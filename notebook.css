@@ -15,15 +15,28 @@
 .note-tools label{display:flex;align-items:center;gap:4px;font-size:.78rem}
 .note-tools input[type=color]{width:28px;height:24px;padding:0;border:1px solid rgba(216,197,138,.45);background:none}
 .note-tools input[type=range]{width:72px;padding:0}
-.note-viewport{flex:1;min-height:0;overflow:auto;position:relative;background:#1d140d}
+.note-pane{flex:1;display:flex;flex-direction:column;min-height:0}
+.note-pane[hidden]{display:none}
+.note-tabs{display:flex;gap:2px;padding:6px 8px 0;background:#102321}
+.note-tabs button{padding:5px 14px;font-size:.82rem;color:#a89a74;background:transparent;border:1px solid rgba(216,197,138,.3);border-bottom:none;border-radius:5px 5px 0 0;cursor:pointer}
+.note-tabs button[aria-selected=true]{color:#e6d9a8;background:#1c3633;border-color:rgba(216,197,138,.6)}
+.note-viewport{flex:1;min-height:0;overflow:hidden;position:relative;background:#1d140d;touch-action:none;cursor:grab}
+.note-viewport.grabbing,.note-viewport.grabbing *{cursor:grabbing!important}
+.note-zoom{position:absolute;right:10px;bottom:10px;z-index:6;display:flex;align-items:center;gap:2px;padding:3px;background:rgba(13,30,28,.92);border:1px solid rgba(216,197,138,.45);border-radius:6px}
+.note-zoom button{min-width:28px;padding:3px 7px;font-size:.85rem;color:#e6d9a8;background:transparent;border:0;border-radius:4px;cursor:pointer}
+.note-zoom button:hover{background:rgba(216,197,138,.18)}
+.note-zoom output{min-width:44px;text-align:center;font-size:.78rem}
+.note-txt{flex:1;min-height:0;width:100%;box-sizing:border-box;resize:none;border:none;border-radius:0;padding:0 16px 10px;font:inherit;font-size:1rem;line-height:28px;color:var(--field-ink);background:var(--field) repeating-linear-gradient(transparent 0 27px,rgba(127,29,29,.18) 27px 28px) local}
+.note-txt:focus{outline:none;box-shadow:inset 0 0 0 2px rgba(216,197,138,.35)}
 .note-viewport:focus{outline:none}
-.note-board{position:relative;width:2400px;height:1600px;background-color:#2b1d12;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1.6px),radial-gradient(ellipse at 50% 40%,rgba(255,235,190,.07),transparent 70%);background-size:22px 22px,100% 100%}
+.note-board{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;width:2400px;height:1600px;background-color:#2b1d12;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1.6px),radial-gradient(ellipse at 50% 40%,rgba(255,235,190,.07),transparent 70%);background-size:22px 22px,100% 100%}
 .note-lines,.note-ink,#noteCards{position:absolute;left:0;top:0;width:2400px;height:1600px}
 .note-lines{z-index:1;pointer-events:none}
 #noteCards{z-index:2;pointer-events:none}
 .note-ink{z-index:3;pointer-events:none}
 .note-board[data-mode=brush] .note-ink{pointer-events:auto;cursor:crosshair;touch-action:none}
 .note-board[data-mode=connect] .nc{cursor:alias}
+.note-board[data-mode=pan] .nc{pointer-events:none}
 .yarn{stroke:#b91c1c;stroke-width:3;stroke-linecap:round}
 .hit{stroke:transparent;stroke-width:18;pointer-events:stroke;cursor:pointer}
 .lsel .yarn{stroke:#f87171;stroke-dasharray:9 6}
@@ -43,7 +56,7 @@
 .nc.new.img img{animation:develop 2.4s ease-out}
 @keyframes snap{from{opacity:0;transform:translateY(-70px) scale(1.3) rotate(calc(var(--r) - 9deg))}}
 @keyframes develop{from{filter:brightness(2.6) sepia(1) blur(4px) contrast(.5)}60%{filter:brightness(1.2) sepia(.7) blur(1px)}}
-.note-empty{position:absolute;left:0;top:0;width:min(560px,100%);height:min(320px,100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:20px;box-sizing:border-box;pointer-events:none;color:#a89a74}
+.note-empty{position:absolute;z-index:5;left:0;top:0;width:min(560px,100%);height:min(320px,100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:20px;box-sizing:border-box;pointer-events:none;color:#a89a74}
 .note-empty[hidden]{display:none}
 .note-empty strong{color:#e6d9a8;font-size:1.05rem}
 .note-empty p{margin:0;font-size:.85rem;max-width:34ch}
@@ -52,5 +65,5 @@ body.mobile .note{left:8px!important;right:8px;top:auto!important;bottom:8px;wid
 body.mobile .note.min{height:auto!important}
 body.mobile .note-bar{cursor:default;padding:9px 10px}
 body.mobile .note-bar button,body.mobile .note-tools button{padding:7px 12px;font-size:.9rem}
-body.mobile .nc textarea,body.mobile .nc .cap{font-size:16px}
+body.mobile .note-txt,body.mobile .nc textarea,body.mobile .nc .cap{font-size:16px}
 @media (prefers-reduced-motion:reduce){.nc.new,.nc.new.img img{animation:none}}
