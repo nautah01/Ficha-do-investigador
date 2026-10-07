@@ -163,7 +163,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 .quote{color:var(--quote)}
 @media(max-width:640px){.atmo .tent{height:52vh}.atmo .sign{opacity:.06}}
 @media (prefers-reduced-motion:reduce){.atmo .fog,h1{animation:none}}
-</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"></head><body>
+</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"></head><body>
 <div class="top">
 <h1>Gerador de Investigadores</h1>
 <p class="tag">Chamado de Cthulhu 7ª ed. · Década de 1920 · fichas offline · notas salvas no navegador</p>
@@ -194,22 +194,31 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <header class="note-bar" title="Arraste para mover · duplo clique para minimizar"><span class="note-title">Bloco de notas</span><button id="noteMin" title="Minimizar" aria-label="Minimizar bloco de notas">–</button><button id="noteX" title="Fechar (tudo fica guardado)" aria-label="Fechar bloco de notas">✕</button></header>
 <div class="note-tabs" role="tablist" aria-label="Seções do bloco de notas"><button id="noteBoardTab" role="tab" aria-selected="true" aria-controls="noteBoardPanel">Quadro de pistas</button><button id="noteTextTab" role="tab" aria-selected="false" aria-controls="noteTextPanel" tabindex="-1">Livro de anotações</button></div>
 <div id="noteBoardPanel" class="note-pane" role="tabpanel" aria-labelledby="noteBoardTab">
+<div class="note-boards"><div id="boardTabs" class="btabs" role="tablist" aria-label="Quadros"></div><button id="boardAdd" title="Criar um novo quadro">＋ Novo</button><button id="boardRen" title="Renomear quadro (ou dê dois cliques na aba)" aria-label="Renomear quadro">✎</button><button id="boardDel" title="Excluir quadro" aria-label="Excluir quadro">🗑</button></div>
 <div class="note-tools">
-<button id="noteAdd" disabled>+ Foto</button><button id="noteAddText" disabled>+ Texto</button><button id="noteConnect" aria-pressed="false" disabled>Interligar</button>
-<button id="noteBrush" aria-pressed="false" disabled>Pincel</button><button id="noteEraser" aria-pressed="false" disabled>Borracha</button>
-<label>Cor <input id="noteBrushColor" type="color" value="#d4af37" aria-label="Cor do pincel" disabled></label>
-<label>Espessura <input id="noteBrushSize" type="range" min="2" max="40" value="6" aria-label="Espessura do pincel" disabled></label>
-<span class="sp"></span><button id="noteDelete" disabled>Excluir seleção</button><button id="noteClear" class="danger" disabled>Limpar quadro</button>
+<button id="noteSelect" aria-pressed="false" title="Selecionar várias peças (Shift+arrastar)">⬚ Selecionar</button><button id="noteAdd">＋ Foto</button><button id="noteAddText">＋ Texto</button><button id="noteConnect" aria-pressed="false" title="Ligar duas peças com uma seta">↗ Interligar</button>
+<i class="sep"></i><button id="noteBrush" aria-pressed="false">🖌 Pincel</button><button id="noteEraser" aria-pressed="false">Borracha</button>
+<label>Cor <input id="noteBrushColor" type="color" value="#d4af37" aria-label="Cor do pincel"></label>
+<label>Espessura <input id="noteBrushSize" type="range" min="2" max="40" value="6" aria-label="Espessura do pincel"></label>
+<i class="sep"></i><button id="noteUndo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer" disabled>↶</button><button id="noteRedo" title="Refazer (Ctrl+Y)" aria-label="Refazer" disabled>↷</button>
+<button id="noteDup" title="Duplicar seleção (Ctrl+D)" disabled>⧉ Duplicar</button><button id="noteDir" title="Mudar o sentido da seta da linha selecionada (ou dois cliques na linha)" disabled>⇄ Sentido</button>
+<span class="sp"></span><span id="noteSelInfo" class="selinfo" aria-live="polite"></span><button id="noteDelete" disabled>Excluir</button><button id="noteClear" class="danger">Limpar quadro</button>
 <input id="noteFiles" type="file" accept="image/*" multiple hidden>
 </div>
 <div id="noteViewport" class="note-viewport" tabindex="0" aria-label="Quadro de pistas. Arraste o fundo para mover, use a roda do mouse para zoom, arraste ou cole imagens aqui.">
-<div id="noteBoard" class="note-board" data-mode="move"><svg id="noteLines" class="note-lines" width="2400" height="1600" aria-label="Barbantes entre as pistas"></svg><div id="noteCards"></div><canvas id="noteInk" class="note-ink" width="2400" height="1600" aria-label="Desenhos"></canvas></div>
-<div id="noteEmpty" class="note-empty"><strong>Monte o quadro de pistas</strong><p>Envie, arraste ou cole uma imagem: ela aparece como foto revelada. Adicione textos, ligue as peças com barbante e rabisque com o pincel.</p></div>
+<div id="noteBoard" class="note-board" data-mode="move"><svg id="noteLines" class="note-lines" width="2400" height="1600" aria-label="Linhas entre as pistas"></svg><div id="noteCards"></div><canvas id="noteInk" class="note-ink" width="2400" height="1600" aria-label="Desenhos"></canvas></div>
+<div id="noteEmpty" class="note-empty"><strong>Monte o quadro de pistas</strong><p>Envie, arraste ou cole uma imagem: ela aparece como foto revelada. Adicione textos, ligue as peças com setas e rabisque com o pincel.</p></div>
 <div class="note-zoom"><button id="noteZoomOut" aria-label="Diminuir zoom">−</button><output id="noteZoomVal">100%</output><button id="noteZoomIn" aria-label="Aumentar zoom">+</button><button id="noteFit" title="Enquadrar todas as peças">Ajustar</button></div>
 </div>
 </div>
-<div id="noteTextPanel" class="note-pane" role="tabpanel" aria-labelledby="noteTextTab" hidden><textarea class="note-txt" id="noteTxt" aria-label="Livro de anotações" maxlength="100000" spellcheck="true" readonly placeholder="Anote aqui: nomes de NPCs, ideias da sessão, teorias…"></textarea></div>
-<footer class="note-footer"><span id="noteHint">Arraste o fundo para mover · roda do mouse para zoom · canto vermelho redimensiona · Delete exclui</span><span id="noteStatus" role="status" aria-live="polite">Carregando notas…</span></footer>
+<div id="noteTextPanel" class="note-pane" role="tabpanel" aria-labelledby="noteTextTab" hidden>
+<div id="diary" class="diary" data-view="page"><div class="dia-book">
+<aside class="dia-index" aria-label="Índice do livro"><header><h5>Índice</h5><button id="diaNew" type="button">＋ Nova entrada</button></header><input id="diaSearch" type="search" placeholder="Procurar no livro…" aria-label="Procurar no livro"><ol id="diaList"></ol><footer id="diaTotal"></footer></aside>
+<section class="dia-page" aria-label="Página do livro"><span class="ribbon" aria-hidden="true"></span>
+<header><button id="diaBack" type="button" class="dia-back">← Índice</button><input id="diaTitle" class="dia-title" maxlength="70" placeholder="Título da entrada" aria-label="Título da entrada"><span class="dia-act"><button id="diaPin" type="button" aria-pressed="false" title="Marcar esta página com uma fita">🔖</button><button id="diaDel" type="button" title="Apagar entrada">🗑</button></span></header>
+<div id="diaDate" class="dia-date"></div><textarea id="diaText" class="dia-text" spellcheck="true" placeholder="Querido diário… anote aqui nomes, teorias e o que aconteceu na sessão."></textarea><footer id="diaCount"></footer></section>
+</div></div></div>
+<footer class="note-footer"><span id="noteHint">Arraste o fundo para mover · Shift+arrastar seleciona várias peças · roda do mouse = zoom</span><span id="noteStatus" role="status" aria-live="polite">Carregando notas…</span></footer>
 </section>
 <div class="atmo" aria-hidden="true"><svg class="sign" viewBox="-100 -100 200 200" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round">
 <circle r="95" stroke-width="1.2"/><circle r="90" stroke-width=".5"/>
@@ -683,4 +692,4 @@ sel.onchange=sel2.onchange=document.getElementById('qty').onchange=persist;
  }catch(_){}
  draw();
 })();
-</script><script src="notebook.js" defer></script><script src="cemiterio.js" defer></script><script src="backup.js" defer></script><script src="ocupacoes.js" defer></script><script src="lua.js" defer></script></body></html>
+</script><script src="notebook.js" defer></script><script src="cemiterio.js" defer></script><script src="backup.js" defer></script><script src="ocupacoes.js" defer></script><script src="lua.js" defer></script><script src="mobile.js" defer></script></body></html>

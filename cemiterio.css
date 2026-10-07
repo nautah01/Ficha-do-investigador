@@ -36,8 +36,6 @@
 .cem-photo button{margin-top:6px}
 .cem-dlg .row{display:flex;justify-content:flex-end;gap:8px}
 .cem-dlg button[type=submit]{background:var(--spine1);color:#fff}
-body.mobile .cem{left:8px!important;right:8px;top:auto!important;bottom:76px;width:auto;height:55vh;resize:none}
-body.mobile #cemFab{width:48px;height:48px}
 @media print{#cemFab,.cem{display:none!important}}
 @media (prefers-reduced-motion:reduce){#cemFab{transition:none}}
 .stone h3::before{display:none}

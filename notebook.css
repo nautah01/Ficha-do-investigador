@@ -61,10 +61,65 @@
 .note-empty strong{color:var(--ink2);font-size:1.05rem}
 .note-empty p{margin:0;font-size:.85rem;max-width:34ch}
 .note-footer{display:flex;gap:10px;justify-content:space-between;padding:5px 10px;font-size:.74rem;color:var(--muted2);background:var(--k4);border-top:1px solid var(--k0)}
-body.mobile .note{left:8px!important;right:8px;top:auto!important;bottom:8px;width:auto!important;max-width:none;height:60vh!important;resize:none}
-body.mobile .note.min{height:auto!important}
-body.mobile .note-bar{cursor:default;padding:9px 10px}
-body.mobile .note-bar button,body.mobile .note-tools button{padding:7px 12px;font-size:.9rem}
-body.mobile .note-txt,body.mobile .nc textarea,body.mobile .nc .cap{font-size:16px}
 @media (prefers-reduced-motion:reduce){.nc.new,.nc.new.img img{animation:none}}
 .note-viewport textarea,.note-viewport input{user-select:text;-webkit-user-select:text}
+
+/* ===== v2: vários quadros, seleção, setas ===== */
+.note-boards{display:flex;align-items:flex-end;gap:6px;padding:6px 8px 0;background:var(--k3);border-bottom:1px solid var(--k0)}
+.note-boards>button{margin-bottom:4px;padding:3px 10px;font-size:.78rem;border-radius:4px;color:var(--ink2);background:transparent;border:1px solid rgba(var(--gr),.45);cursor:pointer}
+.note-boards>button:hover:not(:disabled){background:rgba(var(--gr),.15)}
+.note-boards>button:disabled{opacity:.4;cursor:default}
+.btabs{display:flex;gap:3px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:thin}
+.bt{flex:none;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:5px 13px;font-size:.8rem;color:var(--muted2);background:transparent;border:1px solid rgba(var(--gr),.3);border-bottom:none;border-radius:6px 6px 0 0;cursor:pointer}
+.bt:hover{color:var(--ink2)}
+.bt.on{color:var(--ink2);background:var(--k6);border-color:rgba(var(--gr),.6)}
+.bt-in{flex:none;width:150px;padding:4px 8px;font:inherit;font-size:.8rem;color:var(--field-ink);background:var(--field);border:1px solid var(--head);border-radius:6px 6px 0 0}
+.note-tools .sep{width:1px;height:20px;margin:0 2px;background:rgba(var(--gr),.3)}
+.note-tools button:disabled{opacity:.4;cursor:default}
+.selinfo{font-size:.78rem;color:var(--head)}
+.yarn{stroke:#b91c1c;stroke-width:3;stroke-linecap:round}
+.head{fill:#b91c1c;stroke:none}.lsel .head{fill:#f87171}
+.marq{position:absolute;z-index:4;pointer-events:none;border:1px dashed var(--head);background:rgba(var(--gr),.14)}
+.nc.sel.one .rz{opacity:1}
+.nc:not(.one) .rz{pointer-events:none}
+
+/* ===== livro de anotações (diário) ===== */
+.diary{flex:1;min-height:0;display:flex;padding:16px;position:relative;background:linear-gradient(145deg,var(--spine2),var(--spine1) 55%,var(--spine3));container-type:inline-size}
+.diary::before{content:"";position:absolute;inset:7px;border:1px dashed rgba(var(--gr),.5);border-radius:6px;pointer-events:none}
+.dia-book{position:relative;flex:1;min-width:0;display:flex;border-radius:4px 8px 8px 4px;background:#e4d3a8;box-shadow:0 12px 26px rgba(0,0,0,.55),3px 4px 0 -1px #d8c79c,6px 8px 0 -2px #cbb98a}
+.dia-book::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:30px;margin-left:-15px;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(60,40,10,.28) 50%,transparent)}
+.diary.narrow .dia-book::after{display:none}
+.diary,.diary *{color-scheme:light}
+.diary button,.diary input,.diary textarea{font-family:inherit;text-shadow:none;box-shadow:none}
+.dia-index,.dia-page{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;padding:16px 22px 12px;color:#2b2118}
+.dia-index{border-radius:4px 0 0 4px;background:linear-gradient(90deg,#f1e5c0,#f3e8c6 80%,#dcc99b)}
+.dia-page{border-radius:0 8px 8px 4px;background:linear-gradient(270deg,#f1e5c0,#f3e8c6 80%,#dcc99b)}
+.dia-index header,.dia-page header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.dia-index h5{flex:1;margin:0;font:italic 1.3rem "Segoe Script","Bradley Hand","Brush Script MT","Comic Sans MS",cursive;color:#7a2323}
+.diary button{padding:3px 10px;font-size:.78rem;color:#2b2118;background:transparent;border:1px solid rgba(43,33,24,.45);border-radius:4px;cursor:pointer}
+.diary button:hover{background:rgba(43,33,24,.1)}
+.diary button[aria-pressed=true]{background:rgba(166,43,43,.2);border-color:#a62b2b}
+.diary input[type=search],.dia-title{width:100%;padding:5px 2px;color:#2b2118;background:transparent;border:0;border-bottom:1px solid rgba(43,33,24,.3);border-radius:0;outline:none}
+.diary input[type=search]{font-size:.85rem;margin-bottom:6px}
+.dia-title{flex:1;min-width:0;font:italic 1.35rem "Segoe Script","Bradley Hand","Brush Script MT","Comic Sans MS",cursive}
+.diary ::placeholder{color:rgba(43,33,24,.45)}
+.dia-index ol{flex:1;min-height:0;margin:0;padding:0;list-style:none;overflow:auto}
+.dia-index li button{display:flex;align-items:baseline;gap:6px;width:100%;padding:6px 4px;font:1rem Georgia,"Palatino Linotype",serif;text-align:left;border:0;border-radius:3px}
+.dia-index li button.on{background:rgba(166,43,43,.12);font-weight:bold}
+.dia-index li .t{max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dia-index li i{flex:1;min-width:10px;border-bottom:2px dotted rgba(43,33,24,.4);transform:translateY(-3px)}
+.dia-index li .d{font-size:.8rem;color:#5a4a36}
+.dia-index .none{padding:14px 4px;font-style:italic;color:#5a4a36}
+.dia-index footer,.dia-page footer{margin-top:6px;font-size:.75rem;font-style:italic;color:#6b5a42;text-align:right}
+.dia-date{margin:0 0 4px;font-size:.78rem;font-style:italic;color:#6b5a42}
+.dia-act{display:flex;gap:4px}
+.dia-text{flex:1;min-height:0;width:100%;padding:0 6px 0 16px;resize:none;color:#2b2118;border:0;border-left:2px solid rgba(190,70,70,.4);border-radius:0;outline:none;font:1.02rem/30px Georgia,"Palatino Linotype",serif;background:repeating-linear-gradient(transparent 0 29px,rgba(70,100,140,.28) 29px 30px) local transparent}
+.ribbon{position:absolute;top:0;right:16px;width:22px;height:74px;background:linear-gradient(90deg,#8f2020,#b83232);clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);transform:translateY(-100%);transition:transform .4s cubic-bezier(.2,1.3,.4,1);filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}
+.diary.pinned .ribbon{transform:none}
+.dia-back{display:none}
+.diary.narrow .dia-back{display:inline-block}
+.diary.narrow .dia-index,.diary.narrow .dia-page{border-radius:4px 8px 8px 4px;background:#f3e8c6}
+.diary.narrow[data-view=page] .dia-index,.diary.narrow[data-view=index] .dia-page{display:none}
+@media (prefers-reduced-motion:reduce){.ribbon{transition:none}}
+.dia-page>header{padding-right:34px}
+.dia-page{overflow:hidden}

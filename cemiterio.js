@@ -93,6 +93,7 @@ bar.addEventListener('pointerdown',e=>{
 const inside=(n,x,y)=>{const r=n.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom};
 const over=(x,y)=>inside(fab,x,y)||(!win.hidden&&inside(win,x,y));
 window.Cemiterio={
+ open:o=>setOpen(o),
  add(p,cb){openDlg({id:Math.random().toString(36).slice(2,10),nome:p.nome||'',idade:p.idade??'',causa:'',frase:'',foto:''},true,cb)},
  over,
  hover(x,y,on){fab.classList.toggle('call',!!on);const h=!!on&&over(x,y);fab.classList.toggle('hot',h);win.classList.toggle('hot',h)}
