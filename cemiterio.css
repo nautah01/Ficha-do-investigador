@@ -12,7 +12,7 @@
 .cem-x:hover,.stone-act button:hover{background:rgba(216,197,138,.15)}
 .cem-list{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:26px 16px;align-content:start;padding:22px 16px 30px;background:radial-gradient(ellipse at 50% 0,#1a2f2c,#0a1514 80%)}
 .cem-empty{grid-column:1/-1;margin:30px 0;text-align:center;color:#a89a74;font-size:.9rem;line-height:1.5}
-.cem-foot{padding:5px 10px;font-size:.74rem;color:#a89a74;background:#102321;border-top:1px solid #060d0c}
+.cem-foot{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:5px 10px;font-size:.74rem;color:#a89a74;background:#102321;border-top:1px solid #060d0c}
 .stone{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:26px 14px 28px;color:#2b2c28;border-radius:50% 50% 6px 6px / 96px 96px 6px 6px;background:radial-gradient(circle at 22% 18%,rgba(255,255,255,.22),transparent 45%),radial-gradient(circle at 80% 70%,rgba(0,0,0,.14),transparent 50%),linear-gradient(170deg,#c3c4bb,#9a9b92 55%,#7d7e76);box-shadow:inset 0 0 0 2px rgba(255,255,255,.2),inset 0 -14px 24px rgba(0,0,0,.22),inset 4px 0 8px rgba(255,255,255,.08),0 10px 18px rgba(0,0,0,.55);text-shadow:0 1px 0 rgba(255,255,255,.4)}
 .stone::before{content:"";position:absolute;left:-6px;right:-6px;bottom:-9px;height:20px;border-radius:50%;background:radial-gradient(ellipse at 15% 60%,#40613a 0 28%,transparent 62%),radial-gradient(ellipse at 55% 70%,#2f4d2e 0 30%,transparent 65%),radial-gradient(ellipse at 90% 55%,#4a6b3f 0 25%,transparent 60%),#1d2d1b;box-shadow:0 5px 8px rgba(0,0,0,.5)}
 .stone h3{margin:10px 0 0;color:#2b2c28;font:600 1.02rem/1.2 "Palatino Linotype",Palatino,Georgia,serif;font-variant:small-caps;letter-spacing:.06em;overflow-wrap:anywhere}
@@ -46,3 +46,7 @@ body.mobile #cemFab{width:48px;height:48px}
 .cem-photo-ctl small{font-size:.74rem;color:var(--muted)}
 .cem-photo-ctl input[type=range]{width:100%}
 .cem-photo-ctl .cem-file input{font-size:.75rem;max-width:150px}
+.cem-foot span{flex:1;min-width:150px}
+.cem-foot button{padding:3px 10px;font-size:.76rem;border-radius:4px;color:#e6d9a8;background:transparent;border:1px solid rgba(216,197,138,.45);cursor:pointer}
+.cem-foot button:hover:not(:disabled){background:rgba(216,197,138,.15)}
+.cem-foot button:disabled{opacity:.6;cursor:wait}

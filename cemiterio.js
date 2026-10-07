@@ -10,7 +10,7 @@ const fab=mk('<button id="cemFab" title="Cemitério — arraste uma ficha até a
 const win=mk(`<section class="cem" id="cem" hidden aria-label="Cemitério dos investigadores">
 <header class="cem-bar" title="Arraste para mover"><span>Cemitério · investigadores perdidos</span><button class="cem-x" aria-label="Fechar cemitério">✕</button></header>
 <div class="cem-list" id="cemList"></div>
-<footer class="cem-foot">Arraste uma ficha até a caveira (ou até esta janela) para enterrá-la.</footer></section>`);
+<footer class="cem-foot"><span>Arraste uma ficha até a caveira para enterrá-la.</span><button id="cemPng" title="Baixar o cemitério como imagem">Salvar imagem</button><button id="cemPdf" title="Baixar o cemitério como PDF">Salvar PDF</button></footer></section>`);
 const dlg=mk(`<dialog class="cem-dlg" id="cemDlg"><form id="cemForm" autocomplete="off"><h4 id="cemDlgT">Enterrar investigador</h4>
 <label>Nome<input name="nome" required maxlength="80"></label>
 <label>Idade<input name="idade" maxlength="3" inputmode="numeric"></label>
@@ -96,5 +96,61 @@ window.Cemiterio={
  over,
  hover(x,y,on){fab.classList.toggle('call',!!on);const h=!!on&&over(x,y);fab.classList.toggle('hot',h);win.classList.toggle('hot',h)}
 };
+/* ---------- salvar o cemitério como imagem / PDF ---------- */
+const FONT='"Palatino Linotype",Palatino,Georgia,serif';
+function wrap(c,t,w,max){const out=[];let line='';for(const word of String(t).split(/\s+/)){const test=line?line+' '+word:word;if(c.measureText(test).width>w&&line){out.push(line);line=word}else line=test}if(line)out.push(line);if(out.length>max){out.length=max;out[max-1]=out[max-1].replace(/.{0,2}$/,'…')}return out}
+async function draw(){
+ const imgs=await Promise.all(list.map(r=>r.foto?new Promise(ok=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>ok(null);i.src=r.foto}):null));
+ const S=2,CW=260,G=40,P=50,cols=Math.min(4,list.length),m=document.createElement('canvas').getContext('2d');
+ const W=Math.max(640,2*P+cols*CW+(cols-1)*G),x0=(W-(cols*CW+(cols-1)*G))/2;
+ const cards=list.map((r,i)=>{
+  m.font='600 20px '+FONT;const nameL=wrap(m,r.nome,CW-50,2);
+  m.font='15px '+FONT;const causeL=wrap(m,r.causa,CW-50,4);
+  m.font='italic 14px '+FONT;const quoteL=r.frase?wrap(m,'“'+r.frase+'”',CW-56,4):[];
+  return{r,img:imgs[i],nameL,causeL,quoteL,h:40+118+28+nameL.length*24+8+20+8+causeL.length*20+(quoteL.length?22+quoteL.length*19:0)+40};
+ });
+ const rows=[];for(let i=0;i<cards.length;i+=cols)rows.push(cards.slice(i,i+cols));
+ const H=P+110+rows.reduce((s,r)=>s+Math.max(...r.map(c=>c.h))+G,0)+P-G/2;
+ const cv=document.createElement('canvas');cv.width=W*S;cv.height=H*S;const c=cv.getContext('2d');c.scale(S,S);
+ const bg=c.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#0a1514');bg.addColorStop(1,'#1a2f2c');c.fillStyle=bg;c.fillRect(0,0,W,H);
+ c.textAlign='center';c.textBaseline='alphabetic';c.fillStyle='#d8c58a';c.font='600 38px '+FONT;c.fillText('Cemitério dos Investigadores',W/2,P+34);
+ c.fillStyle='#a89a74';c.font='italic 16px '+FONT;c.fillText(list.length+(list.length===1?' investigador perdido':' investigadores perdidos'),W/2,P+62);
+ let y=P+110;
+ for(const row of rows){
+  const rh=Math.max(...row.map(k=>k.h));
+  row.forEach((k,ci)=>{
+   const x=x0+ci*(CW+G),h=rh,cx0=x+CW/2;
+   c.fillStyle='#3a5a35';c.beginPath();c.ellipse(cx0,y+h,CW/2+8,11,0,0,7);c.fill();
+   const g=c.createLinearGradient(x,y,x+CW*.4,y+h);g.addColorStop(0,'#c3c4bb');g.addColorStop(.55,'#9a9b92');g.addColorStop(1,'#7d7e76');
+   c.fillStyle=g;c.beginPath();c.moveTo(x,y+h);c.lineTo(x,y+110);c.ellipse(cx0,y+110,CW/2,110,0,Math.PI,0);c.lineTo(x+CW,y+h);c.closePath();c.fill();
+   c.strokeStyle='rgba(255,255,255,.25)';c.lineWidth=2;c.stroke();
+   const py=y+40+59;c.save();c.beginPath();c.ellipse(cx0,py,48,59,0,0,7);c.clip();
+   if(k.img){c.filter='grayscale(.9) sepia(.25)';c.drawImage(k.img,cx0-48,py-59,96,118);c.filter='none'}else{c.fillStyle='#6d6e67';c.fillRect(cx0-48,py-59,96,118);c.fillStyle='#d3d4cb';c.font='40px serif';c.textBaseline='middle';c.fillText('✝',cx0,py);c.textBaseline='alphabetic'}
+   c.restore();c.beginPath();c.ellipse(cx0,py,48,59,0,0,7);c.lineWidth=4;c.strokeStyle='#c9b36a';c.stroke();
+   let ty=y+40+118+34;c.fillStyle='#2b2c28';c.font='600 20px '+FONT;
+   k.nameL.forEach(l=>{c.fillText(l,cx0,ty);ty+=24});
+   ty+=-2;c.font='15px '+FONT;c.fillStyle='#3d3e39';c.fillText(k.r.idade!==''?k.r.idade+' anos':'',cx0,ty);ty+=28;
+   c.fillStyle='#2b2c28';k.causeL.forEach(l=>{c.fillText(l,cx0,ty);ty+=20});
+   if(k.quoteL.length){ty+=2;c.strokeStyle='rgba(43,44,40,.3)';c.lineWidth=1;c.beginPath();c.moveTo(cx0-50,ty);c.lineTo(cx0+50,ty);c.stroke();ty+=20;c.font='italic 14px '+FONT;c.fillStyle='#363731';k.quoteL.forEach(l=>{c.fillText(l,cx0,ty);ty+=19})}
+  });
+  y+=rh+G;
+ }
+ return{cv,W,H};
+}
+function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+function loadJsPdf(){return window.jspdf?Promise.resolve():new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+async function exportCem(kind,btn){
+ if(!list.length){alert('Ainda não há investigadores no cemitério.');return}
+ const t=btn.textContent;btn.disabled=true;btn.textContent='Gerando…';
+ try{
+  const {cv,W,H}=await draw();
+  if(kind==='png')cv.toBlob(b=>download(b,'cemiterio-investigadores.png'),'image/png');
+  else{await loadJsPdf();const {jsPDF}=window.jspdf,pdf=new jsPDF({unit:'px',format:[W,H],orientation:W>H?'l':'p',hotfixes:['px_scaling']});
+   pdf.addImage(cv.toDataURL('image/jpeg',.92),'JPEG',0,0,W,H);download(pdf.output('blob'),'cemiterio-investigadores.pdf')}
+ }catch{alert(kind==='pdf'?'Não foi possível gerar o PDF (a biblioteca precisa de internet). Tente salvar como imagem.':'Não foi possível gerar a imagem.')}
+ btn.disabled=false;btn.textContent=t;
+}
+win.querySelector('#cemPng').onclick=e=>exportCem('png',e.currentTarget);
+win.querySelector('#cemPdf').onclick=e=>exportCem('pdf',e.currentTarget);
 render();
 })();
