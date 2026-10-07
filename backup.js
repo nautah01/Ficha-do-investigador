@@ -21,7 +21,7 @@ async function importar(file){
  try{data=JSON.parse(await file.text())}catch{return alert('Este arquivo não é um backup válido.')}
  if(!data||data.format!==FORMAT||typeof data.ls!=='object')return alert('Este arquivo não parece ser um backup deste site.');
  for(const k of LS){const v=data.ls[k];if(v!=null)try{JSON.parse(v)}catch{return alert('O backup está corrompido ('+k+').')}}
- if(!confirm('Carregar este backup vai SUBSTITUIR as fichas, o bloco de notas e o cemitério deste navegador pelos do arquivo. Isso não dá para desfazer. Continuar?'))return;
+ if(!await(window.askConfirm?askConfirm({title:'Carregar este backup?',html:'Isso vai <strong>substituir</strong> as fichas, o bloco de notas e o cemitério deste navegador pelos do arquivo. Não dá para desfazer.',ok:'📂 Carregar dados'}):Promise.resolve(confirm('Carregar este backup vai substituir os dados deste navegador. Continuar?'))))return;
  try{
   LS.forEach(k=>data.ls[k]==null?localStorage.removeItem(k):localStorage.setItem(k,data.ls[k]));
   await setNotes(data.notas);

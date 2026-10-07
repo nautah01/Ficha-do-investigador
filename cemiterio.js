@@ -72,10 +72,11 @@ form.onsubmit=e=>{
  if(cur.isNew)list.unshift(r);save();render();dlg.close();
  if(cur.isNew){setOpen(true);if(done)done()}
 };
-listEl.onclick=e=>{
+const ask=o=>window.askConfirm?askConfirm(o):Promise.resolve(confirm(o.title));
+listEl.onclick=async e=>{
  const b=e.target.closest('button'),id=b&&b.closest('.stone').dataset.id,r=list.find(x=>x.id===id);if(!r)return;
  if(b.dataset.a==='edit')openDlg(r,false);
- else if(confirm('Remover '+r.nome+' do cemitério? Isso não dá para desfazer.')){list=list.filter(x=>x!==r);save();render()}
+ else if(await ask({title:'Remover do cemitério?',html:'<strong>'+esc(r.nome)+'</strong> será removido do cemitério e isso não dá para desfazer.',ok:'🗑 Remover'})){list=list.filter(x=>x!==r);save();render()}
 };
 
 function setOpen(o){win.hidden=!o;fab.setAttribute('aria-expanded',o)}

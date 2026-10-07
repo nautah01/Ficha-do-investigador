@@ -35,3 +35,20 @@
 @media (max-width:640px){.opk{width:100vw;max-height:100vh;border-radius:0}.opk-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
 @media (prefers-reduced-motion:reduce){.opk[open],.opk-card{animation:none}.opk-card{transition:none}}
 @media print{.opk{display:none!important}}
+.opk-hb{display:flex;gap:8px}
+.opk-hb button{padding:3px 12px;border-radius:4px;cursor:pointer}
+.opk-help{display:none;flex:1;min-height:0;overflow:auto;padding:6px 22px 18px;line-height:1.5;font-size:.92rem;outline:none}
+.opk.help .opk-tools,.opk.help .opk-chips,.opk.help .opk-grid,.opk.help .opk-det{display:none}
+.opk.help .opk-help{display:block}
+.opk-help h5{margin:16px 0 4px;font-size:1.02rem;color:var(--head)}
+.opk-help p{margin:0 0 8px;color:var(--txt)}
+.hscale{display:flex;gap:2px;margin:10px 0 4px;border-radius:6px;overflow:hidden}
+.hscale div{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 4px;min-width:0;text-align:center;color:#fff}
+.hscale b{font-size:.78rem;line-height:1.1}.hscale small{font-size:.7rem;opacity:.85}
+.hex{display:grid;gap:8px;margin:10px 0}
+.hx{display:grid;grid-template-columns:minmax(160px,230px) 1fr;gap:10px;align-items:center;font-size:.85rem}
+.hx b{color:var(--head)}
+.hbar{position:relative;height:10px;border-radius:5px;background:rgba(255,255,255,.1)}
+.hbar i{position:absolute;top:0;bottom:0;border-radius:5px;background:var(--head)}
+.opk-back{margin-top:12px;padding:6px 14px;border-radius:4px;cursor:pointer}
+@media (max-width:640px){.hx{grid-template-columns:1fr}}

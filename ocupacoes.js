@@ -14,12 +14,13 @@ const items=(kind)=>kind==='occ'?OCC.map(o=>({v:o.n,n:o.n,o,cred:o.c})):
  [...SEC.map(o=>({v:o.n,n:o.n,o,sec:1})),...OCC.map(o=>({v:'occ:'+o.n,n:o.n,o,cred:o.c,dup:1}))];
 
 const dlg=document.createElement('dialog');dlg.className='opk';dlg.setAttribute('aria-label','Escolher ocupação');
-dlg.innerHTML=`<header><h4 id="opkT"></h4><button type="button" class="opk-x" aria-label="Fechar">✕</button></header>
+dlg.innerHTML=`<header><h4 id="opkT"></h4><span class="opk-hb"><button type="button" id="opkHelpBtn" aria-pressed="false">❔ Ajuda</button><button type="button" class="opk-x" aria-label="Fechar">✕</button></span></header>
 <div class="opk-tools"><input id="opkQ" type="search" placeholder="Buscar ocupação ou perícia…" aria-label="Buscar"><div id="opkTabs" class="opk-tabs"></div></div>
 <div id="opkChips" class="opk-chips"></div><div id="opkGrid" class="opk-grid" role="listbox"></div>
+<div id="opkHelp" class="opk-help" tabindex="-1"></div>
 <footer id="opkDet" class="opk-det">Passe o mouse (ou foque) sobre uma ocupação para ver as perícias.</footer>`;
 document.body.appendChild(dlg);
-const q=$('#opkQ'),grid=$('#opkGrid'),chips=$('#opkChips'),tabs=$('#opkTabs'),det=$('#opkDet');
+const helpBox=$('#opkHelp'),helpBtn=$('#opkHelpBtn'),q=$('#opkQ'),grid=$('#opkGrid'),chips=$('#opkChips'),tabs=$('#opkTabs'),det=$('#opkDet');
 let ctx=null,cat='',tab='sec';
 
 function btnText(sel){
@@ -61,6 +62,27 @@ function render(){
  chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));
  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===tab));
 }
+
+/* ---------- ajuda: o que é Nível de Crédito ---------- */
+const BANDS=[['Sem recursos',0,0,'#6b2323'],['Pobre',1,9,'#8a5a2b'],['Médio',10,49,'#5b7a3a'],['Rico',50,89,'#3f7f86'],['Muito rico',90,99,'#8a6fc0']];
+function helpHtml(){
+ const ex=n=>{const o=OCC.find(x=>x.n===n);return o?`<div class="hx"><span>${meta(n)[0]} ${esc(n)} <b>${o.c[0]}–${o.c[1]}</b></span><div class="hbar"><i style="left:${o.c[0]}%;width:${Math.max(1.5,o.c[1]-o.c[0])}%"></i></div></div>`:''};
+ return`<h5>O que é o Nível de Crédito?</h5>
+<p>É uma perícia especial que mede o <strong>dinheiro, o status e a reputação</strong> do investigador. Quanto mais alto, melhor o padrão de vida: casa, roupas, contatos e o quanto ele consegue gastar sem pensar duas vezes. Vai de <strong>0 a 99</strong>.</p>
+<div class="hscale">${BANDS.map(([n,a,b,c])=>`<div style="flex:${Math.max(b-a+1,6)};background:${c}"><b>${n}</b><small>${a===b?a:a+'–'+b}</small></div>`).join('')}</div>
+<h5>O que significam os números do cartão?</h5>
+<p>Em cada ocupação aparece algo como <strong>Crédito 30–80</strong>. São o <strong>mínimo e o máximo</strong> que aquela profissão permite: um Advogado precisa ter pelo menos 30 (ninguém contrata um advogado falido) e não passa de 80. Ao gerar a ficha, o Nível de Crédito é sorteado dentro dessa faixa. Veja onde algumas ocupações ficam na escala de 0 a 99:</p>
+<div class="hex">${ex('Andarilho')}${ex('Detetive Particular')}${ex('Advogado')}${ex('Diletante')}</div>
+<h5>Por que isso afeta as perícias?</h5>
+<p>Os pontos de Crédito saem dos <strong>pontos de perícia da ocupação</strong>. Um Crédito alto deixa o investigador rico, mas com menos pontos para as perícias de trabalho. Um Crédito baixo faz o contrário: sobra mais para as perícias, mas ele vive com pouco.</p>
+<h5>E as outras informações do cartão?</h5>
+<p>As <strong>etiquetas</strong> mostram as perícias principais da ocupação, que recebem mais pontos. Passe o mouse no cartão para ver a lista completa. Na <strong>ocupação secundária</strong> não há faixa de crédito: ela só reforça algumas perícias com os pontos de interesse pessoal (INT × 2). As abas <em>Ocupações completas</em> permitem usar uma ocupação inteira como secundária.</p>
+<button type="button" class="opk-back">← Voltar à lista</button>`;
+}
+function setHelp(on){dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',on);helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.innerHTML=helpHtml();helpBox.scrollTop=0;helpBox.focus()}else q.focus()}
+helpBtn.addEventListener('click',()=>setHelp(!dlg.classList.contains('help')));
+helpBox.addEventListener('click',e=>{if(e.target.closest('.opk-back'))setHelp(false)});
+dlg.addEventListener('close',()=>{dlg.classList.remove('help');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda'});
 q.addEventListener('input',render);
 chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b){cat=b.dataset.c;render()}});
 tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b){tab=b.dataset.t;render()}});

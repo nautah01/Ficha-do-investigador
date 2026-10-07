@@ -365,18 +365,20 @@ function gen(sel,sel2){
  if(sk['Língua Natural']===undefined)sk['Língua Natural']=bs('Língua Natural');
  return{nome:pick([...NF,...NM])+' '+pick(SN),idade:20+r(20),occ:o.n,sec:sec?sec.n:'',c,sk,edit:false,der:{...calc(c),luck:A()}};
 }
-function confirmDel(name){return new Promise(ok=>{
- const o=document.createElement('div'),prev=document.activeElement;o.className='ovl';
- o.innerHTML=`<div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlgT"><h4 id="dlgT">Excluir ficha?</h4><p><strong>${esc(name)}</strong> será apagada e isso não dá para desfazer.</p><div class="row"><button class="alt" data-r="0">Cancelar</button><button class="danger" data-r="1">🗑 Excluir</button></div></div>`;
+/* confirmação dinâmica reutilizada por todo o site: askConfirm({title,html,ok,danger}) → Promise<boolean> */
+function askConfirm(o){return new Promise(ok=>{
+ const ov=document.createElement('div'),prev=document.activeElement;ov.className='ovl';
+ ov.innerHTML=`<div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlgT"><h4 id="dlgT">${o.title}</h4><p>${o.html}</p><div class="row"><button class="alt" data-r="0">Cancelar</button><button class="${o.danger===false?'':'danger'}" data-r="1">${o.ok||'Confirmar'}</button></div></div>`;
  const key=e=>{
   if(e.key==='Escape'){e.preventDefault();done(false)}
-  else if(e.key==='Tab'){const bs=[...o.querySelectorAll('button')],k=bs.indexOf(document.activeElement);e.preventDefault();bs[(k+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()}
+  else if(e.key==='Tab'){const bs=[...ov.querySelectorAll('button')],k=bs.indexOf(document.activeElement);e.preventDefault();bs[(k+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()}
  };
- const done=v=>{document.removeEventListener('keydown',key,true);o.remove();if(prev&&prev.focus)prev.focus();ok(v)};
- o.addEventListener('click',e=>{const b=e.target.closest('button');if(b)done(b.dataset.r==='1');else if(e.target===o)done(false)});
+ const done=v=>{document.removeEventListener('keydown',key,true);ov.remove();if(prev&&prev.focus)prev.focus();ok(v)};
+ ov.addEventListener('click',e=>{const b=e.target.closest('button');if(b)done(b.dataset.r==='1');else if(e.target===ov)done(false)});
  document.addEventListener('keydown',key,true);
- document.body.appendChild(o);o.querySelector('[data-r="0"]').focus();
+ document.body.appendChild(ov);ov.querySelector('[data-r="0"]').focus();
 })}
+const confirmDel=name=>askConfirm({title:'Excluir ficha?',html:`<strong>${esc(name)}</strong> será apagada e isso não dá para desfazer.`,ok:'🗑 Excluir'});
 const ttl=p=>[p.nome,p.occ].filter(Boolean).join(' — ')||'Ficha em branco';
 /* ficha em branco: atributos zerados, sem nome/ocupação, perícias mais usadas com o valor inicial */
 const BLANK_SK=['Esquivar','Encontrar','Escutar','Psicologia','Usar Biblioteca','Furtividade','Lutar (Brigar)','Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Primeiros Socorros','Persuasão','Lábia','Charme','Intimidação','Ocultismo','História','Dirigir Auto','Escalar','Mundo Natural','Consertos Mecânicos','Língua Natural','Nível de Crédito'];
@@ -429,6 +431,7 @@ function card(p,i){
    <button class="pdfb" data-i="${i}" title="Salvar esta ficha completa em PDF">📄 PDF</button>
    <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Fixar: não some ao gerar">${p.pinned?'📌 Fixa':'📌 Fixar'}</button>
    <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
+   <button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦</button>
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>
   </header>
   <div class="win-body"><div class="stamp">Arquivo<br>Arkham</div>${body(p,i)}</div>
@@ -502,6 +505,7 @@ desk.addEventListener('click',e=>{
    try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}
    const l='📋 Copiar';b.textContent='✔ Copiado!';setTimeout(()=>{b.textContent=l},1200);
   })();return}
+ if(e.target.closest('.burb')){const k=+e.target.closest('.burb').dataset.i,p=cur[k];askConfirm({title:'Levar ao cemitério?',html:`<strong>${esc(ttl(p))}</strong> será enterrado no cemitério. Em seguida você informa a causa da morte.`,ok:'🪦 Levar ao cemitério',danger:false}).then(y=>{if(y&&cur[k]===p)buryFicha(k)});return}
  if(e.target.closest('.delb')){const k=+e.target.closest('.delb').dataset.i,p=cur[k];confirmDel(ttl(p)).then(y=>{if(y&&cur[k]===p){cur.splice(k,1);draw()}});return}
  if(e.target.closest('.ftg')){const p=cur[+e.target.closest('.ftg').dataset.i];p.falta=!p.falta;draw();return}
  if(e.target.closest('.rmb')){const x=e.target.closest('.rmb'),p=cur[+x.dataset.i],n=x.dataset.n;

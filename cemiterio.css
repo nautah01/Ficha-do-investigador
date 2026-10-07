@@ -50,3 +50,5 @@ body.mobile #cemFab{width:48px;height:48px}
 .cem-foot button{padding:3px 10px;font-size:.76rem;border-radius:4px;color:#e6d9a8;background:transparent;border:1px solid rgba(216,197,138,.45);cursor:pointer}
 .cem-foot button:hover:not(:disabled){background:rgba(216,197,138,.15)}
 .cem-foot button:disabled{opacity:.6;cursor:wait}
+.burb{display:none}
+body.mobile #desk .burb{display:inline-block}

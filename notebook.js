@@ -116,8 +116,9 @@ function del(){
 }
 $('noteDelete').onclick=del;
 vp.addEventListener('keydown',e=>{if((e.key==='Delete'||e.key==='Backspace')&&!e.target.matches('textarea,input')){e.preventDefault();del()}});
-$('noteClear').onclick=()=>{
- if(!confirm('Limpar o quadro? Fotos, textos, ligações e desenhos serão apagados e isso não dá para desfazer.'))return;
+const ask=o=>window.askConfirm?askConfirm(o):Promise.resolve(confirm(o.title));
+$('noteClear').onclick=async()=>{
+ if(!await ask({title:'Limpar o quadro?',html:'Fotos, textos, ligações e desenhos serão apagados e isso não dá para desfazer. O livro de anotações não é afetado.',ok:'🧹 Limpar quadro'}))return;
  S={items:[],links:[],ink:'',book:S.book};sel=null;selLink=-1;pick=null;cards.innerHTML='';ctx.clearRect(0,0,W,H);empty.hidden=false;refresh();save();
 };
 /* ---------- mover e zoom do quadro ---------- */
