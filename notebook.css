@@ -1,0 +1,56 @@
+/* Bloco de notas — quadro de pistas (código próprio, salva no navegador) */
+.note{position:fixed;z-index:5000;display:flex;flex-direction:column;min-width:300px;min-height:260px;max-width:96vw;max-height:96vh;resize:both;overflow:hidden;color:#e6d9a8;color-scheme:dark;background:#0d1e1c;border:1px solid rgba(168,139,74,.55);border-radius:7px 7px 4px 4px;box-shadow:0 14px 40px rgba(0,0,0,.6)}
+.note[hidden]{display:none}
+.note.min{height:auto!important;min-height:0;resize:none}
+.note.min>:not(.note-bar){display:none}
+.note-bar{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 12px;cursor:grab;user-select:none;touch-action:none;background:linear-gradient(#1c3633,#102321);border-bottom:1px solid #060d0c}
+.note-bar:active{cursor:grabbing}
+.note-title{flex:1;font-size:.82rem;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note-bar button,.note-tools button{padding:3px 10px;font-size:.8rem;border-radius:4px;background:transparent;color:#e6d9a8;border:1px solid rgba(216,197,138,.45);cursor:pointer}
+.note-bar button:hover,.note-tools button:hover{background:rgba(216,197,138,.15)}
+.note-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:7px 8px;background:#102321;border-bottom:1px solid #060d0c}
+.note-tools button[aria-pressed=true]{background:rgba(216,197,138,.28);border-color:#efe0ae}
+.note-tools .danger{border-color:#b45309;color:#fdba74}
+.note-tools .sp{flex:1}
+.note-tools label{display:flex;align-items:center;gap:4px;font-size:.78rem}
+.note-tools input[type=color]{width:28px;height:24px;padding:0;border:1px solid rgba(216,197,138,.45);background:none}
+.note-tools input[type=range]{width:72px;padding:0}
+.note-viewport{flex:1;min-height:0;overflow:auto;position:relative;background:#1d140d}
+.note-viewport:focus{outline:none}
+.note-board{position:relative;width:2400px;height:1600px;background-color:#2b1d12;background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1.6px),radial-gradient(ellipse at 50% 40%,rgba(255,235,190,.07),transparent 70%);background-size:22px 22px,100% 100%}
+.note-lines,.note-ink,#noteCards{position:absolute;left:0;top:0;width:2400px;height:1600px}
+.note-lines{z-index:1;pointer-events:none}
+#noteCards{z-index:2;pointer-events:none}
+.note-ink{z-index:3;pointer-events:none}
+.note-board[data-mode=brush] .note-ink{pointer-events:auto;cursor:crosshair;touch-action:none}
+.note-board[data-mode=connect] .nc{cursor:alias}
+.yarn{stroke:#b91c1c;stroke-width:3;stroke-linecap:round}
+.hit{stroke:transparent;stroke-width:18;pointer-events:stroke;cursor:pointer}
+.lsel .yarn{stroke:#f87171;stroke-dasharray:9 6}
+.pin{fill:#d8c58a;stroke:#5b4630;stroke-width:1}
+.nc{position:absolute;pointer-events:auto;box-sizing:border-box;touch-action:none;transform:rotate(var(--r,0deg));box-shadow:0 8px 18px rgba(0,0,0,.55)}
+.nc.img{background:#f7f2e4;padding:10px 10px 6px;cursor:grab}
+.nc.img img{display:block;width:100%;height:auto;pointer-events:none}
+.nc .cap{width:100%;box-sizing:border-box;margin:0;padding:8px 0 4px;border:0;outline:none;background:transparent;color:#2a2118;text-align:center;font:italic 1rem "Segoe Script","Bradley Hand","Comic Sans MS",cursive}
+.nc.txt{display:flex;padding:18px 10px 10px;background:#efe2b4;cursor:grab}
+.nc.txt textarea{flex:1;width:100%;height:100%;min-height:0;margin:0;padding:0;resize:none;border:0;outline:none;background:transparent;color:#2a2118;font:1rem/1.4 "Palatino Linotype",Palatino,Georgia,serif;cursor:text}
+.tape{position:absolute;top:-9px;left:50%;width:58px;height:18px;margin-left:-29px;background:rgba(216,197,138,.6);transform:rotate(-3deg);pointer-events:none}
+.rz{position:absolute;right:-5px;bottom:-5px;width:18px;height:18px;cursor:nwse-resize;opacity:0;background:linear-gradient(135deg,transparent 50%,#7f1d1d 50%)}
+.nc:hover .rz,.nc.sel .rz{opacity:1}
+.nc.sel{outline:2px dashed #d8c58a;outline-offset:5px}
+.nc.pick{outline:3px solid #b91c1c;outline-offset:5px}
+.nc.new{animation:snap .5s cubic-bezier(.2,1.5,.4,1)}
+.nc.new.img img{animation:develop 2.4s ease-out}
+@keyframes snap{from{opacity:0;transform:translateY(-70px) scale(1.3) rotate(calc(var(--r) - 9deg))}}
+@keyframes develop{from{filter:brightness(2.6) sepia(1) blur(4px) contrast(.5)}60%{filter:brightness(1.2) sepia(.7) blur(1px)}}
+.note-empty{position:absolute;left:0;top:0;width:min(560px,100%);height:min(320px,100%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:20px;box-sizing:border-box;pointer-events:none;color:#a89a74}
+.note-empty[hidden]{display:none}
+.note-empty strong{color:#e6d9a8;font-size:1.05rem}
+.note-empty p{margin:0;font-size:.85rem;max-width:34ch}
+.note-footer{display:flex;gap:10px;justify-content:space-between;padding:5px 10px;font-size:.74rem;color:#a89a74;background:#102321;border-top:1px solid #060d0c}
+body.mobile .note{left:8px!important;right:8px;top:auto!important;bottom:8px;width:auto!important;max-width:none;height:60vh!important;resize:none}
+body.mobile .note.min{height:auto!important}
+body.mobile .note-bar{cursor:default;padding:9px 10px}
+body.mobile .note-bar button,body.mobile .note-tools button{padding:7px 12px;font-size:.9rem}
+body.mobile .nc textarea,body.mobile .nc .cap{font-size:16px}
+@media (prefers-reduced-motion:reduce){.nc.new,.nc.new.img img{animation:none}}
