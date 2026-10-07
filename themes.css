@@ -1,0 +1,51 @@
+/* Temas do site: a lua troca entre verde (padrão), vermelho (branco e vermelho) e azul. Só na tela; a impressão mantém o visual de papel. */
+@media screen{
+:root{color-scheme:var(--scheme);--scheme:dark;
+ --k0:#030707;--k1:#08100f;--k2:#0b1a19;--k3:#0d1e1c;--k4:#102321;--k5:#16302d;--k6:#1c3633;
+ --card:#0d1e1c;--txt:#e6dcc3;--muted:#9fb0a3;--head:#d8c58a;--rule:rgba(216,197,138,.4);--line:rgba(168,139,74,.3);
+ --field:#08110f;--field-ink:#efe6cc;--spine1:#5a1414;--spine2:#8f2323;--spine3:#040a0a;--stamp:rgba(216,197,138,.42);--warn:#d9b36a;--gold:#a88b4a;
+ --gr:216,197,138;--gr2:168,139,74;--glow:120,190,160;--glow2:30,80,72;--redglow:110,18,18;--vig:0,0,0;--sh:0,0,0;--ov:255,255,255;
+ --ink2:#e6d9a8;--quote:#a9c9b8;--accent:#8fb8a2;--muted2:#8fa89a;
+ --b1:#7a1a1a;--b2:#521010;--b3:#932323;--b4:#651515;--bb:#a64a3a;--btnt:#f3e7c9;
+ --vp:#1d140d;--board:#2b1d12;--zoombg:13,30,28;--onhead:#0b1514;--tab1:#e2cf94;--tab2:#8a6d2f;--tab3:#4d3a14;--ok:#5fae8a;--warn2:#d9967a;
+ --moon1:#dfeee0;--moon2:#9fc4ad;--moon3:#5d8574;--moonglow:130,200,170;--crater:40,80,70}
+:root[data-theme=blue]{
+ --k0:#03070c;--k1:#060d15;--k2:#0a1520;--k3:#0d1b29;--k4:#102232;--k5:#162c42;--k6:#1c3652;
+ --card:#0d1b29;--txt:#dfe6f0;--muted:#9fb0c3;--head:#bcd0ec;--rule:rgba(188,208,236,.4);--line:rgba(130,160,205,.3);
+ --field:#08111b;--field-ink:#e8eef7;--spine1:#1b3354;--spine2:#2c4f80;--spine3:#040a12;--stamp:rgba(188,208,236,.4);--warn:#a9c4e8;--gold:#7f9cc4;
+ --gr:188,208,236;--gr2:127,156,196;--glow:130,170,220;--glow2:50,80,130;--redglow:60,70,140;
+ --ink2:#c5d6ee;--quote:#b3c7de;--accent:#9db8d8;--muted2:#8aa0b8;
+ --b1:#29476f;--b2:#1a2f4d;--b3:#35588a;--b4:#213a60;--bb:#5b7fb0;--btnt:#e8f0fa;
+ --vp:#0c141d;--board:#152230;--zoombg:13,27,41;--onhead:#08111b;--tab1:#c9d9f0;--tab2:#6c88b0;--tab3:#2a3d57;--ok:#7fa9d8;--warn2:#9bb7de;
+ --moon1:#eaf2ff;--moon2:#a8c3ea;--moon3:#5e7fb3;--moonglow:140,180,235;--crater:40,60,100}
+:root[data-theme=red]{--scheme:light;
+ --k0:#f3dcd9;--k1:#fff7f5;--k2:#fdeceb;--k3:#fffaf8;--k4:#f6e3e0;--k5:#efd4d0;--k6:#e8c6c1;
+ --card:#fffaf8;--txt:#2b1d1d;--muted:#6b4a4a;--head:#8a2b2b;--rule:rgba(138,43,43,.35);--line:rgba(138,43,43,.28);
+ --field:#ffffff;--field-ink:#2b1d1d;--spine1:#8f2b2b;--spine2:#b43b3b;--spine3:#5a1818;--stamp:rgba(138,43,43,.35);--warn:#a8431f;--gold:#b5524a;
+ --gr:138,43,43;--gr2:150,70,60;--glow:214,120,120;--glow2:232,160,160;--redglow:200,80,80;--vig:255,226,222;--sh:138,43,43;--ov:138,43,43;
+ --ink2:#7a2323;--quote:#7a4a4a;--accent:#b86a6a;--muted2:#8a6060;
+ --b1:#b8453f;--b2:#8f2e2e;--b3:#cc544c;--b4:#a03636;--bb:#7a2323;--btnt:#fff6f2;
+ --vp:#ecd2cc;--board:#f6e1dc;--zoombg:255,244,241;--onhead:#fff6f2;--tab1:#d98a84;--tab2:#a8433a;--tab3:#6a2020;--ok:#b86a6a;--warn2:#a8431f;
+ --moon1:#fff0ec;--moon2:#f0a9a0;--moon3:#c96b66;--moonglow:220,110,100;--crater:140,50,50}
+
+/* a lua */
+.moon{position:absolute;top:12px;right:max(14px,2.2vw);z-index:3;width:clamp(54px,6vw,84px);aspect-ratio:1;padding:0;border:0;border-radius:50%;cursor:pointer;
+ background:radial-gradient(circle at 30% 32%,rgba(255,255,255,.6),transparent 26%),
+  radial-gradient(circle at 64% 28%,rgba(var(--crater),.34) 0 7%,transparent 8%),radial-gradient(circle at 36% 62%,rgba(var(--crater),.3) 0 10%,transparent 11%),
+  radial-gradient(circle at 72% 68%,rgba(var(--crater),.28) 0 6%,transparent 7%),radial-gradient(circle at 54% 47%,rgba(var(--crater),.2) 0 4%,transparent 5%),
+  radial-gradient(circle at 38% 36%,var(--moon1),var(--moon2) 58%,var(--moon3));
+ box-shadow:inset -9px -7px 16px rgba(0,0,0,.26),inset 5px 4px 10px rgba(255,255,255,.28),0 0 26px 6px rgba(var(--moonglow),.34),0 0 90px 26px rgba(var(--moonglow),.15);
+ animation:moonPulse 6s ease-in-out infinite;transition:transform .25s}
+.moon:hover{transform:scale(1.08) rotate(-6deg);box-shadow:inset -9px -7px 16px rgba(0,0,0,.26),inset 5px 4px 10px rgba(255,255,255,.3),0 0 34px 10px rgba(var(--moonglow),.5),0 0 110px 34px rgba(var(--moonglow),.22)}
+.moon:active{transform:scale(.95)}
+.moon:focus-visible{outline:2px solid var(--head);outline-offset:6px}
+.moon.spin{animation:moonSwap .8s ease}
+.mdots{position:absolute;top:100%;left:50%;display:flex;gap:6px;margin-top:10px;transform:translateX(-50%)}
+.mdots i{width:6px;height:6px;border-radius:50%;background:rgba(var(--moonglow),.32);transition:background .3s,box-shadow .3s}
+.mdots i.on{background:var(--moon1);box-shadow:0 0 7px 1px rgb(var(--moonglow))}
+@keyframes moonPulse{50%{box-shadow:inset -9px -7px 16px rgba(0,0,0,.26),inset 5px 4px 10px rgba(255,255,255,.28),0 0 34px 9px rgba(var(--moonglow),.44),0 0 110px 32px rgba(var(--moonglow),.2)}}
+@keyframes moonSwap{35%{transform:scale(1.2) rotate(120deg);filter:brightness(1.35)}to{transform:none}}
+html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-color .6s,color .6s,border-color .6s,fill .6s,stroke .6s,stop-color .6s!important}
+@media (max-width:640px){.moon{top:8px;right:10px;width:46px}h1{padding-right:58px}}
+@media (prefers-reduced-motion:reduce){.moon,.moon.spin{animation:none}html.tswap *,html.tswap *::before,html.tswap *::after{transition:none!important}}
+}
