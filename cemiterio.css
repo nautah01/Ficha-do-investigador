@@ -1,0 +1,57 @@
+/* botão: pulsa enquanto uma ficha está sendo arrastada, acende quando está sobre ele */
+#cemBtn.cem-ready{border-color:var(--head);box-shadow:0 0 0 2px rgba(216,197,138,.28);animation:cemPulse 1s ease-in-out infinite}
+#cemBtn.cem-hot{background:rgba(216,197,138,.3);border-color:#efe0ae;box-shadow:0 0 0 3px rgba(216,197,138,.65);animation:none}
+@keyframes cemPulse{50%{box-shadow:0 0 0 5px rgba(216,197,138,.1)}}
+
+.cem{position:fixed;z-index:5001;display:flex;flex-direction:column;min-width:300px;min-height:180px;max-width:96vw;resize:both;overflow:hidden;color:var(--txt);color-scheme:dark;background:var(--card);border:1px solid rgba(168,139,74,.55);border-radius:7px 7px 4px 4px;box-shadow:0 14px 40px rgba(0,0,0,.6),inset 0 0 0 1px rgba(216,197,138,.08)}
+.cem[hidden]{display:none}
+.cem.cem-hot{border-color:#efe0ae;box-shadow:0 0 0 3px rgba(216,197,138,.6),0 14px 40px rgba(0,0,0,.6)}
+.cem.min{height:auto!important;min-height:0;resize:none}
+.cem.min .cem-body,.cem.min .cem-foot{display:none}
+.cem-bar{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 12px;cursor:grab;user-select:none;touch-action:none;background:linear-gradient(#1c3633,#102321);color:var(--head);border-bottom:1px solid #060d0c}
+.cem-bar:active{cursor:grabbing}
+.cem.min .cem-bar{border-bottom:none}
+.cem-title{flex:1;font-size:.82rem;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cem-bar button{padding:2px 8px;font-size:.75rem;border-radius:4px;background:transparent;color:#e6d9a8;border:1px solid rgba(216,197,138,.45)}
+.cem-bar button:hover{background:rgba(216,197,138,.15)}
+.cem button:focus-visible{outline:2px solid var(--head);outline-offset:2px}
+
+.cem-body{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:14px;background:#0a1b15}
+.cem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:14px;align-items:start}
+.cem-empty{padding:22px 24px;border:1px dashed #a9a56966;background:#12291fe8;max-width:380px}
+.cem-empty-mark{display:block;font-size:2.2rem;line-height:1.2;margin-bottom:10px}
+.cem-empty strong{display:block;font-variant:small-caps;letter-spacing:.5px;color:#dfdfbf;font-size:1.1rem}
+.cem-empty p{font-size:.86rem;line-height:1.6;color:var(--muted);margin:10px 0 0}
+
+/* lápide */
+.grave{display:flex;flex-direction:column;gap:6px;padding:16px 12px 10px;border:1px solid #5d6b62;border-radius:48px 48px 5px 5px;background:linear-gradient(#27342f,#18221f);box-shadow:inset 0 0 0 1px rgba(255,255,255,.04),0 6px 14px rgba(0,0,0,.45)}
+.grave-rip{text-align:center;font-variant:small-caps;letter-spacing:3px;font-size:.68rem;color:#8a9a90}
+.grave-name{margin:0;text-align:center;font-size:1.05rem;font-variant:small-caps;letter-spacing:1px;color:var(--head);overflow-wrap:anywhere}
+.grave-meta{text-align:center;font-size:.8rem;color:#c9d6c4;overflow-wrap:anywhere}
+.grave-line{font-size:.72rem;line-height:1.45;color:var(--muted);overflow-wrap:anywhere}
+.grave-line b{font-weight:normal;color:#cdbb82}
+.grave label{display:flex;flex-direction:column;gap:2px;font-size:.72rem;color:#cdbb82}
+.grave input,.grave textarea{width:100%;min-width:0;font:inherit;font-size:.82rem;padding:5px 7px;border:1px solid var(--line);border-radius:4px;background:var(--field);color:var(--field-ink)}
+.grave textarea{resize:vertical;min-height:50px;font-style:italic}
+.grave input:focus,.grave textarea:focus{outline:2px solid var(--head);outline-offset:1px}
+.grave-actions{display:flex;justify-content:space-between;gap:6px;margin-top:2px}
+.grave-actions button{padding:3px 9px;font-size:.72rem;border-radius:4px;background:transparent}
+.grave-actions .grave-del{color:#d9967a;border:1px solid rgba(253,186,116,.5)}
+.grave-actions .grave-del:hover{background:rgba(217,150,122,.12)}
+
+.cem-foot{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:space-between;padding:7px 12px;border-top:1px solid var(--line);font-size:.7rem;color:var(--muted);background:#102b20}
+#cemStatus[data-error="true"]{color:#f3b7a1}
+
+button.burb{font-size:.75rem}
+
+body.mobile .cem{left:8px!important;right:8px;top:auto!important;bottom:8px;width:auto!important;max-width:none;height:55vh!important;min-width:0;resize:none}
+body.mobile .cem.min{height:auto!important}
+body.mobile .cem-bar{cursor:default;padding:9px 10px 9px 12px}
+body.mobile .cem-bar button{padding:6px 12px;font-size:.9rem}
+body.mobile .cem-grid{grid-template-columns:1fr}
+body.mobile .grave input,body.mobile .grave textarea{font-size:16px}
+body.mobile .grave-actions button{min-height:36px}
+body.mobile .cem-foot #cemHint{display:none}
+
+@media (prefers-reduced-motion:reduce){#cemBtn.cem-ready{animation:none}}
+@media print{.cem{display:none!important}}
