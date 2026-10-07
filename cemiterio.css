@@ -10,19 +10,22 @@
 .cem-bar span{flex:1}
 .cem-x,.stone-act button{padding:3px 10px;font-size:.78rem;border-radius:4px;background:transparent;color:#e6d9a8;border:1px solid rgba(216,197,138,.45);cursor:pointer}
 .cem-x:hover,.stone-act button:hover{background:rgba(216,197,138,.15)}
-.cem-list{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:18px 14px;align-content:start;padding:18px 14px;background:radial-gradient(ellipse at 50% 0,#1a2f2c,#0a1514 80%)}
+.cem-list{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:26px 16px;align-content:start;padding:22px 16px 30px;background:radial-gradient(ellipse at 50% 0,#1a2f2c,#0a1514 80%)}
 .cem-empty{grid-column:1/-1;margin:30px 0;text-align:center;color:#a89a74;font-size:.9rem;line-height:1.5}
 .cem-foot{padding:5px 10px;font-size:.74rem;color:#a89a74;background:#102321;border-top:1px solid #060d0c}
-.stone{display:flex;flex-direction:column;align-items:center;text-align:center;padding:16px 10px 10px;color:#2a2a28;background:linear-gradient(#a9aaa3,#8c8d86);border-radius:80px 80px 5px 5px;box-shadow:inset 0 0 0 3px rgba(255,255,255,.14),0 6px 14px rgba(0,0,0,.5)}
-.stone h3{margin:8px 0 0;font-size:1rem;line-height:1.2;overflow-wrap:anywhere}
-.stone-age{margin:2px 0 6px;font-size:.8rem;color:#44443f}
-.stone-cause{margin:0;font-size:.82rem;line-height:1.3;overflow-wrap:anywhere}
-.stone blockquote{margin:8px 0 0;font-size:.8rem;font-style:italic;color:#34342f;overflow-wrap:anywhere}
-.stone-act{display:flex;gap:6px;margin-top:10px}
-.stone-act button{color:#2a2a28;border-color:rgba(42,42,40,.5)}
-.stone-act button:hover{background:rgba(0,0,0,.12)}
-.stone-photo{width:74px;height:90px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:50% 50% 8px 8px / 40% 40% 8px 8px;background:#6f706a;color:#cfd0c8;font-size:1.6rem;box-shadow:inset 0 0 0 2px rgba(0,0,0,.25)}
-.stone-photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(.85) contrast(1.05)}
+.stone{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:26px 14px 28px;color:#2b2c28;border-radius:50% 50% 6px 6px / 96px 96px 6px 6px;background:radial-gradient(circle at 22% 18%,rgba(255,255,255,.22),transparent 45%),radial-gradient(circle at 80% 70%,rgba(0,0,0,.14),transparent 50%),linear-gradient(170deg,#c3c4bb,#9a9b92 55%,#7d7e76);box-shadow:inset 0 0 0 2px rgba(255,255,255,.2),inset 0 -14px 24px rgba(0,0,0,.22),inset 4px 0 8px rgba(255,255,255,.08),0 10px 18px rgba(0,0,0,.55);text-shadow:0 1px 0 rgba(255,255,255,.4)}
+.stone::before{content:"";position:absolute;left:-6px;right:-6px;bottom:-9px;height:20px;border-radius:50%;background:radial-gradient(ellipse at 15% 60%,#40613a 0 28%,transparent 62%),radial-gradient(ellipse at 55% 70%,#2f4d2e 0 30%,transparent 65%),radial-gradient(ellipse at 90% 55%,#4a6b3f 0 25%,transparent 60%),#1d2d1b;box-shadow:0 5px 8px rgba(0,0,0,.5)}
+.stone h3{margin:10px 0 0;color:#2b2c28;font:600 1.02rem/1.2 "Palatino Linotype",Palatino,Georgia,serif;font-variant:small-caps;letter-spacing:.06em;overflow-wrap:anywhere}
+.stone h3::after{content:"";display:block;width:46px;height:2px;margin:7px auto 0;background:linear-gradient(90deg,transparent,rgba(43,44,40,.55),transparent)}
+.stone-age{margin:6px 0 8px;font-size:.78rem;letter-spacing:.04em;color:#3d3e39}
+.stone-cause{margin:0;font-size:.82rem;line-height:1.35;overflow-wrap:anywhere}
+.stone blockquote{margin:10px 4px 0;padding-top:8px;border-top:1px solid rgba(43,44,40,.25);font-size:.8rem;font-style:italic;line-height:1.35;color:#363731;overflow-wrap:anywhere}
+.stone-act{display:flex;gap:6px;margin-top:12px;opacity:.75;transition:opacity .15s}
+.stone:hover .stone-act,.stone:focus-within .stone-act{opacity:1}
+.stone-act button{padding:2px 9px;font-size:.74rem;color:#2b2c28;background:rgba(255,255,255,.14);border:1px solid rgba(43,44,40,.4);text-shadow:none}
+.stone-act button:hover{background:rgba(0,0,0,.14)}
+.stone-photo{width:78px;height:96px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:50%;background:#6d6e67;color:#d3d4cb;font-size:1.7rem;border:3px solid #6a5a34;box-shadow:0 0 0 2px #c9b36a,inset 0 0 10px rgba(0,0,0,.5),0 3px 6px rgba(0,0,0,.4);text-shadow:none}
+.stone-photo img{width:100%;height:100%;object-fit:cover;filter:grayscale(.9) sepia(.25) contrast(1.05)}
 .cem-dlg{width:min(380px,92vw);padding:0;color:var(--txt);background:var(--card);border:1px solid var(--line);border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.7)}
 .cem-dlg::backdrop{background:rgba(3,7,7,.7)}
 .cem-dlg form{display:flex;flex-direction:column;gap:10px;padding:16px}
@@ -37,3 +40,4 @@ body.mobile .cem{left:8px!important;right:8px;top:auto!important;bottom:76px;wid
 body.mobile #cemFab{width:48px;height:48px}
 @media print{#cemFab,.cem{display:none!important}}
 @media (prefers-reduced-motion:reduce){#cemFab{transition:none}}
+.stone h3::before{display:none}
