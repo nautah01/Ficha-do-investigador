@@ -70,35 +70,3 @@ body.mobile #desk .burb{display:inline-block}
 .stone-act{position:relative;z-index:2;opacity:.72}
 .cem-dlg{background:linear-gradient(145deg,#1b2925,#0e1715);border-color:rgba(216,197,138,.35);box-shadow:0 20px 60px rgba(0,0,0,.7),inset 0 0 0 1px rgba(216,197,138,.06)}
 @media (prefers-reduced-motion:reduce){.stone{transition:none}.stone:hover{transform:none}}
-
-/* Lápides: granito antigo, moldura gravada e canteiro com capim em camadas */
-.cem-list{align-items:start;overflow-x:hidden}
-.stone{margin-bottom:8px;padding:34px 16px 34px;border:1px solid rgba(52,57,50,.58);border-radius:49% 49% 8px 8px / 88px 88px 8px 8px;background-color:#96988d;background-image:radial-gradient(ellipse at 23% 13%,rgba(255,255,255,.52),transparent 31%),radial-gradient(ellipse at 78% 64%,rgba(37,42,36,.18),transparent 46%),radial-gradient(ellipse at 38% 82%,rgba(255,255,255,.1),transparent 52%),repeating-linear-gradient(171deg,transparent 0 13px,rgba(255,255,255,.035) 14px,transparent 15px 27px),linear-gradient(145deg,#c3c3b7 0%,#a5a69b 28%,#85877e 70%,#6f736a 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.58),inset 0 0 0 4px rgba(47,52,46,.12),inset 0 0 0 6px rgba(242,234,204,.18),inset 0 -18px 24px rgba(23,28,24,.28),inset 7px 0 14px rgba(255,255,255,.09),0 13px 20px rgba(0,0,0,.58)}
-.stone::before{left:-9px;right:-9px;bottom:-11px;height:24px;background:radial-gradient(ellipse at 18% 42%,#60764a 0 20%,transparent 55%),radial-gradient(ellipse at 50% 76%,#354a2e 0 28%,transparent 60%),radial-gradient(ellipse at 82% 43%,#536c3d 0 21%,transparent 55%),linear-gradient(180deg,#2c4329,#18251c);box-shadow:0 7px 12px rgba(0,0,0,.62);z-index:-1}
-.stone::after{content:"✥";top:10px;color:rgba(61,65,57,.57);font-size:1rem;text-shadow:0 1px rgba(255,255,255,.4)}
-.stone>*:not(.stone-grass){position:relative;z-index:1}
-.stone-grass{position:absolute;z-index:2;left:-8px;right:-8px;bottom:-12px;height:34px;pointer-events:none}
-.stone-grass span{position:absolute;bottom:4px;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:var(--blade-h,17px) solid var(--blade,#3b5a32);filter:drop-shadow(0 1px 1px rgba(0,0,0,.38));transform:rotate(var(--blade-r,0deg));transform-origin:bottom center}
-.stone-grass span:nth-child(1){left:3%;--blade-h:14px;--blade:#526c3b;--blade-r:-15deg}
-.stone-grass span:nth-child(2){left:11%;--blade-h:22px;--blade:#344f2e;--blade-r:12deg}
-.stone-grass span:nth-child(3){left:23%;--blade-h:17px;--blade:#667846;--blade-r:-9deg}
-.stone-grass span:nth-child(4){left:37%;--blade-h:25px;--blade:#405d32;--blade-r:14deg}
-.stone-grass span:nth-child(5){left:57%;--blade-h:18px;--blade:#687b43;--blade-r:-12deg}
-.stone-grass span:nth-child(6){left:70%;--blade-h:24px;--blade:#3e5c32;--blade-r:10deg}
-.stone-grass span:nth-child(7){left:84%;--blade-h:16px;--blade:#59733d;--blade-r:-11deg}
-.stone-grass span:nth-child(8){left:94%;--blade-h:21px;--blade:#344d2d;--blade-r:12deg}
-.stone-grass b{position:absolute;bottom:10px;color:#c5ad70;font:9px/1 Georgia,serif;text-shadow:0 1px 3px #172319}
-.stone-grass b:nth-of-type(1){left:29%}.stone-grass b:nth-of-type(2){right:19%;bottom:7px;font-size:7px;color:#b3b889}
-.stone-photo{width:82px;height:100px;border:4px solid #665d43;border-radius:48% 48% 7px 7px;background:#343a34;box-shadow:0 0 0 2px rgba(218,194,125,.77),inset 0 0 0 2px rgba(29,33,29,.62),0 5px 10px rgba(0,0,0,.42)}
-.stone-photo img{filter:grayscale(.92) sepia(.32) contrast(1.12) brightness(.9)}
-.stone h3{margin-top:12px;color:#292c28;text-shadow:0 1px rgba(255,255,255,.45)}
-.stone h3::before{content:"—  MEMORIA  —";margin-bottom:8px;color:rgba(57,62,54,.59);font:600 .54rem/1.2 Georgia,serif;letter-spacing:.2em}
-.stone-age{min-width:72px;margin:8px 0 10px;padding:3px 11px;border:1px solid rgba(58,62,54,.23);border-radius:3px;background:linear-gradient(90deg,transparent,rgba(50,55,48,.08),transparent);color:#464940;font:italic .73rem Georgia,serif;letter-spacing:.04em}
-.stone-cause{max-width:100%;color:#333831;font-size:.81rem;line-height:1.42;text-shadow:0 1px rgba(255,255,255,.22)}
-.stone blockquote{position:relative;margin-top:11px;padding:9px 6px 0;border-top:1px solid rgba(47,52,45,.28);color:#41453d;font-size:.78rem}
-.stone blockquote::before{content:"❝";position:absolute;top:-8px;left:50%;transform:translateX(-50%);padding:0 5px;background:#999b90;color:#66705c;font-size:.8rem}
-.stone-act{margin-top:14px}
-.stone-act button{background:rgba(242,239,222,.25);border-color:rgba(48,53,46,.32);box-shadow:0 1px 2px rgba(0,0,0,.12)}
-.stone:hover{transform:translateY(-3px);filter:brightness(1.04);box-shadow:inset 0 1px 0 rgba(255,255,255,.62),inset 0 0 0 4px rgba(47,52,46,.12),inset 0 0 0 6px rgba(242,234,204,.2),inset 0 -18px 24px rgba(23,28,24,.28),0 18px 25px rgba(0,0,0,.66)}
-@media(max-width:390px){.cem-list{grid-template-columns:1fr;padding-right:24px;padding-left:24px}.stone{width:min(100%,260px);justify-self:center}}
-@media(prefers-reduced-motion:reduce){.stone:hover{transform:none}}
