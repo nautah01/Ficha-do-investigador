@@ -118,9 +118,10 @@ body.mobile button.chip{min-height:38px;font-size:.85rem}
 body.mobile #desk{position:relative;z-index:1;display:flex;flex-direction:column;gap:14px;min-width:0!important;min-height:0!important;padding-bottom:20px}
 body.mobile #desk .win{position:relative!important;left:auto!important;top:auto!important;width:100%!important;min-width:0;max-width:100%;z-index:auto!important}
 body.mobile #desk .rsz{display:none}
-body.mobile #desk .win-bar{cursor:default;flex-wrap:wrap;gap:6px;padding:8px 8px 8px 18px}
-body.mobile #desk .win-title{flex:1 1 100%;order:-1;font-size:.9rem}
-body.mobile #desk .win-bar button{padding:6px 10px;font-size:.85rem;min-height:36px}
+body.mobile #desk .win-bar{cursor:default;flex-wrap:nowrap;gap:4px;padding:5px 6px 5px 16px}
+body.mobile #desk .win-title{flex:1 1 auto;min-width:0;order:0;font-size:.82rem}
+body.mobile #desk .win-bar button{flex:none;display:flex;align-items:center;justify-content:center;width:30px;height:30px;min-height:0;padding:0;font-size:.95rem;line-height:1}
+body.mobile #desk .win-bar .bl{display:none}
 body.mobile #desk .in{font-size:16px!important;padding:6px;min-height:38px}
 body.mobile #desk h2 .in.nm{font-size:18px!important}
 body.mobile #desk .stats{gap:6px}
@@ -246,7 +247,7 @@ const SOC=['Charme','Lábia','Persuasão','Intimidação'];
 const NF=['Edith','Dorothy','Mabel','Harriet','Clara','Eleanor','Agnes','Beatrice','Florence','Louise'];
 const NM=['Arthur','Walter','Harold','Edmund','Henry','Frank','Albert','Raymond','Theodore','Victor'];
 const SN=['Whitlock','Crane','Ashford','Bellamy','Hartwell','Kendrick','Dunmore','Sinclair','Prescott','Blackwood'];
-const BASE={'Antropologia':1,'Armas de Fogo (Pistolas)':20,'Armas de Fogo (Rifles)':25,'Arqueologia':1,'Arremessar':20,'Arte/Ofício (Pintura)':5,'Arte/Ofício (Fotografia)':5,'Avaliação':5,'Cavalgar':5,'Charme':15,'Chaveiro':1,'Ciência (Biologia)':1,'Ciência (Farmácia)':1,'Ciência (Astronomia)':1,'Consertos Elétricos':10,'Consertos Mecânicos':5,'Contabilidade':5,'Direito':5,'Dirigir Auto':20,'Disfarce':5,'Encontrar':25,'Escutar':20,'Escalar':20,'Esquivar':0,'Lábia':5,'Intimidação':15,'História':5,'Furtividade':20,'Lutar (Brigar)':25,'Medicina':1,'Mundo Natural':10,'Natação':20,'Navegação':10,'Ocultismo':5,'Operar Maquinário':1,'Persuasão':10,'Pilotar (Barcos)':1,'Prestidigitação':10,'Primeiros Socorros':30,'Psicanálise':1,'Psicologia':10,'Saltar':20,'Rastrear':10,'Sobrevivência':10,'Usar Biblioteca':20,'Arte/Ofício (Literatura)':5,'Arte/Ofício (Instrumento)':5,'Arte/Ofício (Atuar)':5,'Arte/Ofício (Desenho Técnico)':5,'Arte/Ofício (Trabalhos de Fazenda)':5,'Ciência (Engenharia)':1,'Ciência (Física)':1,'Operar Maquinário Pesado':1,'Pilotar (Aeronaves)':1,'Nível de Crédito':0};
+const BASE={'Ciência (Química)':1,'Ciência (Geologia)':1,'Ciência (Botânica)':1,'Ciência (Zoologia)':1,'Ciência (Matemática)':1,'Ciência (Meteorologia)':1,'Ciência (Ciência Forense)':1,'Arte/Ofício (Escultura)':5,'Arte/Ofício (Desenho)':5,'Arte/Ofício (Piano)':5,'Arte/Ofício (Violino)':5,'Arte/Ofício (Canto)':5,'Arte/Ofício (Violão)':5,'Arte/Ofício (Saxofone)':5,'Antropologia':1,'Armas de Fogo (Pistolas)':20,'Armas de Fogo (Rifles)':25,'Arqueologia':1,'Arremessar':20,'Arte/Ofício (Pintura)':5,'Arte/Ofício (Fotografia)':5,'Avaliação':5,'Cavalgar':5,'Charme':15,'Chaveiro':1,'Ciência (Biologia)':1,'Ciência (Farmácia)':1,'Ciência (Astronomia)':1,'Consertos Elétricos':10,'Consertos Mecânicos':5,'Contabilidade':5,'Direito':5,'Dirigir Auto':20,'Disfarce':5,'Encontrar':25,'Escutar':20,'Escalar':20,'Esquivar':0,'Lábia':5,'Intimidação':15,'História':5,'Furtividade':20,'Lutar (Brigar)':25,'Medicina':1,'Mundo Natural':10,'Natação':20,'Navegação':10,'Ocultismo':5,'Operar Maquinário':1,'Persuasão':10,'Pilotar (Barcos)':1,'Prestidigitação':10,'Primeiros Socorros':30,'Psicanálise':1,'Psicologia':10,'Saltar':20,'Rastrear':10,'Sobrevivência':10,'Usar Biblioteca':20,'Arte/Ofício (Literatura)':5,'Arte/Ofício (Instrumento)':5,'Arte/Ofício (Atuar)':5,'Arte/Ofício (Desenho Técnico)':5,'Arte/Ofício (Trabalhos de Fazenda)':5,'Ciência (Engenharia)':1,'Ciência (Física)':1,'Operar Maquinário Pesado':1,'Pilotar (Aeronaves)':1,'Nível de Crédito':0};
 const base=(n,c)=>n==='Esquivar'?c.DES>>1:n==='Língua Natural'?Math.min(MAXS,c.EDU):n.startsWith('Língua (')?1:BASE[n];
 const E4='EDU*4',ED='EDU*2+DES*2|EDU*2+FOR*2',ART='Arte/Ofício (Pintura)|Arte/Ofício (Fotografia)|Arte/Ofício (Literatura)|Arte/Ofício (Instrumento)|Arte/Ofício (Atuar)',PF='Armas de Fogo (Pistolas)|Armas de Fogo (Rifles)',CR='Armas de Fogo (Pistolas)|Avaliação|Chaveiro|Consertos Mecânicos|Disfarce|Lutar (Brigar)|Prestidigitação';
 /* n=nome, p=pontos (use | para alternativas, vale a maior), c=faixa de Crédito, s=perícias. Em s: A|B = sorteia uma; @soc = perícia social; @lang = língua; @any = qualquer outra (das COMMON); prefixo ! = perícia principal, recebe mais pontos */
@@ -330,18 +331,33 @@ const SEC=[
 ];
 const calc=c=>{const sum=c.FOR+c.TAM,[db,corpo]=sum<65?['-2',-2]:sum<85?['-1',-1]:sum<125?['0',0]:sum<165?['+1d4',1]:['+1d6',2];
  return{hp:Math.floor((c.CON+c.TAM)/10),san:c.POD,pm:Math.floor(c.POD/5),mov:(c.FOR>c.TAM&&c.DES>c.TAM)?9:(c.FOR<c.TAM&&c.DES<c.TAM)?7:8,db,corpo}};
+/* Especializações: cada ocupação pode ter uma sub-lista. "at" são as posições das perícias da ocupação que são trocadas pelas da opção escolhida (! = perícia principal) */
+const SUB={
+ 'Cientista':{lbl:'Área de pesquisa',at:[0,1,2],o:{'Biologia':['!Ciência (Biologia)','!Ciência (Botânica)','Ciência (Zoologia)'],'Química':['!Ciência (Química)','!Ciência (Farmácia)','Ciência (Física)'],'Física':['!Ciência (Física)','!Ciência (Matemática)','Ciência (Engenharia)'],'Astronomia':['!Ciência (Astronomia)','!Ciência (Matemática)','Ciência (Física)'],'Geologia':['!Ciência (Geologia)','!Ciência (Química)','Ciência (Meteorologia)'],'Farmácia':['!Ciência (Farmácia)','!Ciência (Química)','Ciência (Biologia)'],'Zoologia':['!Ciência (Zoologia)','!Ciência (Biologia)','Mundo Natural'],'Ciência Forense':['!Ciência (Ciência Forense)','!Ciência (Química)','Ciência (Biologia)'],'Matemática':['!Ciência (Matemática)','!Ciência (Física)','Contabilidade'],'Meteorologia':['!Ciência (Meteorologia)','!Ciência (Física)','Ciência (Matemática)']}},
+ 'Estudante':{lbl:'Área de estudo',at:[3,4,5],o:{'Humanas':['!História','!Antropologia','Arqueologia'],'Ciências Naturais':['!Ciência (Biologia)','!Ciência (Química)','Ciência (Física)'],'Exatas e Engenharia':['!Ciência (Matemática)','!Ciência (Física)','Ciência (Engenharia)'],'Medicina e Saúde':['!Medicina','!Primeiros Socorros','Ciência (Biologia)'],'Direito':['!Direito','!Persuasão','Contabilidade'],'Letras':['!Arte/Ofício (Literatura)','!Língua (Latim)','História'],'Artes':['!Arte/Ofício (Pintura)','!Arte/Ofício (Escultura)','História'],'Ocultismo e Folclore':['!Ocultismo','!Antropologia','História']}},
+ 'Professor':{lbl:'Matéria',at:[4,5],o:{'História':['!História','Antropologia'],'Ciências':['!Ciência (Física)','!Ciência (Biologia)'],'Letras':['!Arte/Ofício (Literatura)','História'],'Matemática':['!Ciência (Matemática)','Contabilidade'],'Ocultismo e Folclore':['!Ocultismo','Antropologia']}},
+ 'Artista':{lbl:'Arte',at:[0],o:{'Pintura':['!Arte/Ofício (Pintura)'],'Escultura':['!Arte/Ofício (Escultura)'],'Desenho':['!Arte/Ofício (Desenho)'],'Fotografia':['!Arte/Ofício (Fotografia)'],'Poesia e Literatura':['!Arte/Ofício (Literatura)'],'Teatro':['!Arte/Ofício (Atuar)']}},
+ 'Músico':{lbl:'Instrumento',at:[0],o:{'Piano':['!Arte/Ofício (Piano)'],'Violino':['!Arte/Ofício (Violino)'],'Canto':['!Arte/Ofício (Canto)'],'Violão':['!Arte/Ofício (Violão)'],'Saxofone':['!Arte/Ofício (Saxofone)']}},
+ 'Médico':{lbl:'Especialidade',at:[0,1,5],o:{'Clínico geral':['Ciência (Biologia)','Ciência (Farmácia)','Psicologia'],'Cirurgião':['!Ciência (Biologia)','Encontrar','Escutar'],'Psiquiatra':['!Psicologia','Ciência (Biologia)','!Psicanálise'],'Legista / Patologista':['!Ciência (Biologia)','!Ciência (Ciência Forense)','Ciência (Farmácia)'],'Médico militar':['Ciência (Biologia)','Sobrevivência','!Armas de Fogo (Pistolas)']}},
+ 'Engenheiro':{lbl:'Especialidade',at:[1,3,4,5],o:{'Mecânico':['Consertos Elétricos','Ciência (Física)','!Consertos Mecânicos','Operar Maquinário Pesado'],'Elétrico':['!Consertos Elétricos','Ciência (Física)','Consertos Mecânicos','Operar Maquinário'],'Civil':['Navegação','Ciência (Geologia)','Consertos Mecânicos','!Operar Maquinário Pesado'],'Químico':['Consertos Elétricos','!Ciência (Química)','Consertos Mecânicos','Operar Maquinário Pesado'],'Naval':['Consertos Mecânicos','Ciência (Física)','!Pilotar (Barcos)','Navegação'],'Aeronáutico':['Consertos Mecânicos','Ciência (Física)','!Pilotar (Aeronaves)','Consertos Elétricos']}},
+ 'Soldado':{lbl:'Função',at:[0,4,5],o:{'Infantaria':['!Armas de Fogo (Rifles)','!Lutar (Brigar)','Sobrevivência'],'Atirador de elite':['!Armas de Fogo (Rifles)','Escutar','!Encontrar'],'Cavalaria':['!Armas de Fogo (Rifles)','!Cavalgar','Sobrevivência'],'Médico de campo':['Armas de Fogo (Pistolas)','!Primeiros Socorros','!Medicina'],'Sapador':['Armas de Fogo (Rifles)','Consertos Mecânicos','!Operar Maquinário Pesado'],'Aviador':['Armas de Fogo (Pistolas)','!Pilotar (Aeronaves)','Navegação']}},
+ 'Criminoso':{lbl:'Tipo de criminoso',at:[0,1,4,5],o:{'Ladrão':['Encontrar','!Furtividade','!Chaveiro','Prestidigitação'],'Assaltante':['!Armas de Fogo (Pistolas)','!Intimidação','Lutar (Brigar)','Dirigir Auto'],'Falsário / Golpista':['!Lábia','!Disfarce','Avaliação','Prestidigitação'],'Brigão':['!Lutar (Brigar)','!Intimidação','Esquivar','Armas de Fogo (Pistolas)'],'Batedor de carteiras':['!Prestidigitação','!Furtividade','Encontrar','Disfarce']}},
+ 'Atleta':{lbl:'Esporte',at:[2,4,5,6],o:{'Nadador':['Escalar','Lutar (Brigar)','!Natação','Saltar'],'Boxeador':['Escalar','!Lutar (Brigar)','!Esquivar','Saltar'],'Corredor':['Escalar','!Esquivar','Natação','!Saltar'],'Alpinista':['!Escalar','Lutar (Brigar)','Natação','!Saltar']}}
+};
+const tokens=(o,spec)=>{const S=OCC.includes(o)&&SUB[o.n],t=[...o.s];if(!S)return{t,spec:''};const k=spec&&S.o[spec]?spec:pick(Object.keys(S.o));S.at.forEach((ix,j)=>{if(S.o[k][j]!=null)t[ix]=S.o[k][j]});return{t,spec:k}};
 function gen(sel,sel2){
- const o=sel==='*'?pick(OCC):OCC.find(x=>x.n===sel);
+ const[selN,selSub]=String(sel).split('::'),o=sel==='*'?pick(OCC):OCC.find(x=>x.n===selN),oT=tokens(o,selSub);
  const c={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
  const lang=pick(LANGS),sk={},bs=n=>base(n,c),cu=n=>sk[n]??bs(n);
  const spread=(pts,list)=>{list=[...list];while(pts>0&&list.length){const n=pick(list),v=cu(n);if(v>=MAXS){list=list.filter(x=>x!==n);continue}const add=Math.min(pts,5*(1+r(4)),MAXS-v);sk[n]=v+add;pts-=add}};
  const ALL=Object.keys(BASE).filter(n=>n!=='Nível de Crédito'),used=new Set(),keys=[];
  const res=(t,keep)=>{let op=(t==='@soc'?SOC.join('|'):t==='@any'?COMMON.join('|'):t).split('|').map(x=>x==='@lang'?'Língua ('+lang+')':x);
   if(!keep)op=op.filter(x=>!used.has(x));if(!op.length)op=ALL.filter(x=>!used.has(x));const n=pick(op);used.add(n);return n};
- const sec=sel2==='*'?pick([...SEC,...OCC].filter(x=>x.n!==o.n)):sel2.startsWith('occ:')?OCC.find(x=>x.n===sel2.slice(4)):SEC.find(x=>x.n===sel2);
- const occS=o.s.map(t=>{const k=t[0]==='!',n=res(k?t.slice(1):t);if(k)keys.push(n);return n});
+ const isOcc2=sel2.startsWith('occ:'),[s2N,s2Sub]=isOcc2?sel2.slice(4).split('::'):[sel2,''];
+ const sec=sel2==='*'?pick([...SEC,...OCC].filter(x=>x.n!==o.n)):isOcc2?OCC.find(x=>x.n===s2N):SEC.find(x=>x.n===sel2),secT=sec?tokens(sec,isOcc2?s2Sub:''):null;
+ const occS=oT.t.map(t=>{const k=t[0]==='!',n=res(k?t.slice(1):t);if(k)keys.push(n);return n});
  const s2=[],keys2=[];
- if(sec){const hasK=sec.s.some(t=>t[0]==='!');sec.s.forEach((t,i)=>{if(t==='@any')return;const n=res(t.replace(/^!/,''),true);if(!s2.includes(n))s2.push(n);if((t[0]==='!'||(!hasK&&i===0))&&!keys2.includes(n))keys2.push(n)})}
+ if(sec){const hasK=secT.t.some(t=>t[0]==='!');secT.t.forEach((t,i)=>{if(t==='@any')return;const n=res(t.replace(/^!/,''),true);if(!s2.includes(n))s2.push(n);if((t[0]==='!'||(!hasK&&i===0))&&!keys2.includes(n))keys2.push(n)})}
  let occP=Math.max(...o.p.split('|').map(f=>f.split('+').reduce((a,t)=>{const[k,m]=t.split('*');return a+c[k]*m},0)));
  const cr=Math.min(MAXS,occP,Math.max(o.c[0],Math.min(o.c[1],Math.round((o.c[0]+r(o.c[1]-o.c[0]+1))/5)*5)));
  sk['Nível de Crédito']=cr;occP-=cr;
@@ -370,7 +386,7 @@ function gen(sel,sel2){
  rest=dist(rest,ri);if(rest>=5)dist(rest,ri.map(i=>({...i,cap:MAXS})));
  if(sk['Esquivar']===undefined)sk['Esquivar']=bs('Esquivar');
  if(sk['Língua Natural']===undefined)sk['Língua Natural']=bs('Língua Natural');
- return{nome:pick([...NF,...NM])+' '+pick(SN),idade:20+r(20),occ:o.n,sec:sec?sec.n:'',c,sk,edit:false,der:{...calc(c),luck:A()}};
+ return{nome:pick([...NF,...NM])+' '+pick(SN),idade:20+r(20),occ:o.n+(oT.spec?` (${oT.spec})`:''),sec:sec?sec.n+(secT.spec?` (${secT.spec})`:''):'',c,sk,edit:false,der:{...calc(c),luck:A()}};
 }
 /* confirmação dinâmica reutilizada por todo o site: askConfirm({title,html,ok,danger}) → Promise<boolean> */
 function askConfirm(o){return new Promise(ok=>{
@@ -399,7 +415,9 @@ const STORE='coc7-investigadores-v2';
 const sel=document.getElementById('occ'),desk=document.getElementById('desk');
 sel.innerHTML='<option value="*">🎲 Aleatória</option>'+[...OCC].sort(srt).map(o=>`<option>${o.n}</option>`).join('');
 const sel2=document.getElementById('occ2');
+const subOpts=()=>Object.entries(SUB).forEach(([n,s])=>Object.keys(s.o).forEach(k=>{sel.insertAdjacentHTML('beforeend',`<option value="${n}::${k}" hidden>${n} (${k})</option>`);sel2.insertAdjacentHTML('beforeend',`<option value="occ:${n}::${k}" hidden>${n} (${k})</option>`)}));
 sel2.innerHTML='<option value="">Nenhuma</option><option value="*">🎲 Aleatória</option>'+'<optgroup label="Específicas">'+SEC.map(o=>`<option>${o.n}</option>`).join('')+'</optgroup><optgroup label="Ocupações principais (repetidas)">'+[...OCC].sort(srt).map(o=>`<option value="occ:${o.n}">${o.n}</option>`).join('')+'</optgroup>';
+subOpts();
 let cur=[],zTop=10,drag=null,rsz=null,saveT=0;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const get=(p,k)=>{const[a,x]=k.split(/:(.+)/);return a==='c'?p.c[x]:a==='d'?p.der[x]:a==='n'?p[x]:p.sk[x]??(p.custom&&x in p.custom?p.custom[x]:base(x,p.c))};
@@ -434,9 +452,9 @@ function card(p,i){
   <header class="win-bar">
    <button class="colb" data-i="${i}" title="Recolher / expandir">${u.collapsed?'▢':'–'}</button>
    <span class="win-title">${esc(ttl(p))}</span>
-   <button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button>
-   <button class="pdfb" data-i="${i}" title="Salvar esta ficha completa em PDF">📄 PDF</button>
-   <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Fixar: não some ao gerar">${p.pinned?'📌 Fixa':'📌 Fixar'}</button>
+   <button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 <span class="bl">Copiar</span></button>
+   <button class="pdfb" data-i="${i}" title="Salvar esta ficha completa em PDF">📄 <span class="bl">PDF</span></button>
+   <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Fixar: não some ao gerar">${p.pinned?'📌 <span class="bl">Fixa</span>':'📌 <span class="bl">Fixar</span>'}</button>
    <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
    <button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦</button>
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>

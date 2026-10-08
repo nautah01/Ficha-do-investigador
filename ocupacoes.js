@@ -10,8 +10,8 @@ const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const meta=n=>I[n]||['💼','Of'];
 const clean=t=>{t=t.replace(/^!/,'');if(t==='@soc')return'Perícia social';if(t==='@lang')return'Língua';if(t==='@any')return'';t=t.split('|')[0].trim();return t.replace(/\s*\(.*\)$/,'')};
 const skills=o=>{const all=o.s.map(t=>({k:t[0]==='!',n:clean(t)})).filter(x=>x.n);const keys=all.filter(x=>x.k).map(x=>x.n);return{keys:[...new Set(keys.length?keys:all.slice(0,3).map(x=>x.n))],all:[...new Set(all.map(x=>x.n))]}};
-const items=(kind)=>kind==='occ'?OCC.map(o=>({v:o.n,n:o.n,o,cred:o.c})):
- [...SEC.map(o=>({v:o.n,n:o.n,o,sec:1})),...OCC.map(o=>({v:'occ:'+o.n,n:o.n,o,cred:o.c,dup:1}))];
+const items=(kind)=>kind==='occ'?OCC.map(o=>({v:o.n,n:o.n,o,cred:o.c,sub:SUB[o.n]})):
+ [...SEC.map(o=>({v:o.n,n:o.n,o,sec:1})),...OCC.map(o=>({v:'occ:'+o.n,n:o.n,o,cred:o.c,dup:1,sub:SUB[o.n]}))];
 
 const dlg=document.createElement('dialog');dlg.className='opk';dlg.setAttribute('aria-label','Escolher ocupação');
 dlg.innerHTML=`<header><h4 id="opkT"></h4><span class="opk-hb"><button type="button" id="opkHelpBtn" aria-pressed="false">❔ Ajuda</button><button type="button" class="opk-x" aria-label="Fechar">✕</button></span></header>
@@ -21,11 +21,11 @@ dlg.innerHTML=`<header><h4 id="opkT"></h4><span class="opk-hb"><button type="but
 <footer id="opkDet" class="opk-det">Passe o mouse (ou foque) sobre uma ocupação para ver as perícias.</footer>`;
 document.body.appendChild(dlg);
 const helpBox=$('#opkHelp'),helpBtn=$('#opkHelpBtn'),q=$('#opkQ'),grid=$('#opkGrid'),chips=$('#opkChips'),tabs=$('#opkTabs'),det=$('#opkDet');
-let ctx=null,cat='',tab='sec';
+let ctx=null,cat='',tab='sec',subItem=null;
 
 function btnText(sel){
  const v=sel.value;if(v==='*')return['🎲','Aleatória'];if(v==='')return['➖','Nenhuma'];
- const n=v.startsWith('occ:')?v.slice(4):v;return[meta(n)[0],n+(v.startsWith('occ:')?' (como secundária)':'')];
+ const occ=v.startsWith('occ:'),[n,sp]=(occ?v.slice(4):v).split('::');return[meta(n)[0],n+(sp?' ('+sp+')':'')+(occ?' — como secundária':'')];
 }
 const pickers=[];
 function mount(selId,kind,title){
@@ -37,7 +37,7 @@ function mount(selId,kind,title){
  label.addEventListener('click',e=>{e.preventDefault();openPick({sel,kind,title,sync})});
 }
 function openPick(c){
- ctx=c;cat='';q.value='';tab='sec';$('#opkT').textContent=c.title;
+ subItem=null;ctx=c;cat='';q.value='';tab='sec';$('#opkT').textContent=c.title;
  tabs.innerHTML=c.kind==='sec'?'<button type="button" data-t="sec">Especialidades</button><button type="button" data-t="occ">Ocupações completas</button>':'';
  tabs.hidden=c.kind!=='sec';
  chips.innerHTML='<button type="button" data-c="" aria-pressed="true">Todas</button>'+Object.entries(CAT).map(([k,v])=>`<button type="button" data-c="${k}" aria-pressed="false">${v}</button>`).join('');
@@ -48,16 +48,24 @@ function list(){
  if(c.kind==='sec')src=src.filter(i=>tab==='sec'?i.sec:i.dup);
  return src.filter(i=>(!cat||meta(i.n)[1]===cat)&&(!t||norm(i.n).includes(t)||skills(i.o).all.some(s=>norm(s).includes(t)))).sort((a,b)=>a.n.localeCompare(b.n,'pt'));
 }
-function card(v,e,name,sub,tags,full,on,idx){
- return`<button type="button" class="opk-card${on?' on':''}" role="option" aria-selected="${on}" data-v="${esc(v)}" data-d="${esc(full)}" style="--d:${Math.min(idx,24)*18}ms"><span class="oe">${e}</span><span class="oname">${esc(name)}</span>${sub?`<span class="os">${esc(sub)}</span>`:''}<span class="ot">${tags.map(x=>`<i>${esc(x)}</i>`).join('')}</span></button>`;
+function card(v,e,name,sub,tags,full,on,idx,nsub){
+ return`<button type="button" class="opk-card${on?' on':''}${nsub?' has-sub':''}" role="option" aria-selected="${on}" data-v="${esc(v)}" data-d="${esc(full)}"${nsub?' data-sub="1"':''} style="--d:${Math.min(idx,24)*18}ms"><span class="oe">${e}</span><span class="oname">${esc(name)}</span>${sub?`<span class="os">${esc(sub)}</span>`:''}<span class="ot">${tags.map(x=>`<i>${esc(x)}</i>`).join('')}</span>${nsub?`<span class="osub">▸ ${nsub} opções</span>`:''}</button>`;
 }
+const tokTag=t=>{t=t.replace(/^!/,'');if(t==='@soc')return'Social';if(t==='@lang')return'Língua';if(t==='@any')return'';return t.split('|')[0].trim().replace(/^(Ciência|Arte\/Ofício) \((.*)\)$/,'$2')};
 function render(){
- const c=ctx,cur=c.sel.value;let i=0,h='';
- if(c.kind==='sec'&&tab==='sec'||c.kind==='occ'){}
+ const c=ctx,cur=c.sel.value;let i=0,h='';dlg.classList.toggle('sub',!!subItem);
+ if(subItem){
+  const x=subItem,S=SUB[x.n],lbl=S.lbl.toLowerCase();
+  h+=`<div class="opk-subhead"><button type="button" data-back>← Todas as ocupações</button><strong>${meta(x.n)[0]} ${esc(x.n)}</strong><span>Escolha: ${esc(lbl)}</span></div>`;
+  h+=card(x.v,'🎲','Qualquer opção','',['Sorteia ao gerar'],'Sorteia '+lbl+' ao gerar a ficha',cur===x.v,i++);
+  h+=Object.entries(S.o).map(([k,t])=>{const keys=t.filter(z=>z[0]==='!').map(tokTag).filter(Boolean),all=[...new Set(t.map(tokTag).filter(Boolean))],v=x.v+'::'+k;
+   return card(v,meta(x.n)[0],k,x.n,keys.slice(0,3),x.n+' ('+k+') — perícias em destaque: '+all.join(', '),cur===v,i++)}).join('');
+  grid.innerHTML=h;grid.scrollTop=0;
+  chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));return;
+ }
  const specials=c.kind==='occ'?[['*','🎲','Aleatória','Sorteia uma ocupação']]:[['','➖','Nenhuma','Sem ocupação secundária'],['*','🎲','Aleatória','Sorteia uma secundária']];
  if(!q.value&&!cat)h+=specials.map(([v,e,n,d])=>card(v,e,n,'',[d],d,cur===v,i++)).join('');
- const L=list();
- h+=L.map(x=>{const s=skills(x.o);return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],s.keys.slice(0,3),(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v,i++)}).join('');
+ h+=list().map(x=>{const s=skills(x.o);return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],s.keys.slice(0,3),(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0)}).join('');
  grid.innerHTML=h||'<p class="opk-none">Nada encontrado. Tente outra palavra ou outra categoria.</p>';
  chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));
  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===tab));
@@ -77,16 +85,21 @@ function helpHtml(){
 <p>Os pontos de Crédito saem dos <strong>pontos de perícia da ocupação</strong>. Um Crédito alto deixa o investigador rico, mas com menos pontos para as perícias de trabalho. Um Crédito baixo faz o contrário: sobra mais para as perícias, mas ele vive com pouco.</p>
 <h5>E as outras informações do cartão?</h5>
 <p>As <strong>etiquetas</strong> mostram as perícias principais da ocupação, que recebem mais pontos. Passe o mouse no cartão para ver a lista completa. Na <strong>ocupação secundária</strong> não há faixa de crédito: ela só reforça algumas perícias com os pontos de interesse pessoal (INT × 2). As abas <em>Ocupações completas</em> permitem usar uma ocupação inteira como secundária.</p>
+<p>Cartões com <strong>▸ opções</strong> (como Cientista, Estudante ou Médico) abrem uma segunda lista, onde você escolhe a área, a especialidade ou o tipo. Isso troca as perícias principais da ocupação pelas da opção escolhida. Se preferir deixar ao acaso, use <em>Qualquer opção</em>.</p>
 <button type="button" class="opk-back">← Voltar à lista</button>`;
 }
 function setHelp(on){dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',on);helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.innerHTML=helpHtml();helpBox.scrollTop=0;helpBox.focus()}else q.focus()}
 helpBtn.addEventListener('click',()=>setHelp(!dlg.classList.contains('help')));
 helpBox.addEventListener('click',e=>{if(e.target.closest('.opk-back'))setHelp(false)});
-dlg.addEventListener('close',()=>{dlg.classList.remove('help');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda'});
-q.addEventListener('input',render);
-chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b){cat=b.dataset.c;render()}});
-tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b){tab=b.dataset.t;render()}});
-grid.addEventListener('click',e=>{const b=e.target.closest('.opk-card');if(!b)return;ctx.sel.value=b.dataset.v;ctx.sel.dispatchEvent(new Event('change',{bubbles:true}));dlg.close()});
+dlg.addEventListener('close',()=>{subItem=null;dlg.classList.remove('help');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda'});
+q.addEventListener('input',()=>{subItem=null;render()});
+chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b){cat=b.dataset.c;subItem=null;render()}});
+tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b){tab=b.dataset.t;subItem=null;render()}});
+grid.addEventListener('click',e=>{
+ if(e.target.closest('[data-back]')){subItem=null;render();return}
+ const b=e.target.closest('.opk-card');if(!b)return;
+ if(b.dataset.sub){subItem=items(ctx.kind==='occ'?'occ':'sec').find(x=>x.v===b.dataset.v)||null;render();return}
+ ctx.sel.value=b.dataset.v;ctx.sel.dispatchEvent(new Event('change',{bubbles:true}));dlg.close()});
 const showDet=e=>{const b=e.target.closest('.opk-card');if(b)det.textContent=b.dataset.d};
 grid.addEventListener('mouseover',showDet);grid.addEventListener('focusin',showDet);
 q.addEventListener('keydown',e=>{if(e.key==='Enter'){const b=grid.querySelector('.opk-card:not([data-v="*"]):not([data-v=""])')||grid.querySelector('.opk-card');if(b)b.click()}});
