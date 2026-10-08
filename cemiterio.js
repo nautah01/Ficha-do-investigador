@@ -109,7 +109,7 @@ async function draw(){
   m.font='600 20px '+FONT;const nameL=wrap(m,r.nome,CW-50,2);
   m.font='15px '+FONT;const causeL=wrap(m,r.causa,CW-50,4);
   m.font='italic 14px '+FONT;const quoteL=r.frase?wrap(m,'“'+r.frase+'”',CW-56,4):[];
-  return{r,img:imgs[i],nameL,causeL,quoteL,h:40+118+28+nameL.length*24+8+20+8+causeL.length*20+(quoteL.length?22+quoteL.length*19:0)+40};
+  return{r,img:imgs[i],nameL,causeL,quoteL,h:40+118+28+nameL.length*24+8+20+8+14+causeL.length*20+(quoteL.length?22+quoteL.length*19:0)+40};
  });
  const rows=[];for(let i=0;i<cards.length;i+=cols)rows.push(cards.slice(i,i+cols));
  const H=P+110+rows.reduce((s,r)=>s+Math.max(...r.map(c=>c.h))+G,0)+P-G/2;
@@ -136,7 +136,8 @@ async function draw(){
    let ty=y+40+118+34;c.fillStyle='#2b2c28';c.font='600 20px '+FONT;
    k.nameL.forEach(l=>{c.fillText(l,cx0,ty);ty+=24});
    ty+=-2;c.font='15px '+FONT;c.fillStyle='#3d3e39';c.fillText(k.r.idade!==''?k.r.idade+' anos':'',cx0,ty);ty+=28;
-   c.fillStyle='#2b2c28';k.causeL.forEach(l=>{c.fillText(l,cx0,ty);ty+=20});
+   c.font='600 8px '+FONT;c.fillStyle='rgba(61,65,56,.76)';c.fillText('CAUSA DO FALECIMENTO',cx0,ty);ty+=14;
+   c.font='15px '+FONT;c.fillStyle='#2b2c28';k.causeL.forEach(l=>{c.fillText(l,cx0,ty);ty+=20});
    if(k.quoteL.length){ty+=2;c.strokeStyle='rgba(43,44,40,.3)';c.lineWidth=1;c.beginPath();c.moveTo(cx0-50,ty);c.lineTo(cx0+50,ty);c.stroke();ty+=20;c.font='italic 14px '+FONT;c.fillStyle='#363731';k.quoteL.forEach(l=>{c.fillText(l,cx0,ty);ty+=19})}
   });
   y+=rh+G;
