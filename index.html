@@ -164,6 +164,8 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 .quote{color:var(--quote)}
 @media(max-width:640px){.atmo .tent{height:52vh}.atmo .sign{opacity:.06}}
 @media (prefers-reduced-motion:reduce){.atmo .fog,h1{animation:none}}
+.hist{margin:2px 0 6px}.hist .orig{font-size:.88rem;margin:0 0 3px}.hist .orig small{color:var(--muted)}
+.hist .bk{text-align:left;display:block;width:100%;min-height:64px;margin-top:4px;padding:6px 8px;resize:vertical;font:inherit;font-size:.9rem;line-height:1.4}
 </style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"></head><body>
 <div class="top">
 <h1>Gerador de Investigadores</h1>
@@ -345,6 +347,83 @@ const SUB={
  'Atleta':{lbl:'Esporte',at:[2,4,5,6],o:{'Nadador':['Escalar','Lutar (Brigar)','!Natação','Saltar'],'Boxeador':['Escalar','!Lutar (Brigar)','!Esquivar','Saltar'],'Corredor':['Escalar','!Esquivar','Natação','!Saltar'],'Alpinista':['!Escalar','Lutar (Brigar)','Natação','!Saltar']}}
 };
 const tokens=(o,spec)=>{const S=OCC.includes(o)&&SUB[o.n],t=[...o.s];if(!S)return{t,spec:''};const k=spec&&S.o[spec]?spec:pick(Object.keys(S.o));S.at.forEach((ix,j)=>{if(S.o[k][j]!=null)t[ix]=S.o[k][j]});return{t,spec:k}};
+/* Histórico / origem: algumas ocupações perguntam de onde o personagem veio. Cada opção dá +10 em 2 perícias e escreve o início do backstory. "pool" = perícias oferecidas na opção "outro (escrever)" */
+const WARS=[
+ {id:'esp',n:'Guerra Hispano-Americana (1898)',sk:['Cavalgar','Armas de Fogo (Rifles)'],t:'Lutou em Cuba e nas Filipinas e voltou com histórias que poucos acreditam.'},
+ {id:'mex',n:'Revolução Mexicana / Guerra da Fronteira',sk:['Cavalgar','Sobrevivência'],t:'Patrulhou a fronteira entre balas, poeira e bandidos.'},
+ {id:'ww1',n:'Primeira Guerra Mundial (1914–1918)',sk:['Armas de Fogo (Rifles)','Sobrevivência'],t:'Sobreviveu às trincheiras da Grande Guerra e ainda ouve os canhões à noite.'},
+ {id:'rus',n:'Intervenção na Rússia (1918–1920)',sk:['Sobrevivência','Escutar'],t:'Marchou pelo gelo russo numa guerra que o mundo preferiu esquecer.'},
+ {id:'ww2',n:'Segunda Guerra Mundial (1939–1945)',sk:['Armas de Fogo (Rifles)','Esquivar'],t:'Atravessou a guerra mais sangrenta da história e voltou outra pessoa.'},
+ {id:'cor',n:'Guerra da Coreia (1950–1953)',sk:['Sobrevivência','Armas de Fogo (Rifles)'],t:'Viveu o inverno brutal da Coreia, onde o frio matava tanto quanto o inimigo.'},
+ {id:'fria',n:'Guerra Fria',sk:['Escutar','Encontrar'],t:'Serviu em postos de vigilância e operações que nunca constaram em relatório algum.'},
+ {id:'vie',n:'Guerra do Vietnã',sk:['Sobrevivência','Furtividade'],t:'Patrulhou selvas onde cada passo podia ser o último.'},
+ {id:'gol',n:'Guerra do Golfo (1990–1991)',sk:['Dirigir Auto','Armas de Fogo (Rifles)'],t:'Cruzou o deserto numa guerra curta, mas que deixou marcas longas.'}];
+const WAR_POOL=['Armas de Fogo (Rifles)','Armas de Fogo (Pistolas)','Lutar (Brigar)','Sobrevivência','Furtividade','Primeiros Socorros','Escalar','Natação','Cavalgar','Dirigir Auto','Navegação','Consertos Mecânicos','Esquivar','Escutar','Encontrar'];
+const UNIS=[
+ {id:'mis',n:'Universidade Miskatonic (Arkham)',sk:['Ocultismo','Usar Biblioteca'],t:'Passou pelos corredores de Miskatonic, onde o conhecimento proibido espreita nas estantes da biblioteca.'},
+ {id:'har',n:'Universidade de Harvard',sk:['Usar Biblioteca','Direito'],t:'Ligado a Harvard, entre bibliotecas imponentes e velhas famílias de Boston.'},
+ {id:'bos',n:'Universidade de Boston',sk:['História','Persuasão'],t:'Construiu sua vida acadêmica nas salas movimentadas de Boston.'},
+ {id:'yal',n:'Universidade de Yale',sk:['História','Língua (Latim)'],t:'Passou por Yale, onde sociedades secretas sussurram atrás de portas fechadas.'},
+ {id:'col',n:'Universidade Columbia (Nova York)',sk:['Psicologia','Ciência (Matemática)'],t:'Estudou em Nova York, entre o ritmo da cidade e as ideias novas do século.'},
+ {id:'oxf',n:'Universidade de Oxford',sk:['Língua (Latim)','História'],t:'Formou-se em Oxford, cercado de tradição, latim e colégios centenários.'},
+ {id:'cam',n:'Universidade de Cambridge',sk:['Ciência (Matemática)','Ciência (Física)'],t:'Passou por Cambridge, onde números e teoremas parecem esconder algo a mais.'},
+ {id:'sor',n:'Sorbonne (Paris)',sk:['Arte/Ofício (Literatura)','Antropologia'],t:'Viveu em Paris e na Sorbonne, entre cafés, filósofos e viajantes de todo o mundo.'}];
+const UNI_POOL=['História','Antropologia','Arqueologia','Ocultismo','Usar Biblioteca','Direito','Medicina','Psicologia','Ciência (Biologia)','Ciência (Física)','Ciência (Química)','Ciência (Matemática)','Arte/Ofício (Literatura)','Língua (Latim)','Contabilidade'];
+const POLICE={q:'Em que cidade você serve (ou serviu)?',kind:'Cidade',o:[
+ {id:'ark',n:'Arkham',sk:['Escutar','História'],t:'Patrulhou as ruas estreitas de Arkham, onde todos sabem de tudo e ninguém diz nada.'},
+ {id:'bos',n:'Boston',sk:['Intimidação','Lutar (Brigar)'],t:'Aprendeu o ofício nas ruas duras de Boston.'},
+ {id:'nyc',n:'Nova York',sk:['Armas de Fogo (Pistolas)','Psicologia'],t:'Serviu em Nova York, uma cidade que nunca dorme e raramente perdoa.'},
+ {id:'chi',n:'Chicago',sk:['Intimidação','Dirigir Auto'],t:'Viu o crime organizado de perto nas ruas de Chicago.'},
+ {id:'sf',n:'São Francisco',sk:['Persuasão','Encontrar'],t:'Trabalhou entre os cais, as brumas e os bairros misteriosos de São Francisco.'},
+ {id:'lon',n:'Scotland Yard (Londres)',sk:['Direito','Encontrar'],t:'Passou pela Scotland Yard, entre névoa e casos que não fecham.'}],
+ pool:['Direito','Lutar (Brigar)','Armas de Fogo (Pistolas)','Encontrar','Escutar','Psicologia','Intimidação','Persuasão','Dirigir Auto','Furtividade','Primeiros Socorros']};
+const BG={
+ 'Soldado':{q:'Em que conflito você serviu?',kind:'Conflito',o:WARS,pool:WAR_POOL},
+ 'Oficial Militar':{q:'Em que conflito você serviu?',kind:'Conflito',o:WARS,pool:WAR_POOL},
+ 'Professor':{q:'Em que universidade você leciona (ou lecionou)?',kind:'Universidade',o:UNIS,pool:UNI_POOL},
+ 'Estudante':{q:'Em que universidade você estuda?',kind:'Universidade',o:UNIS,pool:UNI_POOL},
+ 'Médico':{q:'Onde você se formou ou trabalhou?',kind:'Formação / hospital',o:[
+  {id:'ark',n:'Sanatório e hospital de Arkham',sk:['Psicologia','Psicanálise'],t:'Atendeu em Arkham, onde certos pacientes dizem coisas que ninguém deveria ouvir.'},
+  {id:'jh',n:'Johns Hopkins (Baltimore)',sk:['Medicina','Ciência (Biologia)'],t:'Formou-se em Johns Hopkins, uma das melhores escolas de medicina do país.'},
+  {id:'hm',n:'Harvard Medical School',sk:['Medicina','Ciência (Farmácia)'],t:'Estudou medicina em Harvard e trouxe de lá um respeito quase religioso pelo método.'},
+  {id:'mil',n:'Hospital militar',sk:['Primeiros Socorros','Sobrevivência'],t:'Aprendeu a salvar vidas debaixo de fogo, em hospitais de campanha.'},
+  {id:'rur',n:'Consultório no interior',sk:['Persuasão','Psicologia'],t:'Cuida de uma cidade pequena, onde todos têm segredos e poucos pagam em dinheiro.'},
+  {id:'bel',n:'Hospital Bellevue (Nova York)',sk:['Primeiros Socorros','Psicologia'],t:'Trabalhou em Bellevue, onde viu o pior e o mais estranho que a cidade tem a oferecer.'}],
+  pool:['Medicina','Primeiros Socorros','Psicologia','Psicanálise','Ciência (Biologia)','Ciência (Farmácia)','Ciência (Química)','Persuasão','Encontrar','Escutar','Língua (Latim)']},
+ 'Oficial de Polícia':POLICE,'Investigador de Polícia':POLICE,
+ 'Detetive Particular':{q:'De onde vem a sua carreira?',kind:'Origem',o:[
+  {id:'pk',n:'Agência Pinkerton',sk:['Furtividade','Armas de Fogo (Pistolas)'],t:'Começou na Pinkerton, seguindo suspeitos e aprendendo a não ser visto.'},
+  {id:'ex',n:'Ex-policial',sk:['Direito','Intimidação'],t:'Deixou o distintivo, mas não os hábitos nem os inimigos.'},
+  {id:'solo',n:'Escritório próprio',sk:['Lábia','Encontrar'],t:'Abriu o próprio escritório e vive de casos pequenos e promessas grandes.'},
+  {id:'mil',n:'Ex-militar',sk:['Armas de Fogo (Pistolas)','Sobrevivência'],t:'Trocou a farda pelo sobretudo, mas a disciplina ficou.'},
+  {id:'seg',n:'Investigador de seguradora',sk:['Contabilidade','Avaliação'],t:'Passou anos desmascarando fraudes e acidentes suspeitos para uma seguradora.'},
+  {id:'div',n:'Casos de divórcio e fofocas',sk:['Disfarce','Escutar'],t:'Sabe mais segredos de família do que qualquer padre, e cobra por cada um.'}],
+  pool:['Furtividade','Encontrar','Escutar','Disfarce','Lábia','Persuasão','Direito','Psicologia','Armas de Fogo (Pistolas)','Lutar (Brigar)','Dirigir Auto','Avaliação','Contabilidade']},
+ 'Jornalista':{q:'Para qual jornal você escreve (ou escreveu)?',kind:'Jornal',o:[
+  {id:'adv',n:'Arkham Advertiser',sk:['Escutar','Persuasão'],t:'Cobriu os assuntos de Arkham, incluindo os que o editor mandou esquecer.'},
+  {id:'glo',n:'Boston Globe',sk:['Usar Biblioteca','Persuasão'],t:'Trabalhou em Boston, atrás de documentos e de fontes que só falam em off.'},
+  {id:'nyt',n:'The New York Times',sk:['Usar Biblioteca','Lábia'],t:'Fez carreira em Nova York, onde um furo vale mais do que uma amizade.'},
+  {id:'chi',n:'Chicago Tribune',sk:['Encontrar','Intimidação'],t:'Cobriu a guerra das gangues em Chicago e nunca mais dormiu direito.'},
+  {id:'tab',n:'Tabloide sensacionalista',sk:['Lábia','Arte/Ofício (Fotografia)'],t:'Escreveu para um tabloide que vive de monstros, fantasmas e escândalos.'},
+  {id:'cor',n:'Correspondente no exterior',sk:['Sobrevivência','Persuasão'],t:'Enviou reportagens de lugares remotos, nem sempre em segurança.'}],
+  pool:['Persuasão','Lábia','Encontrar','Escutar','Psicologia','História','Arte/Ofício (Fotografia)','Direito','Usar Biblioteca','Disfarce']},
+ 'Clero, Membro do':{q:'A qual igreja ou ordem você pertence?',kind:'Denominação',o:[
+  {id:'cat',n:'Igreja Católica',sk:['Língua (Latim)','História'],t:'Foi ordenado na Igreja Católica e conhece de perto seus arquivos e seus segredos.'},
+  {id:'bat',n:'Igreja Batista',sk:['Persuasão','Psicologia'],t:'Prega para uma congregação fiel e conhece os problemas de cada família.'},
+  {id:'ang',n:'Igreja Anglicana',sk:['História','Usar Biblioteca'],t:'Serve numa paróquia antiga, cheia de registros que quase ninguém lê.'},
+  {id:'met',n:'Igreja Metodista',sk:['Persuasão','Primeiros Socorros'],t:'Aprendeu a consolar e a cuidar dos doentes de sua comunidade.'},
+  {id:'ord',n:'Ordem monástica',sk:['Usar Biblioteca','Ocultismo'],t:'Passou anos copiando manuscritos num mosteiro, entre textos que a Igreja guarda a sete chaves.'},
+  {id:'mis',n:'Missões no exterior',sk:['Sobrevivência','Antropologia'],t:'Levou a fé a terras distantes e voltou com perguntas novas.'}],
+  pool:['Psicologia','Persuasão','História','Ocultismo','Língua (Latim)','Primeiros Socorros','Antropologia','Usar Biblioteca','Escutar']}
+};
+/* escolha feita no seletor (ocupacoes.js): {p:{occ,pick},s:{occ,pick}}; pick = {id} | {none:true} | {custom:true,name,sk:[...]} | vazio = sortear */
+function bgFor(slot,oo){
+ const B=BG[oo.n];if(!B)return null;const pk=(window.BGSEL||{})[slot],ch=pk&&pk.occ===oo.n?pk.pick:null;
+ if(ch&&ch.none)return null;
+ if(ch&&ch.custom){const nm=(ch.name||'').trim()||B.kind;return{kind:B.kind,n:nm,sk:(ch.sk||[]).filter(x=>x in BASE).slice(0,2),t:B.kind+': '+nm+'.'}}
+ const op=(ch&&B.o.find(x=>x.id===ch.id))||pick(B.o);return{kind:B.kind,n:op.n,sk:op.sk,t:op.t};
+}
+const histTxt=p=>(p.hist&&p.hist.length||p.back)?'Histórico: '+(p.hist||[]).map(h=>`${h.kind}: ${h.n}${h.sk&&h.sk.length?' (+10 '+h.sk.join(', +10 ')+')':''}`).join(' | ')+(p.back?'\n'+p.back:''):'';
 function gen(sel,sel2){
  const[selN,selSub]=String(sel).split('::'),o=sel==='*'?pick(OCC):OCC.find(x=>x.n===selN),oT=tokens(o,selSub);
  const c={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
@@ -386,7 +465,9 @@ function gen(sel,sel2){
  rest=dist(rest,ri);if(rest>=5)dist(rest,ri.map(i=>({...i,cap:MAXS})));
  if(sk['Esquivar']===undefined)sk['Esquivar']=bs('Esquivar');
  if(sk['Língua Natural']===undefined)sk['Língua Natural']=bs('Língua Natural');
- return{nome:pick([...NF,...NM])+' '+pick(SN),idade:20+r(20),occ:o.n+(oT.spec?` (${oT.spec})`:''),sec:sec?sec.n+(secT.spec?` (${secT.spec})`:''):'',c,sk,edit:false,der:{...calc(c),luck:A()}};
+ const hist=[bgFor('p',o),isOcc2&&sec?bgFor('s',sec):null].filter(Boolean);
+ hist.forEach(g=>g.sk.forEach(n=>{sk[n]=Math.min((sk[n]??base(n,c))+10,85)}));
+ return{hist,back:hist.map(g=>g.t).join('\n'),nome:pick([...NF,...NM])+' '+pick(SN),idade:20+r(20),occ:o.n+(oT.spec?` (${oT.spec})`:''),sec:sec?sec.n+(secT.spec?` (${secT.spec})`:''):'',c,sk,edit:false,der:{...calc(c),luck:A()}};
 }
 /* confirmação dinâmica reutilizada por todo o site: askConfirm({title,html,ok,danger}) → Promise<boolean> */
 function askConfirm(o){return new Promise(ok=>{
@@ -444,6 +525,7 @@ function body(p,i){
   <h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2>
   <div class="sub"><input class="in nm" style="width:48%;font-size:.85rem;font-weight:normal" data-i="${i}" data-k="n:occ" placeholder="Ocupação" value="${esc(p.occ)}"> · <input class="in" data-i="${i}" data-k="n:idade" placeholder="idade" value="${esc(p.idade)}"> anos${p.sec?` · <small>+ ${esc(p.sec)}</small>`:''}</div>
   <div class="stats">${st}</div><div class="der">${d}</div>
+  <h3 class="st">Histórico</h3><div class="hist">${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}<textarea class="in bk" rows="3" data-i="${i}" data-k="n:back" placeholder="Backstory: quem é, de onde vem, o que já viu…">${esc(p.back||'')}</textarea></div>
   <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}`;
 }
 function card(p,i){
@@ -463,9 +545,10 @@ function card(p,i){
   <div class="rsz" data-i="${i}"></div>
  </section>`;
 }
-function txt(p){
+function txtBase(p){
  return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}${p.edit?' [ficha editada]':''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nSem pontos (valor inicial): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'');
 }
+function txt(p){const t=txtBase(p),x=histTxt(p);return x?t+'\n\n'+x:t}
 function persist(){
  clearTimeout(saveT);
  saveT=setTimeout(()=>{
@@ -528,7 +611,7 @@ desk.addEventListener('click',e=>{
   const b=e.target.closest('.copb'),t=txt(cur[+b.dataset.i]);
   (async()=>{
    try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}
-   const l='📋 Copiar';b.textContent='✔ Copiado!';setTimeout(()=>{b.textContent=l},1200);
+   const l='📋 <span class="bl">Copiar</span>';b.innerHTML='✔<span class="bl"> Copiado!</span>';setTimeout(()=>{b.innerHTML=l},1200);
   })();return}
  if(e.target.closest('.burb')){const k=+e.target.closest('.burb').dataset.i,p=cur[k];askConfirm({title:'Levar ao cemitério?',html:`<strong>${esc(ttl(p))}</strong> será enterrado no cemitério. Em seguida você informa a causa da morte.`,ok:'🪦 Levar ao cemitério',danger:false}).then(y=>{if(y&&cur[k]===p)buryFicha(k)});return}
  if(e.target.closest('.delb')){const k=+e.target.closest('.delb').dataset.i,p=cur[k];confirmDel(ttl(p)).then(y=>{if(y&&cur[k]===p){cur.splice(k,1);draw()}});return}
@@ -575,7 +658,7 @@ desk.addEventListener('pointerdown',e=>{
 desk.addEventListener('input',e=>{
  const t=e.target,k=t.dataset.k;if(!k)return;
  const i=+t.dataset.i,p=cur[i],[a,x]=k.split(/:(.+)/);
- if(a==='n')p[x]=t.value;
+ if(a==='n'){p[x]=t.value;if(x==='back'){persist();return}}
  else{
   const v=x==='db'?t.value:Math.max(0,Math.min(999,+t.value||0));
   if(a==='c'){
@@ -625,6 +708,7 @@ function sheetHTML(p){
    <div class="sub">${meta}</div>
    <div class="stats">${st}</div>
    <div class="der"><b>PV</b> ${p.der.hp} <b>Sanidade</b> ${p.der.san} <b>Sorte</b> ${p.der.luck} <b>PM</b> ${p.der.pm} <b>Mov</b> ${p.der.mov} <b>Bônus de Dano</b> ${esc(p.der.db)} <b>Corpo</b> ${p.der.corpo}</div>
+   ${(p.hist&&p.hist.length)||p.back?`<h3 class="st">Histórico</h3>${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}<div style="white-space:pre-wrap;font-size:.9rem;line-height:1.4">${esc(p.back||'')}</div>`:''}
    <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>
    ${fl.length?`<h3 class="st" style="margin-top:14px">Perícias que não tenho (valor inicial)</h3><div class="sk">${rows(fl)}</div>`:''}
   </div></article>`;

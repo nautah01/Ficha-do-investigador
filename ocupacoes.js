@@ -21,11 +21,17 @@ dlg.innerHTML=`<header><h4 id="opkT"></h4><span class="opk-hb"><button type="but
 <footer id="opkDet" class="opk-det">Passe o mouse (ou foque) sobre uma ocupação para ver as perícias.</footer>`;
 document.body.appendChild(dlg);
 const helpBox=$('#opkHelp'),helpBtn=$('#opkHelpBtn'),q=$('#opkQ'),grid=$('#opkGrid'),chips=$('#opkChips'),tabs=$('#opkTabs'),det=$('#opkDet');
-let ctx=null,cat='',tab='sec',subItem=null;
+let ctx=null,cat='',tab='sec',subItem=null,bgItem=null,bgView='list',bgSk=[];
+const BGKEY='cthulhu-bg';
+window.BGSEL={};try{window.BGSEL=JSON.parse(localStorage.getItem(BGKEY)||'{}')||{}}catch{}
+const saveBG=()=>{try{localStorage.setItem(BGKEY,JSON.stringify(window.BGSEL))}catch{}};
+const occName=v=>{if(v==='*'||v==='')return null;return(v.startsWith('occ:')?v.slice(4):v).split('::')[0]};
 
 function btnText(sel){
  const v=sel.value;if(v==='*')return['🎲','Aleatória'];if(v==='')return['➖','Nenhuma'];
- const occ=v.startsWith('occ:'),[n,sp]=(occ?v.slice(4):v).split('::');return[meta(n)[0],n+(sp?' ('+sp+')':'')+(occ?' — como secundária':'')];
+ const occ=v.startsWith('occ:'),[n,sp]=(occ?v.slice(4):v).split('::'),slot=sel.id==='occ'?'p':'s',pk=window.BGSEL[slot];
+ let tag='';if(pk&&pk.occ===n&&pk.pick){const B=BG[n];if(pk.pick.custom)tag=(pk.pick.name||'').trim();else if(pk.pick.id){const o=B&&B.o.find(x=>x.id===pk.pick.id);if(o)tag=o.n.replace(/\s*\(.*\)$/,'')}}
+ return[meta(n)[0],n+(sp?' ('+sp+')':'')+(tag?' · '+tag:'')+(occ?' — como secundária':'')];
 }
 const pickers=[];
 function mount(selId,kind,title){
@@ -37,7 +43,7 @@ function mount(selId,kind,title){
  label.addEventListener('click',e=>{e.preventDefault();openPick({sel,kind,title,sync})});
 }
 function openPick(c){
- subItem=null;ctx=c;cat='';q.value='';tab='sec';$('#opkT').textContent=c.title;
+ subItem=null;bgItem=null;ctx=c;cat='';q.value='';tab='sec';$('#opkT').textContent=c.title;
  tabs.innerHTML=c.kind==='sec'?'<button type="button" data-t="sec">Especialidades</button><button type="button" data-t="occ">Ocupações completas</button>':'';
  tabs.hidden=c.kind!=='sec';
  chips.innerHTML='<button type="button" data-c="" aria-pressed="true">Todas</button>'+Object.entries(CAT).map(([k,v])=>`<button type="button" data-c="${k}" aria-pressed="false">${v}</button>`).join('');
@@ -48,11 +54,29 @@ function list(){
  if(c.kind==='sec')src=src.filter(i=>tab==='sec'?i.sec:i.dup);
  return src.filter(i=>(!cat||meta(i.n)[1]===cat)&&(!t||norm(i.n).includes(t)||skills(i.o).all.some(s=>norm(s).includes(t)))).sort((a,b)=>a.n.localeCompare(b.n,'pt'));
 }
-function card(v,e,name,sub,tags,full,on,idx,nsub){
- return`<button type="button" class="opk-card${on?' on':''}${nsub?' has-sub':''}" role="option" aria-selected="${on}" data-v="${esc(v)}" data-d="${esc(full)}"${nsub?' data-sub="1"':''} style="--d:${Math.min(idx,24)*18}ms"><span class="oe">${e}</span><span class="oname">${esc(name)}</span>${sub?`<span class="os">${esc(sub)}</span>`:''}<span class="ot">${tags.map(x=>`<i>${esc(x)}</i>`).join('')}</span>${nsub?`<span class="osub">▸ ${nsub} opções</span>`:''}</button>`;
+function card(v,e,name,sub,tags,full,on,idx,nsub,bg){
+ return`<button type="button" class="opk-card${on?' on':''}${nsub?' has-sub':''}" role="option" aria-selected="${on}" data-v="${esc(v)}" data-d="${esc(full)}"${nsub?' data-sub="1"':''} style="--d:${Math.min(idx,24)*18}ms"><span class="oe">${e}</span><span class="oname">${esc(name)}</span>${sub?`<span class="os">${esc(sub)}</span>`:''}<span class="ot">${tags.map(x=>`<i>${esc(x)}</i>`).join('')}</span>${nsub?`<span class="osub">▸ ${nsub} opções</span>`:''}${bg?'<span class="osub">✦ origem</span>':''}</button>`;
 }
 const tokTag=t=>{t=t.replace(/^!/,'');if(t==='@soc')return'Social';if(t==='@lang')return'Língua';if(t==='@any')return'';return t.split('|')[0].trim().replace(/^(Ciência|Arte\/Ofício) \((.*)\)$/,'$2')};
+const shortSk=n=>n.replace(/^(Ciência|Arte\/Ofício) \((.*)\)$/,'$2');
+function renderBG(){
+ const B=BG[bgItem.occ],e=meta(bgItem.occ)[0];let h,i=0;
+ if(bgView==='form'){
+  h=`<div class="opk-subhead"><button type="button" data-bgback>← Voltar</button><strong>✍️ ${esc(B.kind)}: outro</strong><span>Escreva o nome e marque até 2 perícias (+10 em cada)</span></div>
+<div class="opk-form"><label>Nome<input id="bgName" maxlength="60" placeholder="${esc(B.kind)} — escreva aqui" autocomplete="off"></label>
+<div class="opk-pool" role="group" aria-label="Perícias (até 2)">${B.pool.map(n=>`<button type="button" data-sk="${esc(n)}" aria-pressed="${bgSk.includes(n)}">${esc(shortSk(n))}</button>`).join('')}</div>
+<div class="opk-formact"><small id="bgCount">${bgSk.length}/2 perícias</small><button type="button" data-bgok>Confirmar</button></div></div>`;
+ }else{
+  h=`<div class="opk-subhead"><button type="button" data-bgback>← Voltar</button><strong>${e} ${esc(bgItem.occ)}</strong><span>${esc(B.q)}</span></div>`;
+  h+=card('bg:random','🎲','Sortear','',['Escolhe uma opção ao gerar'],'Sorteia '+B.kind.toLowerCase()+' ao gerar a ficha',false,i++);
+  h+=B.o.map(o=>card('bg:'+o.id,e,o.n,o.t,o.sk.map(s=>'+10 '+shortSk(s)),o.n+' — '+o.t+' Bônus: +10 '+o.sk.join(', +10 '),false,i++)).join('');
+  h+=card('bg:custom','✍️','Outro (escrever)','',['Você nomeia','até 2 perícias'],'Escreva o nome e escolha até 2 perícias da lista',false,i++);
+  h+=card('bg:none','➖','Sem origem específica','',['Sem bônus'],'Não define origem nem bônus',false,i++);
+ }
+ grid.innerHTML=h;grid.scrollTop=0;det.textContent='Escolha a origem do personagem: ela dá +10 em 2 perícias e já escreve o começo do backstory (você pode editar depois).';
+}
 function render(){
+ if(bgItem){dlg.classList.add('sub');return renderBG()}
  const c=ctx,cur=c.sel.value;let i=0,h='';dlg.classList.toggle('sub',!!subItem);
  if(subItem){
   const x=subItem,S=SUB[x.n],lbl=S.lbl.toLowerCase();
@@ -65,7 +89,7 @@ function render(){
  }
  const specials=c.kind==='occ'?[['*','🎲','Aleatória','Sorteia uma ocupação']]:[['','➖','Nenhuma','Sem ocupação secundária'],['*','🎲','Aleatória','Sorteia uma secundária']];
  if(!q.value&&!cat)h+=specials.map(([v,e,n,d])=>card(v,e,n,'',[d],d,cur===v,i++)).join('');
- h+=list().map(x=>{const s=skills(x.o);return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],s.keys.slice(0,3),(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0)}).join('');
+ h+=list().map(x=>{const s=skills(x.o);return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],s.keys.slice(0,3),(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0,!!BG[x.n])}).join('');
  grid.innerHTML=h||'<p class="opk-none">Nada encontrado. Tente outra palavra ou outra categoria.</p>';
  chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));
  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===tab));
@@ -91,15 +115,36 @@ function helpHtml(){
 function setHelp(on){dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',on);helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.innerHTML=helpHtml();helpBox.scrollTop=0;helpBox.focus()}else q.focus()}
 helpBtn.addEventListener('click',()=>setHelp(!dlg.classList.contains('help')));
 helpBox.addEventListener('click',e=>{if(e.target.closest('.opk-back'))setHelp(false)});
-dlg.addEventListener('close',()=>{subItem=null;dlg.classList.remove('help');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda'});
-q.addEventListener('input',()=>{subItem=null;render()});
+dlg.addEventListener('close',()=>{subItem=null;bgItem=null;dlg.classList.remove('help');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda'});
+q.addEventListener('input',()=>{subItem=null;bgItem=null;render()});
 chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b){cat=b.dataset.c;subItem=null;render()}});
 tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b){tab=b.dataset.t;subItem=null;render()}});
+function setBG(slot,v){if(v)window.BGSEL[slot]=v;else delete window.BGSEL[slot];saveBG()}
+function choose(v){ /* aplica a escolha e, se a ocupação tem origem, pergunta */
+ ctx.sel.value=v;ctx.sel.dispatchEvent(new Event('change',{bubbles:true}));
+ const slot=ctx.kind==='occ'?'p':'s',n=occName(v),has=n&&BG[n]&&(ctx.kind==='occ'||v.startsWith('occ:'));
+ setBG(slot,null);
+ if(has){bgItem={occ:n,slot};bgView='list';bgSk=[];render();return}
+ ctx.sync();dlg.close();
+}
+function finishBG(pick){setBG(bgItem.slot,pick?{occ:bgItem.occ,pick}:null);ctx.sync();dlg.close()}
 grid.addEventListener('click',e=>{
+ if(bgItem){
+  if(e.target.closest('[data-bgback]')){if(bgView==='form'){bgView='list'}else{bgItem=null}render();return}
+  const sk=e.target.closest('[data-sk]');
+  if(sk){const n=sk.dataset.sk,on=bgSk.includes(n);if(on)bgSk=bgSk.filter(x=>x!==n);else if(bgSk.length<2)bgSk.push(n);sk.setAttribute('aria-pressed',bgSk.includes(n));$('#bgCount').textContent=bgSk.length+'/2 perícias';return}
+  if(e.target.closest('[data-bgok]')){finishBG({custom:true,name:$('#bgName').value,sk:bgSk});return}
+  const c2=e.target.closest('.opk-card');if(!c2)return;const v=c2.dataset.v;
+  if(v==='bg:custom'){bgView='form';render();$('#bgName').focus();return}
+  if(v==='bg:random'){finishBG(null);return}
+  if(v==='bg:none'){finishBG({none:true});return}
+  finishBG({id:v.slice(3)});return;
+ }
  if(e.target.closest('[data-back]')){subItem=null;render();return}
  const b=e.target.closest('.opk-card');if(!b)return;
  if(b.dataset.sub){subItem=items(ctx.kind==='occ'?'occ':'sec').find(x=>x.v===b.dataset.v)||null;render();return}
- ctx.sel.value=b.dataset.v;ctx.sel.dispatchEvent(new Event('change',{bubbles:true}));dlg.close()});
+ choose(b.dataset.v);
+});
 const showDet=e=>{const b=e.target.closest('.opk-card');if(b)det.textContent=b.dataset.d};
 grid.addEventListener('mouseover',showDet);grid.addEventListener('focusin',showDet);
 q.addEventListener('keydown',e=>{if(e.key==='Enter'){const b=grid.querySelector('.opk-card:not([data-v="*"]):not([data-v=""])')||grid.querySelector('.opk-card');if(b)b.click()}});
