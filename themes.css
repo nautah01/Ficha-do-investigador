@@ -35,18 +35,12 @@
   radial-gradient(circle at 72% 68%,rgba(var(--crater),.28) 0 6%,transparent 7%),radial-gradient(circle at 54% 47%,rgba(var(--crater),.2) 0 4%,transparent 5%),
   radial-gradient(circle at 38% 36%,var(--moon1),var(--moon2) 58%,var(--moon3));
  box-shadow:inset -6px -5px 10px rgba(0,0,0,.24),inset 3px 3px 7px rgba(255,255,255,.22),0 0 18px 4px rgba(var(--moonglow),.12);
- filter:saturate(.65);transform:translate3d(calc(var(--moon-away,0)*12px),calc(var(--moon-away,0)*-10px),0) scale(calc(1 - var(--moon-away,0)*.24));transition:opacity .35s,filter .35s,transform .4s,box-shadow .4s}
+ filter:saturate(.65);transition:opacity .35s,filter .35s,transform .4s,box-shadow .4s}
 :root>#moon{position:fixed!important;top:10px!important;right:10px!important;left:auto!important;bottom:auto!important;z-index:6000!important}
-.moon:hover,.moon:focus-visible{opacity:1;filter:saturate(1);transform:translate3d(calc(var(--moon-away,0)*12px),calc(var(--moon-away,0)*-10px),0) scale(calc(1.07 - var(--moon-away,0)*.24));box-shadow:inset -6px -5px 10px rgba(0,0,0,.24),inset 3px 3px 7px rgba(255,255,255,.28),0 0 24px 6px rgba(var(--moonglow),.32)}
+.moon:hover,.moon:focus-visible{opacity:1;filter:saturate(1);transform:scale(1.07);box-shadow:inset -6px -5px 10px rgba(0,0,0,.24),inset 3px 3px 7px rgba(255,255,255,.28),0 0 24px 6px rgba(var(--moonglow),.32)}
 .moon:active{transform:scale(.96)}
 .moon:focus-visible{outline:2px solid var(--head);outline-offset:5px}
 .moon.spin{animation:moonSwap .8s ease}
-.mphase{position:absolute;inset:0;border-radius:50%;pointer-events:none;background:radial-gradient(circle at 38% 36%,var(--moon1),var(--moon2) 58%,var(--moon3));opacity:0;transform:scaleX(.08);box-shadow:inset -5px -4px 8px rgba(0,0,0,.25)}
-.moon.phase-shift .mphase{animation:moonPhase .78s cubic-bezier(.4,0,.2,1)}
-.theme-wipe{position:fixed;z-index:5999;inset:0;pointer-events:none;background:var(--wipe-color);clip-path:circle(0 at calc(100% - 38px) 38px)}
-.theme-wipe.open{animation:themeBloom .78s cubic-bezier(.2,.7,.2,1) forwards}
-@keyframes moonPhase{0%{opacity:0;transform:scaleX(.08)}40%{opacity:1;transform:scaleX(1)}100%{opacity:0;transform:scaleX(.08)}}
-@keyframes themeBloom{0%{clip-path:circle(0 at calc(100% - 38px) 38px);opacity:1}75%{clip-path:circle(150vmax at calc(100% - 38px) 38px);opacity:1}100%{clip-path:circle(150vmax at calc(100% - 38px) 38px);opacity:0}}
 .mdots{position:absolute;top:100%;left:50%;display:flex;gap:4px;margin-top:5px;transform:translateX(-50%)}
 .mdots i{width:4px;height:4px;border-radius:50%;background:rgba(var(--moonglow),.3);transition:background .3s,box-shadow .3s}
 .mdots i.on{background:var(--moon1);box-shadow:0 0 7px 1px rgb(var(--moonglow))}
@@ -95,18 +89,10 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
  --cem-edge:rgba(255,250,232,.65);--cem-etch:rgba(72,59,31,.24)
 }
 :root[data-theme=paper] body{
- background-color:#382318;
- background-image:repeating-linear-gradient(90deg,rgba(29,13,5,.24) 0 2px,transparent 2px 13px,rgba(255,221,161,.07) 13px 15px,transparent 15px 28px),repeating-linear-gradient(2deg,transparent 0 46px,rgba(24,10,3,.20) 47px,transparent 50px),linear-gradient(90deg,#29170f,#70452b 18%,#4b2c1b 52%,#71492c 83%,#2b180f);
- background-repeat:repeat;background-attachment:fixed;background-size:auto,auto,cover
+ background:repeating-linear-gradient(180deg,#fcf6e4 0 27px,rgba(196,156,44,.28) 28px,#fcf6e4 29px),linear-gradient(180deg,#fff9e8,#f0e4c3);
+ background-repeat:repeat;background-attachment:fixed;background-color:#f0e4c3
 }
-:root[data-theme=paper] body::before{background:radial-gradient(ellipse at 50% 35%,transparent 28%,rgba(28,14,7,.42) 100%)}
-:root[data-theme=paper] .win,:root[data-theme=paper] .bar,:root[data-theme=paper] .dlg,:root[data-theme=paper] .opk,:root[data-theme=paper] .cem-dlg{color:#382b1c;background-color:#e9d9b6;background-image:linear-gradient(110deg,rgba(255,255,255,.27),transparent 38%,rgba(105,72,30,.07)),repeating-linear-gradient(0deg,transparent 0 27px,rgba(105,83,43,.13) 28px,#f4e8cc 29px);border-color:#9a7842;box-shadow:0 12px 28px rgba(20,10,4,.48),inset 0 0 24px rgba(136,98,43,.1)}
-:root[data-theme=paper] .win-bar,:root[data-theme=paper] .bar{background:linear-gradient(100deg,#d7c49a,#f1e5c7 48%,#d7c49a);color:#47371f}
-:root[data-theme=paper] .win{border-radius:3px}
-:root[data-theme=paper] .win::before{background:linear-gradient(#8e3429,#b7523e 40%,#7e2d24);box-shadow:2px 0 0 #51351f}
-:root[data-theme=paper] input,:root[data-theme=paper] select,:root[data-theme=paper] textarea,:root[data-theme=paper] .in,:root[data-theme=paper] .pickbtn{background-color:#f5ebd1;color:#332819;border-color:rgba(105,77,37,.48)}
-:root[data-theme=paper] button:not(.moon){text-shadow:none;box-shadow:0 1px 2px rgba(53,34,13,.15)}
-:root[data-theme=paper] .clip{filter:sepia(.5)}
+:root[data-theme=paper] body::before{background:linear-gradient(90deg,rgba(126,91,23,.045),transparent 13%,transparent 87%,rgba(126,91,23,.045))}
 /* Pequenos detalhes de céu aparecem quando a lua recebe foco. */
 .moon::before{content:"";position:absolute;inset:-6px;border:1px solid rgba(var(--moonglow),.5);border-radius:50%;opacity:.16;transform:scale(.94);transition:opacity .3s,transform .4s;pointer-events:none}
 .moon::after{content:"✧";position:absolute;top:-4px;right:0;color:var(--moon1);font: .85rem/1 Georgia,serif;opacity:.18;transform:scale(.7);transition:opacity .25s,transform .3s;pointer-events:none}
@@ -114,3 +100,81 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 .moon:hover::after,.moon:focus-visible::after{opacity:.9;transform:scale(1) rotate(0);filter:drop-shadow(0 0 4px rgba(var(--moonglow),.7))}
 }
 @media (prefers-reduced-motion:reduce){.moon::before,.moon::after{transition:none}}
+
+/* ===== Lua e transição entre cenários ===== */
+.moon{opacity:var(--moon-opacity,.9);transition:opacity .2s ease,filter .35s,transform .4s,box-shadow .4s;view-transition-name:moon-control}
+.moon-phase-veil{position:absolute;inset:0;z-index:2;border-radius:50%;pointer-events:none;animation:moonPhaseOut .86s cubic-bezier(.2,.76,.28,1) both}
+@keyframes moonPhaseOut{0%{clip-path:circle(72% at 50% 50%);filter:brightness(1)}48%{filter:brightness(1.55)}100%{clip-path:circle(0 at 50% 50%);filter:brightness(1.8)}}
+.moon.spin{animation:moonPhaseTurn .92s cubic-bezier(.2,.8,.2,1)}
+@keyframes moonPhaseTurn{0%{transform:rotate(0) scale(1)}38%{transform:rotate(150deg) scale(1.2);filter:brightness(1.7) saturate(1.6)}72%{transform:rotate(300deg) scale(.88)}100%{transform:rotate(360deg) scale(1)}}
+@view-transition{navigation:none}
+::view-transition-old(root){animation:none}
+::view-transition-new(root){animation:themeWave .95s cubic-bezier(.16,.72,.2,1) both}
+::view-transition-old(moon-control){animation:none}
+::view-transition-new(moon-control){animation:moonSnapshot .95s cubic-bezier(.2,.8,.2,1) both}
+@keyframes themeWave{from{clip-path:circle(0 at var(--theme-wave-x,96vw) var(--theme-wave-y,36px));filter:brightness(1.4) drop-shadow(0 0 3px rgba(255,246,214,.95)) drop-shadow(0 0 18px rgba(236,178,83,.72))}55%{filter:brightness(1.12) drop-shadow(0 0 3px rgba(255,246,214,.9)) drop-shadow(0 0 13px rgba(236,178,83,.55))}to{clip-path:circle(170vmax at var(--theme-wave-x,96vw) var(--theme-wave-y,36px));filter:none}}
+@keyframes moonSnapshot{0%{transform:rotate(-35deg) scale(.82);filter:brightness(.7)}42%{transform:rotate(150deg) scale(1.22);filter:brightness(1.7) saturate(1.5)}100%{transform:rotate(360deg) scale(1);filter:none}}
+
+/* ===== Lua amarela: ficha de arquivo sobre uma mesa de madeira ===== */
+:root[data-theme=paper]{
+ --k0:#4c2b1b;--k1:#73452a;--k2:#92603a;--k3:#f4e7c6;--k4:#ead9b1;--k5:#d8bf8e;--k6:#c8a878;
+ --card:#f4e9cc;--txt:#30251a;--muted:#6f6047;--head:#5b401b;--rule:rgba(91,64,27,.48);--line:rgba(100,75,38,.34);
+ --field:#f8efd9;--field-ink:#30251a;--spine1:#5d2418;--spine2:#8f3723;--spine3:#3a1a14;--stamp:rgba(124,42,32,.52);--warn:#9c4a28;--gold:#8d682e;
+ --gr:111,81,39;--gr2:122,79,37;--glow:240,192,92;--glow2:183,118,53;--redglow:115,54,29;--vig:35,20,12;--sh:35,20,12;--ov:50,35,22;
+ --ink2:#594327;--quote:#59452a;--accent:#895b2d;--muted2:#75603f;
+ --b1:#70402a;--b2:#52291c;--b3:#865033;--b4:#633422;--bb:#81582e;--btnt:#fff4d8;
+ --vp:#c9b68f;--board:#e5d3ad;--zoombg:242,231,201;--onhead:#fff4d8;--tab1:#d2b36a;--tab2:#a57931;--tab3:#70501f;--ok:#657347;--warn2:#94502b;
+ --moon1:#fff4be;--moon2:#e4bd58;--moon3:#a87728;--moonglow:239,190,75;--crater:121,82,25;
+ --cem-panel:#f0e3c1;--cem-panel-hi:#faf0d4;--cem-panel-mid:#e2cfaa;--cem-ground:#e3d2ae;--cem-haze:177,132,62;--cem-empty:#66502a;
+ --cem-stone-hi:#e8dfc9;--cem-stone-mid:#c8b991;--cem-stone-low:#a6956e;--cem-stone-dark:#897751;
+ --cem-grass-a:#87904a;--cem-grass-b:#68743a;--cem-grass-c:#92904a;--cem-grass-deep:#596234;--cem-grass-base:#454d2a;
+ --cem-ink:#392f1c;--cem-muted:#665533;--cem-frame:#a77c20;--cem-photo-bg:#80744f;--cem-photo-mark:#f7edcf;--cem-edge:rgba(255,250,232,.65);--cem-etch:rgba(72,59,31,.24)
+}
+@media screen{
+:root[data-theme=paper] body{padding:24px clamp(12px,3vw,34px) 70px;color:#30251a;background-color:#56331e;background-image:linear-gradient(90deg,rgba(35,17,8,.78),transparent 5%,transparent 95%,rgba(35,17,8,.75)),repeating-linear-gradient(90deg,transparent 0 78px,rgba(37,19,10,.55) 79px 82px,rgba(238,189,124,.12) 83px 86px,transparent 88px 164px),repeating-linear-gradient(2deg,transparent 0 37px,rgba(42,21,11,.2) 38px,transparent 40px 95px),repeating-linear-gradient(90deg,#75462a 0 16px,#805033 17px 62px,#6c3e25 63px 67px,#875537 68px 128px,#68402a 129px 133px);background-attachment:fixed}
+:root[data-theme=paper] body::before{z-index:0;opacity:.55;background:radial-gradient(ellipse 105% 100% at 50% 42%,transparent 30%,rgba(22,11,6,.65) 100%),repeating-linear-gradient(174deg,transparent 0 49px,rgba(255,215,159,.035) 50px,transparent 52px 102px)}
+:root[data-theme=paper] .top,:root[data-theme=paper] #desk{max-width:1100px;margin-left:auto;margin-right:auto}
+:root[data-theme=paper] h1{font-family:Georgia,"Palatino Linotype",serif;color:#f1dfb3;text-transform:uppercase;letter-spacing:3px;text-shadow:0 2px 2px #26150c,0 0 16px rgba(255,218,145,.2)}
+:root[data-theme=paper] .tag,:root[data-theme=paper] .quote,:root[data-theme=paper] .empty{color:#f4e2bb;text-shadow:0 1px 3px #29190f}
+:root[data-theme=paper] .quote{max-width:58rem}
+:root[data-theme=paper] .bar{position:relative;background:linear-gradient(135deg,rgba(255,247,222,.97),rgba(232,215,175,.97));border:1px solid #604324;border-radius:3px;padding:11px 13px 13px;color:#30251a;box-shadow:0 12px 26px rgba(23,11,5,.6),inset 0 0 0 3px rgba(135,101,49,.13),inset 0 0 32px rgba(137,94,37,.12)}
+:root[data-theme=paper] .bar::after{content:"ARQUIVO · INVESTIGAÇÃO PRIVADA";position:absolute;right:14px;top:-10px;padding:2px 8px;background:#e5d3a5;border:1px solid #8b6a37;color:#745421;font:700 .58rem Georgia,serif;letter-spacing:1px;transform:rotate(1.5deg)}
+:root[data-theme=paper] .bar-head{border-color:rgba(94,66,31,.35)}
+:root[data-theme=paper] .bar-title b{font:700 1rem Georgia,serif;letter-spacing:2px;color:#67481d}
+:root[data-theme=paper] .bar-note,:root[data-theme=paper] .bar-note small,:root[data-theme=paper] label{color:#594327}
+:root[data-theme=paper] select,:root[data-theme=paper] input:not([type=checkbox]):not([type=range]):not([type=color]){border-radius:1px;box-shadow:inset 0 1px 3px rgba(71,48,20,.12)}
+:root[data-theme=paper] .gen select,:root[data-theme=paper] .gen input{border-color:#a89165}
+:root[data-theme=paper] button:not(.moon){border-radius:2px;box-shadow:0 2px 4px rgba(50,28,12,.13);text-shadow:0 1px rgba(30,18,8,.3)}
+:root[data-theme=paper] button.alt{color:#594327;border-color:#9a7b45}
+:root[data-theme=paper] button.alt:hover{background:rgba(130,91,34,.12)}
+:root[data-theme=paper] #desk{min-height:80vh}
+:root[data-theme=paper] #panelBtn{background:linear-gradient(#f2e2bd,#d7bd8b);color:#513d20;border-color:#80612d;text-shadow:none}
+:root[data-theme=paper] .win{border:1px solid #8e754a;border-radius:2px;color:#30251a;background-color:#f2e6c8;background-image:radial-gradient(ellipse at 50% 0,rgba(255,255,255,.45),transparent 55%),repeating-linear-gradient(0deg,transparent 0 27px,rgba(89,116,143,.14) 28px 29px);box-shadow:0 14px 27px rgba(25,12,6,.58),inset 0 0 0 4px rgba(156,122,64,.12),inset 0 0 34px rgba(140,106,50,.14)}
+:root[data-theme=paper] .win::before{width:5px;background:linear-gradient(90deg,#71371f,#bd7950 55%,#754128);box-shadow:1px 0 0 #402116}
+:root[data-theme=paper] .win.pinned{box-shadow:0 0 0 2px #9a6a25,0 16px 32px rgba(25,12,6,.62),inset 0 0 0 4px rgba(156,122,64,.12)}
+:root[data-theme=paper] .win-bar{background:linear-gradient(90deg,#e5d5ad,#f3e8ca 38%,#dfcca0);color:#5a411e;border-bottom:1px solid #b39a68}
+:root[data-theme=paper] .win-title{font-family:Georgia,"Palatino Linotype",serif;font-variant:small-caps;letter-spacing:1px}
+:root[data-theme=paper] .win-bar button{color:#644a23;border-color:rgba(100,74,35,.42);text-shadow:none;box-shadow:none}
+:root[data-theme=paper] .win-bar button:hover{background:rgba(111,77,30,.13)}
+:root[data-theme=paper] .win-body{padding-left:18px}
+:root[data-theme=paper] h2{font-family:Georgia,"Palatino Linotype",serif;color:#49371e;border-color:#8e7448}
+:root[data-theme=paper] .sub,:root[data-theme=paper] .stats small,:root[data-theme=paper] .sk small{color:#76664b}
+:root[data-theme=paper] .nm{color:#48331a;border-color:#8c7145}
+:root[data-theme=paper] .in{background:rgba(255,250,233,.7);color:#30251a;border-color:#ae9870}
+:root[data-theme=paper] .stats div{background:linear-gradient(145deg,#e4d3aa,#ccb789);border:1px solid #9b7941;border-radius:2px;color:#30251a;box-shadow:inset 0 1px rgba(255,255,255,.5)}
+:root[data-theme=paper] .stats b,:root[data-theme=paper] .der b,:root[data-theme=paper] h3{color:#60451d}
+:root[data-theme=paper] .der{background:rgba(164,137,82,.12);border:1px solid rgba(116,89,46,.42);border-radius:2px}
+:root[data-theme=paper] .sk>span{border-bottom:1px dotted rgba(87,69,39,.35)}
+:root[data-theme=paper] .win h3.st{border-color:rgba(103,77,37,.5)}
+:root[data-theme=paper] .clip{border-color:#96732d;background:linear-gradient(#f1d887,#b48533);box-shadow:0 2px 0 #6d4e20}
+:root[data-theme=paper] .stamp{color:rgba(139,49,35,.56);border-color:rgba(139,49,35,.56);font-family:Georgia,serif}
+:root[data-theme=paper] button.ftg{color:#75603f;border-color:#a89165}
+:root[data-theme=paper] .atmo{display:none}
+:root[data-theme=paper] .note{border-color:#826637;box-shadow:0 16px 40px rgba(23,11,5,.55)}
+:root[data-theme=paper] .note-bar,:root[data-theme=paper] .note-tools,:root[data-theme=paper] .note-boards,:root[data-theme=paper] .note-tabs{background:linear-gradient(#f1e4c4,#dfcca1);border-color:#b8a075}
+:root[data-theme=paper] .note-title{color:#594327}
+:root[data-theme=paper] .cem{box-shadow:0 16px 40px rgba(23,11,5,.55)}
+:root[data-theme=paper] .moon{box-shadow:inset -6px -5px 10px rgba(73,49,15,.3),inset 3px 3px 7px rgba(255,255,255,.36),0 0 26px 7px rgba(239,190,75,.27)}
+@media(max-width:640px){:root[data-theme=paper] body{padding:16px 10px 64px}:root[data-theme=paper] h1{font-size:1.45rem;letter-spacing:1.5px}:root[data-theme=paper] .bar{padding:9px 9px 10px}:root[data-theme=paper] .bar::after{right:8px;font-size:.5rem}}
+@media(prefers-reduced-motion:reduce){.moon-phase-veil,.moon.spin,::view-transition-new(root),::view-transition-new(moon-control){animation:none!important}}
+}

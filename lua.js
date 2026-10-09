@@ -1,46 +1,41 @@
-/* A lua do cenário troca o tema do site: verde (padrão) → vermelha → azul → papel… */
+/* Lua fixa: o brilho acompanha a rolagem; trocar tema anima fase e cenário. */
 (()=>{
-const T=['green','red','blue','paper'],N={green:'verde',red:'vermelha',blue:'azul',paper:'de papel com linhas amarelas'},KEY='cthulhu-tema';
+const T=['green','red','blue','paper'],N={green:'verde',red:'vermelha',blue:'azul',paper:'de arquivo sobre madeira'},KEY='cthulhu-tema';
 const root=document.documentElement,btn=document.getElementById('moon');if(!btn)return;
-/* Mantém a lua na camada fixa do botão que reabre o painel. */
 if(btn.parentElement!==root)root.appendChild(btn);
 btn.style.setProperty('position','fixed','important');
-btn.style.setProperty('top','10px','important');
-btn.style.setProperty('right','10px','important');
-btn.style.setProperty('left','auto','important');
-btn.style.setProperty('bottom','auto','important');
-btn.style.setProperty('z-index','6000','important');
-/* A lua permanece no canto e recua suavemente quando a página desce. */
-let scrollTick=false;
-function moveMoon(){
- const distance=Math.min(window.scrollY/700,1);
- btn.style.setProperty('--moon-away',distance.toFixed(3));
- scrollTick=false;
+btn.style.setProperty('top','max(10px, env(safe-area-inset-top))','important');
+btn.style.setProperty('right','max(10px, env(safe-area-inset-right))','important');
+btn.style.setProperty('left','auto','important');btn.style.setProperty('bottom','auto','important');btn.style.setProperty('z-index','6000','important');
+const dots=[...btn.querySelectorAll('.mdots i')];let tm,scrollFrame=0;
+function setScrollFade(){
+ scrollFrame=0;
+ const progress=Math.min(1,Math.max(0,window.scrollY)/420);
+ btn.style.setProperty('--moon-opacity',String(.9-progress*.76));
 }
-window.addEventListener('scroll',()=>{if(!scrollTick){requestAnimationFrame(moveMoon);scrollTick=true}},{passive:true});
-moveMoon();
-const phase=document.createElement('span');phase.className='mphase';phase.setAttribute('aria-hidden','true');btn.appendChild(phase);
-const dots=[...btn.querySelectorAll('.mdots i')];let tm;
-function apply(t,anim){
- if(anim){
-  const oldColor=getComputedStyle(root).getPropertyValue('--k0').trim()||'#030707';
-  const wipe=document.createElement('div');wipe.className='theme-wipe';wipe.style.setProperty('--wipe-color',oldColor);document.body.appendChild(wipe);
-  requestAnimationFrame(()=>wipe.classList.add('open'));wipe.addEventListener('animationend',()=>wipe.remove(),{once:true});
-  root.classList.add('tswap');clearTimeout(tm);tm=setTimeout(()=>root.classList.remove('tswap'),850);
- }
+function onScroll(){if(!scrollFrame)scrollFrame=requestAnimationFrame(setScrollFade)}
+function apply(t){
  if(t==='green')delete root.dataset.theme;else root.dataset.theme=t;
- if(anim){btn.classList.remove('phase-shift');void btn.offsetWidth;btn.classList.add('phase-shift');setTimeout(()=>btn.classList.remove('phase-shift'),820)}
  const i=T.indexOf(t),nx=T[(i+1)%T.length];
  dots.forEach((d,k)=>d.classList.toggle('on',k===i));
  btn.setAttribute('aria-label','Mudar o cenário. Tema atual: '+N[t]+'.');
  btn.title='Cenário '+N[t]+' — clique para '+N[nx];
  try{localStorage.setItem(KEY,t)}catch{}
 }
-const cur=()=>T.includes(root.dataset.theme)?root.dataset.theme:'green';
-btn.addEventListener('click',()=>{
+function switchTheme(next,event){
+ const oldSurface=getComputedStyle(btn).backgroundImage;
+ const x=event?.clientX??(innerWidth-40),y=event?.clientY??40;
+ root.style.setProperty('--theme-wave-x',x+'px');root.style.setProperty('--theme-wave-y',y+'px');
+ const update=()=>apply(next);
+ if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.startViewTransition(update);
+ }else update();
  btn.classList.remove('spin');void btn.offsetWidth;btn.classList.add('spin');
- apply(T[(T.indexOf(cur())+1)%T.length],true);
-});
-btn.addEventListener('animationend',e=>{if(e.animationName==='moonSwap')btn.classList.remove('spin')});
-apply(cur(),false);
+ const veil=document.createElement('span');veil.className='moon-phase-veil';veil.setAttribute('aria-hidden','true');veil.style.backgroundImage=oldSurface;btn.append(veil);
+ veil.addEventListener('animationend',()=>veil.remove(),{once:true});
+ clearTimeout(tm);tm=setTimeout(()=>{btn.classList.remove('spin');veil.remove()},1100);
+}
+const cur=()=>T.includes(root.dataset.theme)?root.dataset.theme:'green';
+btn.addEventListener('click',event=>switchTheme(T[(T.indexOf(cur())+1)%T.length],event));
+window.addEventListener('scroll',onScroll,{passive:true});setScrollFade();apply(cur());
 })();
