@@ -377,6 +377,8 @@ const POLICE={q:'Em que cidade você serve (ou serviu)?',kind:'Cidade',o:[
  {id:'sf',n:'São Francisco',sk:['Persuasão','Encontrar'],t:'Trabalhou entre os cais, as brumas e os bairros misteriosos de São Francisco.'},
  {id:'lon',n:'Scotland Yard (Londres)',sk:['Direito','Encontrar'],t:'Passou pela Scotland Yard, entre névoa e casos que não fecham.'}],
  pool:['Direito','Lutar (Brigar)','Armas de Fogo (Pistolas)','Encontrar','Escutar','Psicologia','Intimidação','Persuasão','Dirigir Auto','Furtividade','Primeiros Socorros']};
+const CRIMINAL_ORIGIN_POOL=[...new Set(['Encontrar','Furtividade',...SOC,'Psicologia',...CR.split('|'),'Dirigir Auto','Esquivar'])];
+const OCCULTIST_ORIGIN_POOL=[...new Set(['Antropologia','História','Usar Biblioteca','Ocultismo',...LANGS.map(n=>'Língua ('+n+')'),'Ciência (Astronomia)','Persuasão',...COMMON])];
 const BG={
  'Soldado':{q:'Em que conflito você serviu?',kind:'Conflito',o:WARS,pool:WAR_POOL},
  'Oficial Militar':{q:'Em que conflito você serviu?',kind:'Conflito',o:WARS,pool:WAR_POOL},
@@ -414,13 +416,25 @@ const BG={
   {id:'met',n:'Igreja Metodista',sk:['Persuasão','Primeiros Socorros'],t:'Aprendeu a consolar e a cuidar dos doentes de sua comunidade.'},
   {id:'ord',n:'Ordem monástica',sk:['Usar Biblioteca','Ocultismo'],t:'Passou anos copiando manuscritos num mosteiro, entre textos que a Igreja guarda a sete chaves.'},
   {id:'mis',n:'Missões no exterior',sk:['Sobrevivência','Antropologia'],t:'Levou a fé a terras distantes e voltou com perguntas novas.'}],
-  pool:['Psicologia','Persuasão','História','Ocultismo','Língua (Latim)','Primeiros Socorros','Antropologia','Usar Biblioteca','Escutar']}
+  pool:['Psicologia','Persuasão','História','Ocultismo','Língua (Latim)','Primeiros Socorros','Antropologia','Usar Biblioteca','Escutar']},
+ 'Criminoso':{q:'Qual é a sua situação com a lei?',kind:'Antecedente criminal',o:[
+  {id:'preso',n:'Já foi preso',sk:['Direito','Lutar (Brigar)'],t:'Cumpriu pena e aprendeu a sobreviver atrás das grades.'},
+  {id:'livre',n:'Nunca foi condenado',sk:['Disfarce','Furtividade'],t:'Sempre escapou antes que a polícia pudesse provar alguma coisa.'},
+  {id:'foragido',n:'Está foragido',sk:['Furtividade','Sobrevivência'],t:'Vive mudando de esconderijo e evitando qualquer rosto conhecido.'},
+  {id:'informante',n:'Virou informante',sk:['Lábia','Psicologia'],t:'Troca informações com a polícia, mas nunca revela de que lado realmente está.'}],pool:CRIMINAL_ORIGIN_POOL},
+ 'Ocultista':{q:'Onde começou seu interesse pelo oculto?',kind:'Origem ocultista',o:[
+  {id:'biblioteca',n:'Biblioteca proibida',sk:['História','Usar Biblioteca'],t:'Encontrou registros que deveriam ter permanecido trancados e passou a procurar respostas.'},
+  {id:'culto',n:'Culto secreto',sk:['Persuasão','Ocultismo'],t:'Aprendeu ritos e símbolos entre pessoas que tratavam o impossível como verdade.'},
+  {id:'grimorio',n:'Grimório herdado',sk:['Antropologia','História'],t:'Recebeu um livro antigo da família, cheio de anotações e avisos ignorados.'},
+  {id:'ritual',n:'Ritual ou contato sobrenatural',sk:['Ocultismo','Ciência (Astronomia)'],t:'Presenciou algo inexplicável e desde então tenta compreender o que viu.'},
+  {id:'familia',n:'Família de ocultistas',sk:['Antropologia','Ocultismo'],t:'Cresceu cercado por histórias, rituais e segredos transmitidos em família.'},
+  {id:'achado',n:'Achado que não devia',sk:['Usar Biblioteca','Ciência (Astronomia)'],t:'Encontrou um objeto ou manuscrito que revelou uma realidade que preferia desconhecer.'}],pool:OCCULTIST_ORIGIN_POOL}
 };
 /* escolha feita no seletor (ocupacoes.js): {p:{occ,pick},s:{occ,pick}}; pick = {id} | {none:true} | {custom:true,name,sk:[...]} | vazio = sortear */
 function bgFor(slot,oo){
  const B=BG[oo.n];if(!B)return null;const pk=(window.BGSEL||{})[slot],ch=pk&&pk.occ===oo.n?pk.pick:null;
  if(ch&&ch.none)return null;
- if(ch&&ch.custom){const nm=(ch.name||'').trim()||B.kind;return{kind:B.kind,n:nm,sk:(ch.sk||[]).filter(x=>x in BASE).slice(0,2),t:B.kind+': '+nm+'.'}}
+ if(ch&&ch.custom){const nm=(ch.name||'').trim()||B.kind;return{kind:B.kind,n:nm,sk:(ch.sk||[]).filter(x=>x in BASE||/^Língua \(.+\)$/.test(x)).slice(0,2),t:B.kind+': '+nm+'.'}}
  const op=(ch&&B.o.find(x=>x.id===ch.id))||pick(B.o);return{kind:B.kind,n:op.n,sk:op.sk,t:op.t};
 }
 const histTxt=p=>(p.hist&&p.hist.length||p.back)?'Histórico: '+(p.hist||[]).map(h=>`${h.kind}: ${h.n}${h.sk&&h.sk.length?' (+10 '+h.sk.join(', +10 ')+')':''}`).join(' | ')+(p.back?'\n'+p.back:''):'';
