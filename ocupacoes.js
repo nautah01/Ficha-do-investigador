@@ -11,7 +11,7 @@ const meta=n=>I[n]||['💼','Of'];
 const clean=t=>{t=t.replace(/^!/,'');if(t==='@soc')return'Perícia social';if(t==='@lang')return'Língua';if(t==='@any')return'';t=t.split('|')[0].trim();return t.replace(/\s*\(.*\)$/,'')};
 const skills=o=>{const all=o.s.map(t=>({k:t[0]==='!',n:clean(t)})).filter(x=>x.n);const keys=all.filter(x=>x.k).map(x=>x.n);return{keys:[...new Set(keys.length?keys:all.slice(0,3).map(x=>x.n))],all:[...new Set(all.map(x=>x.n))]}};
 const items=(kind)=>kind==='occ'?OCC.map(o=>({v:o.n,n:o.n,o,cred:o.c,sub:SUB[o.n]})):
- [...SEC.map(o=>({v:o.n,n:o.n,o,sec:1})),...OCC.map(o=>({v:'occ:'+o.n,n:o.n,o,cred:o.c,dup:1,sub:SUB[o.n]}))];
+ OCC.map(o=>({v:'occ:'+o.n,n:o.n,o,cred:o.c,dup:1}));
 
 const dlg=document.createElement('dialog');dlg.className='opk';dlg.setAttribute('aria-label','Escolher ocupação');
 dlg.innerHTML=`<header><h4 id="opkT"></h4><span class="opk-hb"><button type="button" id="opkHelpBtn" aria-pressed="false">❔ Ajuda</button><button type="button" class="opk-x" aria-label="Fechar">✕</button></span></header>
@@ -35,23 +35,33 @@ function btnText(sel){
 }
 const pickers=[];
 function mount(selId,kind,title){
- const sel=document.getElementById(selId);if(!sel)return;const label=sel.closest('label');
- sel.classList.add('sr');sel.tabIndex=-1;
- const b=document.createElement('button');b.type='button';b.className='pickbtn';b.setAttribute('aria-haspopup','dialog');label.appendChild(b);
- const sync=()=>{const[e,t]=btnText(sel);b.innerHTML=`<span class="pe">${e}</span><span class="pt">${esc(t)}</span><span class="pc">▾</span>`};
- sync();sel.addEventListener('change',sync);pickers.push(sync);
+  const sel=document.getElementById(selId);if(!sel)return;const label=sel.closest('label');
+  if(selId==='occ2'&&sel.value&&sel.value!=='*'){
+   const previous=occName(sel.value);sel.value=OCC.some(o=>o.n===previous)?'occ:'+previous:'';
+  }
+  sel.classList.add('sr');sel.tabIndex=-1;
+  const b=document.createElement('button');b.type='button';b.className='pickbtn';b.setAttribute('aria-haspopup','dialog');label.appendChild(b);
+  const sync=()=>{const[e,t]=btnText(sel);b.innerHTML=`<span class="pe">${e}</span><span class="pt">${esc(t)}</span><span class="pc">▾</span>`};
+  const update=()=>{
+   if(selId==='occ'){
+    const primary=occName(sel.value);
+    if(primary&&occName(sel2.value)===primary){sel2.value='';sel2.dispatchEvent(new Event('change',{bubbles:true}))}
+   }
+   sync();
+  };
+  update();sel.addEventListener('change',update);pickers.push(sync);
  label.addEventListener('click',e=>{e.preventDefault();openPick({sel,kind,title,sync})});
 }
 function openPick(c){
- subItem=null;bgItem=null;ctx=c;cat='';q.value='';tab='sec';$('#opkT').textContent=c.title;
- tabs.innerHTML=c.kind==='sec'?'<button type="button" data-t="sec">Especialidades</button><button type="button" data-t="occ">Ocupações completas</button>':'';
- tabs.hidden=c.kind!=='sec';
+  subItem=null;bgItem=null;ctx=c;cat='';q.value='';tab=c.kind==='sec'?'occ':'sec';$('#opkT').textContent=c.title;
+  tabs.innerHTML='';
+  tabs.hidden=true;
  chips.innerHTML='<button type="button" data-c="" aria-pressed="true">Todas</button>'+Object.entries(CAT).map(([k,v])=>`<button type="button" data-c="${k}" aria-pressed="false">${v}</button>`).join('');
  render();dlg.showModal();q.focus();
 }
 function list(){
  const c=ctx,t=norm(q.value.trim());let src=items(c.kind==='occ'?'occ':'sec');
- if(c.kind==='sec')src=src.filter(i=>tab==='sec'?i.sec:i.dup);
+ if(c.kind==='sec'){const primary=occName(document.getElementById('occ').value);src=src.filter(i=>i.n!==primary)}
  return src.filter(i=>(!cat||meta(i.n)[1]===cat)&&(!t||norm(i.n).includes(t)||skills(i.o).all.some(s=>norm(s).includes(t)))).sort((a,b)=>a.n.localeCompare(b.n,'pt'));
 }
 function card(v,e,name,sub,tags,full,on,idx,nsub,bg){
@@ -108,8 +118,8 @@ function helpHtml(){
 <h5>Por que isso afeta as perícias?</h5>
 <p>Os pontos de Crédito saem dos <strong>pontos de perícia da ocupação</strong>. Um Crédito alto deixa o investigador rico, mas com menos pontos para as perícias de trabalho. Um Crédito baixo faz o contrário: sobra mais para as perícias, mas ele vive com pouco.</p>
 <h5>E as outras informações do cartão?</h5>
-<p>As <strong>etiquetas</strong> mostram as perícias principais da ocupação, que recebem mais pontos. Passe o mouse no cartão para ver a lista completa. Na <strong>ocupação secundária</strong> não há faixa de crédito: ela só reforça algumas perícias com os pontos de interesse pessoal (INT × 2). As abas <em>Ocupações completas</em> permitem usar uma ocupação inteira como secundária.</p>
-<p>Cartões com <strong>▸ opções</strong> (como Cientista, Estudante ou Médico) abrem uma segunda lista, onde você escolhe a área, a especialidade ou o tipo. Isso troca as perícias principais da ocupação pelas da opção escolhida. Se preferir deixar ao acaso, use <em>Qualquer opção</em>.</p>
+ <p>As <strong>etiquetas</strong> mostram as perícias principais da ocupação, que recebem mais pontos. Passe o mouse no cartão para ver a lista completa. Na <strong>ocupação secundária</strong> não há faixa de crédito: ela só reforça algumas perícias com os pontos de interesse pessoal (INT × 2). Ela deve ser diferente da ocupação principal para evitar repetições.</p>
+ <p>Na lista principal, cartões com <strong>▸ opções</strong> (como Cientista, Estudante ou Médico) permitem escolher uma área, especialidade ou tipo. Essa escolha continua disponível na ocupação principal. A lista secundária contém ocupações completas e não repete a principal.</p>
 <button type="button" class="opk-back">← Voltar à lista</button>`;
 }
 function setHelp(on){dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',on);helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.innerHTML=helpHtml();helpBox.scrollTop=0;helpBox.focus()}else q.focus()}

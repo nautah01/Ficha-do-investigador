@@ -432,8 +432,9 @@ function gen(sel,sel2){
  const ALL=Object.keys(BASE).filter(n=>n!=='Nível de Crédito'),used=new Set(),keys=[];
  const res=(t,keep)=>{let op=(t==='@soc'?SOC.join('|'):t==='@any'?COMMON.join('|'):t).split('|').map(x=>x==='@lang'?'Língua ('+lang+')':x);
   if(!keep)op=op.filter(x=>!used.has(x));if(!op.length)op=ALL.filter(x=>!used.has(x));const n=pick(op);used.add(n);return n};
- const isOcc2=sel2.startsWith('occ:'),[s2N,s2Sub]=isOcc2?sel2.slice(4).split('::'):[sel2,''];
- const sec=sel2==='*'?pick([...SEC,...OCC].filter(x=>x.n!==o.n)):isOcc2?OCC.find(x=>x.n===s2N):SEC.find(x=>x.n===sel2),secT=sec?tokens(sec,isOcc2?s2Sub:''):null;
+ const isOcc2=sel2.startsWith('occ:'),s2N=isOcc2?sel2.slice(4).split('::')[0]:'';
+ const requestedSec=sel2==='*'?pick(OCC.filter(x=>x.n!==o.n)):isOcc2?OCC.find(x=>x.n===s2N):null;
+ const sec=requestedSec&&requestedSec.n!==o.n?requestedSec:null,secT=sec?tokens(sec):null;
  const occS=oT.t.map(t=>{const k=t[0]==='!',n=res(k?t.slice(1):t);if(k)keys.push(n);return n});
  const s2=[],keys2=[];
  if(sec){const hasK=secT.t.some(t=>t[0]==='!');secT.t.forEach((t,i)=>{if(t==='@any')return;const n=res(t.replace(/^!/,''),true);if(!s2.includes(n))s2.push(n);if((t[0]==='!'||(!hasK&&i===0))&&!keys2.includes(n))keys2.push(n)})}
@@ -496,8 +497,8 @@ const STORE='coc7-investigadores-v2';
 const sel=document.getElementById('occ'),desk=document.getElementById('desk');
 sel.innerHTML='<option value="*">🎲 Aleatória</option>'+[...OCC].sort(srt).map(o=>`<option>${o.n}</option>`).join('');
 const sel2=document.getElementById('occ2');
-const subOpts=()=>Object.entries(SUB).forEach(([n,s])=>Object.keys(s.o).forEach(k=>{sel.insertAdjacentHTML('beforeend',`<option value="${n}::${k}" hidden>${n} (${k})</option>`);sel2.insertAdjacentHTML('beforeend',`<option value="occ:${n}::${k}" hidden>${n} (${k})</option>`)}));
-sel2.innerHTML='<option value="">Nenhuma</option><option value="*">🎲 Aleatória</option>'+'<optgroup label="Específicas">'+SEC.map(o=>`<option>${o.n}</option>`).join('')+'</optgroup><optgroup label="Ocupações principais (repetidas)">'+[...OCC].sort(srt).map(o=>`<option value="occ:${o.n}">${o.n}</option>`).join('')+'</optgroup>';
+const subOpts=()=>Object.entries(SUB).forEach(([n,s])=>Object.keys(s.o).forEach(k=>{sel.insertAdjacentHTML('beforeend',`<option value="${n}::${k}" hidden>${n} (${k})</option>`)}));
+sel2.innerHTML='<option value="">Nenhuma</option><option value="*">🎲 Aleatória</option><optgroup label="Ocupações">'+[...OCC].sort(srt).map(o=>`<option value="occ:${o.n}">${o.n}</option>`).join('')+'</optgroup>';
 subOpts();
 let cur=[],zTop=10,drag=null,rsz=null,saveT=0;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
