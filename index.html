@@ -82,7 +82,9 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
 .der{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:.85rem;margin-bottom:10px;background:rgba(var(--gr),.06);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
 .der b{color:var(--head);margin-right:4px}
 .sk{display:grid;grid-template-columns:1fr 1fr;gap:3px 14px;font-size:.85rem}
-.sk span{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dotted var(--line);gap:6px}
+.sk>span{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dotted var(--line);gap:6px}
+.sk .sk-name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.sk i{flex:0 0 auto;margin-left:auto;font-style:normal;white-space:nowrap}
 .sk i{font-style:normal;white-space:nowrap}
 h3{color:var(--head);border-top:2px solid var(--rule);padding-top:6px;font-variant:small-caps;letter-spacing:1px}
 .win h3.st{margin:4px 0 6px;font-size:.9rem;border-top:none;padding-top:0;border-bottom:1px solid var(--line);padding-bottom:3px}
@@ -127,7 +129,7 @@ body.mobile #desk h2 .in.nm{font-size:18px!important}
 body.mobile #desk .stats{gap:6px}
 body.mobile #desk .stats .in{width:100%;max-width:64px}
 body.mobile #desk .sk{grid-template-columns:1fr}
-body.mobile #desk .sk span{padding:3px 0}
+body.mobile #desk .sk>span{padding:3px 0}
 body.mobile #desk .der{gap:8px 10px}
 body.mobile #desk button.rmb{padding:4px 10px;font-size:.85rem}
 body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-size:.95rem}
@@ -148,7 +150,8 @@ body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-
 .pdf-sheet .pdf-history .orig{margin:0 0 2px;font-size:.68rem;line-height:1.2;color:var(--muted)}
 .pdf-sheet .pdf-back{font-size:.68rem;line-height:1.2;white-space:pre-wrap;overflow-wrap:anywhere}
 .pdf-sheet .sk{grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 9px;font-size:.68rem;line-height:1.15}
-.pdf-sheet .sk span{min-width:0;align-items:flex-start;gap:3px;padding:1px 0;border-color:var(--line)}
+.pdf-sheet .sk>span{min-width:0;align-items:flex-start;gap:3px;padding:1px 0;border-color:var(--line)}
+.pdf-sheet .sk .sk-name{overflow-wrap:anywhere;word-break:normal}
 .pdf-sheet .sk i{font-size:.65rem}
 .pdf-sheet .sk small{font-size:.55rem}
 @media print{
@@ -188,8 +191,8 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 .hist{margin:2px 0 6px}.hist .orig{font-size:.88rem;margin:0 0 3px}.hist .orig small{color:var(--muted)}
 .hist .bk{text-align:left;display:block;width:100%;min-height:64px;margin-top:4px;padding:6px 8px;resize:vertical;font:inherit;font-size:.9rem;line-height:1.4}
 </style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"></head><body>
-<div class="top">
 <button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+<div class="top">
 <h1>Gerador de Investigadores</h1>
 <p class="tag">Chamado de Cthulhu 7ª ed. · Década de 1920 · fichas offline · notas salvas no navegador</p>
 <p class="quote">“O mais misericordioso no mundo é a incapacidade da mente humana de correlacionar todos os seus conteúdos.” — H. P. Lovecraft</p>
@@ -221,7 +224,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <div id="noteBoardPanel" class="note-pane" role="tabpanel" aria-labelledby="noteBoardTab">
 <div class="note-boards"><div id="boardTabs" class="btabs" role="tablist" aria-label="Quadros"></div><button id="boardAdd" title="Criar um novo quadro">＋ Novo</button><button id="boardRen" title="Renomear quadro (ou dê dois cliques na aba)" aria-label="Renomear quadro">✎</button><button id="boardDel" title="Excluir quadro" aria-label="Excluir quadro">🗑</button></div>
 <div class="note-tools">
-<button id="noteSelect" aria-pressed="false" title="Selecionar várias peças (Shift+arrastar)">⬚ Selecionar</button><button id="noteAdd">＋ Foto</button><button id="noteAddText">＋ Texto</button><button id="noteConnect" aria-pressed="false" title="Ligar duas peças com uma seta">↗ Interligar</button>
+<button id="noteSelect" aria-pressed="false" title="Selecionar várias peças (Shift+arrastar)">⬚ Selecionar</button><button id="noteAdd">＋ Foto</button><button id="noteAddText">＋ Texto</button><button id="noteExport" title="Baixar uma imagem PNG do quadro completo">⇩ Baixar PNG</button><button id="noteConnect" aria-pressed="false" title="Ligar duas peças com uma seta">↗ Interligar</button>
 <i class="sep"></i><button id="noteBrush" aria-pressed="false">🖌 Pincel</button><button id="noteEraser" aria-pressed="false">Borracha</button>
 <label>Cor <input id="noteBrushColor" type="color" value="#d4af37" aria-label="Cor do pincel"></label>
 <label>Espessura <input id="noteBrushSize" type="range" min="2" max="40" value="6" aria-label="Espessura do pincel"></label>
@@ -721,7 +724,7 @@ document.getElementById('blank').onclick=()=>{
 function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
 function sheetHTML(p){
  const st=Object.entries(p.c).map(([k,v])=>`<div><b>${esc(k)}</b><span style="display:block;font-size:1.05rem;margin:3px 0">${v}</span><small>${(v>>1)} / ${Math.floor(v/5)}</small></div>`).join('');
- const rows=l=>l.map(([n,v])=>`<span>${esc(n)}<i>${v}% <small>${(v>>1)} / ${Math.floor(v/5)}</small></i></span>`).join('');
+ const rows=l=>l.map(([n,v])=>`<span><span class="sk-name">${esc(n)}</span><i>${v}% <small>${(v>>1)} / ${Math.floor(v/5)}</small></i></span>`).join('');
  const sk=rows(Object.entries(p.sk).sort((a,b)=>b[1]-a[1]));
  const fl=falta(p).map(([n])=>[n,+get(p,'s:'+n)||0]);
  const meta=[esc(p.occ),p.idade!==''?esc(p.idade)+' anos':'',p.sec?'+ '+esc(p.sec):'',p.edit?'ficha editada':''].filter(Boolean).join(' · ')||'&nbsp;';

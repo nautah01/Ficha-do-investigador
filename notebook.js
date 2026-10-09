@@ -124,6 +124,31 @@ async function addImgs(files){for(const f of files){if(!/^image\//.test(f.type))
 on('noteAdd',()=>$('noteFiles').click());
 $('noteFiles').onchange=e=>{if(ready)addImgs([...e.target.files]);e.target.value=''};
 on('noteAddText',()=>add({type:'txt',w:220,h:150,text:''},true));
+async function exportBoard(){
+ const button=$('noteExport'),oldLabel=button.textContent;let host;
+ button.disabled=true;button.textContent='Preparando…';say('Preparando imagem do quadro…');
+ try{
+  if(!window.html2canvas){
+   await new Promise((resolve,reject)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';script.onload=resolve;script.onerror=()=>reject(new Error('Não foi possível carregar a biblioteca de exportação'));document.head.appendChild(script)});
+  }
+  const copy=board.cloneNode(true);
+  copy.style.transform='none';copy.style.position='relative';copy.style.left='0';copy.style.top='0';copy.style.width=W+'px';copy.style.height=H+'px';
+  copy.querySelectorAll('.nc').forEach(card=>{card.classList.remove('sel','one','pick','new');card.querySelector('.rz')?.remove()});
+  copy.querySelectorAll('.lsel').forEach(line=>line.classList.remove('lsel'));
+  const sourceControls=board.querySelectorAll('textarea,input'),copyControls=copy.querySelectorAll('textarea,input');
+  sourceControls.forEach((control,index)=>{if(copyControls[index])copyControls[index].value=control.value});
+  const sourceCanvases=board.querySelectorAll('canvas'),copyCanvases=copy.querySelectorAll('canvas');
+  sourceCanvases.forEach((canvas,index)=>{const target=copyCanvases[index];if(!target)return;target.width=canvas.width;target.height=canvas.height;target.getContext('2d').drawImage(canvas,0,0)});
+  host=document.createElement('div');host.style.cssText=`position:absolute;left:0;top:0;width:${W}px;height:${H}px;overflow:visible;z-index:-1;pointer-events:none`;
+  host.appendChild(copy);document.body.appendChild(host);
+  const image=await window.html2canvas(copy,{width:W,height:H,scale:1,windowWidth:Math.max(innerWidth,W),windowHeight:Math.max(innerHeight,H),scrollX:0,scrollY:0,backgroundColor:null,useCORS:true});
+  const blob=await new Promise((resolve,reject)=>image.toBlob(value=>value?resolve(value):reject(new Error('Não foi possível criar o arquivo PNG')),'image/png'));
+  const url=URL.createObjectURL(blob),link=document.createElement('a'),name=(B.name||'quadro-de-pistas').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9_-]+/gi,'-').replace(/^-|-$/g,'').toLowerCase()||'quadro-de-pistas';
+  link.href=url;link.download=`${name}.png`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);say('Imagem PNG baixada');
+ }catch(error){console.error('Falha ao exportar o quadro de pistas:',error);say('Não foi possível exportar. Verifique a conexão e tente novamente.');}
+ finally{host?.remove();button.disabled=false;button.textContent=oldLabel}
+}
+on('noteExport',exportBoard);
 vp.addEventListener('dragover',e=>e.preventDefault());
 vp.addEventListener('drop',e=>{e.preventDefault();if(ready)addImgs([...e.dataTransfer.files])});
 document.addEventListener('paste',e=>{if(!ready||win.hidden||$('noteBoardPanel').hidden||e.target.matches('textarea,input'))return;const f=[...(e.clipboardData?.files||[])];if(f.length){e.preventDefault();addImgs(f)}});
