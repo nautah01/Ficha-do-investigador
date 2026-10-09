@@ -133,6 +133,8 @@ async function exportBoard(){
   }
   const copy=board.cloneNode(true);
   copy.style.transform='none';copy.style.position='relative';copy.style.left='0';copy.style.top='0';copy.style.width=W+'px';copy.style.height=H+'px';
+  copy.style.backgroundColor='#a46d4c';copy.style.backgroundImage='radial-gradient(ellipse at 48% 42%,rgba(233,185,136,.22),transparent 72%),radial-gradient(rgba(75,37,23,.2) .7px,transparent 1px),radial-gradient(rgba(239,195,149,.12) .65px,transparent 1px)';copy.style.backgroundSize='100% 100%,9px 9px,13px 13px';
+  [copy,...copy.querySelectorAll('*')].forEach(node=>{node.style.setProperty('box-shadow','none','important');node.style.setProperty('filter','none','important');node.style.setProperty('text-shadow','none','important')});
   copy.querySelectorAll('.nc').forEach(card=>{card.classList.remove('sel','one','pick','new');card.querySelector('.rz')?.remove()});
   copy.querySelectorAll('.lsel').forEach(line=>line.classList.remove('lsel'));
   const sourceControls=board.querySelectorAll('textarea,input'),copyControls=copy.querySelectorAll('textarea,input');
@@ -141,8 +143,21 @@ async function exportBoard(){
   sourceCanvases.forEach((canvas,index)=>{const target=copyCanvases[index];if(!target)return;target.width=canvas.width;target.height=canvas.height;target.getContext('2d').drawImage(canvas,0,0)});
   host=document.createElement('div');host.style.cssText=`position:absolute;left:0;top:0;width:${W}px;height:${H}px;overflow:visible;z-index:-1;pointer-events:none`;
   host.appendChild(copy);document.body.appendChild(host);
-  const image=await window.html2canvas(copy,{width:W,height:H,scale:1,windowWidth:Math.max(innerWidth,W),windowHeight:Math.max(innerHeight,H),scrollX:0,scrollY:0,backgroundColor:null,useCORS:true});
-  const blob=await new Promise((resolve,reject)=>image.toBlob(value=>value?resolve(value):reject(new Error('Não foi possível criar o arquivo PNG')),'image/png'));
+  const photoPins=[...copy.querySelectorAll('.nc.img')].map(card=>({x:parseFloat(card.style.left)||0,y:parseFloat(card.style.top)||0,w:card.offsetWidth,h:card.offsetHeight,r:parseFloat(card.style.getPropertyValue('--r'))||0}));
+  const boardImage=await window.html2canvas(copy,{width:W,height:H,scale:1.5,windowWidth:Math.max(innerWidth,W),windowHeight:Math.max(innerHeight,H),scrollX:0,scrollY:0,backgroundColor:null,useCORS:true});
+  const scale=1.5,frame=64,finished=document.createElement('canvas');finished.width=(W+frame*2)*scale;finished.height=(H+frame*2)*scale;
+  const paint=finished.getContext('2d');paint.scale(scale,scale);
+  const totalW=W+frame*2,totalH=H+frame*2;
+  paint.fillStyle='#21140e';paint.fillRect(0,0,totalW,totalH);
+  const rail=(x,y,w,h,vertical=false)=>{const g=paint.createLinearGradient(vertical?x:x,y,vertical?x+w:x,vertical?y:y+h);g.addColorStop(0,'#4a2a1a');g.addColorStop(.16,'#795034');g.addColorStop(.48,'#986744');g.addColorStop(.78,'#70472f');g.addColorStop(1,'#3a2116');paint.fillStyle=g;paint.fillRect(x,y,w,h)};
+  rail(12,12,totalW-24,48);rail(12,H+frame,totalW-24,48);rail(12,60,48,H,true);rail(W+frame,60,48,H,true);
+  const grain=(horizontal,y0,y1)=>{paint.save();paint.beginPath();if(horizontal){paint.rect(12,y0,totalW-24,y1-y0)}else{paint.rect(y0,60,y1-y0,H)}paint.clip();for(let i=0;i<22;i++){const pos=horizontal?y0+4+(i*17)%(y1-y0-5):y0+4+(i*13)%(y1-y0-5);paint.beginPath();if(horizontal){paint.moveTo(14,pos);paint.bezierCurveTo(totalW*.28,pos+(i%3-1)*3,totalW*.66,pos+(i%4-2)*2,totalW-14,pos+(i%2?2:-2))}else{paint.moveTo(pos,62);paint.bezierCurveTo(pos+(i%3-1)*2,H*.35,pos+(i%4-2)*3,H*.68,pos+(i%2?2:-2),H+frame-2)}paint.strokeStyle=i%3?'rgba(35,18,11,.2)':'rgba(239,194,145,.17)';paint.lineWidth=i%4===0?2:1;paint.stroke()}paint.restore()};
+  grain(true,12,60);grain(true,H+frame,totalH-12);grain(false,12,60);grain(false,W+frame,totalW-12);
+  paint.strokeStyle='rgba(20,12,8,.9)';paint.lineWidth=3;paint.strokeRect(8,8,totalW-16,totalH-16);paint.strokeStyle='rgba(225,182,128,.55)';paint.lineWidth=2;paint.strokeRect(54,54,W+20,H+20);
+  paint.drawImage(boardImage,frame,frame,W,H);
+  paint.strokeStyle='rgba(35,19,12,.8)';paint.lineWidth=5;paint.strokeRect(frame,frame,W,H);paint.strokeStyle='rgba(238,199,148,.42)';paint.lineWidth=1;paint.strokeRect(frame+5,frame+5,W-10,H-10);
+  photoPins.forEach(pin=>{const angle=pin.r*Math.PI/180;paint.save();paint.translate(frame+pin.x+pin.w/2,frame+pin.y+pin.h/2);paint.rotate(angle);const y=-pin.h/2+12;paint.beginPath();paint.arc(0,y,7,0,Math.PI*2);paint.fillStyle='#321812';paint.fill();paint.beginPath();paint.arc(0,y,5.5,0,Math.PI*2);paint.fillStyle='#9d2920';paint.fill();paint.beginPath();paint.arc(-1.5,y-1.7,1.5,0,Math.PI*2);paint.fillStyle='rgba(255,225,190,.75)';paint.fill();paint.restore()});
+  const blob=await new Promise((resolve,reject)=>finished.toBlob(value=>value?resolve(value):reject(new Error('Não foi possível criar o arquivo PNG')),'image/png'));
   const url=URL.createObjectURL(blob),link=document.createElement('a'),name=(B.name||'quadro-de-pistas').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9_-]+/gi,'-').replace(/^-|-$/g,'').toLowerCase()||'quadro-de-pistas';
   link.href=url;link.download=`${name}.png`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);say('Imagem PNG baixada');
  }catch(error){console.error('Falha ao exportar o quadro de pistas:',error);say('Não foi possível exportar. Verifique a conexão e tente novamente.');}

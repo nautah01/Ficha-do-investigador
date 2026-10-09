@@ -438,7 +438,21 @@ const BG={
   {id:'met',n:'Igreja Metodista',sk:['Persuasão','Primeiros Socorros'],t:'Aprendeu a consolar e a cuidar dos doentes de sua comunidade.'},
   {id:'ord',n:'Ordem monástica',sk:['Usar Biblioteca','Ocultismo'],t:'Passou anos copiando manuscritos num mosteiro, entre textos que a Igreja guarda a sete chaves.'},
   {id:'mis',n:'Missões no exterior',sk:['Sobrevivência','Antropologia'],t:'Levou a fé a terras distantes e voltou com perguntas novas.'}],
-  pool:['Psicologia','Persuasão','História','Ocultismo','Língua (Latim)','Primeiros Socorros','Antropologia','Usar Biblioteca','Escutar']}
+  pool:['Psicologia','Persuasão','História','Ocultismo','Língua (Latim)','Primeiros Socorros','Antropologia','Usar Biblioteca','Escutar']},
+ 'Ocultista':{q:'O que despertou seu interesse pelo oculto?',kind:'Origem',o:[
+  {id:'family',n:'Família de ocultistas',sk:['Ocultismo','História'],t:'Cresceu entre símbolos, livros e rituais de família; alguns segredos foram passados como herança.'},
+  {id:'forbidden',n:'Achado que não devia',sk:['Usar Biblioteca','Ocultismo'],t:'Encontrou um objeto ou manuscrito que abriu uma porta para perguntas que era melhor não fazer.'},
+  {id:'society',n:'Sociedade secreta',sk:['Persuasão','Língua (Latim)'],t:'Foi iniciado numa sociedade que estuda aquilo que o mundo prefere tratar como superstição.'},
+  {id:'survivor',n:'Sobreviveu a um ritual',sk:['Psicologia','Ocultismo'],t:'Sobreviveu a uma cerimônia inexplicável e desde então tenta entender o que aconteceu.'},
+  {id:'research',n:'Pesquisa acadêmica',sk:['Antropologia','Usar Biblioteca'],t:'Começou pesquisando crenças antigas, até que as fontes passaram a responder de formas impossíveis.'}],
+  pool:['Ocultismo','História','Antropologia','Usar Biblioteca','Psicologia','Língua (Latim)','Ciência (Astronomia)','Persuasão','Encontrar']},
+ 'Criminoso':{q:'Você já foi preso?',kind:'Passado criminal',o:[
+  {id:'served',n:'Sim, cumpri pena',sk:['Lutar (Brigar)','Psicologia'],t:'Cumpriu pena e aprendeu a sobreviver numa cela sem perder todos os contatos.'},
+  {id:'escaped',n:'Sim, mas escapei',sk:['Furtividade','Escalar'],t:'Foi preso, mas conseguiu fugir; desde então, vive olhando por cima do ombro.'},
+  {id:'never',n:'Nunca fui pego',sk:['Disfarce','Furtividade'],t:'Nunca passou pela cadeia e tem orgulho de não deixar rastros.'},
+  {id:'wrongful',n:'Fui preso injustamente',sk:['Direito','Lábia'],t:'Foi detido por um crime que não cometeu e aprendeu a desconfiar da lei.'},
+  {id:'reformatory',n:'Passei por um reformatório',sk:['Intimidação','Psicologia'],t:'Cresceu num reformatório, onde aprendeu cedo a ler as pessoas e se defender.'}],
+  pool:['Furtividade','Disfarce','Lábia','Direito','Lutar (Brigar)','Intimidação','Escalar','Encontrar','Psicologia']}
 };
 /* escolha feita no seletor (ocupacoes.js): {p:{occ,pick},s:{occ,pick}}; pick = {id} | {none:true} | {custom:true,name,sk:[...]} | vazio = sortear */
 function bgFor(slot,oo){
