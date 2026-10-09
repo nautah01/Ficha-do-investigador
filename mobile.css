@@ -20,3 +20,50 @@ body.mobile .note-footer #noteHint{display:none}
 @media print{#mobTabs{display:none!important}}
 body.mobile h1~p{padding-right:52px}
 body.mobile .note-tools{-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);mask-image:linear-gradient(90deg,#000 90%,transparent)}
+
+/* Painel e fichas mais compactos sem reduzir os campos abaixo de uma área tocável. */
+body.mobile{padding:8px 8px calc(62px + env(safe-area-inset-bottom))}
+body.mobile h1{font-size:1.34rem;line-height:1.15;letter-spacing:.7px}
+body.mobile .tag{margin:3px 0 6px;font-size:.78rem}
+body.mobile .quote{margin-bottom:8px;font-size:.74rem;line-height:1.35}
+body.mobile .bar{gap:7px;margin-bottom:9px;padding:7px 8px 8px;border-radius:8px}
+body.mobile .bar-head{gap:5px;padding-bottom:6px}
+body.mobile .bar-title{gap:2px 8px}
+body.mobile .bar-title b{font-size:.84rem}
+body.mobile .bar-note{font-size:.68rem;line-height:1.25}
+body.mobile .tools{flex-wrap:nowrap;max-width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
+body.mobile .tools::-webkit-scrollbar{display:none}
+body.mobile .tools button.chip{flex:0 0 auto;min-height:34px;padding:3px 8px;font-size:.74rem}
+body.mobile .gen{gap:6px}
+body.mobile .gen label{gap:2px;font-size:.74rem}
+body.mobile .gen select,body.mobile .gen input{height:40px;padding:5px 7px}
+body.mobile .gen button{height:40px;padding:0 8px;font-size:.82rem}
+body.mobile #go{padding:0 10px}
+body.mobile #desk{gap:9px;padding-bottom:14px}
+body.mobile #desk .win{border-radius:6px}
+body.mobile #desk .win-bar{padding:4px 5px 4px 14px}
+body.mobile #desk .win-bar button{width:34px;height:34px;font-size:.88rem}
+body.mobile #desk .win-body{padding:8px 9px 11px 17px}
+body.mobile #desk h2{margin:2px 0;font-size:1.02rem;padding-bottom:4px}
+body.mobile #desk h3{margin:8px 0 5px;padding-top:5px;font-size:.86rem}
+body.mobile #desk .stats{gap:4px;margin:8px 0}
+body.mobile #desk .stats div{padding:4px 2px;border-radius:5px}
+body.mobile #desk .stats b{font-size:.65rem;letter-spacing:.5px}
+body.mobile #desk .stats .in{max-width:56px;padding:4px 2px}
+body.mobile #desk .sk{gap:1px 10px;font-size:.78rem}
+body.mobile #desk .sk span{gap:3px;padding:2px 0}
+body.mobile #desk .sk small{font-size:.62rem}
+body.mobile #desk .der{gap:5px 8px;margin-bottom:7px;padding:6px 7px;font-size:.77rem}
+body.mobile #desk .sub{font-size:.76rem}
+body.mobile #desk .badge{gap:5px;font-size:.66rem}
+body.mobile #desk .add{gap:4px;margin-top:6px}
+body.mobile #desk .add .in{min-width:0}
+body.mobile #mobTabs{gap:2px;padding:4px 5px calc(4px + env(safe-area-inset-bottom))}
+body.mobile #mobTabs button{gap:0;padding:4px 2px;font-size:.66rem}
+body.mobile #mobTabs button span{font-size:1.12rem}
+body.mobile .note,body.mobile .cem{bottom:calc(54px + env(safe-area-inset-bottom))!important}
+@media(max-width:360px){
+ body.mobile .tools button.chip{font-size:.7rem;padding-right:7px;padding-left:7px}
+ body.mobile #desk .win-bar button{width:31px;height:32px}
+ body.mobile #desk .win-body{padding-right:7px}
+}

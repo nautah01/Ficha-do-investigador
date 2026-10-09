@@ -70,3 +70,22 @@ body.mobile #desk .burb{display:inline-block}
 .stone-act{position:relative;z-index:2;opacity:.72}
 .cem-dlg{background:linear-gradient(145deg,#1b2925,#0e1715);border-color:rgba(216,197,138,.35);box-shadow:0 20px 60px rgba(0,0,0,.7),inset 0 0 0 1px rgba(216,197,138,.06)}
 @media (prefers-reduced-motion:reduce){.stone{transition:none}.stone:hover{transform:none}}
+.cem{background:var(--cem-panel);border-color:rgba(var(--gr2),.65)}
+.cem-bar{background:linear-gradient(115deg,var(--cem-panel-hi),var(--cem-panel-mid) 58%,var(--cem-panel-hi));color:var(--ink2)}
+.cem-bar span::before{color:var(--head)}
+.cem-list{background:radial-gradient(ellipse at 50% -10%,rgba(var(--cem-haze),.23),transparent 55%),radial-gradient(ellipse at 15% 78%,rgba(var(--cem-haze),.16),transparent 40%),linear-gradient(180deg,var(--cem-panel-hi),var(--cem-ground) 82%)}
+.cem-empty{color:var(--cem-empty)}
+.cem-foot{color:var(--muted2);background:linear-gradient(90deg,var(--cem-panel-hi),var(--cem-panel-mid));border-top-color:rgba(var(--gr2),.3)}
+.cem-foot button{color:var(--ink2);border-color:rgba(var(--gr),.45)}
+.stone{color:var(--cem-ink);background:radial-gradient(ellipse at 22% 13%,rgba(255,255,255,.47),transparent 38%),radial-gradient(ellipse at 83% 77%,rgba(34,38,33,.23),transparent 47%),repeating-linear-gradient(168deg,transparent 0 19px,rgba(255,255,255,.035) 20px 21px),linear-gradient(160deg,var(--cem-stone-hi) 0%,var(--cem-stone-mid) 34%,var(--cem-stone-low) 72%,var(--cem-stone-dark) 100%)}
+.stone::before{background:radial-gradient(ellipse at 15% 55%,var(--cem-grass-a) 0 25%,transparent 62%),radial-gradient(ellipse at 54% 75%,var(--cem-grass-b) 0 31%,transparent 65%),radial-gradient(ellipse at 88% 55%,var(--cem-grass-c) 0 26%,transparent 60%),linear-gradient(var(--cem-grass-deep),var(--cem-grass-base))}
+.stone::after{color:var(--cem-etch)}
+.stone h3,.stone-act button{color:var(--cem-ink)}
+.stone h3::before{color:var(--cem-muted)}
+.stone h3::after{background:linear-gradient(90deg,transparent,var(--cem-etch),transparent)}
+.stone-age,.stone-cause{color:var(--cem-muted)}
+.stone blockquote{color:var(--cem-muted);border-top-color:var(--cem-etch)}
+.stone-act button{background:rgba(255,255,255,.14);border-color:var(--cem-etch)}
+.stone-act button:hover{background:rgba(0,0,0,.12)}
+.stone-photo{background:var(--cem-photo-bg);color:var(--cem-photo-mark);border-color:var(--cem-frame);box-shadow:0 0 0 2px var(--cem-frame),inset 0 0 10px rgba(0,0,0,.55),0 4px 8px rgba(0,0,0,.38)}
+.cem-dlg{background:linear-gradient(145deg,var(--cem-panel-hi),var(--cem-panel));border-color:rgba(var(--gr2),.5)}

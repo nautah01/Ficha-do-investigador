@@ -166,7 +166,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 @media (prefers-reduced-motion:reduce){.atmo .fog,h1{animation:none}}
 .hist{margin:2px 0 6px}.hist .orig{font-size:.88rem;margin:0 0 3px}.hist .orig small{color:var(--muted)}
 .hist .bk{text-align:left;display:block;width:100%;min-height:64px;margin-top:4px;padding:6px 8px;resize:vertical;font:inherit;font-size:.9rem;line-height:1.4}
-</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"></head><body>
+</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"></head><body>
 <div class="top">
 <h1>Gerador de Investigadores</h1>
 <p class="tag">Chamado de Cthulhu 7ª ed. · Década de 1920 · fichas offline · notas salvas no navegador</p>
@@ -237,7 +237,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <path fill="url(#tg2)" style="stroke:rgba(var(--glow),.18)" stroke-width="1" d="M110 640C150 560 235 520 232 440C229 380 186 366 198 322C204 300 226 296 236 308C220 308 216 320 222 334C234 366 280 386 276 446C272 530 230 590 290 640Z"/>
 <path fill="url(#tg2)" style="stroke:rgba(var(--glow),.14)" stroke-width="1" d="M250 640C275 600 330 590 338 548C344 516 322 506 332 484C338 472 352 472 358 480C348 480 346 488 350 496C358 514 384 524 380 552C376 590 346 616 372 640Z"/>
 </svg><div class="fog f2"></div></div>
-<button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique na lua para trocar o tema"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i></span></button>
+<button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique na lua para trocar o tema"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <script>
 const d6=()=>1+Math.floor(Math.random()*6),r=n=>Math.floor(Math.random()*n),pick=a=>a[r(a.length)];
 const MAXA=90,MAXS=75; /* limites dos valores aleatórios: atributo e perícia */
@@ -377,8 +377,6 @@ const POLICE={q:'Em que cidade você serve (ou serviu)?',kind:'Cidade',o:[
  {id:'sf',n:'São Francisco',sk:['Persuasão','Encontrar'],t:'Trabalhou entre os cais, as brumas e os bairros misteriosos de São Francisco.'},
  {id:'lon',n:'Scotland Yard (Londres)',sk:['Direito','Encontrar'],t:'Passou pela Scotland Yard, entre névoa e casos que não fecham.'}],
  pool:['Direito','Lutar (Brigar)','Armas de Fogo (Pistolas)','Encontrar','Escutar','Psicologia','Intimidação','Persuasão','Dirigir Auto','Furtividade','Primeiros Socorros']};
-const CRIMINAL_ORIGIN_POOL=[...new Set(['Encontrar','Furtividade',...SOC,'Psicologia',...CR.split('|'),'Dirigir Auto','Esquivar'])];
-const OCCULTIST_ORIGIN_POOL=[...new Set(['Antropologia','História','Usar Biblioteca','Ocultismo',...LANGS.map(n=>'Língua ('+n+')'),'Ciência (Astronomia)','Persuasão',...COMMON])];
 const BG={
  'Soldado':{q:'Em que conflito você serviu?',kind:'Conflito',o:WARS,pool:WAR_POOL},
  'Oficial Militar':{q:'Em que conflito você serviu?',kind:'Conflito',o:WARS,pool:WAR_POOL},
@@ -416,28 +414,17 @@ const BG={
   {id:'met',n:'Igreja Metodista',sk:['Persuasão','Primeiros Socorros'],t:'Aprendeu a consolar e a cuidar dos doentes de sua comunidade.'},
   {id:'ord',n:'Ordem monástica',sk:['Usar Biblioteca','Ocultismo'],t:'Passou anos copiando manuscritos num mosteiro, entre textos que a Igreja guarda a sete chaves.'},
   {id:'mis',n:'Missões no exterior',sk:['Sobrevivência','Antropologia'],t:'Levou a fé a terras distantes e voltou com perguntas novas.'}],
-  pool:['Psicologia','Persuasão','História','Ocultismo','Língua (Latim)','Primeiros Socorros','Antropologia','Usar Biblioteca','Escutar']},
- 'Criminoso':{q:'Qual é a sua situação com a lei?',kind:'Antecedente criminal',o:[
-  {id:'preso',n:'Já foi preso',sk:['Direito','Lutar (Brigar)'],t:'Cumpriu pena e aprendeu a sobreviver atrás das grades.'},
-  {id:'livre',n:'Nunca foi condenado',sk:['Disfarce','Furtividade'],t:'Sempre escapou antes que a polícia pudesse provar alguma coisa.'},
-  {id:'foragido',n:'Está foragido',sk:['Furtividade','Sobrevivência'],t:'Vive mudando de esconderijo e evitando qualquer rosto conhecido.'},
-  {id:'informante',n:'Virou informante',sk:['Lábia','Psicologia'],t:'Troca informações com a polícia, mas nunca revela de que lado realmente está.'}],pool:CRIMINAL_ORIGIN_POOL},
- 'Ocultista':{q:'Onde começou seu interesse pelo oculto?',kind:'Origem ocultista',o:[
-  {id:'biblioteca',n:'Biblioteca proibida',sk:['História','Usar Biblioteca'],t:'Encontrou registros que deveriam ter permanecido trancados e passou a procurar respostas.'},
-  {id:'culto',n:'Culto secreto',sk:['Persuasão','Ocultismo'],t:'Aprendeu ritos e símbolos entre pessoas que tratavam o impossível como verdade.'},
-  {id:'grimorio',n:'Grimório herdado',sk:['Antropologia','História'],t:'Recebeu um livro antigo da família, cheio de anotações e avisos ignorados.'},
-  {id:'ritual',n:'Ritual ou contato sobrenatural',sk:['Ocultismo','Ciência (Astronomia)'],t:'Presenciou algo inexplicável e desde então tenta compreender o que viu.'},
-  {id:'familia',n:'Família de ocultistas',sk:['Antropologia','Ocultismo'],t:'Cresceu cercado por histórias, rituais e segredos transmitidos em família.'},
-  {id:'achado',n:'Achado que não devia',sk:['Usar Biblioteca','Ciência (Astronomia)'],t:'Encontrou um objeto ou manuscrito que revelou uma realidade que preferia desconhecer.'}],pool:OCCULTIST_ORIGIN_POOL}
+  pool:['Psicologia','Persuasão','História','Ocultismo','Língua (Latim)','Primeiros Socorros','Antropologia','Usar Biblioteca','Escutar']}
 };
 /* escolha feita no seletor (ocupacoes.js): {p:{occ,pick},s:{occ,pick}}; pick = {id} | {none:true} | {custom:true,name,sk:[...]} | vazio = sortear */
 function bgFor(slot,oo){
  const B=BG[oo.n];if(!B)return null;const pk=(window.BGSEL||{})[slot],ch=pk&&pk.occ===oo.n?pk.pick:null;
  if(ch&&ch.none)return null;
- if(ch&&ch.custom){const nm=(ch.name||'').trim()||B.kind;return{kind:B.kind,n:nm,sk:(ch.sk||[]).filter(x=>x in BASE||/^Língua \(.+\)$/.test(x)).slice(0,2),t:B.kind+': '+nm+'.'}}
+ if(ch&&ch.custom){const nm=(ch.name||'').trim()||B.kind;return{kind:B.kind,n:nm,sk:(ch.sk||[]).filter(x=>x in BASE).slice(0,2),t:B.kind+': '+nm+'.'}}
  const op=(ch&&B.o.find(x=>x.id===ch.id))||pick(B.o);return{kind:B.kind,n:op.n,sk:op.sk,t:op.t};
 }
 const histTxt=p=>(p.hist&&p.hist.length||p.back)?'Histórico: '+(p.hist||[]).map(h=>`${h.kind}: ${h.n}${h.sk&&h.sk.length?' (+10 '+h.sk.join(', +10 ')+')':''}`).join(' | ')+(p.back?'\n'+p.back:''):'';
+window.secondaryBlocked=(main,secondary)=>main===secondary||(main==='Soldado'&&secondary==='Oficial Militar');
 function gen(sel,sel2){
  const[selN,selSub]=String(sel).split('::'),o=sel==='*'?pick(OCC):OCC.find(x=>x.n===selN),oT=tokens(o,selSub);
  const c={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
@@ -447,8 +434,8 @@ function gen(sel,sel2){
  const res=(t,keep)=>{let op=(t==='@soc'?SOC.join('|'):t==='@any'?COMMON.join('|'):t).split('|').map(x=>x==='@lang'?'Língua ('+lang+')':x);
   if(!keep)op=op.filter(x=>!used.has(x));if(!op.length)op=ALL.filter(x=>!used.has(x));const n=pick(op);used.add(n);return n};
  const isOcc2=sel2.startsWith('occ:'),s2N=isOcc2?sel2.slice(4).split('::')[0]:'';
- const requestedSec=sel2==='*'?pick(OCC.filter(x=>x.n!==o.n)):isOcc2?OCC.find(x=>x.n===s2N):null;
- const sec=requestedSec&&requestedSec.n!==o.n?requestedSec:null,secT=sec?tokens(sec):null;
+ const requestedSec=sel2==='*'?pick(OCC.filter(x=>!window.secondaryBlocked(o.n,x.n))):isOcc2?OCC.find(x=>x.n===s2N):null;
+ const sec=requestedSec&&!window.secondaryBlocked(o.n,requestedSec.n)?requestedSec:null,secT=sec?tokens(sec):null;
  const occS=oT.t.map(t=>{const k=t[0]==='!',n=res(k?t.slice(1):t);if(k)keys.push(n);return n});
  const s2=[],keys2=[];
  if(sec){const hasK=secT.t.some(t=>t[0]==='!');secT.t.forEach((t,i)=>{if(t==='@any')return;const n=res(t.replace(/^!/,''),true);if(!s2.includes(n))s2.push(n);if((t[0]==='!'||(!hasK&&i===0))&&!keys2.includes(n))keys2.push(n)})}

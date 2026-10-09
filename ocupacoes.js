@@ -44,8 +44,8 @@ function mount(selId,kind,title){
   const sync=()=>{const[e,t]=btnText(sel);b.innerHTML=`<span class="pe">${e}</span><span class="pt">${esc(t)}</span><span class="pc">▾</span>`};
   const update=()=>{
    if(selId==='occ'){
-    const primary=occName(sel.value);
-    if(primary&&occName(sel2.value)===primary){sel2.value='';sel2.dispatchEvent(new Event('change',{bubbles:true}))}
+    const primary=occName(sel.value),secondary=occName(sel2.value);
+    if(secondary&&window.secondaryBlocked(primary,secondary)){sel2.value='';sel2.dispatchEvent(new Event('change',{bubbles:true}))}
    }
    sync();
   };
@@ -61,7 +61,7 @@ function openPick(c){
 }
 function list(){
  const c=ctx,t=norm(q.value.trim());let src=items(c.kind==='occ'?'occ':'sec');
- if(c.kind==='sec'){const primary=occName(document.getElementById('occ').value);src=src.filter(i=>i.n!==primary)}
+  if(c.kind==='sec'){const primary=occName(document.getElementById('occ').value);src=src.filter(i=>!window.secondaryBlocked(primary,i.n))}
  return src.filter(i=>(!cat||meta(i.n)[1]===cat)&&(!t||norm(i.n).includes(t)||skills(i.o).all.some(s=>norm(s).includes(t)))).sort((a,b)=>a.n.localeCompare(b.n,'pt'));
 }
 function card(v,e,name,sub,tags,full,on,idx,nsub,bg){

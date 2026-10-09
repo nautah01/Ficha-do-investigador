@@ -49,3 +49,55 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 @media (max-width:640px){.moon{top:8px;right:10px;width:46px}h1{padding-right:58px}}
 @media (prefers-reduced-motion:reduce){.moon,.moon.spin{animation:none}html.tswap *,html.tswap *::before,html.tswap *::after{transition:none!important}}
 }
+
+@media screen{
+/* Paleta das lápides, aplicada também às exportações. */
+:root{
+ --cem-panel:#101a17;--cem-panel-hi:#172522;--cem-panel-mid:#202c26;--cem-ground:#0c1513;--cem-haze:105,133,104;--cem-empty:#c0b58e;
+ --cem-stone-hi:#d0d0c5;--cem-stone-mid:#a9aa9f;--cem-stone-low:#888a80;--cem-stone-dark:#6d7169;
+ --cem-grass-a:#557047;--cem-grass-b:#334a2d;--cem-grass-c:#526a3e;--cem-grass-deep:#243923;--cem-grass-base:#152319;
+ --cem-ink:#292b28;--cem-muted:#3d3e39;--cem-frame:#c9b36a;--cem-photo-bg:#555b53;--cem-photo-mark:#d3d4cb;
+ --cem-edge:rgba(241,235,209,.42);--cem-etch:rgba(48,53,46,.22)
+}
+:root[data-theme=blue]{
+ --cem-panel:#101b28;--cem-panel-hi:#17283a;--cem-panel-mid:#22364b;--cem-ground:#0a1420;--cem-haze:92,124,162;--cem-empty:#b4c4d8;
+ --cem-stone-hi:#d0d5dc;--cem-stone-mid:#a0aab7;--cem-stone-low:#788595;--cem-stone-dark:#596878;
+ --cem-grass-a:#405c59;--cem-grass-b:#304848;--cem-grass-c:#4a6660;--cem-grass-deep:#213a3c;--cem-grass-base:#14292d;
+ --cem-ink:#242a30;--cem-muted:#3e4853;--cem-frame:#a8c3ea;--cem-photo-bg:#4e5b68;--cem-photo-mark:#d7e2ef;
+ --cem-edge:rgba(232,240,250,.44);--cem-etch:rgba(45,57,69,.24)
+}
+:root[data-theme=red]{
+ --cem-panel:#3b2422;--cem-panel-hi:#50302d;--cem-panel-mid:#66403b;--cem-ground:#2c1b1a;--cem-haze:155,88,78;--cem-empty:#ead0c4;
+ --cem-stone-hi:#e4d2c8;--cem-stone-mid:#c5aaa0;--cem-stone-low:#a5847c;--cem-stone-dark:#846963;
+ --cem-grass-a:#61704b;--cem-grass-b:#465437;--cem-grass-c:#6b7048;--cem-grass-deep:#34402d;--cem-grass-base:#252e22;
+ --cem-ink:#3a2926;--cem-muted:#63423b;--cem-frame:#b5524a;--cem-photo-bg:#66534d;--cem-photo-mark:#f0ddd4;
+ --cem-edge:rgba(255,246,242,.5);--cem-etch:rgba(70,44,39,.24)
+}
+:root[data-theme=paper]{
+ --scheme:light;--k0:#f3e9cd;--k1:#fff9e8;--k2:#f8f0da;--k3:#f2e7c9;--k4:#eadbb3;--k5:#e2cf96;--k6:#d4bd78;
+ --card:#fff9e8;--txt:#342b1d;--muted:#756847;--head:#80600d;--rule:rgba(148,112,27,.42);--line:rgba(150,116,32,.34);
+ --field:#fff9e9;--field-ink:#332918;--spine1:#70451d;--spine2:#9b6727;--spine3:#4c321d;--stamp:rgba(128,96,13,.4);--warn:#8e641b;--gold:#a77c20;
+ --gr:158,119,25;--gr2:137,101,22;--glow:210,174,70;--glow2:215,192,124;--redglow:130,72,44;--vig:222,207,165;--sh:132,99,25;--ov:132,99,25;
+ --ink2:#59451c;--quote:#76602d;--accent:#9a7622;--muted2:#857347;
+ --b1:#8c6420;--b2:#694b1a;--b3:#a27829;--b4:#76541d;--bb:#9a7022;--btnt:#fff8e5;
+ --vp:#eee2c3;--board:#fff7e2;--zoombg:242,231,201;--onhead:#fff8e5;--tab1:#ead693;--tab2:#b99643;--tab3:#785b20;--ok:#68804a;--warn2:#9b5d30;
+ --moon1:#fff3be;--moon2:#e6c96a;--moon3:#a77c20;--moonglow:220,179,66;--crater:135,99,23;
+ --cem-panel:#eee1be;--cem-panel-hi:#f7edcf;--cem-panel-mid:#e5d4a7;--cem-ground:#e9dcba;--cem-haze:169,139,66;--cem-empty:#765e2a;
+ --cem-stone-hi:#e8dfc9;--cem-stone-mid:#c8b991;--cem-stone-low:#a6956e;--cem-stone-dark:#897751;
+ --cem-grass-a:#87904a;--cem-grass-b:#68743a;--cem-grass-c:#92904a;--cem-grass-deep:#596234;--cem-grass-base:#454d2a;
+ --cem-ink:#392f1c;--cem-muted:#665533;--cem-frame:#b38b26;--cem-photo-bg:#80744f;--cem-photo-mark:#f7edcf;
+ --cem-edge:rgba(255,250,232,.65);--cem-etch:rgba(72,59,31,.24)
+}
+:root[data-theme=paper] body{
+ background:repeating-linear-gradient(180deg,#fcf6e4 0 27px,rgba(196,156,44,.28) 28px,#fcf6e4 29px),linear-gradient(180deg,#fff9e8,#f0e4c3);
+ background-repeat:repeat;background-attachment:fixed;background-color:#f0e4c3
+}
+:root[data-theme=paper] body::before{background:linear-gradient(90deg,rgba(126,91,23,.045),transparent 13%,transparent 87%,rgba(126,91,23,.045))}
+/* A lua ganha um aro e um brilho quando apontada, sem alterar o clique. */
+.moon{position:absolute}
+.moon::before{content:"";position:absolute;inset:-7px;border:1px solid rgba(var(--moonglow),.58);border-radius:50%;opacity:0;transform:scale(.88) rotate(-24deg);transition:opacity .24s ease,transform .35s ease;pointer-events:none}
+.moon::after{content:"✧";position:absolute;top:-5px;right:2px;color:var(--moon1);font:1rem/1 Georgia,serif;opacity:0;transform:scale(.45) rotate(-35deg);transition:opacity .2s ease,transform .3s ease;pointer-events:none}
+.moon:hover::before{opacity:1;transform:scale(1.04) rotate(8deg)}
+.moon:hover::after{opacity:1;transform:scale(1) rotate(0);filter:drop-shadow(0 0 5px rgba(var(--moonglow),.8))}
+}
+@media (prefers-reduced-motion:reduce){.moon::before,.moon::after{transition:none}}
