@@ -270,7 +270,6 @@ Object.keys(tabs).forEach(t=>$(t).onclick=()=>{
 });
 function openN(o){win.hidden=!o;btn.setAttribute('aria-pressed',o);if(o&&ready&&needFit&&!$('noteBoardPanel').hidden){needFit=false;applyView();if(!B.view&&B.items.length)fit(true)}}
 btn.onclick=()=>openN(win.hidden);$('noteX').onclick=()=>openN(false);$('noteMin').onclick=()=>win.classList.toggle('min');
-window.Notas={open:openN,tab:n=>$(n==='book'?'noteTextTab':'noteBoardTab').click()};
 const bar=win.querySelector('.note-bar');
 bar.addEventListener('dblclick',e=>{if(!e.target.closest('button'))win.classList.toggle('min')});
 bar.addEventListener('pointerdown',e=>{
@@ -281,11 +280,12 @@ bar.addEventListener('pointerdown',e=>{
 });
 Object.assign(win.style,{left:'24px',top:'80px',width:Math.min(1000,innerWidth-48)+'px',height:Math.min(660,innerHeight-110)+'px'});
 
-dbGet().then(v=>{
+const loaded=dbGet().then(v=>{
  DB=migrate(v);
  if(!D().entries.length)D().entries.push(newEntry('',''));
  if(!entry())D().cur=D().entries[0].id;
  openBoard(DB.cur,true);showEntry('page');ready=true;
  say(B.items.length?'Quadro carregado':'Quadro vazio');
 }).catch(()=>say('Este navegador não permite salvar as notas'));
+window.Notas={open:openN,tab:n=>$(n==='book'?'noteTextTab':'noteBoardTab').click(),async flush(){await loaded;if(!ready)throw new Error('As notas ainda não foram carregadas');clearTimeout(timer);B.view={...view};await dbSet(DB)}};
 })();

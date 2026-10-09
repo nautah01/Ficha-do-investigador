@@ -132,23 +132,23 @@ body.mobile #desk .der{gap:8px 10px}
 body.mobile #desk button.rmb{padding:4px 10px;font-size:.85rem}
 body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-size:.95rem}
 #printHost{display:none}
-.pdf-sheet{width:800px!important;min-width:0!important;max-width:none!important;overflow:visible!important;background:#f3e6c4!important;color:#2a2118!important;border:1px solid #b49a68!important;box-shadow:none!important}
-.pdf-sheet::before{width:7px;background:linear-gradient(#6e241f,#a33b32 42%,#6e241f)!important;box-shadow:2px 0 0 #39261c!important}
+.pdf-sheet{width:800px!important;min-width:0!important;max-width:none!important;overflow:visible!important;background:var(--card)!important;color:var(--txt)!important;border:1px solid var(--line)!important;box-shadow:none!important}
+.pdf-sheet::before{width:7px;background:linear-gradient(var(--spine1),var(--spine2) 42%,var(--spine1))!important;box-shadow:2px 0 0 var(--spine3)!important}
 .pdf-sheet .win-body{padding:10px 14px 12px 20px!important}
-.pdf-sheet h2{margin:0 0 3px!important;padding-bottom:4px!important;font-size:1.25rem!important;color:#2a2118!important;border-color:#b49a68!important}
-.pdf-sheet .sub{font-size:.72rem!important;color:#68583e!important}
+.pdf-sheet h2{margin:0 0 3px!important;padding-bottom:4px!important;font-size:1.25rem!important;color:var(--head)!important;border-color:var(--rule)!important}
+.pdf-sheet .sub{font-size:.72rem!important;color:var(--muted)!important}
 .pdf-sheet .stats{grid-template-columns:repeat(8,minmax(0,1fr));gap:3px;margin:6px 0}
-.pdf-sheet .stats div{padding:3px 2px;background:#e7d7b2!important;border-color:#ae9562!important;color:#2a2118!important;box-shadow:none}
-.pdf-sheet .stats b{font-size:.62rem;color:#694b23!important;letter-spacing:.2px}
-.pdf-sheet .stats small,.pdf-sheet .sk small{font-size:.58rem;color:#756344!important}
-.pdf-sheet .der{gap:3px 9px;margin-bottom:6px;padding:5px 7px;font-size:.7rem;background:#eee2c8!important;border-color:#cbbb96!important}
-.pdf-sheet .der b{color:#694b23!important}
-.pdf-sheet h3.st{margin:5px 0 3px!important;padding-bottom:2px!important;font-size:.73rem!important;letter-spacing:.5px;color:#694b23!important;border-color:#cbbb96!important}
+.pdf-sheet .stats div{padding:3px 2px;background:var(--k5)!important;border-color:var(--gold)!important;color:var(--btnt)!important;box-shadow:none}
+.pdf-sheet .stats b{font-size:.62rem;color:var(--head)!important;letter-spacing:.2px}
+.pdf-sheet .stats small,.pdf-sheet .sk small{font-size:.58rem;color:var(--muted2)!important}
+.pdf-sheet .der{gap:3px 9px;margin-bottom:6px;padding:5px 7px;font-size:.7rem;background:rgba(var(--gr),.06)!important;border-color:var(--line)!important}
+.pdf-sheet .der b{color:var(--head)!important}
+.pdf-sheet h3.st{margin:5px 0 3px!important;padding-bottom:2px!important;font-size:.73rem!important;letter-spacing:.5px;color:var(--head)!important;border-color:var(--line)!important}
 .pdf-sheet .pdf-history{display:grid;grid-template-columns:1fr 1.3fr;gap:3px 12px;align-items:start;font-size:.68rem;line-height:1.2}
-.pdf-sheet .pdf-history .orig{margin:0 0 2px;font-size:.68rem;line-height:1.2}
+.pdf-sheet .pdf-history .orig{margin:0 0 2px;font-size:.68rem;line-height:1.2;color:var(--muted)}
 .pdf-sheet .pdf-back{font-size:.68rem;line-height:1.2;white-space:pre-wrap;overflow-wrap:anywhere}
 .pdf-sheet .sk{grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 9px;font-size:.68rem;line-height:1.15}
-.pdf-sheet .sk span{min-width:0;align-items:flex-start;gap:3px;padding:1px 0;border-color:#d2c4a4}
+.pdf-sheet .sk span{min-width:0;align-items:flex-start;gap:3px;padding:1px 0;border-color:var(--line)}
 .pdf-sheet .sk i{font-size:.65rem}
 .pdf-sheet .sk small{font-size:.55rem}
 @media print{
@@ -736,13 +736,16 @@ function sheetHTML(p){
    ${fl.length?`<h3 class="st" style="margin-top:14px">Perícias que não tenho (valor inicial)</h3><div class="sk">${rows(fl)}</div>`:''}
   </div></article>`;
 }
+const themeValue=(name,fallback)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim()||fallback;
+function applyPdfTheme(sheet){const root=getComputedStyle(document.documentElement);['--scheme','--card','--txt','--muted','--muted2','--head','--rule','--line','--k0','--k5','--gold','--btnt','--spine1','--spine2','--spine3','--gr'].forEach(name=>{const value=root.getPropertyValue(name).trim();if(value)sheet.style.setProperty(name,value)})}
+function cssRgb(value){const c=document.createElement('canvas').getContext('2d');c.fillStyle=value;c.fillRect(0,0,1,1);return Array.from(c.getImageData(0,0,1,1).data).slice(0,3)}
 /* Cada ficha ocupa uma única folha: o canvas inteiro é ajustado aos limites do A4. */
-function addCanvasToPdf(pdf,canvas,firstPage){
+function addCanvasToPdf(pdf,canvas,firstPage,pageRgb){
  if(!firstPage)pdf.addPage();
  const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),m=22;
  const scale=Math.min((pageW-m*2)/canvas.width,(pageH-m*2)/canvas.height);
  const w=canvas.width*scale,h=canvas.height*scale,x=(pageW-w)/2,y=(pageH-h)/2;
- pdf.setFillColor(243,230,196);pdf.rect(0,0,pageW,pageH,'F');
+ pdf.setFillColor(...pageRgb);pdf.rect(0,0,pageW,pageH,'F');
  pdf.addImage(canvas.toDataURL('image/jpeg',0.94),'JPEG',x,y,w,h);
 }
 async function savePdf(list,b){
@@ -754,14 +757,15 @@ async function savePdf(list,b){
   if(!window.jspdf)await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
   const {jsPDF}=window.jspdf,pdf=new jsPDF({unit:'pt',format:'a4'});
   host=document.createElement('div');
-  host.style.cssText='position:fixed;left:-9000px;top:0;width:800px;background:#f3e6c4';
+  host.style.cssText=`position:fixed;left:-9000px;top:0;width:800px;background:${themeValue('--card','#0d1e1c')}`;
   document.body.appendChild(host);
   let first=true;
   for(const p of list){
    host.innerHTML=sheetHTML(p);
-   const root=host.firstChild;
-   const cv=await html2canvas(root,{scale:2,backgroundColor:'#f3e6c4',useCORS:true,windowWidth:800});
-   addCanvasToPdf(pdf,cv,first);first=false;
+   const root=host.firstChild;applyPdfTheme(root);
+   const cardBg=themeValue('--card','#0d1e1c'),pageBg=themeValue('--k0','#08100f');
+   const cv=await html2canvas(root,{scale:2,backgroundColor:cardBg,useCORS:true,windowWidth:800});
+   addCanvasToPdf(pdf,cv,first,cssRgb(pageBg));first=false;
   }
   const nm=(list.length===1?list[0].nome:'investigadores').replace(/[^\w\u00C0-\u017F -]/g,'').trim().replace(/\s+/g,'_')||'ficha';
   pdf.save(nm+'.pdf');
@@ -772,9 +776,10 @@ async function savePdf(list,b){
 function printFallback(list){
  const h=document.createElement('div');h.id='printHost';h.innerHTML=list.map(sheetHTML).join('');h.style.cssText='position:fixed;left:-10000px;top:0;width:800px;display:block';
  document.body.appendChild(h);
- const sheets=[...h.querySelectorAll('.pdf-sheet')];sheets.forEach((sheet,i)=>{sheet.style.setProperty('width','196mm','important');const r=sheet.getBoundingClientRect(),fit=Math.min(1,733/r.width,1052/r.height);sheet.style.zoom=String(fit);if(i===sheets.length-1){sheet.style.breakAfter='auto';sheet.style.pageBreakAfter='auto'}});
+ const previousBg=document.body.style.backgroundColor;document.body.style.backgroundColor=themeValue('--k0','#08100f');
+ const sheets=[...h.querySelectorAll('.pdf-sheet')];sheets.forEach((sheet,i)=>{applyPdfTheme(sheet);sheet.style.setProperty('width','196mm','important');const r=sheet.getBoundingClientRect(),fit=Math.min(1,733/r.width,1052/r.height);sheet.style.zoom=String(fit);if(i===sheets.length-1){sheet.style.breakAfter='auto';sheet.style.pageBreakAfter='auto'}});
  document.body.classList.add('print-sheet');
- const done=()=>{document.body.classList.remove('print-sheet');h.remove();removeEventListener('afterprint',done)};
+ const done=()=>{document.body.classList.remove('print-sheet');document.body.style.backgroundColor=previousBg;h.remove();removeEventListener('afterprint',done)};
  addEventListener('afterprint',done);window.print();setTimeout(()=>{if(h.isConnected)done()},1500);
 }
 sel.onchange=sel2.onchange=document.getElementById('qty').onchange=persist;
