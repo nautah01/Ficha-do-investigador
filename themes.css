@@ -28,25 +28,24 @@
  --vp:#ecd2cc;--board:#f6e1dc;--zoombg:255,244,241;--onhead:#fff6f2;--tab1:#d98a84;--tab2:#a8433a;--tab3:#6a2020;--ok:#b86a6a;--warn2:#a8431f;
  --moon1:#fff0ec;--moon2:#f0a9a0;--moon3:#c96b66;--moonglow:220,110,100;--crater:140,50,50}
 
-/* a lua */
-.moon{position:absolute;top:12px;right:max(14px,2.2vw);z-index:3;width:clamp(54px,6vw,84px);aspect-ratio:1;padding:0;border:0;border-radius:50%;cursor:pointer;
+/* Controle de tema integrado ao céu do cenário, em vez de um botão luminoso flutuante. */
+.moon{position:absolute;top:2px;right:clamp(5px,1.5vw,18px);z-index:4;width:58px;aspect-ratio:1;padding:0;border:0;border-radius:50%;cursor:pointer;opacity:.46;
  background:radial-gradient(circle at 30% 32%,rgba(255,255,255,.6),transparent 26%),
   radial-gradient(circle at 64% 28%,rgba(var(--crater),.34) 0 7%,transparent 8%),radial-gradient(circle at 36% 62%,rgba(var(--crater),.3) 0 10%,transparent 11%),
   radial-gradient(circle at 72% 68%,rgba(var(--crater),.28) 0 6%,transparent 7%),radial-gradient(circle at 54% 47%,rgba(var(--crater),.2) 0 4%,transparent 5%),
   radial-gradient(circle at 38% 36%,var(--moon1),var(--moon2) 58%,var(--moon3));
- box-shadow:inset -9px -7px 16px rgba(0,0,0,.26),inset 5px 4px 10px rgba(255,255,255,.28),0 0 26px 6px rgba(var(--moonglow),.34),0 0 90px 26px rgba(var(--moonglow),.15);
- animation:moonPulse 6s ease-in-out infinite;transition:transform .25s}
-.moon:hover{transform:scale(1.08) rotate(-6deg);box-shadow:inset -9px -7px 16px rgba(0,0,0,.26),inset 5px 4px 10px rgba(255,255,255,.3),0 0 34px 10px rgba(var(--moonglow),.5),0 0 110px 34px rgba(var(--moonglow),.22)}
-.moon:active{transform:scale(.95)}
-.moon:focus-visible{outline:2px solid var(--head);outline-offset:6px}
+ box-shadow:inset -6px -5px 10px rgba(0,0,0,.24),inset 3px 3px 7px rgba(255,255,255,.22),0 0 18px 4px rgba(var(--moonglow),.12);
+ filter:saturate(.65);transition:opacity .35s,filter .35s,transform .4s,box-shadow .4s}
+.moon:hover,.moon:focus-visible{opacity:1;filter:saturate(1);transform:scale(1.07);box-shadow:inset -6px -5px 10px rgba(0,0,0,.24),inset 3px 3px 7px rgba(255,255,255,.28),0 0 24px 6px rgba(var(--moonglow),.32)}
+.moon:active{transform:scale(.96)}
+.moon:focus-visible{outline:2px solid var(--head);outline-offset:5px}
 .moon.spin{animation:moonSwap .8s ease}
-.mdots{position:absolute;top:100%;left:50%;display:flex;gap:6px;margin-top:10px;transform:translateX(-50%)}
-.mdots i{width:6px;height:6px;border-radius:50%;background:rgba(var(--moonglow),.32);transition:background .3s,box-shadow .3s}
+.mdots{position:absolute;top:100%;left:50%;display:flex;gap:4px;margin-top:5px;transform:translateX(-50%)}
+.mdots i{width:4px;height:4px;border-radius:50%;background:rgba(var(--moonglow),.3);transition:background .3s,box-shadow .3s}
 .mdots i.on{background:var(--moon1);box-shadow:0 0 7px 1px rgb(var(--moonglow))}
-@keyframes moonPulse{50%{box-shadow:inset -9px -7px 16px rgba(0,0,0,.26),inset 5px 4px 10px rgba(255,255,255,.28),0 0 34px 9px rgba(var(--moonglow),.44),0 0 110px 32px rgba(var(--moonglow),.2)}}
-@keyframes moonSwap{35%{transform:scale(1.2) rotate(120deg);filter:brightness(1.35)}to{transform:none}}
+@keyframes moonSwap{45%{transform:scale(1.12) rotate(8deg);filter:brightness(1.18)}to{transform:none}}
 html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-color .6s,color .6s,border-color .6s,fill .6s,stroke .6s,stop-color .6s!important}
-@media (max-width:640px){.moon{top:8px;right:10px;width:46px}h1{padding-right:58px}}
+@media (max-width:640px){.moon{top:0;right:1px;width:42px}h1{padding-right:54px}}
 @media (prefers-reduced-motion:reduce){.moon,.moon.spin{animation:none}html.tswap *,html.tswap *::before,html.tswap *::after{transition:none!important}}
 }
 
@@ -93,11 +92,10 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
  background-repeat:repeat;background-attachment:fixed;background-color:#f0e4c3
 }
 :root[data-theme=paper] body::before{background:linear-gradient(90deg,rgba(126,91,23,.045),transparent 13%,transparent 87%,rgba(126,91,23,.045))}
-/* A lua ganha um aro e um brilho quando apontada, sem alterar o clique. */
-.moon{position:absolute}
-.moon::before{content:"";position:absolute;inset:-7px;border:1px solid rgba(var(--moonglow),.58);border-radius:50%;opacity:0;transform:scale(.88) rotate(-24deg);transition:opacity .24s ease,transform .35s ease;pointer-events:none}
-.moon::after{content:"✧";position:absolute;top:-5px;right:2px;color:var(--moon1);font:1rem/1 Georgia,serif;opacity:0;transform:scale(.45) rotate(-35deg);transition:opacity .2s ease,transform .3s ease;pointer-events:none}
-.moon:hover::before{opacity:1;transform:scale(1.04) rotate(8deg)}
-.moon:hover::after{opacity:1;transform:scale(1) rotate(0);filter:drop-shadow(0 0 5px rgba(var(--moonglow),.8))}
+/* Pequenos detalhes de céu aparecem quando a lua recebe foco. */
+.moon::before{content:"";position:absolute;inset:-6px;border:1px solid rgba(var(--moonglow),.5);border-radius:50%;opacity:.16;transform:scale(.94);transition:opacity .3s,transform .4s;pointer-events:none}
+.moon::after{content:"✧";position:absolute;top:-4px;right:0;color:var(--moon1);font: .85rem/1 Georgia,serif;opacity:.18;transform:scale(.7);transition:opacity .25s,transform .3s;pointer-events:none}
+.moon:hover::before,.moon:focus-visible::before{opacity:.85;transform:scale(1.08) rotate(8deg)}
+.moon:hover::after,.moon:focus-visible::after{opacity:.9;transform:scale(1) rotate(0);filter:drop-shadow(0 0 4px rgba(var(--moonglow),.7))}
 }
 @media (prefers-reduced-motion:reduce){.moon::before,.moon::after{transition:none}}

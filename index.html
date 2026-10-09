@@ -44,7 +44,7 @@ label{display:flex;flex-direction:column;font-size:.8rem;gap:3px;color:var(--ink
 }
 select,input,button{font:inherit;padding:6px 10px;border:1px solid var(--gold);border-radius:5px;background:var(--k3);color:var(--txt)}
 button{cursor:pointer;background:linear-gradient(var(--b1),var(--b2));color:var(--btnt);border-color:var(--bb);font-weight:bold}
-button:hover{background:linear-gradient(var(--b3),var(--b4))}
+button:not(.moon):hover{background:linear-gradient(var(--b3),var(--b4))}
 button.alt{background:transparent;color:var(--ink2);border-color:var(--head)}
 button.alt:hover{background:rgba(var(--gr),.12)}
 #desk{position:relative;z-index:1;min-height:70vh;padding-bottom:80px}
@@ -132,9 +132,29 @@ body.mobile #desk .der{gap:8px 10px}
 body.mobile #desk button.rmb{padding:4px 10px;font-size:.85rem}
 body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-size:.95rem}
 #printHost{display:none}
+.pdf-sheet{width:800px!important;min-width:0!important;max-width:none!important;overflow:visible!important;background:#f3e6c4!important;color:#2a2118!important;border:1px solid #b49a68!important;box-shadow:none!important}
+.pdf-sheet::before{width:7px;background:linear-gradient(#6e241f,#a33b32 42%,#6e241f)!important;box-shadow:2px 0 0 #39261c!important}
+.pdf-sheet .win-body{padding:10px 14px 12px 20px!important}
+.pdf-sheet h2{margin:0 0 3px!important;padding-bottom:4px!important;font-size:1.25rem!important;color:#2a2118!important;border-color:#b49a68!important}
+.pdf-sheet .sub{font-size:.72rem!important;color:#68583e!important}
+.pdf-sheet .stats{grid-template-columns:repeat(8,minmax(0,1fr));gap:3px;margin:6px 0}
+.pdf-sheet .stats div{padding:3px 2px;background:#e7d7b2!important;border-color:#ae9562!important;color:#2a2118!important;box-shadow:none}
+.pdf-sheet .stats b{font-size:.62rem;color:#694b23!important;letter-spacing:.2px}
+.pdf-sheet .stats small,.pdf-sheet .sk small{font-size:.58rem;color:#756344!important}
+.pdf-sheet .der{gap:3px 9px;margin-bottom:6px;padding:5px 7px;font-size:.7rem;background:#eee2c8!important;border-color:#cbbb96!important}
+.pdf-sheet .der b{color:#694b23!important}
+.pdf-sheet h3.st{margin:5px 0 3px!important;padding-bottom:2px!important;font-size:.73rem!important;letter-spacing:.5px;color:#694b23!important;border-color:#cbbb96!important}
+.pdf-sheet .pdf-history{display:grid;grid-template-columns:1fr 1.3fr;gap:3px 12px;align-items:start;font-size:.68rem;line-height:1.2}
+.pdf-sheet .pdf-history .orig{margin:0 0 2px;font-size:.68rem;line-height:1.2}
+.pdf-sheet .pdf-back{font-size:.68rem;line-height:1.2;white-space:pre-wrap;overflow-wrap:anywhere}
+.pdf-sheet .sk{grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 9px;font-size:.68rem;line-height:1.15}
+.pdf-sheet .sk span{min-width:0;align-items:flex-start;gap:3px;padding:1px 0;border-color:#d2c4a4}
+.pdf-sheet .sk i{font-size:.65rem}
+.pdf-sheet .sk small{font-size:.55rem}
 @media print{
+ @page{size:A4 portrait;margin:8mm}
  body.print-sheet #desk{display:none!important}
- body.print-sheet #printHost{display:block}
+ body.print-sheet #printHost{position:static!important;left:auto!important;top:auto!important;width:auto!important;display:block!important}
  .ovl,.note,#panelBtn,.atmo,body::before{display:none!important}
  :root{--card:#f3e6c4;--txt:#2a2118;--muted:#5b4630;--head:#7f1d1d;--rule:rgba(127,29,29,.45);--line:#c4a574;--field:#fffdf6;--field-ink:#1f1610;--spine1:#7f1d1d;--spine2:#b91c1c;--spine3:#4a0c0c;--warn:#9a3412}
  .top,.bar,.aviso,.tag,.quote,.win-bar,button,.add,.ftg,.rmb,.rsz{display:none!important}
@@ -143,6 +163,7 @@ body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-
  .win{position:relative!important;left:auto!important;top:auto!important;width:100%!important;max-width:none;page-break-after:always;box-shadow:none;margin:0 0 16px;overflow:visible}
  .win.collapsed .win-body{display:block}
  .win-body{padding:12px}
+ body.print-sheet #printHost .pdf-sheet{width:196mm!important;min-width:0!important;max-width:none!important;height:auto!important;margin:0!important;overflow:visible!important;box-shadow:none!important;break-after:page;page-break-after:always}
 }
 
 /* ===== atmosfera: fundo ===== */
@@ -168,6 +189,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 .hist .bk{text-align:left;display:block;width:100%;min-height:64px;margin-top:4px;padding:6px 8px;resize:vertical;font:inherit;font-size:.9rem;line-height:1.4}
 </style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"></head><body>
 <div class="top">
+<button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <h1>Gerador de Investigadores</h1>
 <p class="tag">Chamado de Cthulhu 7ª ed. · Década de 1920 · fichas offline · notas salvas no navegador</p>
 <p class="quote">“O mais misericordioso no mundo é a incapacidade da mente humana de correlacionar todos os seus conteúdos.” — H. P. Lovecraft</p>
@@ -237,7 +259,6 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <path fill="url(#tg2)" style="stroke:rgba(var(--glow),.18)" stroke-width="1" d="M110 640C150 560 235 520 232 440C229 380 186 366 198 322C204 300 226 296 236 308C220 308 216 320 222 334C234 366 280 386 276 446C272 530 230 590 290 640Z"/>
 <path fill="url(#tg2)" style="stroke:rgba(var(--glow),.14)" stroke-width="1" d="M250 640C275 600 330 590 338 548C344 516 322 506 332 484C338 472 352 472 358 480C348 480 346 488 350 496C358 514 384 524 380 552C376 590 346 616 372 640Z"/>
 </svg><div class="fog f2"></div></div>
-<button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique na lua para trocar o tema"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <script>
 const d6=()=>1+Math.floor(Math.random()*6),r=n=>Math.floor(Math.random()*n),pick=a=>a[r(a.length)];
 const MAXA=90,MAXS=75; /* limites dos valores aleatórios: atributo e perícia */
@@ -704,34 +725,25 @@ function sheetHTML(p){
  const sk=rows(Object.entries(p.sk).sort((a,b)=>b[1]-a[1]));
  const fl=falta(p).map(([n])=>[n,+get(p,'s:'+n)||0]);
  const meta=[esc(p.occ),p.idade!==''?esc(p.idade)+' anos':'',p.sec?'+ '+esc(p.sec):'',p.edit?'ficha editada':''].filter(Boolean).join(' · ')||'&nbsp;';
- return`<article class="win" style="position:relative;left:auto;top:auto;width:720px;box-shadow:none">
+ return`<article class="win pdf-sheet" style="position:relative;left:auto;top:auto;width:800px;box-shadow:none">
   <div class="win-body" style="padding:18px 22px 22px 28px">
    <h2 style="margin:0 0 4px">${esc(p.nome)||'&nbsp;'}</h2>
    <div class="sub">${meta}</div>
    <div class="stats">${st}</div>
    <div class="der"><b>PV</b> ${p.der.hp} <b>Sanidade</b> ${p.der.san} <b>Sorte</b> ${p.der.luck} <b>PM</b> ${p.der.pm} <b>Mov</b> ${p.der.mov} <b>Bônus de Dano</b> ${esc(p.der.db)} <b>Corpo</b> ${p.der.corpo}</div>
-   ${(p.hist&&p.hist.length)||p.back?`<h3 class="st">Histórico</h3>${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}<div style="white-space:pre-wrap;font-size:.9rem;line-height:1.4">${esc(p.back||'')}</div>`:''}
+   ${(p.hist&&p.hist.length)||p.back?`<h3 class="st">Histórico</h3><div class="pdf-history"><div>${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}</div><div class="pdf-back">${esc(p.back||'')}</div></div>`:''}
    <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>
    ${fl.length?`<h3 class="st" style="margin-top:14px">Perícias que não tenho (valor inicial)</h3><div class="sk">${rows(fl)}</div>`:''}
   </div></article>`;
 }
-/* cuts = posições (em px do canvas) onde é seguro quebrar a página, para nunca cortar uma linha ao meio */
-function addCanvasToPdf(pdf,canvas,firstPage,cuts){
- const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),m=28;
- const imgW=pageW-m*2,k=imgW/canvas.width,maxPx=Math.floor((pageH-m*2)/k);
- let y=0,first=firstPage;
- while(y<canvas.height-1){
-  let end=Math.min(canvas.height,y+maxPx);
-  if(end<canvas.height){const c=(cuts||[]).filter(v=>v>y+maxPx*.35&&v<=end);if(c.length)end=Math.max(...c)}
-  if(!first)pdf.addPage();
-  first=false;
-  pdf.setFillColor(13,30,28);pdf.rect(0,0,pageW,pageH,'F');
-  const sh=end-y,slice=document.createElement('canvas');
-  slice.width=canvas.width;slice.height=Math.max(1,sh);
-  slice.getContext('2d').drawImage(canvas,0,y,canvas.width,sh,0,0,canvas.width,sh);
-  pdf.addImage(slice.toDataURL('image/jpeg',0.93),'JPEG',m,m,imgW,sh*k);
-  y=end;
- }
+/* Cada ficha ocupa uma única folha: o canvas inteiro é ajustado aos limites do A4. */
+function addCanvasToPdf(pdf,canvas,firstPage){
+ if(!firstPage)pdf.addPage();
+ const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),m=22;
+ const scale=Math.min((pageW-m*2)/canvas.width,(pageH-m*2)/canvas.height);
+ const w=canvas.width*scale,h=canvas.height*scale,x=(pageW-w)/2,y=(pageH-h)/2;
+ pdf.setFillColor(243,230,196);pdf.rect(0,0,pageW,pageH,'F');
+ pdf.addImage(canvas.toDataURL('image/jpeg',0.94),'JPEG',x,y,w,h);
 }
 async function savePdf(list,b){
  if(!list.length||b.disabled)return;
@@ -742,15 +754,14 @@ async function savePdf(list,b){
   if(!window.jspdf)await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
   const {jsPDF}=window.jspdf,pdf=new jsPDF({unit:'pt',format:'a4'});
   host=document.createElement('div');
-  host.style.cssText='position:fixed;left:-9000px;top:0;width:720px;background:#0d1e1c';
+  host.style.cssText='position:fixed;left:-9000px;top:0;width:800px;background:#f3e6c4';
   document.body.appendChild(host);
   let first=true;
   for(const p of list){
    host.innerHTML=sheetHTML(p);
-   const root=host.firstChild,top=root.getBoundingClientRect().top;
-   const cuts=[...root.querySelectorAll('.sub,.stats,.der,.sk span')].map(x=>Math.round((x.getBoundingClientRect().bottom-top)*2));
-   const cv=await html2canvas(root,{scale:2,backgroundColor:'#0d1e1c',useCORS:true});
-   addCanvasToPdf(pdf,cv,first,cuts);first=false;
+   const root=host.firstChild;
+   const cv=await html2canvas(root,{scale:2,backgroundColor:'#f3e6c4',useCORS:true,windowWidth:800});
+   addCanvasToPdf(pdf,cv,first);first=false;
   }
   const nm=(list.length===1?list[0].nome:'investigadores').replace(/[^\w\u00C0-\u017F -]/g,'').trim().replace(/\s+/g,'_')||'ficha';
   pdf.save(nm+'.pdf');
@@ -759,8 +770,10 @@ async function savePdf(list,b){
 }
 /* sem internet (as bibliotecas do PDF vêm de um CDN): imprime a ficha completa pelo navegador */
 function printFallback(list){
- const h=document.createElement('div');h.id='printHost';h.innerHTML=list.map(sheetHTML).join('');
- document.body.appendChild(h);document.body.classList.add('print-sheet');
+ const h=document.createElement('div');h.id='printHost';h.innerHTML=list.map(sheetHTML).join('');h.style.cssText='position:fixed;left:-10000px;top:0;width:800px;display:block';
+ document.body.appendChild(h);
+ const sheets=[...h.querySelectorAll('.pdf-sheet')];sheets.forEach((sheet,i)=>{sheet.style.setProperty('width','196mm','important');const r=sheet.getBoundingClientRect(),fit=Math.min(1,733/r.width,1052/r.height);sheet.style.zoom=String(fit);if(i===sheets.length-1){sheet.style.breakAfter='auto';sheet.style.pageBreakAfter='auto'}});
+ document.body.classList.add('print-sheet');
  const done=()=>{document.body.classList.remove('print-sheet');h.remove();removeEventListener('afterprint',done)};
  addEventListener('afterprint',done);window.print();setTimeout(()=>{if(h.isConnected)done()},1500);
 }

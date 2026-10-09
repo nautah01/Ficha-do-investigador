@@ -8,8 +8,8 @@ function apply(t,anim){
  if(t==='green')delete root.dataset.theme;else root.dataset.theme=t;
  const i=T.indexOf(t),nx=T[(i+1)%T.length];
  dots.forEach((d,k)=>d.classList.toggle('on',k===i));
- btn.setAttribute('aria-label','Trocar o tema do site. Tema atual: lua '+N[t]+'.');
- btn.title='Lua '+N[t]+' — clique para a lua '+N[nx];
+ btn.setAttribute('aria-label','Mudar o cenário. Tema atual: '+N[t]+'.');
+ btn.title='Cenário '+N[t]+' — clique para '+N[nx];
  try{localStorage.setItem(KEY,t)}catch{}
 }
 const cur=()=>T.includes(root.dataset.theme)?root.dataset.theme:'green';
