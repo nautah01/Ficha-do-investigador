@@ -467,7 +467,6 @@ function gen(sel,sel2){
  const[selN,selSub]=String(sel).split('::'),o=sel==='*'?pick(OCC):OCC.find(x=>x.n===selN),oT=tokens(o,selSub);
  const c={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
  const lang=pick(LANGS),sk={},bs=n=>base(n,c),cu=n=>sk[n]??bs(n);
- const spread=(pts,list)=>{list=[...list];while(pts>0&&list.length){const n=pick(list),v=cu(n);if(v>=MAXS){list=list.filter(x=>x!==n);continue}const add=Math.min(pts,5*(1+r(4)),MAXS-v);sk[n]=v+add;pts-=add}};
  const ALL=Object.keys(BASE).filter(n=>n!=='Nível de Crédito'),used=new Set(),keys=[];
  const res=(t,keep)=>{let op=(t==='@soc'?SOC.join('|'):t==='@any'?COMMON.join('|'):t).split('|').map(x=>x==='@lang'?'Língua ('+lang+')':x);
   if(!keep)op=op.filter(x=>!used.has(x));if(!op.length)op=ALL.filter(x=>!used.has(x));const n=pick(op);used.add(n);return n};
@@ -722,7 +721,6 @@ function placeNew(p,i,anchors){
 }
 /* cemitério: arraste a ficha até a caveira; ela só sai da mesa depois de confirmar o sepultamento */
 function buryFicha(i){const p=cur[i];if(!p||!window.Cemiterio)return;Cemiterio.add({nome:p.nome,idade:p.idade},()=>{const k=cur.indexOf(p);if(k>=0){cur.splice(k,1);draw()}})}
-function restoreFicha(p){p.pinned=true;placeNew(p,0,cur);cur.push(p);draw();const el=winEl(cur.length-1);if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'})}
 function go(){
  const q=Math.max(1,Math.min(8,+document.getElementById('qty').value||1));
  const kept=cur.filter(p=>p.pinned);

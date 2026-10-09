@@ -2,14 +2,14 @@
 (()=>{
 const T=['green','red','blue','paper'],N={green:'verde',red:'vermelha',blue:'azul',paper:'de papel com linhas amarelas'},KEY='cthulhu-tema';
 const root=document.documentElement,btn=document.getElementById('moon');if(!btn)return;
-/* Keep the control outside the scrolling body and any transformed page panel. */
+/* Mantém a lua na camada fixa do botão que reabre o painel. */
 if(btn.parentElement!==root)root.appendChild(btn);
 btn.style.setProperty('position','fixed','important');
-btn.style.setProperty('top','max(10px, env(safe-area-inset-top))','important');
-btn.style.setProperty('right','max(10px, env(safe-area-inset-right))','important');
+btn.style.setProperty('top','10px','important');
+btn.style.setProperty('right','10px','important');
 btn.style.setProperty('left','auto','important');
 btn.style.setProperty('bottom','auto','important');
-btn.style.setProperty('z-index','2147483000','important');
+btn.style.setProperty('z-index','6000','important');
 const dots=[...btn.querySelectorAll('.mdots i')];let tm;
 function apply(t,anim){
  if(anim){root.classList.add('tswap');clearTimeout(tm);tm=setTimeout(()=>root.classList.remove('tswap'),700)}
