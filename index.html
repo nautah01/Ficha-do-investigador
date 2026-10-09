@@ -739,10 +739,12 @@ function sheetHTML(p){
 const themeValue=(name,fallback)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim()||fallback;
 function applyPdfTheme(sheet){const root=getComputedStyle(document.documentElement);['--scheme','--card','--txt','--muted','--muted2','--head','--rule','--line','--k0','--k5','--gold','--btnt','--spine1','--spine2','--spine3','--gr'].forEach(name=>{const value=root.getPropertyValue(name).trim();if(value)sheet.style.setProperty(name,value)})}
 function cssRgb(value){const c=document.createElement('canvas').getContext('2d');c.fillStyle=value;c.fillRect(0,0,1,1);return Array.from(c.getImageData(0,0,1,1).data).slice(0,3)}
-/* Cada ficha ocupa uma única folha: o canvas inteiro é ajustado aos limites do A4. */
+/* Fichas horizontais usam A4 paisagem; fichas altas usam retrato para aproveitar melhor a folha. */
+function pdfOrientation(canvas){return canvas.width/canvas.height>1?'landscape':'portrait'}
 function addCanvasToPdf(pdf,canvas,firstPage,pageRgb){
- if(!firstPage)pdf.addPage();
- const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),m=22;
+ const orientation=pdfOrientation(canvas);
+ if(!firstPage)pdf.addPage('a4',orientation);
+ const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),m=8;
  const scale=Math.min((pageW-m*2)/canvas.width,(pageH-m*2)/canvas.height);
  const w=canvas.width*scale,h=canvas.height*scale,x=(pageW-w)/2,y=(pageH-h)/2;
  pdf.setFillColor(...pageRgb);pdf.rect(0,0,pageW,pageH,'F');
@@ -755,18 +757,19 @@ async function savePdf(list,b){
  try{
   if(!window.html2canvas)await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
   if(!window.jspdf)await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
-  const {jsPDF}=window.jspdf,pdf=new jsPDF({unit:'pt',format:'a4'});
+  const {jsPDF}=window.jspdf;
+  const cardBg=themeValue('--card','#0d1e1c'),pageRgb=cssRgb(cardBg),canvases=[];
   host=document.createElement('div');
-  host.style.cssText=`position:fixed;left:-9000px;top:0;width:800px;background:${themeValue('--card','#0d1e1c')}`;
+  host.style.cssText=`position:fixed;left:-9000px;top:0;width:800px;background:${cardBg}`;
   document.body.appendChild(host);
-  let first=true;
   for(const p of list){
    host.innerHTML=sheetHTML(p);
    const root=host.firstChild;applyPdfTheme(root);
-   const cardBg=themeValue('--card','#0d1e1c'),pageBg=themeValue('--k0','#08100f');
    const cv=await html2canvas(root,{scale:2,backgroundColor:cardBg,useCORS:true,windowWidth:800});
-   addCanvasToPdf(pdf,cv,first,cssRgb(pageBg));first=false;
+   canvases.push(cv);
   }
+  const pdf=new jsPDF({unit:'pt',format:'a4',orientation:pdfOrientation(canvases[0])});
+  canvases.forEach((cv,i)=>addCanvasToPdf(pdf,cv,i===0,pageRgb));
   const nm=(list.length===1?list[0].nome:'investigadores').replace(/[^\w\u00C0-\u017F -]/g,'').trim().replace(/\s+/g,'_')||'ficha';
   pdf.save(nm+'.pdf');
  }catch(_){printFallback(list)}
