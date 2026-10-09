@@ -2,7 +2,7 @@
 (()=>{
 const T=['green','red','blue','paper'],N={green:'verde',red:'vermelha',blue:'azul',paper:'de papel com linhas amarelas'},KEY='cthulhu-tema';
 const root=document.documentElement,btn=document.getElementById('moon');if(!btn)return;
-/* Fica fora do body e de qualquer área que possa rolar ou criar um containing block. */
+/* Keep the control outside the scrolling body and any transformed page panel. */
 if(btn.parentElement!==root)root.appendChild(btn);
 btn.style.setProperty('position','fixed','important');
 btn.style.setProperty('top','max(10px, env(safe-area-inset-top))','important');
