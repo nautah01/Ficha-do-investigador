@@ -743,6 +743,9 @@ function pdfFrame(doc,C){
 function pdfText(doc,text,x,y,size,color,style='normal',align){
  doc.setFont('times',style);doc.setFontSize(size);doc.setTextColor(...color);doc.text(String(text??''),x,y,align?{align}:undefined);
 }
+function pdfCentered(doc,text,cx,y,size,color,style='normal'){
+ doc.setFont('times',style);doc.setFontSize(size);const x=cx-doc.getTextWidth(String(text??''))/2;pdfText(doc,text,x,y,size,color,style);
+}
 function pdfWrapped(doc,text,x,y,width,size,lineHeight,color,style='normal'){
  doc.setFont('times',style);doc.setFontSize(size);doc.setTextColor(...color);
  const lines=doc.splitTextToSize(String(text??''),width);doc.text(lines,x,y,{lineHeightFactor:lineHeight/size});return y+Math.max(1,lines.length)*lineHeight;
@@ -750,40 +753,30 @@ function pdfWrapped(doc,text,x,y,width,size,lineHeight,color,style='normal'){
 function pdfSection(doc,title,y,C,right=560){
  pdfText(doc,title,39,y,10,C.head,'bold');doc.setDrawColor(...C.line);doc.setLineWidth(.45);doc.line(39,y+4,right,y+4);return y+16;
 }
-function pdfSkillPage(doc,p,title,C){
- doc.addPage('a4','portrait');pdfFrame(doc,C);
- pdfText(doc,p.nome||'Investigador',39,49,16,C.head,'bold');
- pdfText(doc,title,39,66,9,C.muted);doc.setDrawColor(...C.line);doc.line(39,73,560,73);return 88;
-}
 function pdfSkillColumns(doc,p,items,title,y,C){
  if(!items.length)return y;
  const left=39,right=560,gap=14,colW=(right-left-gap*2)/3,bottom=804,valueW=52,nameW=colW-valueW-5;
- let pageY=y>bottom-35?pdfSkillPage(doc,p,title,C):pdfSection(doc,title,y,C),remaining=items.slice(),lastY=pageY;
- while(remaining.length){
-  const room=bottom-pageY-8,cols=[[],[],[]],heights=[0,0,0];
-  doc.setFont('times','normal');doc.setFontSize(6.6);
-  const itemHeight=([name])=>Math.max(8,doc.splitTextToSize(String(name),nameW).length*7.4)+2;
-  const sizes=remaining.map(itemHeight),target=Math.min(room*.92,sizes.reduce((sum,h)=>sum+h,0)/3);
-  let at=0;
-  for(let col=0;col<3&&at<remaining.length;col++){
-   while(at<remaining.length&&(cols[col].length===0||heights[col]+sizes[at]<=target)){
-    const entry=remaining[at++],h=sizes[at-1];cols[col].push(entry);heights[col]+=h;
-   }
+ const startY=pdfSection(doc,title,y,C),room=bottom-startY-3;
+ let font=6.6,lineH=7.5,rowGap=1.6,cols,heights,labels;
+ const layout=()=>{
+  doc.setFont('times','normal');doc.setFontSize(font);cols=[[],[],[]];heights=[0,0,0];labels=[];
+  for(const item of items){
+   const lines=doc.splitTextToSize(String(item[0]),nameW),h=Math.max(lineH,lines.length*lineH)+rowGap;
+   const col=heights.indexOf(Math.min(...heights));cols[col].push({item,lines,h});heights[col]+=h;
   }
-  remaining=remaining.slice(at);
-  cols.forEach((entries,col)=>{
-   const x=left+col*(colW+gap);let yy=pageY;
-   entries.forEach(([name,value])=>{
-    const label=doc.splitTextToSize(String(name),nameW),h=Math.max(8,label.length*7.4)+2;
-    doc.setFont('times','normal');doc.setFontSize(6.6);doc.setTextColor(...C.text);doc.text(label,x,yy);
-    const val=`${value}% · ${(value>>1)} / ${Math.floor(value/5)}`;
-    doc.setFont('times','bold');doc.setFontSize(6.2);doc.setTextColor(...C.muted);doc.text(val,x+colW,yy,{align:'right'});
-    yy+=h;
-   });lastY=Math.max(lastY,yy);
+ };
+ layout();
+ while(Math.max(...heights)>room&&font>5.2){font=Math.max(5.2,font-.2);lineH=font+1;rowGap=1;layout()}
+ cols.forEach((entries,col)=>{
+  const x=left+col*(colW+gap);let yy=startY;
+  entries.forEach(({item,lines,h})=>{
+   const [name,value]=item;doc.setFont('times','normal');doc.setFontSize(font);doc.setTextColor(...C.text);doc.text(lines,x,yy,{lineHeightFactor:lineH/font});
+   const val=`${value}% · ${(value>>1)} / ${Math.floor(value/5)}`;
+   doc.setFont('times','bold');doc.setFontSize(font-.3);doc.setTextColor(...C.muted);doc.text(val,x+colW,yy,{align:'right'});
+   yy+=h;
   });
-  if(remaining.length)pageY=pdfSkillPage(doc,p,`${title} (continuação)`,C);
- }
- return lastY+6;
+ });
+ return startY+Math.max(...heights)+5;
 }
 function pdfInvestigator(doc,p,C){
  pdfFrame(doc,C);const W=doc.internal.pageSize.getWidth(),right=W-36;
@@ -794,8 +787,8 @@ function pdfInvestigator(doc,p,C){
  const attrs=Object.entries(p.c||{}),gap=4,boxW=(right-39-gap*(attrs.length-1))/attrs.length,boxH=55;
  attrs.forEach(([key,value],i)=>{
   const x=39+i*(boxW+gap);doc.setFillColor(...C.panel);doc.setDrawColor(...C.gold);doc.setLineWidth(.55);doc.roundedRect(x,y,boxW,boxH,4,4,'FD');
-  pdfText(doc,key,x+boxW/2,y+13,7,C.head,'bold','center');pdfText(doc,value,x+boxW/2,y+32,15,C.text,'normal','center');
-  pdfText(doc,`${value>>1} / ${Math.floor(value/5)}`,x+boxW/2,y+46,7,C.muted,'normal','center');
+  pdfCentered(doc,key,x+boxW/2,y+13,7,C.head,'bold');pdfCentered(doc,value,x+boxW/2,y+32,15,C.text,'normal');
+  pdfCentered(doc,`${value>>1} / ${Math.floor(value/5)}`,x+boxW/2,y+46,7,C.muted,'normal');
  });y+=boxH+8;
  const pairs=[['PV',p.der.hp],['Sanidade',p.der.san],['Sorte',p.der.luck],['PM',p.der.pm],['Mov',p.der.mov],['Bônus de Dano',p.der.db],['Corpo',p.der.corpo]];
  doc.setFont('times','bold');doc.setFontSize(7.4);
@@ -817,7 +810,7 @@ function pdfLore(doc,p,C){
  const W=doc.internal.pageSize.getWidth(),left=39,right=W-39,top=112,bottom=802,font=10.5,lineH=14;
  doc.setFont('times','normal');doc.setFontSize(font);const lines=doc.splitTextToSize(String(p.back||''),right-left);
  const pageLines=Math.floor((bottom-top)/lineH),chunks=[];for(let i=0;i<lines.length;i+=pageLines)chunks.push(lines.slice(i,i+pageLines));
- chunks.forEach((part)=>{doc.addPage('a4','portrait');pdfFrame(doc,C);
+ chunks.forEach((part,i)=>{doc.addPage('a4','portrait');pdfFrame(doc,C);
   pdfText(doc,p.nome||'Investigador',left,50,19,C.head,'bold');pdfText(doc,`${p.occ||''} · História do investigador`,left,70,9,C.muted);
   const heading=`Backstory${chunks.length>1?` · página ${i+1} de ${chunks.length}`:''}`;pdfSection(doc,heading,91,C,right);
   doc.setFont('times','normal');doc.setFontSize(font);doc.setTextColor(...C.text);doc.text(part,left,top,{lineHeightFactor:lineH/font});
