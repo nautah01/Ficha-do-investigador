@@ -52,19 +52,24 @@
   const rect=button.getBoundingClientRect();
   const x=rect.left+rect.width/2;
   const y=rect.top+rect.height/2;
-  const radius=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
   const compact=window.matchMedia('(max-width: 640px), (pointer: coarse)').matches;
+  const viewport=window.visualViewport;
+  const width=Math.max(root.clientWidth,innerWidth,viewport?.width||0);
+  const height=Math.max(root.clientHeight,innerHeight,viewport?.height||0);
+  const radius=Math.hypot(Math.max(x,width-x),Math.max(y,height-y))+Math.max(width,height)*.08;
   const transition=document.startViewTransition(()=>saveTheme(theme));
 
   transition.ready.then(()=>{
-   root.animate([
+   const reveal=root.animate([
     {clipPath:`circle(0 at ${x}px ${y}px)`,offset:0},
     {clipPath:`circle(${radius*.58}px at ${x}px ${y}px)`,offset:.64},
     {clipPath:`circle(${radius}px at ${x}px ${y}px)`,offset:1}
    ],
-    {duration:compact?760:1050,easing:'cubic-bezier(.16,.72,.22,1)',fill:'none',pseudoElement:'::view-transition-new(root)'}
+    {duration:compact?760:1050,easing:'cubic-bezier(.16,.72,.22,1)',fill:'both',pseudoElement:'::view-transition-new(root)'}
    );
-   root.animate(
+   if(compact&&typeof transition.skipTransition==='function')
+    reveal.finished.then(()=>transition.skipTransition()).catch(()=>{});
+   if(!compact)root.animate(
     {transform:['translateX(-25px) scale(.72)','translateX(5px) scale(1.08)','translateX(0) scale(1)'],filter:['brightness(.72) saturate(.6)','brightness(1.35) saturate(1.3)','brightness(1) saturate(1)']},
     {duration:780,easing:'cubic-bezier(.2,.75,.25,1)',pseudoElement:'::view-transition-new(theme-moon)'}
    );
