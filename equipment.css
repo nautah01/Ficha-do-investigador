@@ -9,6 +9,7 @@
 .eq-add-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;padding:9px;background:rgba(var(--gr),.045);border:1px solid var(--line);border-radius:6px}
 .eq-add-row button{flex:1 1 150px;min-width:0;min-height:36px;padding:5px 12px;font-size:.82rem;white-space:nowrap}
 .eq-custom-grid label{display:flex;flex-direction:column;gap:3px;font-size:.76rem;color:var(--muted)}
+.eq-custom-grid label small{font-size:.68rem;line-height:1.3;color:var(--muted2)}
 .eq-custom-grid input,.eq-custom-grid select,.eq-custom-grid textarea{min-width:0;width:100%;min-height:34px;padding:5px 7px;font-size:.82rem;color:var(--field-ink);background:var(--field);border:1px solid var(--line);border-radius:4px}
 .eq-custom{margin:0 0 11px;padding:10px;border:1px solid var(--gold);border-radius:6px;background:rgba(var(--gr),.045)}
 .eq-custom[hidden]{display:none!important}
@@ -24,9 +25,11 @@
 .eq-list{display:grid;gap:7px}
 .eq-item{display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;min-width:0;padding:9px 10px;border:1px solid rgba(var(--gr2),.42);border-radius:6px;background:linear-gradient(110deg,rgba(var(--gr),.055),transparent 72%)}
 .eq-main{min-width:0}
-.eq-thumb{position:relative;display:flex;align-items:center;justify-content:center;width:64px;height:64px;overflow:hidden;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.08)}
+.eq-thumb{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;width:64px;height:64px;overflow:hidden;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.08)}
 .eq-thumb.has{background:#efe8d6}
-.eq-thumb img{display:block;width:100%;height:100%;object-fit:contain}
+.eq-thumb img{position:absolute;inset:0;display:block;width:100%;height:100%}
+.eq-thumb .eq-thumb-backdrop{z-index:0;object-fit:cover;filter:blur(7px) brightness(.68);opacity:.78;transform:scale(1.16)}
+.eq-thumb .eq-thumb-foreground{z-index:1;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
 .eq-ph{font-size:1.7rem;line-height:1;opacity:.75}
 .eq-thumb .eq-cycle{position:absolute;right:2px;bottom:2px;width:22px;min-height:22px;height:22px;padding:0;font-size:.8rem;line-height:1;font-weight:normal;color:#fff;background:rgba(0,0,0,.6);border:0;border-radius:50%;opacity:0;transition:opacity .15s}
 .eq-thumb:hover .eq-cycle,.eq-thumb .eq-cycle:focus-visible{opacity:.95}
@@ -56,10 +59,12 @@
 .eqk-sec{grid-column:1/-1;margin:8px 0 0;padding-bottom:3px;font-size:.9rem;color:var(--head);font-variant:small-caps;letter-spacing:1px;border-bottom:1px solid var(--line)}
 .eqk-sec:first-child{margin-top:0}
 .eqk-card{position:relative;align-items:stretch;gap:0;padding:0;min-height:max-content}
-.eqk-img{border-radius:7px 7px 0 0;display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;overflow:hidden;background:rgba(var(--ov),.07);border-bottom:1px solid var(--line)}
+.eqk-img{position:relative;isolation:isolate;border-radius:7px 7px 0 0;display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;overflow:hidden;background:rgba(var(--ov),.07);border-bottom:1px solid var(--line)}
 .eqk-img .eq-ph{font-size:2.2rem}
 .eqk-img.has{background:#efe8d6}
-.eqk-img img{display:block;width:100%;height:100%;object-fit:contain}
+.eqk-img img{position:absolute;inset:0;display:block;width:100%;height:100%}
+.eqk-img .eqk-backdrop{z-index:0;object-fit:cover;filter:blur(12px) brightness(.7);opacity:.62;transform:scale(1.12)}
+.eqk-img .eqk-foreground{z-index:1;object-fit:contain;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5))}
 .eqk-body{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:9px 11px 11px}
 .eqk-have{position:absolute;top:6px;right:6px;padding:1px 8px;font-size:.7rem;font-weight:bold;color:var(--onhead);background:var(--head);border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
 .eqk-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 14px;padding:10px 18px;color:var(--warn);background:rgba(217,150,80,.12);border-top:2px solid var(--warn);font-size:.85rem;line-height:1.4}
