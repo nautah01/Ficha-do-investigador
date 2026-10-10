@@ -56,7 +56,7 @@ button.alt:hover{background:rgba(var(--gr),.12)}
 .win::before{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:linear-gradient(var(--spine1),var(--spine2) 40%,var(--spine1));box-shadow:2px 0 0 var(--spine3);pointer-events:none}
 .win.pinned{box-shadow:0 0 0 2px var(--head),0 16px 44px rgba(0,0,0,.55)}
 .win.collapsed{height:auto}
-.win.collapsed .win-body,.win.collapsed .rsz{display:none}
+.win.collapsed .win-body,.win.collapsed .win-tabs,.win.collapsed .rsz{display:none}
 .win-bar{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 18px;cursor:grab;user-select:none;
  background:linear-gradient(var(--k6),var(--k4));color:var(--head);border-bottom:1px solid var(--k0)}
 .win-bar:active{cursor:grabbing}
@@ -155,7 +155,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 @media (prefers-reduced-motion:reduce){.atmo .fog,h1{animation:none}}
 .hist{margin:2px 0 6px}.hist .orig{font-size:.88rem;margin:0 0 3px}.hist .orig small{color:var(--muted)}
 .hist .bk{text-align:left;display:block;width:100%;min-height:64px;margin-top:4px;padding:6px 8px;resize:vertical;font:inherit;font-size:.9rem;line-height:1.4}
-</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"></head><body>
+</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><script src="equipment.js"></script></head><body>
 <button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <div class="top">
 <h1>Gerador de Investigadores</h1>
@@ -559,6 +559,7 @@ function body(p,i){
 }
 function card(p,i){
  const u=uiOf(p,i);
+ const isEq=u.tab==='equipment';
  return`<section class="win${p.pinned?' pinned':''}${u.collapsed?' collapsed':''}" data-i="${i}" style="left:${u.x}px;top:${u.y}px;width:${u.w}px;z-index:${u.z}">
   <header class="win-bar">
    <button class="colb" data-i="${i}" title="Recolher / expandir">${u.collapsed?'▢':'–'}</button>
@@ -569,12 +570,13 @@ function card(p,i){
    <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>
   </header>
-  <div class="win-body"><div class="stamp">Arquivo<br>Arkham</div>${body(p,i)}</div>
+  <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" data-sheet-tab="sheet" role="tab" aria-selected="${!isEq}">🗂 Ficha</button><button type="button" data-sheet-tab="equipment" role="tab" aria-selected="${isEq}">🎒 Equipamentos${p.equipment&&p.equipment.length?` (${p.equipment.length})`:''}</button></div>
+  <div class="win-body"><div class="win-pane sheet-pane" role="tabpanel" ${isEq?'hidden':''}><div class="stamp">Arquivo<br>Arkham</div>${body(p,i)}</div><div class="win-pane equipment-pane" role="tabpanel" ${isEq?'':'hidden'}>${window.CthEquipment.render(p,i)}</div></div>
   <div class="rsz" data-i="${i}"></div>
  </section>`;
 }
 function txtBase(p){
- return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}${p.edit?' [ficha editada]':''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nSem pontos (valor inicial): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'');
+ return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}${p.edit?' [ficha editada]':''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nSem pontos (valor inicial): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'')+window.CthEquipment.plainText(p);
 }
 function txt(p){const t=txtBase(p),x=histTxt(p);return x?t+'\n\n'+x:t}
 function persist(){
@@ -597,7 +599,7 @@ function fitDesk(){
    const nx=Math.max(0,Math.min(u.x,aw-u.w)),ny=Math.max(0,Math.min(u.y,FICHA_MAXY));
    if(nx!==u.x||ny!==u.y){u.x=nx;u.y=ny;const el=winEl(i);if(el){el.style.left=nx+'px';el.style.top=ny+'px'}}
   }
-  w=Math.max(w,u.x+u.w);h=Math.max(h,u.y+(u.collapsed?56:640))});
+  const el=winEl(i);w=Math.max(w,u.x+u.w);h=Math.max(h,u.y+(u.collapsed?56:el?el.offsetHeight:640))});
  desk.style.minWidth=Math.min(w,aw)+'px';desk.style.minHeight=h+'px';
 }
 /* limites: as janelas ficam dentro da largura da tela e não descem além de FICHA_MAXY */
@@ -630,9 +632,40 @@ function addSkill(i,box){
  if(!nome||p.sk[nome]!==undefined||nome in BASE||nome in EXTRA||(p.custom&&nome in p.custom))return;
  (p.custom=p.custom||{})[nome]=v;p.edit=true;draw();
 }
+async function approveEquipment(p,item){
+ const warnings=window.CthEquipment.warnings(p,item);if(!warnings.length)return true;
+ const html=`<strong>${esc(item.name)}</strong><br>${warnings.map(w=>`⚠ ${esc(w)}`).join('<br>')}<br>Esse aviso é só uma referência. Você pode combinar a escolha com o Guardião ou justificá-la no histórico do investigador.`;
+ return askConfirm({title:'Confira este equipamento',html,ok:'Adicionar mesmo assim',danger:false});
+}
 desk.addEventListener('click',e=>{
  const i=e.target.closest('[data-i]');
  const idx=i?+i.dataset.i:NaN;
+ const tab=e.target.closest('[data-sheet-tab]');if(tab){const k=+tab.closest('.win').dataset.i;cur[k].ui.tab=tab.dataset.sheetTab==='equipment'?'equipment':'sheet';draw();return}
+ const eqAction=e.target.closest('[data-eq-action]');if(eqAction){
+  const win=eqAction.closest('.win'),k=win?+win.dataset.i:NaN,p=cur[k],panel=eqAction.closest('[data-eq-panel]'),action=eqAction.dataset.eqAction;
+  if(!p||!panel)return;
+  if(action==='add-catalog'){
+   const item=window.CthEquipment.catalog.find(x=>x.id===panel.querySelector('[data-eq-choice]').value);if(!item)return;
+   (async()=>{if(!await approveEquipment(p,item)||cur[k]!==p)return;window.CthEquipment.addCatalog(p,item.id);p.edit=true;draw()})();return
+  }
+  if(action==='open-custom'){const form=panel.querySelector('.eq-custom');form.hidden=false;const cat=form.elements.category.value;form.querySelector('[data-eq-custom-fields]').innerHTML=window.CthEquipment.customFields(cat,`eqSkills-${k}`);form.elements.name.focus();return}
+  if(action==='cancel-custom'){panel.querySelector('.eq-custom').hidden=true;return}
+  if(action==='save-custom'){
+   const form=panel.querySelector('.eq-custom');if(!form.reportValidity())return;const data=window.CthEquipment.customData(form),draft=window.CthEquipment.buildCustom(data);
+   (async()=>{if(!await approveEquipment(p,draft)||cur[k]!==p)return;window.CthEquipment.ensure(p).push(draft);p.edit=true;draw()})();return
+  }
+  const item=window.CthEquipment.find(p,eqAction.dataset.eqId);if(!item)return;
+  if(action==='remove'){const a=window.CthEquipment.ensure(p),n=a.indexOf(item);if(n>=0)a.splice(n,1);p.edit=true;draw();return}
+  if(action==='shot'){item.loaded=Math.max(0,(+item.loaded||0)-1);p.edit=true;draw();return}
+  if(action==='use'){item.uses=Math.max(0,(+item.uses||0)-1);p.edit=true;draw();return}
+  if(action==='reserve'){item.reserve=(+item.reserve||0)+10;p.edit=true;draw();return}
+  if(action==='transfer-ammo'){
+   const sourceSelect=[...panel.querySelectorAll('[data-eq-ammo-source]')].find(x=>x.dataset.eqAmmoSource===item.uid),source=sourceSelect&&window.CthEquipment.find(p,sourceSelect.value);
+   if(!source||source.kind!=='ammo'||!source.quantity)return;
+   const moved=Math.min(10,+source.quantity||0);source.quantity-=moved;item.reserve=(+item.reserve||0)+moved;p.edit=true;draw();return
+  }
+  if(action==='reload'){const n=Math.max(0,(+item.capacity||0)-(+item.loaded||0)),m=Math.min(n,+item.reserve||0);item.loaded=(+item.loaded||0)+m;item.reserve=(+item.reserve||0)-m;p.edit=true;draw();return}
+ }
  if(e.target.closest('.addb')){const b=e.target.closest('.addb');(b.dataset.m?addMain:addSkill)(+b.dataset.i,b.parentElement);return}
  if(e.target.closest('.pdfb')){const b=e.target.closest('.pdfb');savePdf([cur[+b.dataset.i]],b);return}
  if(e.target.closest('.copb')){
@@ -653,6 +686,11 @@ desk.addEventListener('click',e=>{
  if(e.target.closest('.dupb')){const p=JSON.parse(JSON.stringify(cur[idx]));p.pinned=false;p.ui={...p.ui,x:(p.ui.x||0)+28,y:(p.ui.y||0)+28,z:++zTop,collapsed:false};p.nome=p.nome.replace(/ \(cópia\)$/,'')+' (cópia)';if(!cur[idx].nome)p.nome='';cur.push(p);draw();return}
 });
 desk.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset.add==='n'){const b=e.target.parentElement.querySelector('.addb');(b.dataset.m?addMain:addSkill)(+b.dataset.i,e.target.parentElement)}});
+desk.addEventListener('change',e=>{
+ const panel=e.target.closest('[data-eq-panel]');if(!panel)return;
+ if(e.target.matches('[data-eq-category]'))window.CthEquipment.updateCatalog(panel,e.target.value);
+ if(e.target.matches('[data-eq-custom-category]')){const k=+panel.dataset.i;panel.querySelector('[data-eq-custom-fields]').innerHTML=window.CthEquipment.customFields(e.target.value,`eqSkills-${k}`)}
+});
 function onDragMove(e){
  const dr=desk.getBoundingClientRect();
  if(rsz){const p=cur[rsz.i];p.ui.w=Math.max(340,Math.min(820,fichaDeskW()-p.ui.x,rsz.ow+(e.clientX-rsz.ox)));const el=winEl(rsz.i);if(el)el.style.width=p.ui.w+'px';return}
@@ -684,6 +722,11 @@ desk.addEventListener('pointerdown',e=>{
  document.addEventListener('pointerup',onDragEnd);
 });
 desk.addEventListener('input',e=>{
+ const eq=e.target.closest('[data-eq-field]');if(eq){
+  const win=eq.closest('.win'),k=win?+win.dataset.i:NaN,p=cur[k],item=p&&window.CthEquipment.find(p,eq.dataset.eqId);if(!item)return;
+  let value=Math.max(0,Math.floor(+eq.value||0));if(eq.dataset.eqField==='loaded')value=Math.min(+item.capacity||0,value);item[eq.dataset.eqField]=value;p.edit=true;
+  window.CthEquipment.refreshWarnings(p,win.querySelector('[data-eq-panel]'));persist();return;
+ }
  const t=e.target,k=t.dataset.k;if(!k)return;
  const i=+t.dataset.i,p=cur[i],[a,x]=k.split(/:(.+)/);
  if(a==='n'){p[x]=t.value;if(x==='back'){persist();return}}
@@ -696,7 +739,7 @@ desk.addEventListener('input',e=>{
    if(p.sk['Língua Natural']===ol)p.sk['Língua Natural']=base('Língua Natural',p.c);
   }else if(a==='d')p.der[x]=v;else p.sk[x]=v;
  }
- p.edit=true;refresh(i);
+ p.edit=true;refresh(i);window.CthEquipment.refreshWarnings(p,winEl(i)&&winEl(i).querySelector('[data-eq-panel]'));
 });
 function placeNew(p,i,anchors){
  let x=28+(i%5)*40,y=16+(i%5)*32;
@@ -828,6 +871,27 @@ function pdfLore(doc,p,C,startY){
   doc.text(part,left,textY,{lineHeightFactor:lineH/font});offset+=part.length;page++;
  }
 }
+function pdfEquipment(doc,p,C){
+ const items=window.CthEquipment.pdfRows(p);if(!items.length)return;
+ const W=doc.internal.pageSize.getWidth(),left=39,right=W-39,bottom=802;let y=0,page=0;
+ const newPage=()=>{
+  doc.addPage('a4','portrait');pdfFrame(doc,C);
+  pdfText(doc,p.nome||'Investigador',left,50,19,C.head,'bold');
+  pdfText(doc,`${p.occ||''} · Equipamentos`,left,70,9,C.muted);
+  y=pdfSection(doc,page?'Equipamentos (continuação)':'Equipamentos',91,C,right);page++;
+ };
+ newPage();
+ for(const item of items){
+  const title=`${item.quantity} × ${item.name} · ${item.category}`;
+  doc.setFont('times','bold');doc.setFontSize(9);const titleLines=doc.splitTextToSize(title,right-left);
+  doc.setFont('times','normal');doc.setFontSize(8.2);const detailLines=item.detail?doc.splitTextToSize(item.detail,right-left):[];
+  const height=titleLines.length*11+(detailLines.length?detailLines.length*10+3:0)+8;
+  if(y+height>bottom){newPage()}
+  doc.setFont('times','bold');doc.setFontSize(9);doc.setTextColor(...C.head);doc.text(titleLines,left,y,{lineHeightFactor:11/9});y+=titleLines.length*11;
+  if(detailLines.length){doc.setFont('times','normal');doc.setFontSize(8.2);doc.setTextColor(...C.text);doc.text(detailLines,left,y+2,{lineHeightFactor:10/8.2});y+=detailLines.length*10+2}
+  doc.setDrawColor(...C.line);doc.setLineWidth(.3);doc.line(left,y+2,right,y+2);y+=9;
+ }
+}
 async function savePdf(list,b){
  if(!list.length||b.disabled)return;
  const label=b.textContent;b.textContent='⏳ Gerando…';b.disabled=true;
@@ -838,6 +902,7 @@ async function savePdf(list,b){
    if(i)pdf.addPage('a4','portrait');
    const loreStart=pdfInvestigator(pdf,p,C);
    if(String(p.back||'').trim())pdfLore(pdf,p,C,loreStart);
+   pdfEquipment(pdf,p,C);
   }
   const name=(list.length===1?list[0].nome:'investigadores').replace(/[^\w\u00C0-\u017F -]/g,'').trim().replace(/\s+/g,'_')||'ficha';
   pdf.save(name+'.pdf');
