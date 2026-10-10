@@ -145,12 +145,13 @@ body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-
 .pdf-sheet .stats small,.pdf-sheet .sk small{font-size:.58rem;color:var(--muted2)!important}
 .pdf-sheet .der{gap:3px 9px;margin-bottom:6px;padding:5px 7px;font-size:.7rem;background:rgba(var(--gr),.06)!important;border-color:var(--line)!important}
 .pdf-sheet .der b{color:var(--head)!important}
+.pdf-sheet .der>span{white-space:nowrap}
 .pdf-sheet h3.st{margin:5px 0 3px!important;padding-bottom:2px!important;font-size:.73rem!important;letter-spacing:.5px;color:var(--head)!important;border-color:var(--line)!important}
 .pdf-sheet .pdf-history{display:block;font-size:.68rem;line-height:1.2}
-.pdf-sheet .pdf-history .orig{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:3px;align-items:start;margin:0 0 3px;font-size:.68rem;line-height:1.35;letter-spacing:normal;word-spacing:normal;color:var(--muted)}
+.pdf-sheet .pdf-history .orig{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:8px;align-items:start;margin:0 0 3px;font-size:.68rem;line-height:1.35;color:var(--muted)}
 .pdf-sheet .pdf-history .orig b{margin:0}
-.pdf-sheet .pdf-history .orig-value{min-width:0;letter-spacing:normal;word-spacing:normal}
-.pdf-sheet .pdf-history .orig-value small{margin-left:2px}
+.pdf-sheet .pdf-history .orig-value{min-width:0}
+.pdf-sheet .pdf-history .orig-value small{margin-left:5px}
 .pdf-sheet .pdf-back{font-size:.68rem;line-height:1.2;white-space:pre-wrap;overflow-wrap:anywhere}
 .pdf-lore-sheet{min-height:1050px!important}
 .pdf-lore-sheet .pdf-lore-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.9rem;line-height:1.5;word-spacing:.08em;letter-spacing:.01em;color:var(--txt)}
@@ -604,7 +605,7 @@ function card(p,i){
    <button class="colb" data-i="${i}" title="Recolher / expandir">${u.collapsed?'▢':'–'}</button>
    <span class="win-title">${esc(ttl(p))}</span>
    <button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 <span class="bl">Copiar</span></button>
-   <button class="pdfb" data-i="${i}" title="Salvar esta ficha completa em PDF">📄 <span class="bl">PDF</span></button>
+   <button class="pdfb" data-i="${i}" title="Imprimir ou salvar esta ficha como PDF">📄 <span class="bl">PDF</span></button>
    <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Fixar: não some ao gerar">${p.pinned?'📌 <span class="bl">Fixa</span>':'📌 <span class="bl">Fixar</span>'}</button>
    <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>
@@ -762,21 +763,19 @@ document.getElementById('blank').onclick=()=>{
  const p=genBlank();placeNew(p,0,cur);cur.push(p);draw();
  const el=winEl(cur.length-1);if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
 };
-function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
 function sheetHTML(p){
- const pdfEsc=s=>esc(String(s??'').replace(/[\s\u00a0]+/g,' ').trim());
  const st=Object.entries(p.c).map(([k,v])=>`<div><b>${esc(k)}</b><span style="display:block;font-size:1.05rem;margin:3px 0">${v}</span><small>${(v>>1)} / ${Math.floor(v/5)}</small></div>`).join('');
  const rows=l=>l.map(([n,v])=>`<span><span class="sk-name">${esc(n)}</span><i>${v}% <small>${(v>>1)} / ${Math.floor(v/5)}</small></i></span>`).join('');
  const sk=rows(Object.entries(p.sk).sort((a,b)=>b[1]-a[1]));
  const fl=falta(p).map(([n])=>[n,+get(p,'s:'+n)||0]);
- const meta=[pdfEsc(p.occ),p.idade!==''?pdfEsc(p.idade)+' anos':'',p.sec?'+ '+pdfEsc(p.sec):'',p.edit?'ficha editada':''].filter(Boolean).join(' · ')||'&nbsp;';
+ const meta=[esc(p.occ),p.idade!==''?esc(p.idade)+' anos':'',p.sec?'+ '+esc(p.sec):'',p.edit?'ficha editada':''].filter(Boolean).join(' · ')||'&nbsp;';
  return`<article class="win pdf-sheet" style="position:relative;left:auto;top:auto;width:800px;box-shadow:none">
   <div class="win-body" style="padding:18px 22px 22px 28px">
    <h2 style="margin:0 0 4px">${esc(p.nome)||'&nbsp;'}</h2>
    <div class="sub">${meta}</div>
    <div class="stats">${st}</div>
-   <div class="der"><b>PV</b> ${p.der.hp} <b>Sanidade</b> ${p.der.san} <b>Sorte</b> ${p.der.luck} <b>PM</b> ${p.der.pm} <b>Mov</b> ${p.der.mov} <b>Bônus de Dano</b> ${esc(p.der.db)} <b>Corpo</b> ${p.der.corpo}</div>
-    ${(p.hist&&p.hist.length)||crRangeTxt(p)?`<h3 class="st">Histórico</h3><div class="pdf-history">${(p.hist||[]).map(g=>`<div class="orig"><b>${pdfEsc(g.kind)}:</b><span class="orig-value">${pdfEsc(g.n)}${g.sk&&g.sk.length?`<small>+10 ${pdfEsc(g.sk.join(', +10 '))}</small>`:''}</span></div>`).join('')}${crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b><span class="orig-value">${pdfEsc(crRangeTxt(p))}</span></div>`:''}</div>`:''}
+   <div class="der"><span><b>PV</b>${p.der.hp}</span><span><b>Sanidade</b>${p.der.san}</span><span><b>Sorte</b>${p.der.luck}</span><span><b>PM</b>${p.der.pm}</span><span><b>Mov</b>${p.der.mov}</span><span><b>Bônus de Dano</b>${esc(p.der.db)}</span><span><b>Corpo</b>${p.der.corpo}</span></div>
+    ${(p.hist&&p.hist.length)||crRangeTxt(p)?`<h3 class="st">Histórico</h3><div class="pdf-history">${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b><span class="orig-value">${esc(g.n)}${g.sk&&g.sk.length?`<small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</span></div>`).join('')}${crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b><span class="orig-value">${esc(crRangeTxt(p))}</span></div>`:''}</div>`:''}
    <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>
    ${fl.length?`<h3 class="st" style="margin-top:14px">Perícias que não tenho (valor inicial)</h3><div class="sk">${rows(fl)}</div>`:''}
   </div></article>`;
@@ -795,56 +794,18 @@ function pdfLoreSheets(p){
  return pages.map((text,i)=>`<article class="win pdf-sheet pdf-lore-sheet" style="position:relative;left:auto;top:auto;width:800px;box-shadow:none"><div class="win-body" style="padding:18px 22px 22px 28px"><h2>${esc(p.nome)||'Investigador'}</h2><div class="sub">${esc(p.occ||'')} · História do investigador</div><h3 class="st">Backstory${pages.length>1?` · página ${i+1} de ${pages.length}`:''}</h3><div class="pdf-lore-text">${esc(text)}</div></div></article>`);
 }
 function pdfSheets(p){return[sheetHTML(p),...pdfLoreSheets(p)]}
-const themeValue=(name,fallback)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim()||fallback;
-function applyPdfTheme(sheet){const root=getComputedStyle(document.documentElement);['--scheme','--card','--txt','--muted','--muted2','--head','--rule','--line','--k0','--k5','--gold','--btnt','--spine1','--spine2','--spine3','--gr'].forEach(name=>{const value=root.getPropertyValue(name).trim();if(value)sheet.style.setProperty(name,value)})}
-function cssRgb(value){const c=document.createElement('canvas').getContext('2d');c.fillStyle=value;c.fillRect(0,0,1,1);return Array.from(c.getImageData(0,0,1,1).data).slice(0,3)}
-/* Fichas horizontais usam A4 paisagem; fichas altas usam retrato para aproveitar melhor a folha. */
-function pdfOrientation(canvas){return canvas.width/canvas.height>1?'landscape':'portrait'}
-function addCanvasToPdf(pdf,canvas,firstPage,pageRgb){
- const orientation=pdfOrientation(canvas);
- if(!firstPage)pdf.addPage('a4',orientation);
- const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),m=8;
- const scale=Math.min((pageW-m*2)/canvas.width,(pageH-m*2)/canvas.height);
- const w=canvas.width*scale,h=canvas.height*scale,x=(pageW-w)/2,y=(pageH-h)/2;
- pdf.setFillColor(...pageRgb);pdf.rect(0,0,pageW,pageH,'F');
- pdf.addImage(canvas.toDataURL('image/png'),'PNG',x,y,w,h);
-}
-async function savePdf(list,b){
- if(!list.length||b.disabled)return;
- const l=b.textContent;b.textContent='⏳ Gerando…';b.disabled=true;
- let host;
- try{
-  if(!window.html2canvas)await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
-  if(!window.jspdf)await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
-  const {jsPDF}=window.jspdf;
-  const cardBg=themeValue('--card','#0d1e1c'),pageRgb=cssRgb(cardBg),canvases=[];
-  host=document.createElement('div');
-  host.style.cssText=`position:fixed;left:-9000px;top:0;width:800px;background:${cardBg}`;
-  document.body.appendChild(host);
-  for(const p of list){
-   for(const html of pdfSheets(p)){
-    host.innerHTML=html;
-    const root=host.firstChild;applyPdfTheme(root);
-    const cv=await html2canvas(root,{scale:2,backgroundColor:cardBg,useCORS:true,windowWidth:800});
-    canvases.push(cv);
-   }
-  }
-  const pdf=new jsPDF({unit:'pt',format:'a4',orientation:pdfOrientation(canvases[0])});
-  canvases.forEach((cv,i)=>addCanvasToPdf(pdf,cv,i===0,pageRgb));
-  const nm=(list.length===1?list[0].nome:'investigadores').replace(/[^\w\u00C0-\u017F -]/g,'').trim().replace(/\s+/g,'_')||'ficha';
-  pdf.save(nm+'.pdf');
- }catch(_){printFallback(list)}
- finally{if(host)host.remove();b.textContent=l;b.disabled=false}
-}
-/* sem internet (as bibliotecas do PDF vêm de um CDN): imprime a ficha completa pelo navegador */
-function printFallback(list){
+function savePdf(list,b){if(!list.length||b.disabled)return;printPdf(list,b)}
+/* Imprime texto real pelo navegador, sem converter as fichas em imagens. */
+function printPdf(list,b){
+ const label=b.textContent,previousTitle=document.title;b.textContent='⏳ Preparando…';b.disabled=true;
+ const fileLabel=(list.length===1?list[0].nome:'Investigadores').replace(/[^\w\u00C0-\u017F -]/g,'').trim()||'Ficha';document.title=fileLabel+' - Ficha de investigador';
  const h=document.createElement('div');h.id='printHost';h.innerHTML=list.flatMap(pdfSheets).join('');h.style.cssText='position:fixed;left:-10000px;top:0;width:800px;display:block';
  document.body.appendChild(h);
- const previousBg=document.body.style.backgroundColor;document.body.style.backgroundColor=themeValue('--k0','#08100f');
- const sheets=[...h.querySelectorAll('.pdf-sheet')];sheets.forEach((sheet,i)=>{applyPdfTheme(sheet);sheet.style.setProperty('width','196mm','important');const r=sheet.getBoundingClientRect(),fit=Math.min(1,733/r.width,1052/r.height);sheet.style.zoom=String(fit);if(i===sheets.length-1){sheet.style.breakAfter='auto';sheet.style.pageBreakAfter='auto'}});
+ const previousBg=document.body.style.backgroundColor;document.body.style.backgroundColor='#08100f';
+ const sheets=[...h.querySelectorAll('.pdf-sheet')];sheets.forEach((sheet,i)=>{sheet.style.setProperty('width','196mm','important');const r=sheet.getBoundingClientRect(),fit=Math.min(1,733/r.width,1052/r.height);sheet.style.zoom=String(fit);if(i===sheets.length-1){sheet.style.breakAfter='auto';sheet.style.pageBreakAfter='auto'}});
  document.body.classList.add('print-sheet');
- const done=()=>{document.body.classList.remove('print-sheet');document.body.style.backgroundColor=previousBg;h.remove();removeEventListener('afterprint',done)};
- addEventListener('afterprint',done);window.print();setTimeout(()=>{if(h.isConnected)done()},1500);
+ let finished=false;const done=()=>{if(finished)return;finished=true;document.body.classList.remove('print-sheet');document.body.style.backgroundColor=previousBg;document.title=previousTitle;h.remove();b.textContent=label;b.disabled=false;removeEventListener('afterprint',done)};
+ addEventListener('afterprint',done);try{window.print()}catch(_){done()}
 }
 sel.onchange=sel2.onchange=document.getElementById('qty').onchange=persist;
 (function responsiveMode(){
