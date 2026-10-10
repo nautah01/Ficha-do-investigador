@@ -9,7 +9,7 @@
  /* q = termo de busca (título de artigo da Wikipédia em inglês) usado para achar a imagem de referência */
  const CATALOG=[
   {id:'wallet',cat:'Geral',name:'Carteira com identidade',q:'Wallet',notes:'Carteira, documentos e identificação.'},
-  {id:'notebook',cat:'Geral',name:'Caderno e lápis',q:'Pencil',imgSrc:'Novas%20alterações/equip-images/notebook-pencil.png',imgRev:2},
+  {id:'notebook',cat:'Geral',name:'Caderno e lápis',q:'Pencil',imgPaths:['equip-images/notebook-pencil.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/notebook-pencil.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/notebook-pencil.png?v=20261010','notebook-pencil.png?v=20261010'],imgRev:3},
   {id:'pen',cat:'Geral',name:'Caneta-tinteiro',q:'Fountain pen'},
   {id:'flashlight',cat:'Geral',name:'Lanterna elétrica',q:'Flashlight'},
   {id:'batteries',cat:'Geral',name:'Pilhas',q:'Battery (electricity)',imgRev:2},
@@ -20,9 +20,9 @@
   {id:'camera',cat:'Geral',name:'Câmera fotográfica',q:'Kodak Brownie'},
   {id:'typewriter',cat:'Geral',name:'Máquina de escrever Remington',q:'Typewriter'},
   {id:'dictaphone',cat:'Geral',name:'Ditafone',q:'Dictaphone',imgRev:2},
-  {id:'handcuffs',cat:'Geral',name:'Algemas',q:'Handcuff',imgSrc:'Novas%20alterações/equip-images/handcuffs.png',imgRev:3},
+  {id:'handcuffs',cat:'Geral',name:'Algemas',q:'Handcuff',imgPaths:['equip-images/handcuffs.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/handcuffs.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/handcuffs.png?v=20261010','handcuffs.png?v=20261010'],imgRev:4},
   {id:'rope',cat:'Geral',name:'Corda (50 pés)',q:'Rope'},
-  {id:'crowbar',cat:'Geral',name:'Pé de cabra',q:'Crowbar',imgSrc:'Novas%20alterações/equip-images/crowbar.png',imgRev:3},
+  {id:'crowbar',cat:'Geral',name:'Pé de cabra',q:'Crowbar',imgPaths:['equip-images/crowbar.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/crowbar.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/crowbar.png?v=20261010','crowbar.png?v=20261010'],imgRev:4},
   {id:'tools',cat:'Geral',name:'Estojo de ferramentas',q:'Toolbox',imgRev:2},
   {id:'fieldbag',cat:'Geral',name:'Bolsa de lona',q:'Duffel bag'},
   {id:'canteen',cat:'Geral',name:'Cantil',q:'Canteen (bottle)'},
@@ -45,7 +45,7 @@
   {id:'thermometer',cat:'Cura',name:'Termômetro clínico',q:'Medical thermometer'},
   {id:'syringe',cat:'Cura',name:'Seringas hipodérmicas',q:'Hypodermic needle'},
   {id:'alcohol',cat:'Cura',name:'Álcool medicinal',q:'Rubbing alcohol'},
-  {id:'crutches',cat:'Cura',name:'Muletas',q:'Crutch',imgSrc:'Novas%20alterações/equip-images/crutches.png',imgRev:3},
+  {id:'crutches',cat:'Cura',name:'Muletas',q:'Crutch',imgPaths:['equip-images/crutches.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/crutches.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/crutches.png?v=20261010','crutches.png?v=20261010'],imgRev:4},
   {id:'pistol22',cat:'Arma de fogo',name:'Pistola automática .22 Short',q:'Semi-automatic pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'10 jardas',rate:'1 (até 3)',capacity:6,ammo:'.22 Short',mal:100},
   {id:'derringer25',cat:'Arma de fogo',name:'Derringer .25 (cano único)',q:'Derringer',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'3 jardas',rate:'1',capacity:1,ammo:'.25',mal:100},
   {id:'revolver32',cat:'Arma de fogo',name:'Revólver .32 / 7,65 mm',q:'Colt Police Positive',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.32',mal:100},
@@ -62,15 +62,16 @@
   {id:'shotgun12auto',cat:'Arma de fogo',name:'Espingarda calibre 12 semiautomática',q:'Browning Auto-5',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1 (até 2)',capacity:5,ammo:'calibre 12',mal:100,creditMin:40,imgRev:2},
   {id:'thompson',cat:'Arma de fogo',name:'Submetralhadora Thompson',q:'Thompson submachine gun',skill:'Armas de Fogo (Metralhadoras)',damage:'1D10+2',range:'20 jardas',rate:'1 ou rajada automática',capacity:20,ammo:'.45',mal:96,creditMin:60,imgRev:2,caution:'Arma automática rara e normalmente indisponível a civis; confirme a disponibilidade com o Guardião.',notes:'Inclui carregador de 20 cartuchos na configuração de referência.'},
   {id:'crossbow',cat:'Arma de fogo',name:'Besta',q:'Crossbow',skill:'Armas de Fogo (Arco)',damage:'1D8+2',range:'50 jardas',rate:'1 a cada 2 rodadas',capacity:1,ammo:'virote',mal:96},
-  {id:'club',cat:'Arma corpo a corpo',name:'Cassetete / porrete pequeno',q:'Baton (law enforcement)',imgSrc:'Novas%20alterações/equip-images/small-club.png',imgRev:3,skill:'Lutar (Brigar)',damage:'1D6 + BD',range:'Toque'},
+  {id:'club',cat:'Arma corpo a corpo',name:'Cassetete / porrete pequeno',q:'Baton (law enforcement)',imgPaths:['equip-images/small-club.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/small-club.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/small-club.png?v=20261010','small-club.png?v=20261010'],imgRev:4,skill:'Lutar (Brigar)',damage:'1D6 + BD',range:'Toque'},
   {id:'baseballbat',cat:'Arma corpo a corpo',name:'Porrete grande / taco',q:'Baseball bat',skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'},
   {id:'brassknuckles',cat:'Arma corpo a corpo',name:'Soco-inglês',q:'Brass knuckles',skill:'Lutar (Brigar)',damage:'1D3+1 + BD',range:'Toque'},
   {id:'knife_small',cat:'Arma corpo a corpo',name:'Faca pequena',q:'Pocketknife',skill:'Lutar (Brigar)',damage:'1D4 + BD',range:'Toque'},
   {id:'knife_medium',cat:'Arma corpo a corpo',name:'Faca média',q:'Hunting knife',skill:'Lutar (Brigar)',damage:'1D4+2 + BD',range:'Toque'},
-  {id:'knife_large',cat:'Arma corpo a corpo',name:'Faca grande / machete',q:'Machete',imgSrc:'Novas%20alterações/equip-images/machete.png',imgRev:2,skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'},
+  {id:'knife_large',cat:'Arma corpo a corpo',name:'Faca grande / machete',q:'Machete',imgPaths:['equip-images/machete.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/machete.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/machete.png?v=20261010','machete.png?v=20261010'],imgRev:3,skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'},
   {id:'hatchet',cat:'Arma corpo a corpo',name:'Machadinha',q:'Hand axe',imgRev:2,skill:'Lutar (Machado)',damage:'1D6+1 + BD',range:'Toque'},
   {id:'bullwhip',cat:'Arma corpo a corpo',name:'Chicote',q:'Bullwhip',skill:'Lutar (Chicote)',damage:'1D3 + metade do BD',range:'10 pés'},
  ];
+ const localImagePaths=item=>Array.isArray(item&&item.imgPaths)?item.imgPaths:(item&&item.imgSrc?[item.imgSrc]:[]);
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
  const uid=()=>`eq-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
@@ -82,7 +83,7 @@
   if(it.kind==='ammo'){it.kind='general';it.cat='Geral';if(!it.notes&&it.ammo)it.notes='Calibre '+it.ammo+'.'}
   if(it.kind==='protection'||it.cat==='Proteção'){it.kind='general';it.cat='Geral'}
   const latest=CATALOG.find(x=>x.id===it.id&&x.imgRev);
-  if(latest&&it.imgRev!==latest.imgRev&&!it.imgManual){it.q=latest.q;it.img=latest.imgSrc||'';it.imgFixed=!!latest.imgSrc;it.imgNone=false;it.imgI=0;it.imgRev=latest.imgRev}
+  if(latest&&it.imgRev!==latest.imgRev&&!it.imgManual){it.q=latest.q;it.imgPaths=localImagePaths(latest);it.img=it.imgPaths[0]||'';it.imgFixed=!!it.imgPaths.length;it.imgNone=false;it.imgI=0;it.imgRev=latest.imgRev}
   return it;
  }
  const ensure=p=>{if(!Array.isArray(p.equipment))p.equipment=[];p.equipment.forEach(migrateItem);return p.equipment};
@@ -100,7 +101,8 @@
  }
  function newItem(template){
   const item={...template,uid:uid(),quantity:template.quantity||1};
-  if(item.imgSrc){item.img=item.imgSrc;item.imgFixed=true}
+  item.imgPaths=localImagePaths(item);
+  if(item.imgPaths.length){item.img=item.imgPaths[0];item.imgFixed=true}
   if(item.kind==='firearm'){item.loaded=item.capacity||0;item.reserve=0}
   if(item.kind==='healing'&&item.uses==null)item.uses=item.quantity;
   return item;
@@ -196,7 +198,8 @@
  function wireThumb(th,item){
   const im=th.querySelector('.eq-thumb-foreground');if(!im||im.dataset.wired)return;im.dataset.wired='1';
   im.addEventListener('error',()=>{
-   const wasFixed=item.imgFixed;
+   const wasFixed=item.imgFixed,paths=localImagePaths(item),pathIndex=paths.indexOf(item.img);
+   if(wasFixed&&pathIndex>=0&&pathIndex+1<paths.length){item.img=paths[pathIndex+1];if(th.isConnected)paintThumb(th,item);persistSoon();return}
    item.img='';item.imgFixed=false;
    if(item.imgManual){item.imgManual=false;item.imgNone=false}else item.imgNone=wasFixed?false:true;
    if(th.isConnected)paintThumb(th,item);persistSoon();
@@ -299,11 +302,18 @@
  }
  async function loadCardImg(card){
   const t=CATALOG.find(x=>x.id===card.dataset.v),box=card.querySelector('[data-eqk-img]');if(!t||!box)return;
-  let urls=t.imgSrc?[t.imgSrc]:cachedUrls(t);if(!urls.length)urls=(await findImages(t)).urls;
+  const local=localImagePaths(t);let urls=local.length?local:cachedUrls(t);if(!urls.length)urls=(await findImages(t)).urls;
   if(!urls.length||!box.isConnected)return;
-  const im=new Image();im.alt='';im.decoding='async';im.referrerPolicy='no-referrer';
-  im.onload=()=>{if(box.isConnected){const back=im.cloneNode();back.className='eqk-backdrop';back.alt='';back.setAttribute('aria-hidden','true');im.className='eqk-foreground';box.replaceChildren(back,im);box.classList.add('has')}};
-  im.src=urls[0];
+  const show=im=>{if(!box.isConnected)return;const back=im.cloneNode();back.className='eqk-backdrop';back.alt='';back.setAttribute('aria-hidden','true');im.className='eqk-foreground';box.replaceChildren(back,im);box.classList.add('has')};
+  const load=async(list,index=0)=>{
+   for(let i=index;i<list.length;i++){
+    const im=new Image();im.alt='';im.decoding='async';im.referrerPolicy='no-referrer';
+    const ok=await new Promise(resolve=>{im.onload=()=>resolve(true);im.onerror=()=>resolve(false);im.src=list[i]});
+    if(ok){show(im);return true}
+   }
+   return false;
+  };
+  if(!await load(urls)&&local.length){const fallback=(await findImages(t)).urls;await load(fallback)}
  }
  function choose(id){
   const t=CATALOG.find(x=>x.id===id);if(!t||!pk)return;
