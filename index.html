@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gerador de Investigadores — Chamado de Cthulhu 7e</title>
+<style>
+:root{--gold:#a88b4a;--felt:#08100f;--felt2:#040a0a;
+ --card:#0d1e1c;--txt:#e6dcc3;--muted:#9fb0a3;--head:#d8c58a;--rule:rgba(216,197,138,.4);--line:rgba(168,139,74,.3);
+ --field:#08110f;--field-ink:#efe6cc;--spine1:#5a1414;--spine2:#8f2323;--spine3:#040a0a;--stamp:rgba(216,197,138,.42);--warn:#d9b36a}
+*{box-sizing:border-box}
+body{font-family:"Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;color:var(--txt);margin:0;min-height:100vh;background:
+ radial-gradient(ellipse 55% 38% at 88% 4%,rgba(var(--glow),.16),transparent 62%),
+ radial-gradient(ellipse 70% 45% at 8% 100%,rgba(var(--redglow),.28),transparent 60%),
+ radial-gradient(ellipse 90% 60% at 50% 115%,rgba(var(--glow2),.35),transparent 65%),
+ linear-gradient(180deg,var(--k1),var(--k2) 48%,var(--k0));background-repeat:no-repeat;background-attachment:fixed;background-color:var(--k0);padding:16px 16px 48px}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+ background:radial-gradient(ellipse 120% 95% at 50% 45%,transparent 45%,rgba(var(--vig),.72) 100%)}
+.top{position:relative;z-index:2;max-width:1100px}
+h1{margin:0;font-size:1.85rem;font-variant:small-caps;letter-spacing:2px;color:var(--head);text-shadow:0 2px 0 var(--k2),0 0 18px rgba(var(--gr),.25)}
+.tag{color:var(--quote);margin:4px 0 8px;font-size:.95rem}
+.quote{color:var(--quote);font-style:italic;font-size:.82rem;max-width:46rem;opacity:.85;margin:0 0 12px}
+.bar{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;background:linear-gradient(var(--k2),var(--k1));border:1px solid rgba(var(--gr2),.7);border-radius:10px;padding:8px 12px 12px;box-shadow:0 8px 24px rgba(0,0,0,.35);max-width:1100px}
+.bar[hidden]{display:none}
+.bar-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 14px;padding-bottom:8px;border-bottom:1px solid rgba(var(--gr2),.25)}
+.bar-title{display:flex;align-items:baseline;gap:4px 12px;flex-wrap:wrap;min-width:0}
+.bar-title b{color:var(--head);font-variant:small-caps;letter-spacing:1.5px;font-size:.95rem}
+.bar-note{font-size:.76rem;color:var(--muted2)}
+.bar-note small{color:var(--muted2)}
+.tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+button.chip{padding:3px 11px;font-size:.78rem;border-radius:999px;line-height:1.5}
+button.chip.sq{padding:3px 10px;font-weight:bold}
+.gen{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 70px auto auto;gap:10px;align-items:end}
+.gen select,.gen input{width:100%;min-width:0;height:36px;background:var(--field);color:var(--field-ink);border:1px solid var(--line);color-scheme:var(--scheme)}
+.gen select:focus,.gen input:focus{outline:2px solid var(--head);outline-offset:1px}
+.gen button{height:36px;white-space:nowrap}
+#go{padding:0 22px}
+#panelBtn{position:fixed;top:10px;left:10px;z-index:6000;padding:6px 14px;border-radius:999px;font-size:.85rem;background:linear-gradient(var(--k5),var(--k2));color:var(--head);border:1px solid var(--gold);box-shadow:0 6px 18px rgba(0,0,0,.5)}
+#panelBtn:hover{background:linear-gradient(var(--k6),var(--k5))}
+#panelBtn[hidden]{display:none}
+body.pmin h1{padding-left:112px}
+label{display:flex;flex-direction:column;font-size:.8rem;gap:3px;color:var(--ink2);min-width:0}
+@media(max-width:640px){
+ .gen{grid-template-columns:1fr 1fr}.gen .qtl{grid-column:1/-1}
+ .bar-head{flex-direction:column;align-items:stretch}
+ h1{padding-left:0}
+}
+select,input,button{font:inherit;padding:6px 10px;border:1px solid var(--gold);border-radius:5px;background:var(--k3);color:var(--txt)}
+button{cursor:pointer;background:linear-gradient(var(--b1),var(--b2));color:var(--btnt);border-color:var(--bb);font-weight:bold}
+button:not(.moon):hover{background:linear-gradient(var(--b3),var(--b4))}
+button.alt{background:transparent;color:var(--ink2);border-color:var(--head)}
+button.alt:hover{background:rgba(var(--gr),.12)}
+#desk{position:relative;z-index:1;min-height:70vh;padding-bottom:80px}
+.empty{color:var(--quote);padding:24px}
+.win{position:absolute;width:520px;min-width:340px;max-width:94vw;color:var(--txt);color-scheme:var(--scheme);border-radius:7px 7px 4px 4px;overflow:hidden;
+ background:var(--card) repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(var(--gr),.045) 28px);
+ border:1px solid rgba(var(--gr2),.55);box-shadow:0 14px 40px rgba(0,0,0,.6),inset 0 0 0 1px rgba(var(--gr),.08);
+ transform-origin:top center}
+.win::before{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;background:linear-gradient(var(--spine1),var(--spine2) 40%,var(--spine1));box-shadow:2px 0 0 var(--spine3);pointer-events:none}
+.win.pinned{box-shadow:0 0 0 2px var(--head),0 16px 44px rgba(0,0,0,.55)}
+.win.collapsed{height:auto}
+.win.collapsed .win-body,.win.collapsed .rsz{display:none}
+.win-bar{display:flex;align-items:center;gap:6px;padding:6px 8px 6px 18px;cursor:grab;user-select:none;
+ background:linear-gradient(var(--k6),var(--k4));color:var(--head);border-bottom:1px solid var(--k0)}
+.win-bar:active{cursor:grabbing}
+.win-title{flex:1;font-size:.82rem;letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.win-bar button{padding:2px 8px;font-size:.75rem;border-radius:4px;background:transparent;color:var(--ink2);border:1px solid rgba(var(--gr),.45)}
+.win-bar button:hover{background:rgba(var(--gr),.15)}
+.win-bar .pinb.on{background:var(--head);color:var(--onhead);border-color:var(--head)}
+.win-body{padding:12px 14px 16px 22px;position:relative}
+.badge{display:flex;gap:8px;align-items:center;float:right;font-size:.72rem}
+.ed{color:var(--warn);font-weight:bold}
+.clip{width:18px;height:28px;border:2px solid var(--gold);border-bottom:none;border-radius:4px 4px 0 0;background:linear-gradient(var(--tab1),var(--tab2));box-shadow:0 2px 0 var(--tab3);margin-top:-18px}
+h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid var(--rule);font-variant:small-caps}
+.sub{color:var(--muted);font-size:.85rem}
+.in{width:54px;text-align:center;border:1px solid var(--line);background:var(--field);color:var(--field-ink);padding:2px 4px;font:inherit;font-size:.85rem;border-radius:3px}
+.in:focus{outline:2px solid var(--head);background:var(--k3)}
+.nm{font-size:1.12rem;font-weight:bold;width:62%;color:var(--head);background:transparent;border:none;border-bottom:1px solid var(--line);border-radius:0;text-align:left}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0}
+.stats div{background:linear-gradient(var(--k5),var(--k4));border:1px solid var(--gold);border-radius:6px;text-align:center;padding:6px 4px;color:var(--btnt);box-shadow:inset 0 0 0 1px rgba(var(--gr),.15)}
+.stats b{display:block;font-size:.72rem;color:var(--head);letter-spacing:1px}
+.stats .in{width:48px;background:var(--field);color:var(--field-ink);border-color:var(--ok)}
+.stats small,.sk small{display:block;color:var(--muted2);font-size:.68rem}
+.sk small{display:inline;margin-left:4px;color:var(--muted)}
+.der{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:.85rem;margin-bottom:10px;background:rgba(var(--gr),.06);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+.der b{color:var(--head);margin-right:4px}
+.sk{display:grid;grid-template-columns:1fr 1fr;gap:3px 14px;font-size:.85rem}
+.sk>span{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dotted var(--line);gap:6px}
+.sk .sk-name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.sk i{flex:0 0 auto;margin-left:auto;font-style:normal;white-space:nowrap}
+.sk i{font-style:normal;white-space:nowrap}
+h3{color:var(--head);border-top:2px solid var(--rule);padding-top:6px;font-variant:small-caps;letter-spacing:1px}
+.win h3.st{margin:4px 0 6px;font-size:.9rem;border-top:none;padding-top:0;border-bottom:1px solid var(--line);padding-bottom:3px}
+button.rmb{padding:0 6px;margin-left:6px;font-size:.7rem;background:transparent;color:var(--warn2);border:1px solid rgba(253,186,116,.5);border-radius:4px}
+button.addb{padding:2px 10px;font-size:.8rem}
+.add{display:flex;gap:6px;margin-top:8px;align-items:center}
+.add .in{text-align:left}
+button.ftg{display:block;width:100%;margin-top:10px;padding:4px 10px;font-size:.8rem;background:transparent;color:var(--muted);border:1px dashed var(--line)}
+button.ftg:hover{background:rgba(var(--gr),.08)}
+.rsz{position:absolute;right:2px;bottom:2px;width:14px;height:14px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 50%,var(--gold) 50%)}
+.stamp{position:absolute;right:16px;top:52px;width:64px;height:64px;border:3px solid var(--stamp);border-radius:50%;color:var(--stamp);font-size:.55rem;font-weight:bold;display:flex;align-items:center;justify-content:center;text-align:center;transform:rotate(12deg);pointer-events:none;letter-spacing:1px;text-transform:uppercase}
+.win:not(.pinned) .stamp{display:none}
+.ovl{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,12,8,.72);backdrop-filter:blur(3px)}
+.dlg{width:min(420px,100%);color-scheme:var(--scheme);background:var(--card) repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(var(--gr),.045) 28px);border:1px solid rgba(var(--gr2),.6);border-radius:8px;box-shadow:0 24px 60px rgba(0,0,0,.7),inset 0 0 0 1px rgba(var(--gr),.08);padding:20px 22px 18px;color:var(--txt);animation:dlgin .14s ease-out}
+.dlg h4{margin:0 0 8px;font-size:1.15rem;font-variant:small-caps;letter-spacing:1px;color:var(--head)}
+.dlg p{margin:0 0 18px;font-size:.92rem;line-height:1.45;color:var(--muted)}
+.dlg p strong{color:var(--txt)}
+.dlg .row{display:flex;justify-content:flex-end;gap:8px}
+.dlg button:focus-visible{outline:2px solid var(--head);outline-offset:2px}
+button.danger{background:#b91c1c;color:#fff;border-color:#f87171}
+button.danger:hover{background:#dc2626}
+@keyframes dlgin{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.dlg{animation:none}}
+button.alt.on{background:rgba(var(--gr),.18);border-color:#efe0ae}
+body.mobile{padding:12px 10px 90px}
+body.mobile h1{font-size:1.5rem;letter-spacing:1px}
+body.mobile .tag{font-size:.9rem}
+body.mobile .gen{grid-template-columns:1fr 1fr}
+body.mobile .gen .qtl{grid-column:1/-1}
+body.mobile .bar-head{flex-direction:column;align-items:stretch}
+body.mobile .gen select,body.mobile .gen input,body.mobile .gen button{height:44px;font-size:16px}
+body.mobile button.chip{min-height:38px;font-size:.85rem}
+body.mobile #desk{position:relative;z-index:1;display:flex;flex-direction:column;gap:14px;min-width:0!important;min-height:0!important;padding-bottom:20px}
+body.mobile #desk .win{position:relative!important;left:auto!important;top:auto!important;width:100%!important;min-width:0;max-width:100%;z-index:auto!important}
+body.mobile #desk .rsz{display:none}
+body.mobile #desk .win-bar{cursor:default;flex-wrap:nowrap;gap:4px;padding:5px 6px 5px 16px}
+body.mobile #desk .win-title{flex:1 1 auto;min-width:0;order:0;font-size:.82rem}
+body.mobile #desk .win-bar button{flex:none;display:flex;align-items:center;justify-content:center;width:30px;height:30px;min-height:0;padding:0;font-size:.95rem;line-height:1}
+body.mobile #desk .win-bar .bl{display:none}
+body.mobile #desk .in{font-size:16px!important;padding:6px;min-height:38px}
+body.mobile #desk h2 .in.nm{font-size:18px!important}
+body.mobile #desk .stats{gap:6px}
+body.mobile #desk .stats .in{width:100%;max-width:64px}
+body.mobile #desk .sk{grid-template-columns:1fr}
+body.mobile #desk .sk>span{padding:3px 0}
+body.mobile #desk .der{gap:8px 10px}
+body.mobile #desk button.rmb{padding:4px 10px;font-size:.85rem}
+body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-size:.95rem}
+#printHost{display:none}
+.pdf-sheet{width:800px!important;min-width:0!important;max-width:none!important;overflow:visible!important;background:var(--card)!important;color:var(--txt)!important;border:1px solid var(--line)!important;box-shadow:none!important}
+.pdf-sheet::before{width:7px;background:linear-gradient(var(--spine1),var(--spine2) 42%,var(--spine1))!important;box-shadow:2px 0 0 var(--spine3)!important}
+.pdf-sheet .win-body{padding:10px 14px 12px 20px!important}
+.pdf-sheet h2{margin:0 0 3px!important;padding-bottom:4px!important;font-size:1.25rem!important;color:var(--head)!important;border-color:var(--rule)!important}
+.pdf-sheet .sub{font-size:.72rem!important;color:var(--muted)!important}
+.pdf-sheet .stats{grid-template-columns:repeat(8,minmax(0,1fr));gap:3px;margin:6px 0}
+.pdf-sheet .stats div{padding:3px 2px;background:var(--k5)!important;border-color:var(--gold)!important;color:var(--btnt)!important;box-shadow:none}
+.pdf-sheet .stats b{font-size:.62rem;color:var(--head)!important;letter-spacing:.2px}
+.pdf-sheet .stats small,.pdf-sheet .sk small{font-size:.58rem;color:var(--muted2)!important}
+.pdf-sheet .der{gap:3px 9px;margin-bottom:6px;padding:5px 7px;font-size:.7rem;background:rgba(var(--gr),.06)!important;border-color:var(--line)!important}
+.pdf-sheet .der b{color:var(--head)!important}
+.pdf-sheet h3.st{margin:5px 0 3px!important;padding-bottom:2px!important;font-size:.73rem!important;letter-spacing:.5px;color:var(--head)!important;border-color:var(--line)!important}
+.pdf-sheet .pdf-history{display:grid;grid-template-columns:1fr 1.3fr;gap:3px 12px;align-items:start;font-size:.68rem;line-height:1.2}
+.pdf-sheet .pdf-history .orig{margin:0 0 2px;font-size:.68rem;line-height:1.2;color:var(--muted)}
+.pdf-sheet .pdf-back{font-size:.68rem;line-height:1.2;white-space:pre-wrap;overflow-wrap:anywhere}
+.pdf-sheet .sk{grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 9px;font-size:.68rem;line-height:1.15}
+.pdf-sheet .sk>span{min-width:0;align-items:flex-start;gap:3px;padding:1px 0;border-color:var(--line)}
+.pdf-sheet .sk .sk-name{overflow-wrap:anywhere;word-break:normal}
+.pdf-sheet .sk i{font-size:.65rem}
+.pdf-sheet .sk small{font-size:.55rem}
+@media print{
+ @page{size:A4 portrait;margin:8mm}
+ body.print-sheet #desk{display:none!important}
+ body.print-sheet #printHost{position:static!important;left:auto!important;top:auto!important;width:auto!important;display:block!important}
+ .ovl,.note,#panelBtn,.atmo,body::before{display:none!important}
+ :root{--card:#f3e6c4;--txt:#2a2118;--muted:#5b4630;--head:#7f1d1d;--rule:rgba(127,29,29,.45);--line:#c4a574;--field:#fffdf6;--field-ink:#1f1610;--spine1:#7f1d1d;--spine2:#b91c1c;--spine3:#4a0c0c;--warn:#9a3412}
+ .top,.bar,.aviso,.tag,.quote,.win-bar,button,.add,.ftg,.rmb,.rsz{display:none!important}
+ body{background:#fff;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #desk{position:static}
+ .win{position:relative!important;left:auto!important;top:auto!important;width:100%!important;max-width:none;page-break-after:always;box-shadow:none;margin:0 0 16px;overflow:visible}
+ .win.collapsed .win-body{display:block}
+ .win-body{padding:12px}
+ body.print-sheet #printHost .pdf-sheet{width:196mm!important;min-width:0!important;max-width:none!important;height:auto!important;margin:0!important;overflow:visible!important;box-shadow:none!important;break-after:page;page-break-after:always}
+}
+
+/* ===== atmosfera: fundo ===== */
+.atmo{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.atmo .sign{position:absolute;left:50%;top:50%;width:min(92vmin,900px);height:min(92vmin,900px);transform:translate(-50%,-50%);color:var(--accent);opacity:.075}
+.atmo .city{position:absolute;left:0;right:0;bottom:0;width:100%;height:clamp(110px,24vh,230px);opacity:.9}
+.atmo .tent{position:absolute;bottom:-6px;height:min(78vh,640px);width:auto}
+.atmo .tent.tl{left:-30px}
+.atmo .tent.tr{right:-30px;transform:scaleX(-1)}
+.atmo .fog{position:absolute;left:0;bottom:0;width:200%;height:46vh;background-repeat:repeat-x;background-size:50% 100%;will-change:transform}
+.atmo .fog.f1{height:52vh;animation:drift 140s linear infinite;
+ background-image:radial-gradient(ellipse 28% 42% at 30% 66%,rgba(var(--glow),.10),transparent 100%),radial-gradient(ellipse 24% 34% at 74% 44%,rgba(var(--glow),.07),transparent 100%)}
+.atmo .fog.f2{height:34vh;animation:drift 90s linear infinite reverse;
+ background-image:radial-gradient(ellipse 26% 46% at 24% 70%,rgba(var(--glow),.09),transparent 100%),radial-gradient(ellipse 22% 38% at 70% 58%,rgba(var(--glow),.08),transparent 100%)}
+@keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+/* título: uma única falha de lamparina ao carregar */
+h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28);animation:lamp 2.4s ease-out 1}
+@keyframes lamp{0%,18%{opacity:.25}22%{opacity:.9}27%{opacity:.35}34%{opacity:1}41%{opacity:.6}48%,100%{opacity:1}}
+.quote{color:var(--quote)}
+@media(max-width:640px){.atmo .tent{height:52vh}.atmo .sign{opacity:.06}}
+@media (prefers-reduced-motion:reduce){.atmo .fog,h1{animation:none}}
+.hist{margin:2px 0 6px}.hist .orig{font-size:.88rem;margin:0 0 3px}.hist .orig small{color:var(--muted)}
+.hist .bk{text-align:left;display:block;width:100%;min-height:64px;margin-top:4px;padding:6px 8px;resize:vertical;font:inherit;font-size:.9rem;line-height:1.4}
+</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"></head><body>
+<button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
+<div class="top">
+<h1>Gerador de Investigadores</h1>
+<p class="tag">Chamado de Cthulhu 7ª ed. · Década de 1920 · fichas offline · notas salvas no navegador</p>
+<p class="quote">“O mais misericordioso no mundo é a incapacidade da mente humana de correlacionar todos os seus conteúdos.” — H. P. Lovecraft</p>
+<div class="bar" id="panel">
+<div class="bar-head">
+<div class="bar-title"><b>Painel</b><span class="bar-note">Não se preocupe, a ficha fica salva no navegador <small id="saved"></small></span></div>
+<div class="tools">
+<button class="alt chip" id="notesBtn" aria-pressed="false" title="Abrir ou fechar o bloco de notas">📓 Notas</button>
+<button class="alt chip" id="bkpOut" title="Baixar fichas, bloco de notas e cemitério num arquivo de backup">💾 Baixar dados</button>
+<button class="alt chip" id="bkpIn" title="Carregar um arquivo de backup neste navegador">📂 Carregar dados</button>
+<button class="alt chip" id="mobBtn" aria-pressed="false" title="Alternar entre versão para celular e computador">📱 Versão para celular</button>
+<button class="alt chip sq" id="panelMin" title="Minimizar painel">–</button>
+</div>
+</div>
+<div class="gen">
+<label>Ocupação<select id="occ"></select></label>
+<label>Ocupação secundária<select id="occ2"></select></label>
+<label class="qtl">Qtd.<input id="qty" type="number" min="1" max="8" value="1"></label>
+<button id="go">🎲 Gerar</button>
+<button class="alt" id="blank" title="Gerar ficha em branco">📝 Ficha em branco</button>
+</div>
+</div>
+</div>
+<button id="panelBtn" hidden title="Abrir painel de geração">☰ Painel</button>
+<div id="desk"></div>
+<section class="note" id="note" hidden aria-label="Bloco de notas">
+<header class="note-bar" title="Arraste para mover · duplo clique para minimizar"><span class="note-title">Bloco de notas</span><button id="noteMin" title="Minimizar" aria-label="Minimizar bloco de notas">–</button><button id="noteX" title="Fechar (tudo fica guardado)" aria-label="Fechar bloco de notas">✕</button></header>
+<div class="note-tabs" role="tablist" aria-label="Seções do bloco de notas"><button id="noteBoardTab" role="tab" aria-selected="true" aria-controls="noteBoardPanel">Quadro de pistas</button><button id="noteTextTab" role="tab" aria-selected="false" aria-controls="noteTextPanel" tabindex="-1">Livro de anotações</button></div>
+<div id="noteBoardPanel" class="note-pane" role="tabpanel" aria-labelledby="noteBoardTab">
+<div class="note-boards"><div id="boardTabs" class="btabs" role="tablist" aria-label="Quadros"></div><button id="boardAdd" title="Criar um novo quadro">＋ Novo</button><button id="boardRen" title="Renomear quadro (ou dê dois cliques na aba)" aria-label="Renomear quadro">✎</button><button id="boardDel" title="Excluir quadro" aria-label="Excluir quadro">🗑</button></div>
+<div class="note-tools">
+<button id="noteSelect" aria-pressed="false" title="Selecionar várias peças (Shift+arrastar)">⬚ Selecionar</button><button id="noteAdd">＋ Foto</button><button id="noteAddText">＋ Texto</button><button id="noteExport" title="Baixar uma imagem PNG do quadro completo">⇩ Baixar PNG</button><button id="noteConnect" aria-pressed="false" title="Ligar duas peças com uma seta">↗ Interligar</button>
+<i class="sep"></i><button id="noteBrush" aria-pressed="false">🖌 Pincel</button><button id="noteEraser" aria-pressed="false">Borracha</button>
+<label>Cor <input id="noteBrushColor" type="color" value="#d4af37" aria-label="Cor do pincel"></label>
+<label>Espessura <input id="noteBrushSize" type="range" min="2" max="40" value="6" aria-label="Espessura do pincel"></label>
+<i class="sep"></i><button id="noteUndo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer" disabled>↶</button><button id="noteRedo" title="Refazer (Ctrl+Y)" aria-label="Refazer" disabled>↷</button>
+<button id="noteDup" title="Duplicar seleção (Ctrl+D)" disabled>⧉ Duplicar</button><button id="noteDir" title="Mudar o sentido da seta da linha selecionada (ou dois cliques na linha)" disabled>⇄ Sentido</button>
+<span class="sp"></span><span id="noteSelInfo" class="selinfo" aria-live="polite"></span><button id="noteDelete" disabled>Excluir</button><button id="noteClear" class="danger">Limpar quadro</button>
+<input id="noteFiles" type="file" accept="image/*" multiple hidden>
+</div>
+<div id="noteViewport" class="note-viewport" tabindex="0" aria-label="Quadro de pistas. Arraste o fundo para mover, use a roda do mouse para zoom, arraste ou cole imagens aqui.">
+<div id="noteBoard" class="note-board" data-mode="move"><svg id="noteLines" class="note-lines" width="2400" height="1600" aria-label="Linhas entre as pistas"></svg><div id="noteCards"></div><canvas id="noteInk" class="note-ink" width="2400" height="1600" aria-label="Desenhos"></canvas></div>
+<div id="noteEmpty" class="note-empty"><strong>Monte o quadro de pistas</strong><p>Envie, arraste ou cole uma imagem: ela aparece como foto revelada. Adicione textos, ligue as peças com setas e rabisque com o pincel.</p></div>
+<div class="note-zoom"><button id="noteZoomOut" aria-label="Diminuir zoom">−</button><output id="noteZoomVal">100%</output><button id="noteZoomIn" aria-label="Aumentar zoom">+</button><button id="noteFit" title="Enquadrar todas as peças">Ajustar</button></div>
+</div>
+</div>
+<div id="noteTextPanel" class="note-pane" role="tabpanel" aria-labelledby="noteTextTab" hidden>
+<div id="diary" class="diary" data-view="page"><div class="dia-book">
+<aside class="dia-index" aria-label="Índice do livro"><header><h5>Índice</h5><button id="diaNew" type="button">＋ Nova entrada</button></header><input id="diaSearch" type="search" placeholder="Procurar no livro…" aria-label="Procurar no livro"><ol id="diaList"></ol><footer id="diaTotal"></footer></aside>
+<section class="dia-page" aria-label="Página do livro"><span class="ribbon" aria-hidden="true"></span>
+<header><button id="diaBack" type="button" class="dia-back">← Índice</button><input id="diaTitle" class="dia-title" maxlength="70" placeholder="Título da entrada" aria-label="Título da entrada"><span class="dia-act"><button id="diaPin" type="button" aria-pressed="false" title="Marcar esta página com uma fita">🔖</button><button id="diaDel" type="button" title="Apagar entrada">🗑</button></span></header>
+<div id="diaDate" class="dia-date"></div><textarea id="diaText" class="dia-text" spellcheck="true" placeholder="Querido diário… anote aqui nomes, teorias e o que aconteceu na sessão."></textarea><footer id="diaCount"></footer></section>
+</div></div></div>
+<footer class="note-footer"><span id="noteHint">Arraste o fundo para mover · Shift+arrastar seleciona várias peças · roda do mouse = zoom</span><span id="noteStatus" role="status" aria-live="polite">Carregando notas…</span></footer>
+</section>
+<div class="atmo" aria-hidden="true"><svg class="sign" viewBox="-100 -100 200 200" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round">
+<circle r="95" stroke-width="1.2"/><circle r="90" stroke-width=".5"/>
+<path d="M0.0 -20.0L0.0 -84.0M0.0 -48.0L-10.5 -61.4M0.0 -48.0L10.5 -61.4M0.0 -66.0L-8.0 -76.2M0.0 -66.0L8.0 -76.2M19.0 -6.2L79.9 -26.0M45.7 -14.8L55.2 -28.9M45.7 -14.8L61.6 -9.0M62.8 -20.4L70.0 -31.2M62.8 -20.4L75.0 -15.9M11.8 16.2L49.4 68.0M28.2 38.8L44.6 43.5M28.2 38.8L27.6 55.8M38.8 53.4L51.3 57.0M38.8 53.4L38.3 66.4M-11.8 16.2L-49.4 68.0M-28.2 38.8L-27.6 55.8M-28.2 38.8L-44.6 43.5M-38.8 53.4L-38.3 66.4M-38.8 53.4L-51.3 57.0M-19.0 -6.2L-79.9 -26.0M-45.7 -14.8L-61.6 -9.0M-45.7 -14.8L-55.2 -28.9M-62.8 -20.4L-75.0 -15.9M-62.8 -20.4L-70.0 -31.2" stroke-width="2.4"/>
+<path d="M0 -17C9 -8 10 3 0 14C-10 3 -9 -8 0 -17Z" stroke-width="1.6"/><circle r="3.2" fill="currentColor" stroke="none"/></g></svg><svg class="city" viewBox="0 0 1200 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path style="fill:var(--k0)" d="M0 220V176L48 168L66 112L82 108L98 170L168 178L182 70L205 62L224 182L292 188L312 128L352 112L372 190L452 196L476 46L498 38L520 200L610 206L628 138L664 120L690 206L760 200L786 92L806 88L830 196L902 190L918 142L958 130L978 188L1052 180L1070 100L1090 96L1110 176L1160 172L1200 164V220Z"/></svg><div class="fog f1"></div><svg class="tent tl" viewBox="0 0 400 640" preserveAspectRatio="xMinYMax meet" aria-hidden="true">
+<defs><linearGradient id="tg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" style="stop-color:var(--k0)"/><stop offset=".7" style="stop-color:var(--k2)"/><stop offset="1" style="stop-color:var(--k6)"/></linearGradient></defs>
+<path fill="url(#tg)" style="stroke:rgba(var(--glow),.22)" stroke-width="1.2" d="M-20 640C10 500 95 450 86 340C80 265 22 245 44 178C54 148 84 140 98 156C76 156 68 172 78 194C98 240 150 268 144 346C138 450 92 520 170 640Z"/>
+<path fill="url(#tg)" style="stroke:rgba(var(--glow),.18)" stroke-width="1" d="M110 640C150 560 235 520 232 440C229 380 186 366 198 322C204 300 226 296 236 308C220 308 216 320 222 334C234 366 280 386 276 446C272 530 230 590 290 640Z"/>
+<path fill="url(#tg)" style="stroke:rgba(var(--glow),.14)" stroke-width="1" d="M250 640C275 600 330 590 338 548C344 516 322 506 332 484C338 472 352 472 358 480C348 480 346 488 350 496C358 514 384 524 380 552C376 590 346 616 372 640Z"/>
+</svg><svg class="tent tr" viewBox="0 0 400 640" preserveAspectRatio="xMinYMax meet" aria-hidden="true">
+<defs><linearGradient id="tg2" x1="0" y1="1" x2="0" y2="0"><stop offset="0" style="stop-color:var(--k0)"/><stop offset=".7" style="stop-color:var(--k2)"/><stop offset="1" style="stop-color:var(--k6)"/></linearGradient></defs>
+<path fill="url(#tg2)" style="stroke:rgba(var(--glow),.22)" stroke-width="1.2" d="M-20 640C10 500 95 450 86 340C80 265 22 245 44 178C54 148 84 140 98 156C76 156 68 172 78 194C98 240 150 268 144 346C138 450 92 520 170 640Z"/>
+<path fill="url(#tg2)" style="stroke:rgba(var(--glow),.18)" stroke-width="1" d="M110 640C150 560 235 520 232 440C229 380 186 366 198 322C204 300 226 296 236 308C220 308 216 320 222 334C234 366 280 386 276 446C272 530 230 590 290 640Z"/>
+<path fill="url(#tg2)" style="stroke:rgba(var(--glow),.14)" stroke-width="1" d="M250 640C275 600 330 590 338 548C344 516 322 506 332 484C338 472 352 472 358 480C348 480 346 488 350 496C358 514 384 524 380 552C376 590 346 616 372 640Z"/>
+</svg><div class="fog f2"></div></div>
+<script>
+const d6=()=>1+Math.floor(Math.random()*6),r=n=>Math.floor(Math.random()*n),pick=a=>a[r(a.length)];
+const MAXA=90,MAXS=75; /* limites dos valores aleatórios: atributo e perícia */
+const A=()=>Math.min(MAXA,(d6()+d6()+d6())*5),B=()=>Math.min(MAXA,(d6()+d6()+6)*5);
+/* perícias comuns usadas em "qualquer outra" e nos interesses pessoais, para evitar sorteios sem sentido */
+const COMMON=['Encontrar','Escutar','Psicologia','Furtividade','Primeiros Socorros','Dirigir Auto','Usar Biblioteca','Lutar (Brigar)','Esquivar','Persuasão','Lábia','Charme','Intimidação','História','Ocultismo','Armas de Fogo (Pistolas)','Natação','Escalar','Consertos Mecânicos','Mundo Natural','Avaliação','Saltar','Arremessar','Navegação','Chaveiro','Cavalgar'];
+const LANGS=['Latim','Francês','Alemão','Italiano','Árabe','Grego'];
+const SOC=['Charme','Lábia','Persuasão','Intimidação'];
+const NF=['Edith','Dorothy','Mabel','Harriet','Clara','Eleanor','Agnes','Beatrice','Florence','Louise'];
+const NM=['Arthur','Walter','Harold','Edmund','Henry','Frank','Albert','Raymond','Theodore','Victor'];
+const SN=['Whitlock','Crane','Ashford','Bellamy','Hartwell','Kendrick','Dunmore','Sinclair','Prescott','Blackwood'];
+const BASE={'Ciência (Química)':1,'Ciência (Geologia)':1,'Ciência (Botânica)':1,'Ciência (Zoologia)':1,'Ciência (Matemática)':1,'Ciência (Meteorologia)':1,'Ciência (Ciência Forense)':1,'Arte/Ofício (Escultura)':5,'Arte/Ofício (Desenho)':5,'Arte/Ofício (Piano)':5,'Arte/Ofício (Violino)':5,'Arte/Ofício (Canto)':5,'Arte/Ofício (Violão)':5,'Arte/Ofício (Saxofone)':5,'Antropologia':1,'Armas de Fogo (Pistolas)':20,'Armas de Fogo (Rifles)':25,'Arqueologia':1,'Arremessar':20,'Arte/Ofício (Pintura)':5,'Arte/Ofício (Fotografia)':5,'Avaliação':5,'Cavalgar':5,'Charme':15,'Chaveiro':1,'Ciência (Biologia)':1,'Ciência (Farmácia)':1,'Ciência (Astronomia)':1,'Consertos Elétricos':10,'Consertos Mecânicos':5,'Contabilidade':5,'Direito':5,'Dirigir Auto':20,'Disfarce':5,'Encontrar':25,'Escutar':20,'Escalar':20,'Esquivar':0,'Lábia':5,'Intimidação':15,'História':5,'Furtividade':20,'Lutar (Brigar)':25,'Medicina':1,'Mundo Natural':10,'Natação':20,'Navegação':10,'Ocultismo':5,'Operar Maquinário':1,'Persuasão':10,'Pilotar (Barcos)':1,'Prestidigitação':10,'Primeiros Socorros':30,'Psicanálise':1,'Psicologia':10,'Saltar':20,'Rastrear':10,'Sobrevivência':10,'Usar Biblioteca':20,'Arte/Ofício (Literatura)':5,'Arte/Ofício (Instrumento)':5,'Arte/Ofício (Atuar)':5,'Arte/Ofício (Desenho Técnico)':5,'Arte/Ofício (Trabalhos de Fazenda)':5,'Ciência (Engenharia)':1,'Ciência (Física)':1,'Operar Maquinário Pesado':1,'Pilotar (Aeronaves)':1,'Nível de Crédito':0};
+const base=(n,c)=>n==='Esquivar'?c.DES>>1:n==='Língua Natural'?Math.min(MAXS,c.EDU):n.startsWith('Língua (')?1:BASE[n];
+const E4='EDU*4',ED='EDU*2+DES*2|EDU*2+FOR*2',ART='Arte/Ofício (Pintura)|Arte/Ofício (Fotografia)|Arte/Ofício (Literatura)|Arte/Ofício (Instrumento)|Arte/Ofício (Atuar)',PF='Armas de Fogo (Pistolas)|Armas de Fogo (Rifles)',CR='Armas de Fogo (Pistolas)|Avaliação|Chaveiro|Consertos Mecânicos|Disfarce|Lutar (Brigar)|Prestidigitação';
+/* n=nome, p=pontos (use | para alternativas, vale a maior), c=faixa de Crédito, s=perícias. Em s: A|B = sorteia uma; @soc = perícia social; @lang = língua; @any = qualquer outra (das COMMON); prefixo ! = perícia principal, recebe mais pontos */
+const OCC=[
+{n:'Advogado',p:E4,c:[30,80],s:['Contabilidade','!Direito','@soc','@soc','!Psicologia','Usar Biblioteca','@any','@any']},
+{n:'Andarilho',p:'EDU*2+APA*2|EDU*2+DES*2|EDU*2+FOR*2',c:[0,5],s:['Escalar','!Escutar','!Furtividade','@soc','Navegação','Saltar','@any','@any']},
+{n:'Antiquário',p:E4,c:[30,70],s:[ART,'!Avaliação','Encontrar','!História','@soc','@lang','Usar Biblioteca','@any']},
+{n:'Arqueólogo',p:E4,c:[10,40],s:['!Arqueologia','Avaliação','!História','@lang','Usar Biblioteca','Encontrar','Navegação','Consertos Mecânicos']},
+{n:'Artista',p:'EDU*2+POD*2|EDU*2+DES*2',c:[9,50],s:['!'+ART,'Encontrar','História|Mundo Natural','@soc','@lang','Psicologia','@any','@any']},
+{n:'Atleta',p:ED,c:[9,70],s:['Arremessar','Cavalgar','!Escalar','@soc','Lutar (Brigar)','!Natação','!Saltar','@any']},
+{n:'Autor',p:E4,c:[9,30],s:['!Arte/Ofício (Literatura)','História','!Língua Natural','Mundo Natural|Ocultismo','@lang','Psicologia','Usar Biblioteca','@any']},
+{n:'Bibliotecário',p:E4,c:[9,35],s:['Contabilidade','Língua Natural','@lang','!Usar Biblioteca','@any','@any','@any','@any']},
+{n:'Clero, Membro do',p:E4,c:[9,60],s:['Contabilidade','Escutar','História','!@soc','@lang','!Psicologia','Usar Biblioteca','@any']},
+{n:'Criminoso',p:ED,c:[5,65],s:['!Encontrar','!Furtividade','@soc','Psicologia',CR,CR,CR,CR]},
+{n:'Detetive Particular',p:ED,c:[9,30],s:['Arte/Ofício (Fotografia)','Direito','Disfarce','!Encontrar','@soc','!Psicologia','Usar Biblioteca','@any']},
+{n:'Diletante',p:'EDU*2+APA*2',c:[50,99],s:[PF,ART,'!Cavalgar','!@soc','@lang','@any','@any','@any']},
+{n:'Engenheiro',p:E4,c:[30,60],s:['!Arte/Ofício (Desenho Técnico)','Consertos Elétricos','!Ciência (Engenharia)','Ciência (Física)','Consertos Mecânicos','Operar Maquinário Pesado','Usar Biblioteca','@any']},
+{n:'Fanático',p:'EDU*2+APA*2|EDU*2+POD*2',c:[0,30],s:['Furtividade','História','!@soc','@soc','!Psicologia','@any','@any','@any']},
+{n:'Fazendeiro',p:ED,c:[9,30],s:['!Arte/Ofício (Trabalhos de Fazenda)','Consertos Mecânicos','Dirigir Auto','@soc','!Mundo Natural','Operar Maquinário Pesado','Rastrear','@any']},
+{n:'Investigador de Polícia',p:ED,c:[20,50],s:['Arte/Ofício (Atuar)|Disfarce','!Armas de Fogo (Pistolas)','Direito','Escutar','@soc','!Psicologia','!Encontrar','@any']},
+{n:'Jornalista',p:E4,c:[9,30],s:['Arte/Ofício (Fotografia)','História','!Usar Biblioteca','Língua Natural','@soc','!Psicologia','Encontrar|Escutar','@any']},
+{n:'Médico',p:E4,c:[30,80],s:['Ciência (Biologia)','Ciência (Farmácia)','!Medicina','Língua (Latim)','!Primeiros Socorros','Psicologia','@any','@any']},
+{n:'Membro de Tribo',p:ED,c:[0,15],s:['Arremessar|Lutar (Brigar)','Encontrar','Escalar','Escutar','!Mundo Natural','Natação','Ocultismo','!Sobrevivência']},
+{n:'Missionário',p:E4,c:[0,30],s:[ART,'Consertos Mecânicos','!@soc','Medicina','Mundo Natural','!Primeiros Socorros','@any','@any']},
+{n:'Músico',p:'EDU*2+DES*2|EDU*2+POD*2',c:[9,30],s:['!Arte/Ofício (Instrumento)','!Escutar','@soc','Psicologia','@any','@any','@any','@any']},
+{n:'Oficial de Polícia',p:ED,c:[9,30],s:['!Armas de Fogo (Pistolas)','Direito','!Encontrar','@soc','!Lutar (Brigar)','Primeiros Socorros','Psicologia','Dirigir Auto|Cavalgar']},
+{n:'Oficial Militar',p:ED,c:[20,70],s:['!Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)|Lutar (Brigar)','Navegação','!@soc','@soc','Psicologia','Sobrevivência','Contabilidade|Esquivar']},
+{n:'Ocultista',p:E4,c:[9,65],s:['!Antropologia','História','Usar Biblioteca','!Ocultismo','@lang','Ciência (Astronomia)','Persuasão','@any']},
+{n:'Parapsicólogo',p:E4,c:[9,30],s:['Antropologia','Arte/Ofício (Fotografia)','História','!Usar Biblioteca','!Ocultismo','@lang','Psicologia','@any']},
+{n:'Piloto',p:'EDU*2+DES*2',c:[20,70],s:['Consertos Elétricos','Consertos Mecânicos','!Navegação','Operar Maquinário Pesado','!Pilotar (Aeronaves)','Ciência (Astronomia)','@any','@any']},
+{n:'Professor',p:E4,c:[20,70],s:['Língua Natural','!@lang','Psicologia','!Usar Biblioteca','@any','@any','@any','@any']},
+{n:'Profissional de Entretenimento',p:'EDU*2+APA*2',c:[9,70],s:['!Arte/Ofício (Atuar)','Disfarce','Escutar','!@soc','@soc','Psicologia','@any','@any']},
+{n:'Soldado',p:ED,c:[9,30],s:['!Armas de Fogo (Rifles)','Escalar|Natação','!Esquivar','Furtividade','!Lutar (Brigar)','Sobrevivência','Armas de Fogo (Pistolas)|Primeiros Socorros','Consertos Mecânicos|Primeiros Socorros|@lang']},
+{n:'Cientista',p:E4,c:[9,50],s:['!Ciência (Biologia)|Ciência (Física)','!Ciência (Farmácia)|Ciência (Astronomia)','Ciência (Engenharia)','@lang','Usar Biblioteca','Psicologia','Encontrar','@any']},
+{n:'Contador',p:E4,c:[30,70],s:['!Contabilidade','!Direito','Avaliação','Usar Biblioteca','Escutar','Persuasão|Lábia','Psicologia','@any']},
+{n:'Enfermeiro',p:E4,c:[9,30],s:['!Primeiros Socorros','Escutar','!Medicina','Psicologia','Ciência (Biologia)','Ciência (Farmácia)','@soc','@any']},
+{n:'Espião',p:ED,c:[20,60],s:['!Disfarce','!Furtividade','Escutar','Lábia','@lang','!Armas de Fogo (Pistolas)','Psicologia','Encontrar']},
+{n:'Estudante',p:E4,c:[5,10],s:['!Usar Biblioteca','@lang','Psicologia','História','@any','@any','@any','@any']},
+{n:'Explorador',p:ED,c:[9,60],s:['Escalar','!Navegação','!Sobrevivência','Natação','Rastrear','Mundo Natural','Primeiros Socorros','@lang']},
+{n:'Fotógrafo',p:'EDU*2+DES*2|EDU*2+POD*2',c:[9,30],s:['!Arte/Ofício (Fotografia)','!Encontrar','Furtividade','Psicologia','@soc','Consertos Elétricos','Usar Biblioteca','@any']},
+{n:'Guarda-caça',p:ED,c:[9,30],s:['!Armas de Fogo (Rifles)','!Rastrear','Furtividade','Sobrevivência','Mundo Natural','Escalar','Escutar','Primeiros Socorros']},
+{n:'Marinheiro',p:ED,c:[9,30],s:['!Pilotar (Barcos)','!Navegação','Natação','Escalar','Consertos Mecânicos','Primeiros Socorros','Lutar (Brigar)','@any']},
+{n:'Mecânico',p:ED,c:[9,30],s:['!Consertos Mecânicos','!Consertos Elétricos','Dirigir Auto','Operar Maquinário','Operar Maquinário Pesado','Escalar','Encontrar','Avaliação']},
+{n:'Mordomo',p:'EDU*2+APA*2',c:[9,40],s:['Contabilidade','!Escutar','!Encontrar','Psicologia','@soc','Primeiros Socorros','Furtividade','@any']},
+{n:'Motorista',p:ED,c:[9,30],s:['!Dirigir Auto','!Consertos Mecânicos','Escutar','Navegação','@soc','Encontrar','Primeiros Socorros','@any']},
+{n:'Operário',p:ED,c:[9,30],s:['!Consertos Mecânicos','Consertos Elétricos','!Operar Maquinário Pesado','Escalar','Arremessar','Primeiros Socorros','Encontrar','@any']},
+{n:'Político',p:'EDU*2+APA*2',c:[50,90],s:['!Charme','Intimidação','!Persuasão','!Lábia','História','Psicologia','Direito','Usar Biblioteca']},
+{n:'Contrabandista',p:ED,c:[5,50],s:['!Dirigir Auto|Pilotar (Barcos)','!Furtividade','Lábia','Avaliação','Encontrar','Escutar','Armas de Fogo (Pistolas)','@any']},
+{n:'Alienista (Psiquiatra)',p:E4,c:[30,80],s:['!Psicanálise','!Psicologia','Medicina','Ciência (Biologia)','Língua (Latim)','Escutar','Persuasão','Usar Biblioteca']},
+{n:'Barman',p:'EDU*2+APA*2',c:[5,25],s:['Contabilidade','!Escutar','!Psicologia','@soc','@soc','Lutar (Brigar)','Encontrar','@any']},
+{n:'Bombeiro',p:ED,c:[9,30],s:['!Escalar','Saltar','!Primeiros Socorros','Consertos Mecânicos','Dirigir Auto','Operar Maquinário Pesado','Arremessar','Esquivar']},
+{n:'Caçador',p:ED,c:[9,30],s:['!Armas de Fogo (Rifles)','!Rastrear','Furtividade','Sobrevivência','Mundo Natural','Escutar','Primeiros Socorros','Encontrar']},
+{n:'Guarda-costas',p:ED,c:[9,40],s:['!Lutar (Brigar)','Intimidação','!Armas de Fogo (Pistolas)','Escutar','Dirigir Auto','Primeiros Socorros','Psicologia','Esquivar']}
+];
+OCC.sort((a,b)=>a.n.localeCompare(b.n,'pt'));
+/* ocupações secundárias: n=nome, s=perícias que ganham parte dos pontos de interesse */
+/* ! = perícia principal da ocupação secundária (sempre recebe a maior parte dos pontos de interesse) */
+const SEC=[
+{n:'Fotógrafo',s:['!Arte/Ofício (Fotografia)','!Encontrar','Furtividade','Escalar']},
+{n:'Mecânico de Carros',s:['!Consertos Mecânicos','Consertos Elétricos','!Dirigir Auto','Operar Maquinário']},
+{n:'Lutador',s:['!Lutar (Brigar)','!Esquivar','Intimidação','Primeiros Socorros']},
+{n:'Médico de Guerra',s:['!Primeiros Socorros','!Medicina',PF,'Sobrevivência']},
+{n:'Médico',s:['!Medicina','!Primeiros Socorros','Ciência (Biologia)','Psicologia']},
+{n:'Enfermeiro',s:['!Primeiros Socorros','Medicina','Psicologia','Escutar']},
+{n:'Soldado',s:['!'+PF,'!Lutar (Brigar)','Furtividade','Sobrevivência']},
+{n:'Detetive Amador',s:['!Encontrar','!Psicologia','Escutar','Usar Biblioteca']},
+{n:'Jornalista Freelancer',s:['!Usar Biblioteca','Persuasão','Escutar','Arte/Ofício (Fotografia)']},
+{n:'Motorista',s:['!Dirigir Auto','Consertos Mecânicos','Navegação','Escutar']},
+{n:'Caçador',s:['!Armas de Fogo (Rifles)','!Rastrear','Furtividade','Mundo Natural']},
+{n:'Marinheiro',s:['!Pilotar (Barcos)','Natação','!Navegação','Consertos Mecânicos']},
+{n:'Ladrão de Casas',s:['!Chaveiro','!Furtividade','Prestidigitação','Escalar']},
+{n:'Contrabandista',s:['!Dirigir Auto|Pilotar (Barcos)','Furtividade','Lábia','Avaliação']},
+{n:'Jogador de Cartas',s:['!Prestidigitação','!Psicologia','Lábia','Contabilidade']},
+{n:'Estudante de Ocultismo',s:['!Ocultismo','Usar Biblioteca','@lang','Antropologia']},
+{n:'Cavaleiro',s:['!Cavalgar','Mundo Natural','Rastrear','Saltar']},
+{n:'Pintor Amador',s:['!Arte/Ofício (Pintura)','Encontrar','Avaliação','História']},
+{n:'Espião',s:['!Disfarce','!Furtividade','@lang','Escutar']},
+{n:'Guarda-costas',s:['!Lutar (Brigar)','Intimidação','!Armas de Fogo (Pistolas)','Escutar']},
+{n:'Contador',s:['!Contabilidade','Direito','Usar Biblioteca','Persuasão']},
+{n:'Eletricista',s:['!Consertos Elétricos','Operar Maquinário','Escalar','Contabilidade']}
+];
+const calc=c=>{const sum=c.FOR+c.TAM,[db,corpo]=sum<65?['-2',-2]:sum<85?['-1',-1]:sum<125?['0',0]:sum<165?['+1d4',1]:['+1d6',2];
+ return{hp:Math.floor((c.CON+c.TAM)/10),san:c.POD,pm:Math.floor(c.POD/5),mov:(c.FOR>c.TAM&&c.DES>c.TAM)?9:(c.FOR<c.TAM&&c.DES<c.TAM)?7:8,db,corpo}};
+/* Especializações: cada ocupação pode ter uma sub-lista. "at" são as posições das perícias da ocupação que são trocadas pelas da opção escolhida (! = perícia principal) */
+const SUB={
+ 'Cientista':{lbl:'Área de pesquisa',at:[0,1,2],o:{'Biologia':['!Ciência (Biologia)','!Ciência (Botânica)','Ciência (Zoologia)'],'Química':['!Ciência (Química)','!Ciência (Farmácia)','Ciência (Física)'],'Física':['!Ciência (Física)','!Ciência (Matemática)','Ciência (Engenharia)'],'Astronomia':['!Ciência (Astronomia)','!Ciência (Matemática)','Ciência (Física)'],'Geologia':['!Ciência (Geologia)','!Ciência (Química)','Ciência (Meteorologia)'],'Farmácia':['!Ciência (Farmácia)','!Ciência (Química)','Ciência (Biologia)'],'Zoologia':['!Ciência (Zoologia)','!Ciência (Biologia)','Mundo Natural'],'Ciência Forense':['!Ciência (Ciência Forense)','!Ciência (Química)','Ciência (Biologia)'],'Matemática':['!Ciência (Matemática)','!Ciência (Física)','Contabilidade'],'Meteorologia':['!Ciência (Meteorologia)','!Ciência (Física)','Ciência (Matemática)']}},
+ 'Estudante':{lbl:'Área de estudo',at:[3,4,5],o:{'Humanas':['!História','!Antropologia','Arqueologia'],'Ciências Naturais':['!Ciência (Biologia)','!Ciência (Química)','Ciência (Física)'],'Exatas e Engenharia':['!Ciência (Matemática)','!Ciência (Física)','Ciência (Engenharia)'],'Medicina e Saúde':['!Medicina','!Primeiros Socorros','Ciência (Biologia)'],'Direito':['!Direito','!Persuasão','Contabilidade'],'Letras':['!Arte/Ofício (Literatura)','!Língua (Latim)','História'],'Artes':['!Arte/Ofício (Pintura)','!Arte/Ofício (Escultura)','História'],'Ocultismo e Folclore':['!Ocultismo','!Antropologia','História']}},
+ 'Professor':{lbl:'Matéria',at:[4,5],o:{'História':['!História','Antropologia'],'Ciências':['!Ciência (Física)','!Ciência (Biologia)'],'Letras':['!Arte/Ofício (Literatura)','História'],'Matemática':['!Ciência (Matemática)','Contabilidade'],'Ocultismo e Folclore':['!Ocultismo','Antropologia']}},
+ 'Artista':{lbl:'Arte',at:[0],o:{'Pintura':['!Arte/Ofício (Pintura)'],'Escultura':['!Arte/Ofício (Escultura)'],'Desenho':['!Arte/Ofício (Desenho)'],'Fotografia':['!Arte/Ofício (Fotografia)'],'Poesia e Literatura':['!Arte/Ofício (Literatura)'],'Teatro':['!Arte/Ofício (Atuar)']}},
+ 'Músico':{lbl:'Instrumento',at:[0],o:{'Piano':['!Arte/Ofício (Piano)'],'Violino':['!Arte/Ofício (Violino)'],'Canto':['!Arte/Ofício (Canto)'],'Violão':['!Arte/Ofício (Violão)'],'Saxofone':['!Arte/Ofício (Saxofone)']}},
+ 'Médico':{lbl:'Especialidade',at:[0,1,5],o:{'Clínico geral':['Ciência (Biologia)','Ciência (Farmácia)','Psicologia'],'Cirurgião':['!Ciência (Biologia)','Encontrar','Escutar'],'Psiquiatra':['!Psicologia','Ciência (Biologia)','!Psicanálise'],'Legista / Patologista':['!Ciência (Biologia)','!Ciência (Ciência Forense)','Ciência (Farmácia)'],'Médico militar':['Ciência (Biologia)','Sobrevivência','!Armas de Fogo (Pistolas)']}},
+ 'Engenheiro':{lbl:'Especialidade',at:[1,3,4,5],o:{'Mecânico':['Consertos Elétricos','Ciência (Física)','!Consertos Mecânicos','Operar Maquinário Pesado'],'Elétrico':['!Consertos Elétricos','Ciência (Física)','Consertos Mecânicos','Operar Maquinário'],'Civil':['Navegação','Ciência (Geologia)','Consertos Mecânicos','!Operar Maquinário Pesado'],'Químico':['Consertos Elétricos','!Ciência (Química)','Consertos Mecânicos','Operar Maquinário Pesado'],'Naval':['Consertos Mecânicos','Ciência (Física)','!Pilotar (Barcos)','Navegação'],'Aeronáutico':['Consertos Mecânicos','Ciência (Física)','!Pilotar (Aeronaves)','Consertos Elétricos']}},
+ 'Soldado':{lbl:'Função',at:[0,4,5],o:{'Infantaria':['!Armas de Fogo (Rifles)','!Lutar (Brigar)','Sobrevivência'],'Atirador de elite':['!Armas de Fogo (Rifles)','Escutar','!Encontrar'],'Cavalaria':['!Armas de Fogo (Rifles)','!Cavalgar','Sobrevivência'],'Médico de campo':['Armas de Fogo (Pistolas)','!Primeiros Socorros','!Medicina'],'Sapador':['Armas de Fogo (Rifles)','Consertos Mecânicos','!Operar Maquinário Pesado'],'Aviador':['Armas de Fogo (Pistolas)','!Pilotar (Aeronaves)','Navegação']}},
+ 'Criminoso':{lbl:'Tipo de criminoso',at:[0,1,4,5],o:{'Ladrão':['Encontrar','!Furtividade','!Chaveiro','Prestidigitação'],'Assaltante':['!Armas de Fogo (Pistolas)','!Intimidação','Lutar (Brigar)','Dirigir Auto'],'Falsário / Golpista':['!Lábia','!Disfarce','Avaliação','Prestidigitação'],'Brigão':['!Lutar (Brigar)','!Intimidação','Esquivar','Armas de Fogo (Pistolas)'],'Batedor de carteiras':['!Prestidigitação','!Furtividade','Encontrar','Disfarce']}},
+ 'Atleta':{lbl:'Esporte',at:[2,4,5,6],o:{'Nadador':['Escalar','Lutar (Brigar)','!Natação','Saltar'],'Boxeador':['Escalar','!Lutar (Brigar)','!Esquivar','Saltar'],'Corredor':['Escalar','!Esquivar','Natação','!Saltar'],'Alpinista':['!Escalar','Lutar (Brigar)','Natação','!Saltar']}}
+};
+const tokens=(o,spec)=>{const S=OCC.includes(o)&&SUB[o.n],t=[...o.s];if(!S)return{t,spec:''};const k=spec&&S.o[spec]?spec:pick(Object.keys(S.o));S.at.forEach((ix,j)=>{if(S.o[k][j]!=null)t[ix]=S.o[k][j]});return{t,spec:k}};
+/* Histórico / origem: algumas ocupações perguntam de onde o personagem veio. Cada opção dá +10 em 2 perícias e escreve o início do backstory. "pool" = perícias oferecidas na opção "outro (escrever)" */
+const WARS=[
+ {id:'esp',n:'Guerra Hispano-Americana (1898)',sk:['Cavalgar','Armas de Fogo (Rifles)'],t:'Lutou em Cuba e nas Filipinas e voltou com histórias que poucos acreditam.'},
+ {id:'mex',n:'Revolução Mexicana / Guerra da Fronteira',sk:['Cavalgar','Sobrevivência'],t:'Patrulhou a fronteira entre balas, poeira e bandidos.'},
+ {id:'ww1',n:'Primeira Guerra Mundial (1914–1918)',sk:['Armas de Fogo (Rifles)','Sobrevivência'],t:'Sobreviveu às trincheiras da Grande Guerra e ainda ouve os canhões à noite.'},
+ {id:'rus',n:'Intervenção na Rússia (1918–1920)',sk:['Sobrevivência','Escutar'],t:'Marchou pelo gelo russo numa guerra que o mundo preferiu esquecer.'},
+ {id:'ww2',n:'Segunda Guerra Mundial (1939–1945)',sk:['Armas de Fogo (Rifles)','Esquivar'],t:'Atravessou a guerra mais sangrenta da história e voltou outra pessoa.'},
+ {id:'cor',n:'Guerra da Coreia (1950–1953)',sk:['Sobrevivência','Armas de Fogo (Rifles)'],t:'Viveu o inverno brutal da Coreia, onde o frio matava tanto quanto o inimigo.'},
+ {id:'fria',n:'Guerra Fria',sk:['Escutar','Encontrar'],t:'Serviu em postos de vigilância e operações que nunca constaram em relatório algum.'},
+ {id:'vie',n:'Guerra do Vietnã',sk:['Sobrevivência','Furtividade'],t:'Patrulhou selvas onde cada passo podia ser o último.'},
+ {id:'gol',n:'Guerra do Golfo (1990–1991)',sk:['Dirigir Auto','Armas de Fogo (Rifles)'],t:'Cruzou o deserto numa guerra curta, mas que deixou marcas longas.'}];
+const WAR_POOL=['Armas de Fogo (Rifles)','Armas de Fogo (Pistolas)','Lutar (Brigar)','Sobrevivência','Furtividade','Primeiros Socorros','Escalar','Natação','Cavalgar','Dirigir Auto','Navegação','Consertos Mecânicos','Esquivar','Escutar','Encontrar'];
+const UNIS=[
+ {id:'mis',n:'Universidade Miskatonic (Arkham)',sk:['Ocultismo','Usar Biblioteca'],t:'Passou pelos corredores de Miskatonic, onde o conhecimento proibido espreita nas estantes da biblioteca.'},
+ {id:'har',n:'Universidade de Harvard',sk:['Usar Biblioteca','Direito'],t:'Ligado a Harvard, entre bibliotecas imponentes e velhas famílias de Boston.'},
+ {id:'bos',n:'Universidade de Boston',sk:['História','Persuasão'],t:'Construiu sua vida acadêmica nas salas movimentadas de Boston.'},
+ {id:'yal',n:'Universidade de Yale',sk:['História','Língua (Latim)'],t:'Passou por Yale, onde sociedades secretas sussurram atrás de portas fechadas.'},
+ {id:'col',n:'Universidade Columbia (Nova York)',sk:['Psicologia','Ciência (Matemática)'],t:'Estudou em Nova York, entre o ritmo da cidade e as ideias novas do século.'},
+ {id:'oxf',n:'Universidade de Oxford',sk:['Língua (Latim)','História'],t:'Formou-se em Oxford, cercado de tradição, latim e colégios centenários.'},
+ {id:'cam',n:'Universidade de Cambridge',sk:['Ciência (Matemática)','Ciência (Física)'],t:'Passou por Cambridge, onde números e teoremas parecem esconder algo a mais.'},
+ {id:'sor',n:'Sorbonne (Paris)',sk:['Arte/Ofício (Literatura)','Antropologia'],t:'Viveu em Paris e na Sorbonne, entre cafés, filósofos e viajantes de todo o mundo.'}];
+const UNI_POOL=['História','Antropologia','Arqueologia','Ocultismo','Usar Biblioteca','Direito','Medicina','Psicologia','Ciência (Biologia)','Ciência (Física)','Ciência (Química)','Ciência (Matemática)','Arte/Ofício (Literatura)','Língua (Latim)','Contabilidade'];
+const POLICE={q:'Em que cidade você serve (ou serviu)?',kind:'Cidade',o:[
+ {id:'ark',n:'Arkham',sk:['Escutar','História'],t:'Patrulhou as ruas estreitas de Arkham, onde todos sabem de tudo e ninguém diz nada.'},
+ {id:'bos',n:'Boston',sk:['Intimidação','Lutar (Brigar)'],t:'Aprendeu o ofício nas ruas duras de Boston.'},
+ {id:'nyc',n:'Nova York',sk:['Armas de Fogo (Pistolas)','Psicologia'],t:'Serviu em Nova York, uma cidade que nunca dorme e raramente perdoa.'},
+ {id:'chi',n:'Chicago',sk:['Intimidação','Dirigir Auto'],t:'Viu o crime organizado de perto nas ruas de Chicago.'},
+ {id:'sf',n:'São Francisco',sk:['Persuasão','Encontrar'],t:'Trabalhou entre os cais, as brumas e os bairros misteriosos de São Francisco.'},
+ {id:'lon',n:'Scotland Yard (Londres)',sk:['Direito','Encontrar'],t:'Passou pela Scotland Yard, entre névoa e casos que não fecham.'}],
+ pool:['Direito','Lutar (Brigar)','Armas de Fogo (Pistolas)','Encontrar','Escutar','Psicologia','Intimidação','Persuasão','Dirigir Auto','Furtividade','Primeiros Socorros']};
+const BG={
+ 'Soldado':{q:'Em que conflito você serviu?',kind:'Conflito',o:WARS,pool:WAR_POOL},
+ 'Oficial Militar':{q:'Em que conflito você serviu?',kind:'Conflito',o:WARS,pool:WAR_POOL},
+ 'Professor':{q:'Em que universidade você leciona (ou lecionou)?',kind:'Universidade',o:UNIS,pool:UNI_POOL},
+ 'Estudante':{q:'Em que universidade você estuda?',kind:'Universidade',o:UNIS,pool:UNI_POOL},
+ 'Médico':{q:'Onde você se formou ou trabalhou?',kind:'Formação / hospital',o:[
+  {id:'ark',n:'Sanatório e hospital de Arkham',sk:['Psicologia','Psicanálise'],t:'Atendeu em Arkham, onde certos pacientes dizem coisas que ninguém deveria ouvir.'},
+  {id:'jh',n:'Johns Hopkins (Baltimore)',sk:['Medicina','Ciência (Biologia)'],t:'Formou-se em Johns Hopkins, uma das melhores escolas de medicina do país.'},
+  {id:'hm',n:'Harvard Medical School',sk:['Medicina','Ciência (Farmácia)'],t:'Estudou medicina em Harvard e trouxe de lá um respeito quase religioso pelo método.'},
+  {id:'mil',n:'Hospital militar',sk:['Primeiros Socorros','Sobrevivência'],t:'Aprendeu a salvar vidas debaixo de fogo, em hospitais de campanha.'},
+  {id:'rur',n:'Consultório no interior',sk:['Persuasão','Psicologia'],t:'Cuida de uma cidade pequena, onde todos têm segredos e poucos pagam em dinheiro.'},
+  {id:'bel',n:'Hospital Bellevue (Nova York)',sk:['Primeiros Socorros','Psicologia'],t:'Trabalhou em Bellevue, onde viu o pior e o mais estranho que a cidade tem a oferecer.'}],
+  pool:['Medicina','Primeiros Socorros','Psicologia','Psicanálise','Ciência (Biologia)','Ciência (Farmácia)','Ciência (Química)','Persuasão','Encontrar','Escutar','Língua (Latim)']},
+ 'Oficial de Polícia':POLICE,'Investigador de Polícia':POLICE,
+ 'Detetive Particular':{q:'De onde vem a sua carreira?',kind:'Origem',o:[
+  {id:'pk',n:'Agência Pinkerton',sk:['Furtividade','Armas de Fogo (Pistolas)'],t:'Começou na Pinkerton, seguindo suspeitos e aprendendo a não ser visto.'},
+  {id:'ex',n:'Ex-policial',sk:['Direito','Intimidação'],t:'Deixou o distintivo, mas não os hábitos nem os inimigos.'},
+  {id:'solo',n:'Escritório próprio',sk:['Lábia','Encontrar'],t:'Abriu o próprio escritório e vive de casos pequenos e promessas grandes.'},
+  {id:'mil',n:'Ex-militar',sk:['Armas de Fogo (Pistolas)','Sobrevivência'],t:'Trocou a farda pelo sobretudo, mas a disciplina ficou.'},
+  {id:'seg',n:'Investigador de seguradora',sk:['Contabilidade','Avaliação'],t:'Passou anos desmascarando fraudes e acidentes suspeitos para uma seguradora.'},
+  {id:'div',n:'Casos de divórcio e fofocas',sk:['Disfarce','Escutar'],t:'Sabe mais segredos de família do que qualquer padre, e cobra por cada um.'}],
+  pool:['Furtividade','Encontrar','Escutar','Disfarce','Lábia','Persuasão','Direito','Psicologia','Armas de Fogo (Pistolas)','Lutar (Brigar)','Dirigir Auto','Avaliação','Contabilidade']},
+ 'Jornalista':{q:'Para qual jornal você escreve (ou escreveu)?',kind:'Jornal',o:[
+  {id:'adv',n:'Arkham Advertiser',sk:['Escutar','Persuasão'],t:'Cobriu os assuntos de Arkham, incluindo os que o editor mandou esquecer.'},
+  {id:'glo',n:'Boston Globe',sk:['Usar Biblioteca','Persuasão'],t:'Trabalhou em Boston, atrás de documentos e de fontes que só falam em off.'},
+  {id:'nyt',n:'The New York Times',sk:['Usar Biblioteca','Lábia'],t:'Fez carreira em Nova York, onde um furo vale mais do que uma amizade.'},
+  {id:'chi',n:'Chicago Tribune',sk:['Encontrar','Intimidação'],t:'Cobriu a guerra das gangues em Chicago e nunca mais dormiu direito.'},
+  {id:'tab',n:'Tabloide sensacionalista',sk:['Lábia','Arte/Ofício (Fotografia)'],t:'Escreveu para um tabloide que vive de monstros, fantasmas e escândalos.'},
+  {id:'cor',n:'Correspondente no exterior',sk:['Sobrevivência','Persuasão'],t:'Enviou reportagens de lugares remotos, nem sempre em segurança.'}],
+  pool:['Persuasão','Lábia','Encontrar','Escutar','Psicologia','História','Arte/Ofício (Fotografia)','Direito','Usar Biblioteca','Disfarce']},
+ 'Clero, Membro do':{q:'A qual igreja ou ordem você pertence?',kind:'Denominação',o:[
+  {id:'cat',n:'Igreja Católica',sk:['Língua (Latim)','História'],t:'Foi ordenado na Igreja Católica e conhece de perto seus arquivos e seus segredos.'},
+  {id:'bat',n:'Igreja Batista',sk:['Persuasão','Psicologia'],t:'Prega para uma congregação fiel e conhece os problemas de cada família.'},
+  {id:'ang',n:'Igreja Anglicana',sk:['História','Usar Biblioteca'],t:'Serve numa paróquia antiga, cheia de registros que quase ninguém lê.'},
+  {id:'met',n:'Igreja Metodista',sk:['Persuasão','Primeiros Socorros'],t:'Aprendeu a consolar e a cuidar dos doentes de sua comunidade.'},
+  {id:'ord',n:'Ordem monástica',sk:['Usar Biblioteca','Ocultismo'],t:'Passou anos copiando manuscritos num mosteiro, entre textos que a Igreja guarda a sete chaves.'},
+  {id:'mis',n:'Missões no exterior',sk:['Sobrevivência','Antropologia'],t:'Levou a fé a terras distantes e voltou com perguntas novas.'}],
+  pool:['Psicologia','Persuasão','História','Ocultismo','Língua (Latim)','Primeiros Socorros','Antropologia','Usar Biblioteca','Escutar']},
+ 'Ocultista':{q:'O que despertou seu interesse pelo oculto?',kind:'Origem',o:[
+  {id:'family',n:'Família de ocultistas',sk:['Ocultismo','História'],t:'Cresceu entre símbolos, livros e rituais de família; alguns segredos foram passados como herança.'},
+  {id:'forbidden',n:'Achado que não devia',sk:['Usar Biblioteca','Ocultismo'],t:'Encontrou um objeto ou manuscrito que abriu uma porta para perguntas que era melhor não fazer.'},
+  {id:'society',n:'Sociedade secreta',sk:['Persuasão','Língua (Latim)'],t:'Foi iniciado numa sociedade que estuda aquilo que o mundo prefere tratar como superstição.'},
+  {id:'survivor',n:'Sobreviveu a um ritual',sk:['Psicologia','Ocultismo'],t:'Sobreviveu a uma cerimônia inexplicável e desde então tenta entender o que aconteceu.'},
+  {id:'research',n:'Pesquisa acadêmica',sk:['Antropologia','Usar Biblioteca'],t:'Começou pesquisando crenças antigas, até que as fontes passaram a responder de formas impossíveis.'}],
+  pool:['Ocultismo','História','Antropologia','Usar Biblioteca','Psicologia','Língua (Latim)','Ciência (Astronomia)','Persuasão','Encontrar']},
+ 'Criminoso':{q:'Você já foi preso?',kind:'Passado criminal',o:[
+  {id:'served',n:'Sim, cumpri pena',sk:['Lutar (Brigar)','Psicologia'],t:'Cumpriu pena e aprendeu a sobreviver numa cela sem perder todos os contatos.'},
+  {id:'escaped',n:'Sim, mas escapei',sk:['Furtividade','Escalar'],t:'Foi preso, mas conseguiu fugir; desde então, vive olhando por cima do ombro.'},
+  {id:'never',n:'Nunca fui pego',sk:['Disfarce','Furtividade'],t:'Nunca passou pela cadeia e tem orgulho de não deixar rastros.'},
+  {id:'wrongful',n:'Fui preso injustamente',sk:['Direito','Lábia'],t:'Foi detido por um crime que não cometeu e aprendeu a desconfiar da lei.'},
+  {id:'reformatory',n:'Passei por um reformatório',sk:['Intimidação','Psicologia'],t:'Cresceu num reformatório, onde aprendeu cedo a ler as pessoas e se defender.'}],
+  pool:['Furtividade','Disfarce','Lábia','Direito','Lutar (Brigar)','Intimidação','Escalar','Encontrar','Psicologia']}
+};
+/* escolha feita no seletor (ocupacoes.js): {p:{occ,pick},s:{occ,pick}}; pick = {id} | {none:true} | {custom:true,name,sk:[...]} | vazio = sortear */
+function bgFor(slot,oo){
+ const B=BG[oo.n];if(!B)return null;const pk=(window.BGSEL||{})[slot],ch=pk&&pk.occ===oo.n?pk.pick:null;
+ if(ch&&ch.none)return null;
+ if(ch&&ch.custom){const nm=(ch.name||'').trim()||B.kind;return{kind:B.kind,n:nm,sk:(ch.sk||[]).filter(x=>x in BASE).slice(0,2),t:B.kind+': '+nm+'.'}}
+ const op=(ch&&B.o.find(x=>x.id===ch.id))||pick(B.o);return{kind:B.kind,n:op.n,sk:op.sk,t:op.t};
+}
+const histTxt=p=>(p.hist&&p.hist.length||p.back)?'Histórico: '+(p.hist||[]).map(h=>`${h.kind}: ${h.n}${h.sk&&h.sk.length?' (+10 '+h.sk.join(', +10 ')+')':''}`).join(' | ')+(p.back?'\n'+p.back:''):'';
+window.secondaryBlocked=(main,secondary)=>main===secondary||(main==='Soldado'&&secondary==='Oficial Militar');
+function gen(sel,sel2){
+ const[selN,selSub]=String(sel).split('::'),o=sel==='*'?pick(OCC):OCC.find(x=>x.n===selN),oT=tokens(o,selSub);
+ const c={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
+ const lang=pick(LANGS),sk={},bs=n=>base(n,c),cu=n=>sk[n]??bs(n);
+ const ALL=Object.keys(BASE).filter(n=>n!=='Nível de Crédito'),used=new Set(),keys=[];
+ const res=(t,keep)=>{let op=(t==='@soc'?SOC.join('|'):t==='@any'?COMMON.join('|'):t).split('|').map(x=>x==='@lang'?'Língua ('+lang+')':x);
+  if(!keep)op=op.filter(x=>!used.has(x));if(!op.length)op=ALL.filter(x=>!used.has(x));const n=pick(op);used.add(n);return n};
+ const isOcc2=sel2.startsWith('occ:'),s2N=isOcc2?sel2.slice(4).split('::')[0]:'';
+ const requestedSec=sel2==='*'?pick(OCC.filter(x=>!window.secondaryBlocked(o.n,x.n))):isOcc2?OCC.find(x=>x.n===s2N):null;
+ const sec=requestedSec&&!window.secondaryBlocked(o.n,requestedSec.n)?requestedSec:null,secT=sec?tokens(sec):null;
+ const occS=oT.t.map(t=>{const k=t[0]==='!',n=res(k?t.slice(1):t);if(k)keys.push(n);return n});
+ const s2=[],keys2=[];
+ if(sec){const hasK=secT.t.some(t=>t[0]==='!');secT.t.forEach((t,i)=>{if(t==='@any')return;const n=res(t.replace(/^!/,''),true);if(!s2.includes(n))s2.push(n);if((t[0]==='!'||(!hasK&&i===0))&&!keys2.includes(n))keys2.push(n)})}
+ let occP=Math.max(...o.p.split('|').map(f=>f.split('+').reduce((a,t)=>{const[k,m]=t.split('*');return a+c[k]*m},0)));
+ const cr=Math.min(MAXS,occP,Math.max(o.c[0],Math.min(o.c[1],Math.round((o.c[0]+r(o.c[1]-o.c[0]+1))/5)*5)));
+ sk['Nível de Crédito']=cr;occP-=cr;
+ /* distribui pontos em múltiplos de 5, proporcional ao peso de cada perícia (com um pouco de variação) e respeitando um teto; o que sobra vai de 5 em 5 */
+ const dist=(pts,items)=>{
+  const it=items.map(i=>({...i,w:i.w*(.8+Math.random()*.4)}));
+  for(let pass=0;pass<4&&pts>=5;pass++){
+   const act=it.filter(i=>cu(i.n)<i.cap),W=act.reduce((a,i)=>a+i.w,0);if(!act.length)break;const budget=pts;
+   act.forEach(i=>{const add=Math.min(Math.floor(budget*i.w/W/5)*5,i.cap-cu(i.n),pts);if(add>0){sk[i.n]=cu(i.n)+add;pts-=add}});
+  }
+  while(pts>=5){const act=it.filter(i=>cu(i.n)+5<=i.cap);if(!act.length)break;const W=act.reduce((a,i)=>a+i.w,0);let x=Math.random()*W,pk=act[0];for(const a of act){x-=a.w;if(x<=0){pk=a;break}}sk[pk.n]=cu(pk.n)+5;pts-=5}
+  return pts};
+ /* degraus de nível: as perícias principais (!) sobem primeiro (50→65→75) e as demais da lista ficam em 30-40; só depois o resto é sorteado com pesos */
+ const lift=(pts,list,t)=>{let go=true;while(go&&pts>=5){go=false;for(const n of list){if(pts>=5&&cu(n)<t&&cu(n)<MAXS){sk[n]=cu(n)+5;pts-=5;go=true}}}return pts};
+ const tiers=(pts,K,N,T)=>{for(const[w,t]of T)pts=lift(pts,w==='K'?K:N,t);return pts};
+ const K1=[...new Set(occS.filter(n=>keys.includes(n)))],N1=[...new Set(occS)].filter(n=>!K1.includes(n));
+ const oi=[...new Set(occS)].map(n=>({n,w:keys.includes(n)?3:1,cap:keys.includes(n)?MAXS:50}));
+ occP=tiers(occP,K1,N1,[['K',50],['N',30],['K',65],['N',40],['K',75]]);
+ occP=dist(occP,oi);if(occP>=5)occP=dist(occP,oi.map(i=>({...i,cap:MAXS})));
+ /* interesses pessoais: 70% vão para a ocupação secundária, cuja perícia-chave é sempre treinada de verdade (45→60→70); o resto vai para hobbies */
+ const I=c.INT*2,secP=s2.length?Math.round(I*.7/5)*5:0;let rest=I-secP;
+ if(s2.length){const K2=keys2,N2=s2.filter(n=>!K2.includes(n));let left=tiers(secP,K2,N2,[['K',45],['N',30],['K',60],['N',40],['K',70]]);
+  const si=s2.map(n=>({n,w:K2.includes(n)?3:1,cap:K2.includes(n)?75:50}));left=dist(left,si);if(left>=5)left=dist(left,si.map(i=>({...i,cap:MAXS})));rest+=left}
+ const pool=COMMON.filter(n=>!occS.includes(n)&&!s2.includes(n)).sort(()=>Math.random()-.5).slice(0,4);
+ const ri=[...pool.map(n=>({n,w:1,cap:55})),...oi.map(i=>({n:i.n,w:keys.includes(i.n)?.5:.8,cap:65}))];
+ rest=dist(rest,ri);if(rest>=5)dist(rest,ri.map(i=>({...i,cap:MAXS})));
+ if(sk['Esquivar']===undefined)sk['Esquivar']=bs('Esquivar');
+ if(sk['Língua Natural']===undefined)sk['Língua Natural']=bs('Língua Natural');
+ const hist=[bgFor('p',o),isOcc2&&sec?bgFor('s',sec):null].filter(Boolean);
+ hist.forEach(g=>g.sk.forEach(n=>{sk[n]=Math.min((sk[n]??base(n,c))+10,85)}));
+ return{hist,back:hist.map(g=>g.t).join('\n'),nome:pick([...NF,...NM])+' '+pick(SN),idade:20+r(20),occ:o.n+(oT.spec?` (${oT.spec})`:''),sec:sec?sec.n+(secT.spec?` (${secT.spec})`:''):'',c,sk,edit:false,der:{...calc(c),luck:A()}};
+}
+/* confirmação dinâmica reutilizada por todo o site: askConfirm({title,html,ok,danger}) → Promise<boolean> */
+function askConfirm(o){return new Promise(ok=>{
+ const ov=document.createElement('div'),prev=document.activeElement;ov.className='ovl';
+ ov.innerHTML=`<div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlgT"><h4 id="dlgT">${o.title}</h4><p>${o.html}</p><div class="row"><button class="alt" data-r="0">Cancelar</button><button class="${o.danger===false?'':'danger'}" data-r="1">${o.ok||'Confirmar'}</button></div></div>`;
+ const key=e=>{
+  if(e.key==='Escape'){e.preventDefault();done(false)}
+  else if(e.key==='Tab'){const bs=[...ov.querySelectorAll('button')],k=bs.indexOf(document.activeElement);e.preventDefault();bs[(k+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()}
+ };
+ const done=v=>{document.removeEventListener('keydown',key,true);ov.remove();if(prev&&prev.focus)prev.focus();ok(v)};
+ ov.addEventListener('click',e=>{const b=e.target.closest('button');if(b)done(b.dataset.r==='1');else if(e.target===ov)done(false)});
+ document.addEventListener('keydown',key,true);
+ document.body.appendChild(ov);ov.querySelector('[data-r="0"]').focus();
+})}
+const confirmDel=name=>askConfirm({title:'Excluir ficha?',html:`<strong>${esc(name)}</strong> será apagada e isso não dá para desfazer.`,ok:'🗑 Excluir'});
+const ttl=p=>[p.nome,p.occ].filter(Boolean).join(' — ')||'Ficha em branco';
+/* ficha em branco: atributos zerados, sem nome/ocupação, perícias mais usadas com o valor inicial */
+const BLANK_SK=['Esquivar','Encontrar','Escutar','Psicologia','Usar Biblioteca','Furtividade','Lutar (Brigar)','Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Primeiros Socorros','Persuasão','Lábia','Charme','Intimidação','Ocultismo','História','Dirigir Auto','Escalar','Mundo Natural','Consertos Mecânicos','Língua Natural','Nível de Crédito'];
+function genBlank(){
+ const c={FOR:0,CON:0,POD:0,DES:0,APA:0,TAM:0,INT:0,EDU:0},sk={};
+ BLANK_SK.forEach(n=>sk[n]=base(n,c));
+ return{nome:'',idade:'',occ:'',sec:'',c,sk,edit:false,pinned:true,blank:true,der:{hp:0,san:0,luck:0,pm:0,mov:0,db:'0',corpo:0}};
+}
+const srt=(a,b)=>a.n.localeCompare(b.n,'pt');
+const STORE='coc7-investigadores-v2';
+const sel=document.getElementById('occ'),desk=document.getElementById('desk');
+sel.innerHTML='<option value="*">🎲 Aleatória</option>'+[...OCC].sort(srt).map(o=>`<option>${o.n}</option>`).join('');
+const sel2=document.getElementById('occ2');
+const subOpts=()=>Object.entries(SUB).forEach(([n,s])=>Object.keys(s.o).forEach(k=>{sel.insertAdjacentHTML('beforeend',`<option value="${n}::${k}" hidden>${n} (${k})</option>`)}));
+sel2.innerHTML='<option value="">Nenhuma</option><option value="*">🎲 Aleatória</option><optgroup label="Ocupações">'+[...OCC].sort(srt).map(o=>`<option value="occ:${o.n}">${o.n}</option>`).join('')+'</optgroup>';
+subOpts();
+let cur=[],zTop=10,drag=null,rsz=null,saveT=0;
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const get=(p,k)=>{const[a,x]=k.split(/:(.+)/);return a==='c'?p.c[x]:a==='d'?p.der[x]:a==='n'?p[x]:p.sk[x]??(p.custom&&x in p.custom?p.custom[x]:base(x,p.c))};
+const fr=(p,k)=>{const v=+get(p,k)||0;return(v>>1)+' / '+Math.floor(v/5)};
+const inp=(p,i,k)=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${k}" value="${esc(get(p,k))}">`;
+const falta=p=>Object.entries({...BASE,...EXTRA,...(p.custom||{})}).filter(([n])=>p.sk[n]===undefined&&!(p.removed&&p.removed[n])).sort((a,b)=>a[0].localeCompare(b[0],'pt'));
+const EXTRA={'Arte/Ofício (outra)':5,'Ciência (outra)':1,'Língua (outra)':1,'Pilotar (outra)':1,'Mythos de Cthulhu':0};
+const row=(p,i,n,rm)=>`<span>${esc(n)}<i>${inp(p,i,'s:'+n)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
+function uiOf(p,i){
+ p.ui=p.ui||{};
+ if(p.ui.x==null)p.ui.x=18+(i%6)*36;
+ if(p.ui.y==null)p.ui.y=10+(i%6)*28;
+ if(!p.ui.w)p.ui.w=520;
+ if(!p.ui.z)p.ui.z=++zTop;
+ return p.ui;
+}
+function body(p,i){
+ const st=Object.keys(p.c).map(k=>`<div><b>${k}</b>${inp(p,i,'c:'+k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`).join('');
+ const sk=Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n])=>row(p,i,n,1)).join('');
+ const addM=`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" data-add="n"><input class="in" type="number" value="50" title="Valor" data-add="v"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
+ const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<b>${l}</b> ${inp(p,i,'d:'+k)}`).join(' ');
+ const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
+ return`<div class="badge"><span class="ed" ${p.edit?'':'hidden'}>✎ Ficha editada</span></div>
+  <h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2>
+  <div class="sub"><input class="in nm" style="width:48%;font-size:.85rem;font-weight:normal" data-i="${i}" data-k="n:occ" placeholder="Ocupação" value="${esc(p.occ)}"> · <input class="in" data-i="${i}" data-k="n:idade" placeholder="idade" value="${esc(p.idade)}"> anos${p.sec?` · <small>+ ${esc(p.sec)}</small>`:''}</div>
+  <div class="stats">${st}</div><div class="der">${d}</div>
+  <h3 class="st">Histórico</h3><div class="hist">${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}<textarea class="in bk" rows="3" data-i="${i}" data-k="n:back" placeholder="Backstory: quem é, de onde vem, o que já viu…">${esc(p.back||'')}</textarea></div>
+  <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}`;
+}
+function card(p,i){
+ const u=uiOf(p,i);
+ return`<section class="win${p.pinned?' pinned':''}${u.collapsed?' collapsed':''}" data-i="${i}" style="left:${u.x}px;top:${u.y}px;width:${u.w}px;z-index:${u.z}">
+  <header class="win-bar">
+   <button class="colb" data-i="${i}" title="Recolher / expandir">${u.collapsed?'▢':'–'}</button>
+   <span class="win-title">${esc(ttl(p))}</span>
+   <button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 <span class="bl">Copiar</span></button>
+   <button class="pdfb" data-i="${i}" title="Salvar esta ficha completa em PDF">📄 <span class="bl">PDF</span></button>
+   <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Fixar: não some ao gerar">${p.pinned?'📌 <span class="bl">Fixa</span>':'📌 <span class="bl">Fixar</span>'}</button>
+   <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
+   <button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦</button>
+   <button class="delb" data-i="${i}" title="Excluir">🗑</button>
+  </header>
+  <div class="win-body"><div class="stamp">Arquivo<br>Arkham</div>${body(p,i)}</div>
+  <div class="rsz" data-i="${i}"></div>
+ </section>`;
+}
+function txtBase(p){
+ return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}${p.edit?' [ficha editada]':''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nSem pontos (valor inicial): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'');
+}
+function txt(p){const t=txtBase(p),x=histTxt(p);return x?t+'\n\n'+x:t}
+function persist(){
+ clearTimeout(saveT);
+ saveT=setTimeout(()=>{
+  try{
+   localStorage.setItem(STORE,JSON.stringify({cur,occ:sel.value,occ2:sel2.value,qty:document.getElementById('qty').value,zTop}));
+   const el=document.getElementById('saved');
+   const t=new Date();
+   el.textContent='· salvo às '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+  }catch(_){}
+ },180);
+}
+function fitDesk(){
+ let w=800,h=560;
+ const mob=document.body.classList.contains('mobile'),aw=fichaDeskW();
+ cur.forEach((p,i)=>{
+  const u=uiOf(p,i);
+  if(!mob){
+   const nx=Math.max(0,Math.min(u.x,aw-u.w)),ny=Math.max(0,Math.min(u.y,FICHA_MAXY));
+   if(nx!==u.x||ny!==u.y){u.x=nx;u.y=ny;const el=winEl(i);if(el){el.style.left=nx+'px';el.style.top=ny+'px'}}
+  }
+  w=Math.max(w,u.x+u.w);h=Math.max(h,u.y+(u.collapsed?56:640))});
+ desk.style.minWidth=Math.min(w,aw)+'px';desk.style.minHeight=h+'px';
+}
+/* limites: as janelas ficam dentro da largura da tela e não descem além de FICHA_MAXY */
+const FICHA_MAXY=1000;
+function fichaDeskW(){return Math.max(340,document.documentElement.clientWidth-32)}
+let fichaFitT=0;addEventListener('resize',()=>{clearTimeout(fichaFitT);fichaFitT=setTimeout(()=>{if(!document.body.classList.contains('mobile')){fitDesk();persist()}},120)});
+const draw=()=>{
+ desk.innerHTML=cur.length?cur.map(card).join(''):'<p class="empty">Nenhuma ficha. Clique em Gerar — e depois fixe as que quiser guardar.</p>';
+ fitDesk();persist();
+};
+function winEl(i){return desk.querySelector('.win[data-i="'+i+'"]')}
+function bring(i){const p=cur[i];if(!p)return;p.ui.z=++zTop;const el=winEl(i);if(el)el.style.zIndex=p.ui.z;persist()}
+function refresh(i){
+ const el=winEl(i),p=cur[i];if(!el)return;
+ el.querySelectorAll('[data-k]').forEach(x=>{if(x!==document.activeElement)x.value=get(p,x.dataset.k)});
+ el.querySelectorAll('[data-f]').forEach(x=>x.textContent=fr(p,x.dataset.f));
+ const ed=el.querySelector('.ed');if(ed)ed.hidden=!p.edit;
+ const t=el.querySelector('.win-title');if(t)t.textContent=ttl(p);
+ persist();
+}
+function addMain(i,box){
+ const p=cur[i],nome=box.querySelector('[data-add=n]').value.replace(/[<>&"']/g,'').trim(),v=Math.max(0,Math.min(999,+box.querySelector('[data-add=v]').value||0));
+ if(!nome||p.sk[nome]!==undefined)return;
+ if(p.removed)delete p.removed[nome];if(p.custom)delete p.custom[nome];
+ p.sk[nome]=v;p.edit=true;draw();
+}
+function addSkill(i,box){
+ const p=cur[i],nome=box.querySelector('[data-add=n]').value.replace(/[<>&"']/g,'').trim(),v=Math.max(0,Math.min(999,+box.querySelector('[data-add=v]').value||0));
+ if(p.removed&&p.removed[nome]){delete p.removed[nome];draw();return}
+ if(!nome||p.sk[nome]!==undefined||nome in BASE||nome in EXTRA||(p.custom&&nome in p.custom))return;
+ (p.custom=p.custom||{})[nome]=v;p.edit=true;draw();
+}
+desk.addEventListener('click',e=>{
+ const i=e.target.closest('[data-i]');
+ const idx=i?+i.dataset.i:NaN;
+ if(e.target.closest('.addb')){const b=e.target.closest('.addb');(b.dataset.m?addMain:addSkill)(+b.dataset.i,b.parentElement);return}
+ if(e.target.closest('.pdfb')){const b=e.target.closest('.pdfb');savePdf([cur[+b.dataset.i]],b);return}
+ if(e.target.closest('.copb')){
+  const b=e.target.closest('.copb'),t=txt(cur[+b.dataset.i]);
+  (async()=>{
+   try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}
+   const l='📋 <span class="bl">Copiar</span>';b.innerHTML='✔<span class="bl"> Copiado!</span>';setTimeout(()=>{b.innerHTML=l},1200);
+  })();return}
+ if(e.target.closest('.burb')){const k=+e.target.closest('.burb').dataset.i,p=cur[k];askConfirm({title:'Levar ao cemitério?',html:`<strong>${esc(ttl(p))}</strong> será enterrado no cemitério. Em seguida você informa a causa da morte.`,ok:'🪦 Levar ao cemitério',danger:false}).then(y=>{if(y&&cur[k]===p)buryFicha(k)});return}
+ if(e.target.closest('.delb')){const k=+e.target.closest('.delb').dataset.i,p=cur[k];confirmDel(ttl(p)).then(y=>{if(y&&cur[k]===p){cur.splice(k,1);draw()}});return}
+ if(e.target.closest('.ftg')){const p=cur[+e.target.closest('.ftg').dataset.i];p.falta=!p.falta;draw();return}
+ if(e.target.closest('.rmb')){const x=e.target.closest('.rmb'),p=cur[+x.dataset.i],n=x.dataset.n;
+  if(p.sk[n]!==undefined){delete p.sk[n];if(n in BASE||n in EXTRA)(p.removed=p.removed||{})[n]=1}
+  else if(p.custom&&n in p.custom)delete p.custom[n];else(p.removed=p.removed||{})[n]=1;
+  p.edit=true;draw();return}
+ if(e.target.closest('.colb')){const p=cur[idx];p.ui.collapsed=!p.ui.collapsed;draw();return}
+ if(e.target.closest('.pinb')){const p=cur[idx];p.pinned=!p.pinned;draw();return}
+ if(e.target.closest('.dupb')){const p=JSON.parse(JSON.stringify(cur[idx]));p.pinned=false;p.ui={...p.ui,x:(p.ui.x||0)+28,y:(p.ui.y||0)+28,z:++zTop,collapsed:false};p.nome=p.nome.replace(/ \(cópia\)$/,'')+' (cópia)';if(!cur[idx].nome)p.nome='';cur.push(p);draw();return}
+});
+desk.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset.add==='n'){const b=e.target.parentElement.querySelector('.addb');(b.dataset.m?addMain:addSkill)(+b.dataset.i,e.target.parentElement)}});
+function onDragMove(e){
+ const dr=desk.getBoundingClientRect();
+ if(rsz){const p=cur[rsz.i];p.ui.w=Math.max(340,Math.min(820,fichaDeskW()-p.ui.x,rsz.ow+(e.clientX-rsz.ox)));const el=winEl(rsz.i);if(el)el.style.width=p.ui.w+'px';return}
+ if(!drag)return;
+ const p=cur[drag.i];
+ const el=winEl(drag.i),ww=el?el.offsetWidth:p.ui.w;
+ p.ui.x=Math.max(0,Math.min(fichaDeskW()-ww,e.clientX-dr.left-drag.ox));
+ p.ui.y=Math.max(0,Math.min(FICHA_MAXY,e.clientY-dr.top-drag.oy));
+ if(el){el.style.left=p.ui.x+'px';el.style.top=p.ui.y+'px'}
+ if(window.Cemiterio)Cemiterio.hover(e.clientX,e.clientY,true);
+}
+function onDragEnd(e){
+ const C=window.Cemiterio,toBury=drag&&e&&C&&C.over(e.clientX,e.clientY)?drag.i:-1;
+ if(C)C.hover(0,0,false);
+ if(drag||rsz){drag=rsz=null;fitDesk();persist()}
+ document.removeEventListener('pointermove',onDragMove);
+ document.removeEventListener('pointerup',onDragEnd);
+ if(toBury>=0)buryFicha(toBury);
+}
+desk.addEventListener('pointerdown',e=>{
+ if(document.body.classList.contains('mobile'))return;
+ const win=e.target.closest('.win');if(!win)return;
+ const i=+win.dataset.i;bring(i);
+ if(e.target.closest('.rsz')){rsz={i,ox:e.clientX,ow:cur[i].ui.w};document.addEventListener('pointermove',onDragMove);document.addEventListener('pointerup',onDragEnd);e.preventDefault();return}
+ if(!e.target.closest('.win-bar')||e.target.closest('button'))return;
+ const wr=win.getBoundingClientRect();
+ drag={i,ox:e.clientX-wr.left,oy:e.clientY-wr.top};
+ document.addEventListener('pointermove',onDragMove);
+ document.addEventListener('pointerup',onDragEnd);
+});
+desk.addEventListener('input',e=>{
+ const t=e.target,k=t.dataset.k;if(!k)return;
+ const i=+t.dataset.i,p=cur[i],[a,x]=k.split(/:(.+)/);
+ if(a==='n'){p[x]=t.value;if(x==='back'){persist();return}}
+ else{
+  const v=x==='db'?t.value:Math.max(0,Math.min(999,+t.value||0));
+  if(a==='c'){
+   const oe=base('Esquivar',p.c),ol=base('Língua Natural',p.c);p.c[x]=v;
+   p.der={...p.der,...calc(p.c)};
+   if(p.sk['Esquivar']===oe)p.sk['Esquivar']=base('Esquivar',p.c);
+   if(p.sk['Língua Natural']===ol)p.sk['Língua Natural']=base('Língua Natural',p.c);
+  }else if(a==='d')p.der[x]=v;else p.sk[x]=v;
+ }
+ p.edit=true;refresh(i);
+});
+function placeNew(p,i,anchors){
+ let x=28+(i%5)*40,y=16+(i%5)*32;
+ if(anchors&&anchors.length){
+  const maxX=Math.max(...anchors.map(a=>(a.ui&&a.ui.x||0)+(a.ui&&a.ui.w||520)));
+  x=maxX+28+(i%3)*16;
+  y=12+(i%5)*26;
+  if(x+520>fichaDeskW()){x=28+(i%5)*40;y=16+(i%5)*32}
+ }
+ p.ui={x,y,w:520,z:++zTop,collapsed:false};
+}
+/* cemitério: arraste a ficha até a caveira; ela só sai da mesa depois de confirmar o sepultamento */
+function buryFicha(i){const p=cur[i];if(!p||!window.Cemiterio)return;Cemiterio.add({nome:p.nome,idade:p.idade},()=>{const k=cur.indexOf(p);if(k>=0){cur.splice(k,1);draw()}})}
+function go(){
+ const q=Math.max(1,Math.min(8,+document.getElementById('qty').value||1));
+ const kept=cur.filter(p=>p.pinned);
+ const neu=Array.from({length:q},()=>gen(sel.value,sel2.value));
+ neu.forEach((p,i)=>placeNew(p,i,kept));
+ cur=kept.concat(neu);draw();
+}
+document.getElementById('go').onclick=go;
+document.getElementById('blank').onclick=()=>{
+ const p=genBlank();placeNew(p,0,cur);cur.push(p);draw();
+ const el=winEl(cur.length-1);if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+};
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+function sheetHTML(p){
+ const st=Object.entries(p.c).map(([k,v])=>`<div><b>${esc(k)}</b><span style="display:block;font-size:1.05rem;margin:3px 0">${v}</span><small>${(v>>1)} / ${Math.floor(v/5)}</small></div>`).join('');
+ const rows=l=>l.map(([n,v])=>`<span><span class="sk-name">${esc(n)}</span><i>${v}% <small>${(v>>1)} / ${Math.floor(v/5)}</small></i></span>`).join('');
+ const sk=rows(Object.entries(p.sk).sort((a,b)=>b[1]-a[1]));
+ const fl=falta(p).map(([n])=>[n,+get(p,'s:'+n)||0]);
+ const meta=[esc(p.occ),p.idade!==''?esc(p.idade)+' anos':'',p.sec?'+ '+esc(p.sec):'',p.edit?'ficha editada':''].filter(Boolean).join(' · ')||'&nbsp;';
+ return`<article class="win pdf-sheet" style="position:relative;left:auto;top:auto;width:800px;box-shadow:none">
+  <div class="win-body" style="padding:18px 22px 22px 28px">
+   <h2 style="margin:0 0 4px">${esc(p.nome)||'&nbsp;'}</h2>
+   <div class="sub">${meta}</div>
+   <div class="stats">${st}</div>
+   <div class="der"><b>PV</b> ${p.der.hp} <b>Sanidade</b> ${p.der.san} <b>Sorte</b> ${p.der.luck} <b>PM</b> ${p.der.pm} <b>Mov</b> ${p.der.mov} <b>Bônus de Dano</b> ${esc(p.der.db)} <b>Corpo</b> ${p.der.corpo}</div>
+   ${(p.hist&&p.hist.length)||p.back?`<h3 class="st">Histórico</h3><div class="pdf-history"><div>${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}</div><div class="pdf-back">${esc(p.back||'')}</div></div>`:''}
+   <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>
+   ${fl.length?`<h3 class="st" style="margin-top:14px">Perícias que não tenho (valor inicial)</h3><div class="sk">${rows(fl)}</div>`:''}
+  </div></article>`;
+}
+const themeValue=(name,fallback)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim()||fallback;
+function applyPdfTheme(sheet){const root=getComputedStyle(document.documentElement);['--scheme','--card','--txt','--muted','--muted2','--head','--rule','--line','--k0','--k5','--gold','--btnt','--spine1','--spine2','--spine3','--gr'].forEach(name=>{const value=root.getPropertyValue(name).trim();if(value)sheet.style.setProperty(name,value)})}
+function cssRgb(value){const c=document.createElement('canvas').getContext('2d');c.fillStyle=value;c.fillRect(0,0,1,1);return Array.from(c.getImageData(0,0,1,1).data).slice(0,3)}
+/* Fichas horizontais usam A4 paisagem; fichas altas usam retrato para aproveitar melhor a folha. */
+function pdfOrientation(canvas){return canvas.width/canvas.height>1?'landscape':'portrait'}
+function addCanvasToPdf(pdf,canvas,firstPage,pageRgb){
+ const orientation=pdfOrientation(canvas);
+ if(!firstPage)pdf.addPage('a4',orientation);
+ const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),m=8;
+ const scale=Math.min((pageW-m*2)/canvas.width,(pageH-m*2)/canvas.height);
+ const w=canvas.width*scale,h=canvas.height*scale,x=(pageW-w)/2,y=(pageH-h)/2;
+ pdf.setFillColor(...pageRgb);pdf.rect(0,0,pageW,pageH,'F');
+ pdf.addImage(canvas.toDataURL('image/jpeg',0.94),'JPEG',x,y,w,h);
+}
+async function savePdf(list,b){
+ if(!list.length||b.disabled)return;
+ const l=b.textContent;b.textContent='⏳ Gerando…';b.disabled=true;
+ let host;
+ try{
+  if(!window.html2canvas)await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
+  if(!window.jspdf)await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
+  const {jsPDF}=window.jspdf;
+  const cardBg=themeValue('--card','#0d1e1c'),pageRgb=cssRgb(cardBg),canvases=[];
+  host=document.createElement('div');
+  host.style.cssText=`position:fixed;left:-9000px;top:0;width:800px;background:${cardBg}`;
+  document.body.appendChild(host);
+  for(const p of list){
+   host.innerHTML=sheetHTML(p);
+   const root=host.firstChild;applyPdfTheme(root);
+   const cv=await html2canvas(root,{scale:2,backgroundColor:cardBg,useCORS:true,windowWidth:800});
+   canvases.push(cv);
+  }
+  const pdf=new jsPDF({unit:'pt',format:'a4',orientation:pdfOrientation(canvases[0])});
+  canvases.forEach((cv,i)=>addCanvasToPdf(pdf,cv,i===0,pageRgb));
+  const nm=(list.length===1?list[0].nome:'investigadores').replace(/[^\w\u00C0-\u017F -]/g,'').trim().replace(/\s+/g,'_')||'ficha';
+  pdf.save(nm+'.pdf');
+ }catch(_){printFallback(list)}
+ finally{if(host)host.remove();b.textContent=l;b.disabled=false}
+}
+/* sem internet (as bibliotecas do PDF vêm de um CDN): imprime a ficha completa pelo navegador */
+function printFallback(list){
+ const h=document.createElement('div');h.id='printHost';h.innerHTML=list.map(sheetHTML).join('');h.style.cssText='position:fixed;left:-10000px;top:0;width:800px;display:block';
+ document.body.appendChild(h);
+ const previousBg=document.body.style.backgroundColor;document.body.style.backgroundColor=themeValue('--k0','#08100f');
+ const sheets=[...h.querySelectorAll('.pdf-sheet')];sheets.forEach((sheet,i)=>{applyPdfTheme(sheet);sheet.style.setProperty('width','196mm','important');const r=sheet.getBoundingClientRect(),fit=Math.min(1,733/r.width,1052/r.height);sheet.style.zoom=String(fit);if(i===sheets.length-1){sheet.style.breakAfter='auto';sheet.style.pageBreakAfter='auto'}});
+ document.body.classList.add('print-sheet');
+ const done=()=>{document.body.classList.remove('print-sheet');document.body.style.backgroundColor=previousBg;h.remove();removeEventListener('afterprint',done)};
+ addEventListener('afterprint',done);window.print();setTimeout(()=>{if(h.isConnected)done()},1500);
+}
+sel.onchange=sel2.onchange=document.getElementById('qty').onchange=persist;
+(function mobileMode(){
+ const KEY='coc7-mobile-v1',btn=document.getElementById('mobBtn');
+ let on;try{const v=localStorage.getItem(KEY);on=v==='1'}catch(_){on=false}
+ const apply=()=>{
+  document.body.classList.toggle('mobile',on);btn.classList.toggle('on',on);btn.setAttribute('aria-pressed',String(on));
+  btn.textContent=on?'🖥 Versão para computador':'📱 Versão para celular';
+  window.dispatchEvent(new Event('resize'));
+ };
+ btn.onclick=()=>{on=!on;try{localStorage.setItem(KEY,on?'1':'0')}catch(_){}apply()};
+ apply();
+})();
+(function panelMin(){
+ const KEY='coc7-painel-v1',bar=document.getElementById('panel'),btn=document.getElementById('panelBtn'),mn=document.getElementById('panelMin');
+ let min=false;try{min=localStorage.getItem(KEY)==='1'}catch(_){}
+ const apply=()=>{bar.hidden=min;btn.hidden=!min;document.body.classList.toggle('pmin',min)};
+ const set=v=>{min=v;try{localStorage.setItem(KEY,v?'1':'0')}catch(_){}apply();(v?btn:mn).focus()};
+ mn.onclick=()=>set(true);btn.onclick=()=>set(false);
+ apply();
+})();
+(function boot(){
+ try{
+  const d=JSON.parse(localStorage.getItem(STORE)||'null');
+  if(d&&Array.isArray(d.cur)&&d.cur.length){
+   cur=d.cur;zTop=d.zTop||20;
+   if(d.occ)sel.value=d.occ;if(d.occ2)sel2.value=d.occ2;
+   if(d.qty)document.getElementById('qty').value=d.qty;
+   cur.forEach(uiOf);draw();return;
+  }
+ }catch(_){}
+ draw();
+})();
+</script><script src="notebook.js" defer></script><script src="cemiterio.js" defer></script><script src="backup.js" defer></script><script src="ocupacoes.js" defer></script><script src="lua.js" defer></script><script src="mobile.js" defer></script></body></html>
