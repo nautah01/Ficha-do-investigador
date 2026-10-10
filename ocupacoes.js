@@ -78,8 +78,8 @@ function renderBG(){
 <div class="opk-formact"><small id="bgCount">${bgSk.length}/2 perícias</small><button type="button" data-bgok>Confirmar</button></div></div>`;
  }else{
   h=`<div class="opk-subhead"><button type="button" data-bgback>← Voltar</button><strong>${e} ${esc(bgItem.occ)}</strong><span>${esc(B.q)}</span></div>`;
-  h+=card('bg:random','🎲','Sortear','',['Escolhe uma opção ao gerar'],'Sorteia '+B.kind.toLowerCase()+' ao gerar a ficha',false,i++);
-  h+=B.o.map(o=>card('bg:'+o.id,e,o.n,o.t,o.sk.map(s=>'+10 '+shortSk(s)),o.n+' — '+o.t+' Bônus: +10 '+o.sk.join(', +10 '),false,i++)).join('');
+  h+=card('bg:random','🎲','Sortear','',['Escolhe uma opção ao gerar','Crédito varia pela opção'],'Sorteia '+B.kind.toLowerCase()+' ao gerar a ficha; o ajuste de crédito depende da opção sorteada',false,i++);
+  h+=B.o.map(o=>{const tags=o.sk.map(s=>'+10 '+shortSk(s));if(o.crMod)tags.push(crFmt(o.crMod)+' Crédito');return card('bg:'+o.id,e,o.n,o.t,tags,o.n+' — '+o.t+' Bônus: +10 '+o.sk.join(', +10 ')+(o.crMod?' · faixa de Crédito '+crFmt(o.crMod):''),false,i++)}).join('');
   h+=card('bg:custom','✍️','Outro (escrever)','',['Você nomeia','até 2 perícias'],'Escreva o nome e escolha até 2 perícias da lista',false,i++);
   h+=card('bg:none','➖','Sem origem específica','',['Sem bônus'],'Não define origem nem bônus',false,i++);
  }
@@ -92,8 +92,8 @@ function render(){
   const x=subItem,S=SUB[x.n],lbl=S.lbl.toLowerCase();
   h+=`<div class="opk-subhead"><button type="button" data-back>← Todas as ocupações</button><strong>${meta(x.n)[0]} ${esc(x.n)}</strong><span>Escolha: ${esc(lbl)}</span></div>`;
   h+=card(x.v,'🎲','Qualquer opção','',['Sorteia ao gerar'],'Sorteia '+lbl+' ao gerar a ficha',cur===x.v,i++);
-  h+=Object.entries(S.o).map(([k,t])=>{const keys=t.filter(z=>z[0]==='!').map(tokTag).filter(Boolean),all=[...new Set(t.map(tokTag).filter(Boolean))],v=x.v+'::'+k;
-   return card(v,meta(x.n)[0],k,x.n,keys.slice(0,3),x.n+' ('+k+') — perícias em destaque: '+all.join(', '),cur===v,i++)}).join('');
+  h+=Object.entries(S.o).map(([k,t])=>{const keys=t.filter(z=>z[0]==='!').map(tokTag).filter(Boolean),all=[...new Set(t.map(tokTag).filter(Boolean))],v=x.v+'::'+k,mod=S.crMod&&S.crMod[k]||0,tags=keys.slice(0,3);if(mod)tags.push(crFmt(mod)+' Crédito');
+   return card(v,meta(x.n)[0],k,x.n,tags,x.n+' ('+k+') — perícias em destaque: '+all.join(', ')+(mod?' · faixa de Crédito '+crFmt(mod):''),cur===v,i++)}).join('');
   grid.innerHTML=h;grid.scrollTop=0;
   chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));return;
  }
