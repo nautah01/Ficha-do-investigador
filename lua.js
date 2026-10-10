@@ -2,16 +2,17 @@
 (()=>{
 const T=['green','red','blue','paper'],N={green:'verde',red:'vermelha',blue:'azul',paper:'de papel com linhas amarelas'},KEY='cthulhu-tema';
 const root=document.documentElement,btn=document.getElementById('moon');if(!btn)return;
-/* Mantém a lua na camada fixa do botão que reabre o painel. */
+/* A lua fica na camada fixa da página, mesmo se o HTML ao redor mudar. */
 if(btn.parentElement!==root)root.appendChild(btn);
 btn.style.setProperty('position','fixed','important');
-btn.style.setProperty('top','10px','important');
-btn.style.setProperty('right','10px','important');
+btn.style.setProperty('top','max(10px, env(safe-area-inset-top))','important');
+btn.style.setProperty('right','max(10px, env(safe-area-inset-right))','important');
 btn.style.setProperty('left','auto','important');
 btn.style.setProperty('bottom','auto','important');
 btn.style.setProperty('z-index','6000','important');
-const dots=[...btn.querySelectorAll('.mdots i')];let tm;
-function setTheme(t){
+const dots=[...btn.querySelectorAll('.mdots i')],reduceMotion=matchMedia('(prefers-reduced-motion: reduce)');let tm,busy=false,scrollFrame=0;
+function apply(t,anim){
+ if(anim&&!document.startViewTransition){root.classList.add('tswap');clearTimeout(tm);tm=setTimeout(()=>root.classList.remove('tswap'),700)}
  if(t==='green')delete root.dataset.theme;else root.dataset.theme=t;
  const i=T.indexOf(t),nx=T[(i+1)%T.length];
  dots.forEach((d,k)=>d.classList.toggle('on',k===i));
@@ -19,26 +20,30 @@ function setTheme(t){
  btn.title='Cenário '+N[t]+' — clique para '+N[nx];
  try{localStorage.setItem(KEY,t)}catch{}
 }
-function apply(t,anim){
- if(!anim){setTheme(t);return}
- clearTimeout(tm);
- if(document.startViewTransition&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
-  const r=btn.getBoundingClientRect();
-  root.style.setProperty('--theme-x',(r.left+r.width/2)+'px');
-  root.style.setProperty('--theme-y',(r.top+r.height/2)+'px');
-  document.startViewTransition(()=>setTheme(t));
- }else{
-  root.classList.add('tswap');setTheme(t);
-  tm=setTimeout(()=>root.classList.remove('tswap'),700);
- }
-}
 const cur=()=>T.includes(root.dataset.theme)?root.dataset.theme:'green';
-btn.addEventListener('click',()=>{
- btn.classList.remove('spin');void btn.offsetWidth;btn.classList.add('spin');
- apply(T[(T.indexOf(cur())+1)%T.length],true);
+function updateScrollFade(){
+ scrollFrame=0;
+ const progress=Math.min(window.scrollY/420,1);
+ btn.style.setProperty('--scroll-opacity',(0.46-0.30*progress).toFixed(3));
+}
+window.addEventListener('scroll',()=>{if(!scrollFrame)scrollFrame=requestAnimationFrame(updateScrollFade)},{passive:true});
+updateScrollFade();
+btn.addEventListener('click',async()=>{
+ if(busy)return;
+ busy=true;btn.setAttribute('aria-busy','true');btn.classList.remove('spin');void btn.offsetWidth;btn.classList.add('spin');
+ const next=T[(T.indexOf(cur())+1)%T.length];
+ if(document.startViewTransition&&!reduceMotion.matches){
+  const rect=btn.getBoundingClientRect(),x=rect.left+rect.width/2,y=rect.top+rect.height/2;
+  const radius=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+  const transition=document.startViewTransition(()=>apply(next,true));
+  transition.ready.then(()=>root.animate(
+   {clipPath:[`circle(0 at ${x}px ${y}px)`,`circle(${radius}px at ${x}px ${y}px)`]},
+   {duration:1050,easing:'cubic-bezier(.16,.72,.22,1)',pseudoElement:'::view-transition-new(root)'}
+  )).catch(()=>{});
+  try{await transition.finished}catch{}
+ }else apply(next,true);
+ btn.classList.remove('spin');btn.removeAttribute('aria-busy');busy=false;
 });
-btn.addEventListener('animationend',e=>{if(e.animationName==='moonSwap')btn.classList.remove('spin')});
-const fadeMoon=()=>root.style.setProperty('--moon-visibility',String(Math.max(.08,1-window.scrollY/900)));
-window.addEventListener('scroll',fadeMoon,{passive:true});fadeMoon();
 apply(cur(),false);
 })();
+

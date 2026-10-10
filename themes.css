@@ -29,7 +29,7 @@
  --moon1:#fff0ec;--moon2:#f0a9a0;--moon3:#c96b66;--moonglow:220,110,100;--crater:140,50,50}
 
 /* Controle de tema integrado ao céu do cenário, em vez de um botão luminoso flutuante. */
-.moon{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:30;width:58px;aspect-ratio:1;padding:0;border:0;border-radius:50%;cursor:pointer;opacity:calc(.46 * var(--moon-visibility,1));
+.moon{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:30;width:58px;aspect-ratio:1;padding:0;border:0;border-radius:50%;cursor:pointer;opacity:var(--scroll-opacity,.46);
  background:radial-gradient(circle at 30% 32%,rgba(255,255,255,.6),transparent 26%),
   radial-gradient(circle at 64% 28%,rgba(var(--crater),.34) 0 7%,transparent 8%),radial-gradient(circle at 36% 62%,rgba(var(--crater),.3) 0 10%,transparent 11%),
   radial-gradient(circle at 72% 68%,rgba(var(--crater),.28) 0 6%,transparent 7%),radial-gradient(circle at 54% 47%,rgba(var(--crater),.2) 0 4%,transparent 5%),
@@ -40,20 +40,17 @@
 .moon:hover,.moon:focus-visible{opacity:1;filter:saturate(1);transform:scale(1.07);box-shadow:inset -6px -5px 10px rgba(0,0,0,.24),inset 3px 3px 7px rgba(255,255,255,.28),0 0 24px 6px rgba(var(--moonglow),.32)}
 .moon:active{transform:scale(.96)}
 .moon:focus-visible{outline:2px solid var(--head);outline-offset:5px}
-.moon.spin{animation:moonSwap .8s ease}
+.moon.spin{animation:moonSwap 1.05s cubic-bezier(.18,.72,.24,1) both}
 .mdots{position:absolute;top:100%;left:50%;display:flex;gap:4px;margin-top:5px;transform:translateX(-50%)}
 .mdots i{width:4px;height:4px;border-radius:50%;background:rgba(var(--moonglow),.3);transition:background .3s,box-shadow .3s}
 .mdots i.on{background:var(--moon1);box-shadow:0 0 7px 1px rgb(var(--moonglow))}
-@keyframes moonSwap{0%{transform:translateX(-18px) rotate(-35deg) scale(.82);filter:brightness(.78) saturate(.6)}48%{transform:translateX(12px) rotate(205deg) scale(1.16);filter:brightness(1.35) saturate(1.35)}78%{transform:translateX(-3px) rotate(330deg) scale(1.04)}100%{transform:translateX(0) rotate(360deg) scale(1);filter:brightness(1) saturate(1)}}
-@keyframes themeReveal{from{clip-path:circle(0 at var(--theme-x,calc(100% - 40px)) var(--theme-y,40px))}to{clip-path:circle(150vmax at var(--theme-x,calc(100% - 40px)) var(--theme-y,40px))}}
-::view-transition-group(root){animation-duration:.95s}
-::view-transition-image-pair(root){isolation:auto}
-::view-transition-old(root),::view-transition-new(root){mix-blend-mode:normal;display:block}
-::view-transition-old(root){animation:none}
-::view-transition-new(root){animation:themeReveal .95s cubic-bezier(.2,.72,.18,1) both}
+@keyframes moonSwap{0%{transform:translateX(0) rotate(0) scale(1)}35%{transform:translateX(-34px) rotate(-150deg) scale(1.16);filter:brightness(1.35) saturate(1.35)}72%{transform:translateX(-12px) rotate(-300deg) scale(.94)}100%{transform:translateX(0) rotate(-360deg) scale(1);filter:none}}
 html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-color .6s,color .6s,border-color .6s,fill .6s,stroke .6s,stop-color .6s!important}
+::view-transition-group(root){animation-duration:1.05s}
+::view-transition-image-pair(root){isolation:auto}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
 @media (max-width:640px){.moon{top:max(8px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right));width:42px}h1{padding-right:54px}}
-@media (prefers-reduced-motion:reduce){.moon,.moon.spin{animation:none}::view-transition-group(root),::view-transition-old(root),::view-transition-new(root){animation:none!important}html.tswap *,html.tswap *::before,html.tswap *::after{transition:none!important}}
+@media (prefers-reduced-motion:reduce){.moon,.moon.spin{animation:none}html.tswap *,html.tswap *::before,html.tswap *::after{transition:none!important}::view-transition-group(root){animation-duration:0s!important}}
 }
 
 @media screen{
@@ -106,3 +103,4 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 .moon:hover::after,.moon:focus-visible::after{opacity:.9;transform:scale(1) rotate(0);filter:drop-shadow(0 0 4px rgba(var(--moonglow),.7))}
 }
 @media (prefers-reduced-motion:reduce){.moon::before,.moon::after{transition:none}}
+
