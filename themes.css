@@ -39,8 +39,6 @@
 .moon:hover,.moon:focus-visible{opacity:1!important;filter:saturate(1);box-shadow:inset -6px -5px 10px rgba(0,0,0,.24),inset 3px 3px 7px rgba(255,255,255,.28),0 0 26px 7px rgba(var(--moonglow),.34)}
 .moon:active{filter:brightness(1.12)}
 .moon:focus-visible{outline:2px solid var(--head);outline-offset:5px}
-.moon.is-turning{animation:moonOrbit .82s cubic-bezier(.2,.75,.25,1) both}
-@keyframes moonOrbit{0%{transform:translateX(-13px) rotate(-150deg) scale(.72);filter:brightness(.76) saturate(.65)}55%{transform:translateX(8px) rotate(205deg) scale(1.12);filter:brightness(1.35) saturate(1.3)}100%{transform:translateX(0) rotate(360deg) scale(1);filter:brightness(1) saturate(1)}}
 .mdots{position:absolute;top:100%;left:50%;display:flex;gap:4px;margin-top:5px;transform:translateX(-50%)}
 .mdots i{width:4px;height:4px;border-radius:50%;background:rgba(var(--moonglow),.3);transition:background .3s,box-shadow .3s}
 .mdots i.on{background:var(--moon1);box-shadow:0 0 7px 1px rgb(var(--moonglow))}
@@ -52,10 +50,6 @@
 ::view-transition-new(theme-moon){animation:none}
 @keyframes moonDepart{to{transform:translateX(13px) rotate(150deg) scale(.72);opacity:0}}
 @media (max-width:640px){.moon{width:48px}h1{padding-right:56px}}
-@media (prefers-reduced-motion:reduce){
- .moon,.moon::before,.moon::after{transition:none!important;animation:none!important}
- ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
-}
 }
 
 @media screen{
