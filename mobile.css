@@ -8,7 +8,7 @@ body.mobile #mobTabs{position:fixed;left:0;right:0;bottom:0;z-index:6000;display
 body.mobile .note,body.mobile .cem{left:0!important;top:0!important;right:0!important;bottom:calc(64px + env(safe-area-inset-bottom))!important;width:auto!important;height:auto!important;min-width:0;max-width:none;max-height:none;border-radius:0;resize:none;z-index:5500}
 body.mobile .note-bar button,body.mobile .note-tabs{display:none}
 body.mobile .note-bar,body.mobile .cem-bar{cursor:default}
-body.mobile #cemFab,body.mobile #notesBtn{display:none}
+body.mobile #notesFab{display:none}
 body.mobile[data-mtab]:not([data-mtab=fichas]){overflow:hidden}
 body.mobile .note-tools{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}
 body.mobile .note-tools>*{flex:none}

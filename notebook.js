@@ -2,7 +2,7 @@
 (()=>{
 const $=id=>document.getElementById(id);
 const win=$('note'),vp=$('noteViewport'),board=$('noteBoard'),cards=$('noteCards'),svg=$('noteLines'),ink=$('noteInk'),ctx=ink.getContext('2d'),
- empty=$('noteEmpty'),hint=$('noteHint'),status=$('noteStatus'),btn=$('notesBtn'),diary=$('diary');
+ empty=$('noteEmpty'),hint=$('noteHint'),status=$('noteStatus'),btn=$('notesFab'),diary=$('diary');
 const W=2400,H=1600;
 const HINTS={move:'Arraste o fundo para mover · Shift+arrastar seleciona várias peças · roda do mouse = zoom',select:'Selecionar: arraste no fundo para marcar várias peças ou toque nelas para somar',brush:'Pincel ativo: desenhe sobre o quadro',connect:'Interligar: toque na peça de origem e depois na de destino (a seta aponta para o destino)'};
 const ask=o=>window.askConfirm?askConfirm(o):Promise.resolve(confirm(o.title));
@@ -309,7 +309,7 @@ Object.keys(tabs).forEach(t=>$(t).onclick=()=>{
  hint.style.visibility=t==='noteBoardTab'?'':'hidden';
 });
 function openN(o){win.hidden=!o;btn.setAttribute('aria-pressed',o);if(o&&ready&&needFit&&!$('noteBoardPanel').hidden){needFit=false;applyView();if(!B.view&&B.items.length)fit(true)}}
-btn.onclick=()=>openN(win.hidden);$('noteX').onclick=()=>openN(false);$('noteMin').onclick=()=>win.classList.toggle('min');
+btn.onclick=()=>{openN(win.hidden);if(win.hidden===false)window.Notas?.tab('board')};$('noteX').onclick=()=>openN(false);$('noteMin').onclick=()=>win.classList.toggle('min');
 const bar=win.querySelector('.note-bar');
 bar.addEventListener('dblclick',e=>{if(!e.target.closest('button'))win.classList.toggle('min')});
 bar.addEventListener('pointerdown',e=>{

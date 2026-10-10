@@ -6,11 +6,11 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const mk=h=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstChild};
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(list))}catch{alert('Não foi possível salvar: o armazenamento do navegador está cheio.')}};
 
-const fab=mk('<button id="cemFab" title="Cemitério — arraste uma ficha até aqui" aria-label="Abrir cemitério" aria-expanded="false">💀</button>');
+const cemBtn=document.getElementById('cemPanelBtn');
 const win=mk(`<section class="cem" id="cem" hidden aria-label="Cemitério dos investigadores">
 <header class="cem-bar" title="Arraste para mover"><span>Cemitério · investigadores perdidos</span><button class="cem-x" aria-label="Fechar cemitério">✕</button></header>
 <div class="cem-list" id="cemList"></div>
-<footer class="cem-foot"><span>Arraste uma ficha até a caveira para enterrá-la.</span><button id="cemPng" title="Baixar o cemitério como imagem">Salvar imagem</button><button id="cemPdf" title="Baixar o cemitério como PDF">Salvar PDF</button></footer></section>`);
+<footer class="cem-foot"><span>Arraste uma ficha até o botão Cemitério no painel para enterrá-la.</span><button id="cemPng" title="Baixar o cemitério como imagem">Salvar imagem</button><button id="cemPdf" title="Baixar o cemitério como PDF">Salvar PDF</button></footer></section>`);
 const dlg=mk(`<dialog class="cem-dlg" id="cemDlg"><form id="cemForm" autocomplete="off"><h4 id="cemDlgT">Enterrar investigador</h4>
 <label>Nome<input name="nome" required maxlength="80"></label>
 <label>Idade<input name="idade" maxlength="3" inputmode="numeric"></label>
@@ -18,7 +18,7 @@ const dlg=mk(`<dialog class="cem-dlg" id="cemDlg"><form id="cemForm" autocomplet
 <label>Última frase (opcional)<input name="frase" maxlength="120"></label>
 <div class="cem-photo"><canvas id="cemCrop" width="156" height="192" aria-label="Enquadramento da foto"></canvas><div class="cem-photo-ctl"><label class="cem-file">Foto (opcional)<input id="cemFile" type="file" accept="image/*"></label><label id="cemZoomL" hidden>Zoom<input id="cemZoom" type="range" min="1" max="3" step="0.02" value="1"></label><small id="cemTip" hidden>Arraste a foto para enquadrar</small><button type="button" id="cemNoPhoto" hidden>Remover foto</button></div></div>
 <div class="row"><button type="button" id="cemCancel">Cancelar</button><button type="submit" id="cemOk">Enterrar</button></div></form></dialog>`);
-document.body.append(fab,win,dlg);
+document.body.append(win,dlg);
 const listEl=win.querySelector('#cemList'),form=dlg.querySelector('form'),cv=dlg.querySelector('#cemCrop'),cx=cv.getContext('2d');
 let cur=null,done=null,ed={img:null,orig:'',z:1,x:0,y:0};
 
@@ -28,7 +28,7 @@ function render(){
  <h3>${esc(r.nome)}</h3><p class="stone-age">${r.idade!==''?esc(r.idade)+' anos':'&nbsp;'}</p>
  <p class="stone-cause">${esc(r.causa)}</p>${r.frase?`<blockquote>“${esc(r.frase)}”</blockquote>`:''}
  <div class="stone-act"><button data-a="edit">Editar</button><button data-a="del">Remover</button></div></article>`).join('')
- :'<p class="cem-empty">Nenhum investigador morreu… ainda.<br>Arraste uma ficha até a caveira.</p>';
+ :'<p class="cem-empty">Nenhum investigador morreu… ainda.<br>Arraste uma ficha até o botão Cemitério no painel.</p>';
 }
 function paint(c,w,h,s){ /* desenha a foto enquadrada (x,y em fração do quadro) */
  c.clearRect(0,0,w,h);const im=ed.img;
@@ -79,8 +79,7 @@ listEl.onclick=async e=>{
  else if(await ask({title:'Remover do cemitério?',html:'<strong>'+esc(r.nome)+'</strong> será removido do cemitério e isso não dá para desfazer.',ok:'🗑 Remover'})){list=list.filter(x=>x!==r);save();render()}
 };
 
-function setOpen(o){win.hidden=!o;fab.setAttribute('aria-expanded',o)}
-fab.onclick=()=>setOpen(win.hidden);
+function setOpen(o){win.hidden=!o;syncButton()}
 win.querySelector('.cem-x').onclick=()=>setOpen(false);
 const bar=win.querySelector('.cem-bar');
 bar.addEventListener('pointerdown',e=>{
@@ -91,12 +90,15 @@ bar.addEventListener('pointerdown',e=>{
 });
 
 const inside=(n,x,y)=>{const r=n.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom};
-const over=(x,y)=>inside(fab,x,y)||(!win.hidden&&inside(win,x,y));
+const over=(x,y)=>(cemBtn&&inside(cemBtn,x,y))||(!win.hidden&&inside(win,x,y));
+if(cemBtn)cemBtn.onclick=()=>setOpen(win.hidden);
+function syncButton(){if(cemBtn)cemBtn.setAttribute('aria-pressed',String(!win.hidden))}
+const cemObserver=new MutationObserver(syncButton);cemObserver.observe(win,{attributes:true,attributeFilter:['hidden']});syncButton();
 window.Cemiterio={
  open:o=>setOpen(o),
  add(p,cb){openDlg({id:Math.random().toString(36).slice(2,10),nome:p.nome||'',idade:p.idade??'',causa:'',frase:'',foto:''},true,cb)},
  over,
- hover(x,y,on){fab.classList.toggle('call',!!on);const h=!!on&&over(x,y);fab.classList.toggle('hot',h);win.classList.toggle('hot',h)}
+ hover(x,y,on){if(cemBtn)cemBtn.classList.toggle('hot',!!on&&over(x,y));const h=!!on&&over(x,y);win.classList.toggle('hot',h)}
 };
 /* ---------- salvar o cemitério como imagem / PDF ---------- */
 const FONT='"Palatino Linotype",Palatino,Georgia,serif';

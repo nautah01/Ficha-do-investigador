@@ -200,7 +200,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <div class="bar-head">
 <div class="bar-title"><b>Painel</b><span class="bar-note">Não se preocupe, a ficha fica salva no navegador <small id="saved"></small></span></div>
 <div class="tools">
-<button class="alt chip" id="notesBtn" aria-pressed="false" title="Abrir ou fechar o bloco de notas">📓 Notas</button>
+<button class="alt chip" id="cemPanelBtn" aria-pressed="false" title="Abrir ou fechar o cemitério">🪦 Cemitério</button>
 <button class="alt chip" id="bkpOut" title="Baixar fichas, bloco de notas e cemitério num arquivo de backup">💾 Baixar dados</button>
 <button class="alt chip" id="bkpIn" title="Carregar um arquivo de backup neste navegador">📂 Carregar dados</button>
 <button class="alt chip" id="mobBtn" aria-pressed="false" title="Alternar entre versão para celular e computador">📱 Versão para celular</button>
@@ -218,6 +218,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 </div>
 <button id="panelBtn" hidden title="Abrir painel de geração">☰ Painel</button>
 <div id="desk"></div>
+<button id="notesFab" title="Abrir quadro de pistas e livro de anotações" aria-label="Abrir quadro de pistas e livro de anotações" aria-pressed="false">📖</button>
 <section class="note" id="note" hidden aria-label="Bloco de notas">
 <header class="note-bar" title="Arraste para mover · duplo clique para minimizar"><span class="note-title">Bloco de notas</span><button id="noteMin" title="Minimizar" aria-label="Minimizar bloco de notas">–</button><button id="noteX" title="Fechar (tudo fica guardado)" aria-label="Fechar bloco de notas">✕</button></header>
 <div class="note-tabs" role="tablist" aria-label="Seções do bloco de notas"><button id="noteBoardTab" role="tab" aria-selected="true" aria-controls="noteBoardPanel">Quadro de pistas</button><button id="noteTextTab" role="tab" aria-selected="false" aria-controls="noteTextPanel" tabindex="-1">Livro de anotações</button></div>
@@ -746,7 +747,7 @@ function placeNew(p,i,anchors){
  }
  p.ui={x,y,w:520,z:++zTop,collapsed:false};
 }
-/* cemitério: arraste a ficha até a caveira; ela só sai da mesa depois de confirmar o sepultamento */
+/* cemitério: arraste a ficha até o botão do cemitério no painel; ela só sai da mesa depois de confirmar */
 function buryFicha(i){const p=cur[i];if(!p||!window.Cemiterio)return;Cemiterio.add({nome:p.nome,idade:p.idade},()=>{const k=cur.indexOf(p);if(k>=0){cur.splice(k,1);draw()}})}
 function go(){
  const q=Math.max(1,Math.min(8,+document.getElementById('qty').value||1));
