@@ -146,9 +146,11 @@ body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-
 .pdf-sheet .der{gap:3px 9px;margin-bottom:6px;padding:5px 7px;font-size:.7rem;background:rgba(var(--gr),.06)!important;border-color:var(--line)!important}
 .pdf-sheet .der b{color:var(--head)!important}
 .pdf-sheet h3.st{margin:5px 0 3px!important;padding-bottom:2px!important;font-size:.73rem!important;letter-spacing:.5px;color:var(--head)!important;border-color:var(--line)!important}
-.pdf-sheet .pdf-history{display:grid;grid-template-columns:1fr 1.3fr;gap:3px 12px;align-items:start;font-size:.68rem;line-height:1.2}
+.pdf-sheet .pdf-history{display:block;font-size:.68rem;line-height:1.2}
 .pdf-sheet .pdf-history .orig{margin:0 0 2px;font-size:.68rem;line-height:1.2;color:var(--muted)}
 .pdf-sheet .pdf-back{font-size:.68rem;line-height:1.2;white-space:pre-wrap;overflow-wrap:anywhere}
+.pdf-lore-sheet{min-height:1050px!important}
+.pdf-lore-sheet .pdf-lore-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.9rem;line-height:1.5;color:var(--txt)}
 .pdf-sheet .sk{grid-template-columns:repeat(3,minmax(0,1fr));gap:2px 9px;font-size:.68rem;line-height:1.15}
 .pdf-sheet .sk>span{min-width:0;align-items:flex-start;gap:3px;padding:1px 0;border-color:var(--line)}
 .pdf-sheet .sk .sk-name{overflow-wrap:anywhere;word-break:normal}
@@ -770,11 +772,25 @@ function sheetHTML(p){
    <div class="sub">${meta}</div>
    <div class="stats">${st}</div>
    <div class="der"><b>PV</b> ${p.der.hp} <b>Sanidade</b> ${p.der.san} <b>Sorte</b> ${p.der.luck} <b>PM</b> ${p.der.pm} <b>Mov</b> ${p.der.mov} <b>Bônus de Dano</b> ${esc(p.der.db)} <b>Corpo</b> ${p.der.corpo}</div>
-    ${(p.hist&&p.hist.length)||p.back||crRangeTxt(p)?`<h3 class="st">Histórico</h3><div class="pdf-history"><div>${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}${crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b> <small>${esc(crRangeTxt(p))}</small></div>`:''}</div><div class="pdf-back">${esc(p.back||'')}</div></div>`:''}
+    ${(p.hist&&p.hist.length)||crRangeTxt(p)?`<h3 class="st">Histórico</h3><div class="pdf-history">${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}${crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b> <small>${esc(crRangeTxt(p))}</small></div>`:''}</div>`:''}
    <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>
    ${fl.length?`<h3 class="st" style="margin-top:14px">Perícias que não tenho (valor inicial)</h3><div class="sk">${rows(fl)}</div>`:''}
   </div></article>`;
 }
+function splitPdfText(text,limit=4000){
+ const rest=String(text||''),pages=[];let start=0;
+ while(start<rest.length){
+  let end=Math.min(start+limit,rest.length);
+  if(end<rest.length){let cut=Math.max(rest.lastIndexOf('\n',end),rest.lastIndexOf(' ',end));if(cut>start+limit*.6)end=cut+1}
+  pages.push(rest.slice(start,end));start=end;
+ }
+ return pages;
+}
+function pdfLoreSheets(p){
+ const pages=splitPdfText(p.back);if(!pages.length||!String(p.back||'').trim())return[];
+ return pages.map((text,i)=>`<article class="win pdf-sheet pdf-lore-sheet" style="position:relative;left:auto;top:auto;width:800px;box-shadow:none"><div class="win-body" style="padding:18px 22px 22px 28px"><h2>${esc(p.nome)||'Investigador'}</h2><div class="sub">${esc(p.occ||'')} · História do investigador</div><h3 class="st">Backstory${pages.length>1?` · página ${i+1} de ${pages.length}`:''}</h3><div class="pdf-lore-text">${esc(text)}</div></div></article>`);
+}
+function pdfSheets(p){return[sheetHTML(p),...pdfLoreSheets(p)]}
 const themeValue=(name,fallback)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim()||fallback;
 function applyPdfTheme(sheet){const root=getComputedStyle(document.documentElement);['--scheme','--card','--txt','--muted','--muted2','--head','--rule','--line','--k0','--k5','--gold','--btnt','--spine1','--spine2','--spine3','--gr'].forEach(name=>{const value=root.getPropertyValue(name).trim();if(value)sheet.style.setProperty(name,value)})}
 function cssRgb(value){const c=document.createElement('canvas').getContext('2d');c.fillStyle=value;c.fillRect(0,0,1,1);return Array.from(c.getImageData(0,0,1,1).data).slice(0,3)}
@@ -802,10 +818,12 @@ async function savePdf(list,b){
   host.style.cssText=`position:fixed;left:-9000px;top:0;width:800px;background:${cardBg}`;
   document.body.appendChild(host);
   for(const p of list){
-   host.innerHTML=sheetHTML(p);
-   const root=host.firstChild;applyPdfTheme(root);
-   const cv=await html2canvas(root,{scale:2,backgroundColor:cardBg,useCORS:true,windowWidth:800});
-   canvases.push(cv);
+   for(const html of pdfSheets(p)){
+    host.innerHTML=html;
+    const root=host.firstChild;applyPdfTheme(root);
+    const cv=await html2canvas(root,{scale:2,backgroundColor:cardBg,useCORS:true,windowWidth:800});
+    canvases.push(cv);
+   }
   }
   const pdf=new jsPDF({unit:'pt',format:'a4',orientation:pdfOrientation(canvases[0])});
   canvases.forEach((cv,i)=>addCanvasToPdf(pdf,cv,i===0,pageRgb));
@@ -816,7 +834,7 @@ async function savePdf(list,b){
 }
 /* sem internet (as bibliotecas do PDF vêm de um CDN): imprime a ficha completa pelo navegador */
 function printFallback(list){
- const h=document.createElement('div');h.id='printHost';h.innerHTML=list.map(sheetHTML).join('');h.style.cssText='position:fixed;left:-10000px;top:0;width:800px;display:block';
+ const h=document.createElement('div');h.id='printHost';h.innerHTML=list.flatMap(pdfSheets).join('');h.style.cssText='position:fixed;left:-10000px;top:0;width:800px;display:block';
  document.body.appendChild(h);
  const previousBg=document.body.style.backgroundColor;document.body.style.backgroundColor=themeValue('--k0','#08100f');
  const sheets=[...h.querySelectorAll('.pdf-sheet')];sheets.forEach((sheet,i)=>{applyPdfTheme(sheet);sheet.style.setProperty('width','196mm','important');const r=sheet.getBoundingClientRect(),fit=Math.min(1,733/r.width,1052/r.height);sheet.style.zoom=String(fit);if(i===sheets.length-1){sheet.style.breakAfter='auto';sheet.style.pageBreakAfter='auto'}});
