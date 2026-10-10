@@ -40,56 +40,34 @@
   if(!scrollFrame)scrollFrame=requestAnimationFrame(updateScrollFade);
  }
 
- function fallbackWave(rect,radius,duration){
-  const wave=document.createElement('span');
-  wave.className='theme-wave';
-  wave.setAttribute('aria-hidden','true');
-  wave.style.setProperty('--wave-x',`${rect.left+rect.width/2}px`);
-  wave.style.setProperty('--wave-y',`${rect.top+rect.height/2}px`);
-  wave.style.setProperty('--wave-scale',String(radius/4));
-  wave.style.setProperty('--wave-duration',`${duration}ms`);
-  document.body.appendChild(wave);
-  wave.addEventListener('animationend',()=>wave.remove(),{once:true});
- }
-
  function revealTheme(theme){
+  if(reduceMotion.matches||typeof document.startViewTransition!=='function'){
+   root.classList.add('tswap');
+   saveTheme(theme);
+   clearTimeout(fallbackTimer);
+   fallbackTimer=setTimeout(()=>root.classList.remove('tswap'),650);
+   return;
+  }
+
   const rect=button.getBoundingClientRect();
   const x=rect.left+rect.width/2;
   const y=rect.top+rect.height/2;
   const radius=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
-  const reduced=reduceMotion.matches;
-  const duration=reduced?480:1050;
-
-  if(typeof document.startViewTransition!=='function'){
-   root.classList.add('tswap');
-   saveTheme(theme);
-   fallbackWave(rect,radius,duration);
-   clearTimeout(fallbackTimer);
-   fallbackTimer=setTimeout(()=>root.classList.remove('tswap'),duration);
-   return;
-  }
-
+  const compact=window.matchMedia('(max-width: 640px), (pointer: coarse)').matches;
   const transition=document.startViewTransition(()=>saveTheme(theme));
 
   transition.ready.then(()=>{
-   try{
-    root.animate([
-     {clipPath:`circle(0 at ${x}px ${y}px)`,filter:'drop-shadow(0 0 0 rgba(var(--moonglow),0))',offset:0},
-     {clipPath:`circle(${radius*.58}px at ${x}px ${y}px)`,filter:`drop-shadow(0 0 ${reduced ? 8 : 18}px rgba(var(--moonglow),${reduced ? .35 : .9}))`,offset:.64},
-     {clipPath:`circle(${radius}px at ${x}px ${y}px)`,filter:`drop-shadow(0 0 ${reduced ? 10 : 24}px rgba(var(--moonglow),${reduced ? .2 : .55}))`,offset:.9},
-     {clipPath:`circle(${radius}px at ${x}px ${y}px)`,filter:'drop-shadow(0 0 0 rgba(var(--moonglow),0))',offset:1}
-    ],
-     {duration,easing:'cubic-bezier(.16,.72,.22,1)',fill:'both',pseudoElement:'::view-transition-new(root)'}
-    );
-    if(!reduced){
-     root.animate(
-      {transform:['translateX(-25px) scale(.72)','translateX(5px) scale(1.08)','translateX(0) scale(1)'],filter:['brightness(.72) saturate(.6)','brightness(1.35) saturate(1.3)','brightness(1) saturate(1)']},
-      {duration:780,easing:'cubic-bezier(.2,.75,.25,1)',pseudoElement:'::view-transition-new(theme-moon)'}
-     );
-    }
-   }catch(_){
-    fallbackWave(rect,radius,duration);
-   }
+   root.animate([
+    {clipPath:`circle(0 at ${x}px ${y}px)`,offset:0},
+    {clipPath:`circle(${radius*.58}px at ${x}px ${y}px)`,offset:.64},
+    {clipPath:`circle(${radius}px at ${x}px ${y}px)`,offset:1}
+   ],
+    {duration:compact?760:1050,easing:'cubic-bezier(.16,.72,.22,1)',fill:'none',pseudoElement:'::view-transition-new(root)'}
+   );
+   root.animate(
+    {transform:['translateX(-25px) scale(.72)','translateX(5px) scale(1.08)','translateX(0) scale(1)'],filter:['brightness(.72) saturate(.6)','brightness(1.35) saturate(1.3)','brightness(1) saturate(1)']},
+    {duration:780,easing:'cubic-bezier(.2,.75,.25,1)',pseudoElement:'::view-transition-new(theme-moon)'}
+   );
   }).catch(()=>{/* uma transição interrompida não impede a troca do tema */});
  }
 
