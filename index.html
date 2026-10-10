@@ -740,8 +740,8 @@ function pdfFrame(doc,C){
  doc.setDrawColor(...C.gold);doc.setLineWidth(.8);doc.roundedRect(22,22,W-44,H-44,4,4,'S');
  doc.setFillColor(...C.spineDark);doc.rect(22,22,9,H-44,'F');doc.setFillColor(...C.spine);doc.rect(25,22,5,H-44,'F');
 }
-function pdfText(doc,text,x,y,size,color,style='normal'){
- doc.setFont('times',style);doc.setFontSize(size);doc.setTextColor(...color);doc.text(String(text??''),x,y);
+function pdfText(doc,text,x,y,size,color,style='normal',align){
+ doc.setFont('times',style);doc.setFontSize(size);doc.setTextColor(...color);doc.text(String(text??''),x,y,align?{align}:undefined);
 }
 function pdfWrapped(doc,text,x,y,width,size,lineHeight,color,style='normal'){
  doc.setFont('times',style);doc.setFontSize(size);doc.setTextColor(...color);
@@ -758,21 +758,32 @@ function pdfSkillPage(doc,p,title,C){
 function pdfSkillColumns(doc,p,items,title,y,C){
  if(!items.length)return y;
  const left=39,right=560,gap=14,colW=(right-left-gap*2)/3,bottom=804,valueW=52,nameW=colW-valueW-5;
- const continued=y>bottom-35;if(continued)y=pdfSkillPage(doc,p,title,C);else y=pdfSection(doc,title,y,C);
- let col=0,colY=[y,y,y];
- for(const [name,value] of items){
+ let pageY=y>bottom-35?pdfSkillPage(doc,p,title,C):pdfSection(doc,title,y,C),remaining=items.slice(),lastY=pageY;
+ while(remaining.length){
+  const room=bottom-pageY-8,cols=[[],[],[]],heights=[0,0,0];
   doc.setFont('times','normal');doc.setFontSize(6.6);
-  const label=doc.splitTextToSize(String(name),nameW),height=Math.max(8,label.length*7.4)+2;
-  if(colY[col]+height>bottom){col++;
-   if(col>=3){y=pdfSkillPage(doc,p,title,C);col=0;colY=[y,y,y]}
+  const itemHeight=([name])=>Math.max(8,doc.splitTextToSize(String(name),nameW).length*7.4)+2;
+  const sizes=remaining.map(itemHeight),target=Math.min(room*.92,sizes.reduce((sum,h)=>sum+h,0)/3);
+  let at=0;
+  for(let col=0;col<3&&at<remaining.length;col++){
+   while(at<remaining.length&&(cols[col].length===0||heights[col]+sizes[at]<=target)){
+    const entry=remaining[at++],h=sizes[at-1];cols[col].push(entry);heights[col]+=h;
+   }
   }
-  const x=left+col*(colW+gap),yy=colY[col];
-  doc.setFont('times','normal');doc.setFontSize(6.6);doc.setTextColor(...C.text);doc.text(label,x,yy);
-  const val=`${value}% · ${(value>>1)} / ${Math.floor(value/5)}`;
-  doc.setFont('times','bold');doc.setFontSize(6.2);doc.setTextColor(...C.muted);doc.text(val,x+colW,yy,{align:'right'});
-  colY[col]+=height;
+  remaining=remaining.slice(at);
+  cols.forEach((entries,col)=>{
+   const x=left+col*(colW+gap);let yy=pageY;
+   entries.forEach(([name,value])=>{
+    const label=doc.splitTextToSize(String(name),nameW),h=Math.max(8,label.length*7.4)+2;
+    doc.setFont('times','normal');doc.setFontSize(6.6);doc.setTextColor(...C.text);doc.text(label,x,yy);
+    const val=`${value}% · ${(value>>1)} / ${Math.floor(value/5)}`;
+    doc.setFont('times','bold');doc.setFontSize(6.2);doc.setTextColor(...C.muted);doc.text(val,x+colW,yy,{align:'right'});
+    yy+=h;
+   });lastY=Math.max(lastY,yy);
+  });
+  if(remaining.length)pageY=pdfSkillPage(doc,p,`${title} (continuação)`,C);
  }
- return Math.max(...colY)+6;
+ return lastY+6;
 }
 function pdfInvestigator(doc,p,C){
  pdfFrame(doc,C);const W=doc.internal.pageSize.getWidth(),right=W-36;
@@ -783,8 +794,8 @@ function pdfInvestigator(doc,p,C){
  const attrs=Object.entries(p.c||{}),gap=4,boxW=(right-39-gap*(attrs.length-1))/attrs.length,boxH=55;
  attrs.forEach(([key,value],i)=>{
   const x=39+i*(boxW+gap);doc.setFillColor(...C.panel);doc.setDrawColor(...C.gold);doc.setLineWidth(.55);doc.roundedRect(x,y,boxW,boxH,4,4,'FD');
-  pdfText(doc,key,x+boxW/2,y+13,7,C.head,'bold');pdfText(doc,value,x+boxW/2,y+32,15,C.text,'normal');
-  pdfText(doc,`${value>>1} / ${Math.floor(value/5)}`,x+boxW/2,y+46,7,C.muted,'normal');
+  pdfText(doc,key,x+boxW/2,y+13,7,C.head,'bold','center');pdfText(doc,value,x+boxW/2,y+32,15,C.text,'normal','center');
+  pdfText(doc,`${value>>1} / ${Math.floor(value/5)}`,x+boxW/2,y+46,7,C.muted,'normal','center');
  });y+=boxH+8;
  const pairs=[['PV',p.der.hp],['Sanidade',p.der.san],['Sorte',p.der.luck],['PM',p.der.pm],['Mov',p.der.mov],['Bônus de Dano',p.der.db],['Corpo',p.der.corpo]];
  doc.setFont('times','bold');doc.setFontSize(7.4);
