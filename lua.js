@@ -56,12 +56,16 @@
   const transition=document.startViewTransition(()=>saveTheme(theme));
 
   transition.ready.then(()=>{
-   root.animate(
-    {clipPath:[`circle(0 at ${x}px ${y}px)`,`circle(${radius}px at ${x}px ${y}px)`]},
-    {duration:920,easing:'cubic-bezier(.16,.72,.22,1)',fill:'both',pseudoElement:'::view-transition-new(root)'}
+   root.animate([
+    {clipPath:`circle(0 at ${x}px ${y}px)`,filter:'drop-shadow(0 0 0 rgba(var(--moonglow),0))',offset:0},
+    {clipPath:`circle(${radius*.58}px at ${x}px ${y}px)`,filter:'drop-shadow(0 0 18px rgba(var(--moonglow),.9))',offset:.64},
+    {clipPath:`circle(${radius}px at ${x}px ${y}px)`,filter:'drop-shadow(0 0 24px rgba(var(--moonglow),.55))',offset:.9},
+    {clipPath:`circle(${radius}px at ${x}px ${y}px)`,filter:'drop-shadow(0 0 0 rgba(var(--moonglow),0))',offset:1}
+   ],
+    {duration:1050,easing:'cubic-bezier(.16,.72,.22,1)',fill:'both',pseudoElement:'::view-transition-new(root)'}
    );
    root.animate(
-    {transform:['translateX(-25px) rotate(-150deg) scale(.72)','translateX(5px) rotate(215deg) scale(1.08)','translateX(0) rotate(360deg) scale(1)'],filter:['brightness(.72) saturate(.6)','brightness(1.35) saturate(1.3)','brightness(1) saturate(1)']},
+    {transform:['translateX(-25px) scale(.72)','translateX(5px) scale(1.08)','translateX(0) scale(1)'],filter:['brightness(.72) saturate(.6)','brightness(1.35) saturate(1.3)','brightness(1) saturate(1)']},
     {duration:780,easing:'cubic-bezier(.2,.75,.25,1)',pseudoElement:'::view-transition-new(theme-moon)'}
    );
   }).catch(()=>{/* uma transição interrompida não impede a troca do tema */});
