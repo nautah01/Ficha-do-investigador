@@ -74,6 +74,10 @@
 .bt-in{flex:none;width:150px;padding:4px 8px;font:inherit;font-size:.8rem;color:var(--field-ink);background:var(--field);border:1px solid var(--head);border-radius:6px 6px 0 0}
 .note-tools .sep{width:1px;height:20px;margin:0 2px;background:rgba(var(--gr),.3)}
 .note-tools button:disabled{opacity:.4;cursor:default}
+.note-more{display:contents}
+.note-more>summary{display:none}
+.note-more-content{display:contents}
+.note-more:not([open])>.note-more-content{display:contents}
 .selinfo{font-size:.78rem;color:var(--head)}
 .yarn{stroke:#b91c1c;stroke-width:3;stroke-linecap:round}
 .head{fill:#b91c1c;stroke:none}.lsel .head{fill:#f87171}

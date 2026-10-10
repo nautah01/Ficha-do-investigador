@@ -191,8 +191,8 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 .hist{margin:2px 0 6px}.hist .orig{font-size:.88rem;margin:0 0 3px}.hist .orig small{color:var(--muted)}
 .hist .bk{text-align:left;display:block;width:100%;min-height:64px;margin-top:4px;padding:6px 8px;resize:vertical;font:inherit;font-size:.9rem;line-height:1.4}
 </style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"></head><body>
-<button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <div class="top">
+<button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <h1>Gerador de Investigadores</h1>
 <p class="tag">Chamado de Cthulhu 7ª ed. · Década de 1920 · fichas offline · notas salvas no navegador</p>
 <p class="quote">“O mais misericordioso no mundo é a incapacidade da mente humana de correlacionar todos os seus conteúdos.” — H. P. Lovecraft</p>
@@ -224,13 +224,13 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <div id="noteBoardPanel" class="note-pane" role="tabpanel" aria-labelledby="noteBoardTab">
 <div class="note-boards"><div id="boardTabs" class="btabs" role="tablist" aria-label="Quadros"></div><button id="boardAdd" title="Criar um novo quadro">＋ Novo</button><button id="boardRen" title="Renomear quadro (ou dê dois cliques na aba)" aria-label="Renomear quadro">✎</button><button id="boardDel" title="Excluir quadro" aria-label="Excluir quadro">🗑</button></div>
 <div class="note-tools">
-<button id="noteSelect" aria-pressed="false" title="Selecionar várias peças (Shift+arrastar)">⬚ Selecionar</button><button id="noteAdd">＋ Foto</button><button id="noteAddText">＋ Texto</button><button id="noteExport" title="Baixar uma imagem PNG do quadro completo">⇩ Baixar PNG</button><button id="noteConnect" aria-pressed="false" title="Ligar duas peças com uma seta">↗ Interligar</button>
-<i class="sep"></i><button id="noteBrush" aria-pressed="false">🖌 Pincel</button><button id="noteEraser" aria-pressed="false">Borracha</button>
+<button id="noteSelect" aria-label="Selecionar peças" aria-pressed="false" title="Selecionar várias peças (Shift+arrastar)">⬚ Selecionar</button><button id="noteAdd" aria-label="Adicionar foto" title="Adicionar foto">＋ Foto</button><button id="noteAddText" aria-label="Adicionar texto" title="Adicionar texto">＋ Texto</button><button id="noteExport" aria-label="Baixar imagem PNG" title="Baixar uma imagem PNG do quadro completo">⇩ Baixar PNG</button><button id="noteConnect" aria-label="Interligar peças" aria-pressed="false" title="Ligar duas peças com uma seta">↗ Interligar</button>
+<details class="note-more"><summary>⚙ Mais ferramentas</summary><div class="note-more-content"><i class="sep"></i><button id="noteBrush" aria-pressed="false">🖌 Pincel</button><button id="noteEraser" aria-pressed="false">Borracha</button>
 <label>Cor <input id="noteBrushColor" type="color" value="#d4af37" aria-label="Cor do pincel"></label>
 <label>Espessura <input id="noteBrushSize" type="range" min="2" max="40" value="6" aria-label="Espessura do pincel"></label>
 <i class="sep"></i><button id="noteUndo" title="Desfazer (Ctrl+Z)" aria-label="Desfazer" disabled>↶</button><button id="noteRedo" title="Refazer (Ctrl+Y)" aria-label="Refazer" disabled>↷</button>
 <button id="noteDup" title="Duplicar seleção (Ctrl+D)" disabled>⧉ Duplicar</button><button id="noteDir" title="Mudar o sentido da seta da linha selecionada (ou dois cliques na linha)" disabled>⇄ Sentido</button>
-<span class="sp"></span><span id="noteSelInfo" class="selinfo" aria-live="polite"></span><button id="noteDelete" disabled>Excluir</button><button id="noteClear" class="danger">Limpar quadro</button>
+<span class="sp"></span><span id="noteSelInfo" class="selinfo" aria-live="polite"></span><button id="noteDelete" disabled>Excluir</button><button id="noteClear" class="danger">Limpar quadro</button></div></details>
 <input id="noteFiles" type="file" accept="image/*" multiple hidden>
 </div>
 <div id="noteViewport" class="note-viewport" tabindex="0" aria-label="Quadro de pistas. Arraste o fundo para mover, use a roda do mouse para zoom, arraste ou cole imagens aqui.">
