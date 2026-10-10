@@ -165,6 +165,7 @@ body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-
  body.print-sheet #desk{display:none!important}
  body.print-sheet #printHost{position:static!important;left:auto!important;top:auto!important;width:auto!important;display:block!important}
  .ovl,.note,#panelBtn,.atmo,body::before{display:none!important}
+ :root{--card:#f3e6c4;--txt:#2a2118;--muted:#5b4630;--head:#7f1d1d;--rule:rgba(127,29,29,.45);--line:#c4a574;--field:#fffdf6;--field-ink:#1f1610;--spine1:#7f1d1d;--spine2:#b91c1c;--spine3:#4a0c0c;--warn:#9a3412}
  .top,.bar,.aviso,.tag,.quote,.win-bar,button,.add,.ftg,.rmb,.rsz{display:none!important}
  body{background:#fff;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
  #desk{position:static}
@@ -604,7 +605,7 @@ function card(p,i){
    <button class="colb" data-i="${i}" title="Recolher / expandir">${u.collapsed?'▢':'–'}</button>
    <span class="win-title">${esc(ttl(p))}</span>
    <button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 <span class="bl">Copiar</span></button>
-   <button class="pdfb" data-i="${i}" title="Baixar esta ficha em PDF">📄 <span class="bl">PDF</span></button>
+   <button class="pdfb" data-i="${i}" title="Imprimir ou salvar esta ficha como PDF">📄 <span class="bl">PDF</span></button>
    <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Fixar: não some ao gerar">${p.pinned?'📌 <span class="bl">Fixa</span>':'📌 <span class="bl">Fixar</span>'}</button>
    <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>
@@ -793,81 +794,47 @@ function pdfLoreSheets(p){
  return pages.map((text,i)=>`<article class="win pdf-sheet pdf-lore-sheet" style="position:relative;left:auto;top:auto;width:800px;box-shadow:none"><div class="win-body" style="padding:18px 22px 22px 28px"><h2>${esc(p.nome)||'Investigador'}</h2><div class="sub">${esc(p.occ||'')} · História do investigador</div><h3 class="st">Backstory${pages.length>1?` · página ${i+1} de ${pages.length}`:''}</h3><div class="pdf-lore-text">${esc(text)}</div></div></article>`);
 }
 function pdfSheets(p){return[sheetHTML(p),...pdfLoreSheets(p)]}
-let pdfMakeLoading=null;
-function loadPdfScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.onload=resolve;s.onerror=()=>reject(Error('Falha ao carregar o gerador de PDF'));document.head.appendChild(s)})}
-function ensurePdfMake(){
- if(window.pdfMake&&window.pdfMake.vfs)return Promise.resolve();
- if(!pdfMakeLoading)pdfMakeLoading=(async()=>{
-  if(!window.pdfMake)await loadPdfScript('https://cdn.jsdelivr.net/npm/pdfmake@0.2.20/build/pdfmake.min.js');
-  if(!window.pdfMake.vfs)await loadPdfScript('https://cdn.jsdelivr.net/npm/pdfmake@0.2.20/build/vfs_fonts.js');
-  if(!window.pdfMake||!window.pdfMake.vfs)throw Error('Gerador de PDF indisponível');
- })().catch(error=>{pdfMakeLoading=null;throw error});
- return pdfMakeLoading;
+function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+function applyPdfTheme(sheet){const root=getComputedStyle(document.documentElement);['--scheme','--card','--txt','--muted','--muted2','--head','--rule','--line','--k0','--k5','--gold','--btnt','--spine1','--spine2','--spine3','--gr'].forEach(name=>{const value=root.getPropertyValue(name).trim();if(value)sheet.style.setProperty(name,value)})}
+function cssRgb(value){const c=document.createElement('canvas').getContext('2d');c.fillStyle=value;c.fillRect(0,0,1,1);return Array.from(c.getImageData(0,0,1,1).data).slice(0,3)}
+function pdfOrientation(canvas){return canvas.width/canvas.height>1?'landscape':'portrait'}
+function addCanvasToPdf(pdf,canvas,firstPage,pageRgb){
+ const orientation=pdfOrientation(canvas);if(!firstPage)pdf.addPage('a4',orientation);
+ const pageW=pdf.internal.pageSize.getWidth(),pageH=pdf.internal.pageSize.getHeight(),m=8;
+ const scale=Math.min((pageW-m*2)/canvas.width,(pageH-m*2)/canvas.height);
+ const w=canvas.width*scale,h=canvas.height*scale,x=(pageW-w)/2,y=(pageH-h)/2;
+ pdf.setFillColor(...pageRgb);pdf.rect(0,0,pageW,pageH,'F');
+ pdf.addImage(canvas.toDataURL('image/png'),'PNG',x,y,w,h);
 }
-function pdfColor(raw,background='#ffffff'){
- const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');canvas.width=canvas.height=1;
- ctx.fillStyle=background;ctx.fillRect(0,0,1,1);ctx.fillStyle=raw||'#000000';ctx.fillRect(0,0,1,1);
- return '#'+Array.from(ctx.getImageData(0,0,1,1).data).slice(0,3).map(v=>v.toString(16).padStart(2,'0')).join('');
-}
-function pdfPalette(){
- const css=getComputedStyle(document.documentElement),raw=(name,fallback)=>css.getPropertyValue(name).trim()||fallback;
- const card=pdfColor(raw('--card','#0d1e1c'));
- return{card,text:pdfColor(raw('--txt','#e6dcc3'),card),muted:pdfColor(raw('--muted','#9fb0a3'),card),heading:pdfColor(raw('--head','#d8c58a'),card),gold:pdfColor(raw('--gold','#a88b4a'),card),line:pdfColor(raw('--line','rgba(168,139,74,.3)'),card),panel:pdfColor(raw('--k5','#16302d'),card),spine:pdfColor(raw('--spine2','#8f2323'),card)};
-}
-function pdfTableLayout(colors,kind='quiet'){
- if(kind==='stats')return{hLineWidth:()=>.65,vLineWidth:()=>.65,hLineColor:()=>colors.gold,vLineColor:()=>colors.gold,paddingLeft:()=>3,paddingRight:()=>3,paddingTop:()=>3,paddingBottom:()=>3};
- return{hLineWidth:()=>kind==='skills' ? .35 : 0,vLineWidth:()=>0,hLineColor:()=>colors.line,vLineColor:()=>colors.line,paddingLeft:()=>kind==='skills'?2:0,paddingRight:()=>kind==='skills'?3:0,paddingTop:()=>kind==='skills'?1:0,paddingBottom:()=>kind==='skills'?1:0};
-}
-function pdfSection(title){return{text:title.toLocaleUpperCase('pt-BR'),style:'section',margin:[0,10,0,5]}}
-function pdfMeta(p,colors){
- const parts=[p.occ,p.idade!==''?`${p.idade} anos`:'',p.sec?`+ ${p.sec}`:'',p.edit?'Ficha editada':''].filter(Boolean);
- const columns=[];parts.forEach((part,i)=>{if(i)columns.push({text:'·',width:'auto',color:colors.gold});columns.push({text:String(part),width:'auto',color:colors.muted})});
- return{columns,columnGap:7,margin:[0,1,0,7],fontSize:9};
-}
-function pdfStats(p,colors){
- const cells=Object.entries(p.c).map(([name,value])=>({stack:[{text:name,style:'statLabel'},{text:String(value),style:'statValue'},{text:`${value>>1} / ${Math.floor(value/5)}`,style:'statSmall'}],alignment:'center',fillColor:colors.panel,margin:[2,3,2,3]}));
- return{table:{widths:Array(8).fill('*'),body:[cells]},layout:pdfTableLayout(colors,'stats'),margin:[0,5,0,6]};
-}
-function pdfDerived(p,colors){
- const entries=[['PV',p.der.hp],['Sanidade',p.der.san],['Sorte',p.der.luck],['PM',p.der.pm],['Mov',p.der.mov],['Bônus de Dano',p.der.db],['Corpo',p.der.corpo]],rows=[];
- for(let i=0;i<entries.length;i+=4){rows.push(Array.from({length:4},(_,j)=>{const item=entries[i+j];return item?{text:[{text:item[0]+': ',bold:true,color:colors.heading},{text:String(item[1]),color:colors.text}],fillColor:colors.panel,margin:[4,5,4,5],fontSize:8.5}:''}))}
- return{table:{widths:['*','*','*','*'],body:rows},layout:'noBorders',margin:[0,0,0,7]};
-}
-function pdfSkillTable(entries,colors){
- const rows=[];for(let i=0;i<entries.length;i+=3){const row=[];for(let j=0;j<3;j++){const item=entries[i+j];if(item){const[name,value]=item;row.push({text:name,color:colors.text,fontSize:7.1},{text:`${value}%  ${value>>1} / ${Math.floor(value/5)}`,alignment:'right',color:colors.muted,fontSize:6.4})}else row.push('','')}rows.push(row)}
- return{table:{widths:['*',48,'*',48,'*',48],body:rows},layout:pdfTableLayout(colors,'skills')};
-}
-function pdfHistory(p,colors){
- const rows=(p.hist||[]).map(g=>({columns:[{text:`${g.kind}:`,width:'auto',bold:true,color:colors.text},{text:`${g.n}${g.sk&&g.sk.length?'   ·   +10 '+g.sk.join(', +10 '):''}`,width:'*',color:colors.muted}],columnGap:8,margin:[0,0,0,3],fontSize:8.2}));
- const range=crRangeTxt(p);if(range)rows.push({columns:[{text:'Nível de Crédito:',width:'auto',bold:true,color:colors.text},{text:range,width:'*',color:colors.muted}],columnGap:8,margin:[0,0,0,3],fontSize:8.2});
- return rows;
-}
-function pdfDocument(list,colors){
- const content=[];
- list.forEach((p,index)=>{
-  const firstTitle={text:p.nome||'Investigador',style:'name',margin:[0,0,0,3]};if(index)firstTitle.pageBreak='before';
-  content.push(firstTitle,pdfMeta(p,colors),pdfStats(p,colors),pdfDerived(p,colors));
-  const history=pdfHistory(p,colors);if(history.length)content.push(pdfSection('Histórico'),...history);
-  content.push(pdfSection('Perícias do personagem'),pdfSkillTable(Object.entries(p.sk).sort((a,b)=>b[1]-a[1]),colors));
-  const missing=falta(p).map(([name])=>[name,+get(p,'s:'+name)||0]);if(missing.length)content.push({text:'Perícias que não tenho (valor inicial)',style:'section',margin:[0,10,0,5]},pdfSkillTable(missing,colors));
-  if(String(p.back||'').trim())content.push({text:p.nome||'Investigador',style:'name',pageBreak:'before',margin:[0,0,0,3]},pdfMeta(p,colors),pdfSection('Backstory'),{text:String(p.back),style:'lore'});
- });
- return{pageSize:'A4',pageMargins:[34,30,28,30],defaultStyle:{font:'Roboto',fontSize:8.5,color:colors.text},styles:{name:{fontSize:19,bold:true,color:colors.heading},section:{fontSize:10,bold:true,color:colors.heading,characterSpacing:.7,decoration:'underline',decorationColor:colors.line},statLabel:{fontSize:7,bold:true,color:colors.heading},statValue:{fontSize:12,color:colors.text,margin:[1,0,1,0]},statSmall:{fontSize:6,color:colors.muted},lore:{fontSize:10,lineHeight:1.35,color:colors.text}},background:(page,pageSize)=>({canvas:[{type:'rect',x:0,y:0,w:pageSize.width,h:pageSize.height,color:colors.card},{type:'rect',x:16,y:16,w:7,h:pageSize.height-32,color:colors.spine}]}),footer:(page,total)=>({text:`${page} / ${total}`,alignment:'right',color:colors.muted,fontSize:7,margin:[0,0,28,10]}),content,info:{title:(list.length===1?list[0].nome:'Investigadores')+' - Ficha de investigador'}};
-}
-function pdfFileName(list){return((list.length===1?list[0].nome:'investigadores')||'ficha').replace(/[^\w\u00C0-\u017F -]/g,'').trim().replace(/\s+/g,'_')+'.pdf'}
 async function savePdf(list,b){
  if(!list.length||b.disabled)return;
  const label=b.textContent;b.textContent='⏳ Gerando…';b.disabled=true;
- const reset=()=>{b.textContent=label;b.disabled=false};
- try{await ensurePdfMake();window.pdfMake.createPdf(pdfDocument(list,pdfPalette())).download(pdfFileName(list),reset);setTimeout(reset,12000)}
- catch(_){printPdfFallback(list,b,label)}
+ let host,fallback=false;
+ try{
+  if(!window.html2canvas)await loadScript('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js');
+  if(!window.jspdf)await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
+  const {jsPDF}=window.jspdf,cardBg=getComputedStyle(document.documentElement).getPropertyValue('--card').trim()||'#0d1e1c',pageRgb=cssRgb(cardBg),canvases=[];
+  host=document.createElement('div');host.style.cssText=`position:fixed;left:-9000px;top:0;width:800px;background:${cardBg}`;document.body.appendChild(host);
+  for(const p of list)for(const html of pdfSheets(p)){
+   host.innerHTML=html;const root=host.firstChild;applyPdfTheme(root);
+   canvases.push(await html2canvas(root,{scale:2,backgroundColor:cardBg,useCORS:true,windowWidth:800}));
+  }
+  if(!canvases.length)throw new Error('Não foi possível montar as páginas da ficha.');
+  const pdf=new jsPDF({unit:'pt',format:'a4',orientation:pdfOrientation(canvases[0])});
+  canvases.forEach((cv,i)=>addCanvasToPdf(pdf,cv,i===0,pageRgb));
+  const name=(list.length===1?list[0].nome:'investigadores').replace(/[^\w\u00C0-\u017F -]/g,'').trim().replace(/\s+/g,'_')||'ficha';
+  pdf.save(name+'.pdf');
+ }catch(_){
+  fallback=true;if(host)host.remove();printPdf(list,b,label);
+ }finally{
+  if(host)host.remove();if(!fallback){b.textContent=label;b.disabled=false}
+ }
 }
-/* Imprime texto real pelo navegador, sem converter as fichas em imagens. */
-function printPdfFallback(list,b,originalLabel){
- const label=originalLabel||b.textContent,previousTitle=document.title;b.textContent='⏳ Abrindo impressão…';b.disabled=true;
+/* Alternativa quando o navegador não consegue carregar as bibliotecas de PDF. */
+function printPdf(list,b,label=b.textContent){
+ const previousTitle=document.title;b.textContent='⏳ Preparando…';b.disabled=true;
  const fileLabel=(list.length===1?list[0].nome:'Investigadores').replace(/[^\w\u00C0-\u017F -]/g,'').trim()||'Ficha';document.title=fileLabel+' - Ficha de investigador';
- const h=document.createElement('div');h.id='printHost';h.innerHTML=list.flatMap(pdfSheets).join('');h.style.cssText='position:fixed;left:-10000px;top:0;width:800px;display:block';
- document.body.appendChild(h);
+ const h=document.createElement('div');h.id='printHost';h.innerHTML=list.flatMap(pdfSheets).join('');h.style.cssText='position:fixed;left:-10000px;top:0;width:800px;display:block';document.body.appendChild(h);
  const previousBg=document.body.style.backgroundColor;document.body.style.backgroundColor='#08100f';
  const sheets=[...h.querySelectorAll('.pdf-sheet')];sheets.forEach((sheet,i)=>{sheet.style.setProperty('width','196mm','important');const r=sheet.getBoundingClientRect(),fit=Math.min(1,733/r.width,1052/r.height);sheet.style.zoom=String(fit);if(i===sheets.length-1){sheet.style.breakAfter='auto';sheet.style.pageBreakAfter='auto'}});
  document.body.classList.add('print-sheet');
