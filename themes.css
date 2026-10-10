@@ -47,9 +47,17 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 ::view-transition-image-pair(root){isolation:auto}
 ::view-transition-old(root),::view-transition-new(root){display:block;animation:none;mix-blend-mode:normal}
 ::view-transition-group(theme-moon){z-index:1}
-::view-transition-old(theme-moon){animation:moonDepart .34s ease-in both}
-::view-transition-new(theme-moon){animation:none}
-@keyframes moonDepart{to{transform:translateX(15px) rotate(150deg) scale(.72);opacity:0}}
+::view-transition-old(theme-moon){animation:moonDepart .9s cubic-bezier(.4,0,.7,.25) both}
+::view-transition-new(theme-moon){animation:moonArrive .9s cubic-bezier(.16,.72,.22,1) both}
+@keyframes moonDepart{
+ from{transform:translateX(0) rotate(0deg) scale(1);opacity:1}
+ to{transform:translateX(-18px) rotate(360deg) scale(.55);opacity:0}
+}
+@keyframes moonArrive{
+ 0%{clip-path:circle(0 at 100% 50%);transform:translateX(76px) rotate(-360deg) scale(.78);opacity:0}
+ 65%{opacity:1}
+ 100%{clip-path:circle(76% at 50% 50%);transform:translateX(0) rotate(0deg) scale(1);opacity:1}
+}
 @media (max-width:640px){.moon{width:46px}h1{padding-right:54px}}
 @media (prefers-reduced-motion:reduce){
  .moon,.moon::before,.moon::after{transition:none!important}
