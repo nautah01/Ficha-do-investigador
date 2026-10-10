@@ -10,7 +10,7 @@ const cemBtn=document.getElementById('cemPanelBtn');
 const win=mk(`<section class="cem" id="cem" hidden aria-label="Cemitério dos investigadores">
 <header class="cem-bar" title="Arraste para mover"><span>Cemitério · investigadores perdidos</span><button class="cem-x" aria-label="Fechar cemitério">✕</button></header>
 <div class="cem-list" id="cemList"></div>
-<footer class="cem-foot"><span>Arraste uma ficha até o botão Cemitério no painel para enterrá-la.</span><button id="cemPng" title="Baixar o cemitério como imagem">Salvar imagem</button><button id="cemPdf" title="Baixar o cemitério como PDF">Salvar PDF</button></footer></section>`);
+<footer class="cem-foot"><span class="cem-drag-hint">Arraste uma ficha até o botão Cemitério no painel para enterrá-la.</span><button id="cemPng" title="Baixar o cemitério como imagem">Salvar imagem</button><button id="cemPdf" title="Baixar o cemitério como PDF">Salvar PDF</button></footer></section>`);
 const dlg=mk(`<dialog class="cem-dlg" id="cemDlg"><form id="cemForm" autocomplete="off"><h4 id="cemDlgT">Enterrar investigador</h4>
 <label>Nome<input name="nome" required maxlength="80"></label>
 <label>Idade<input name="idade" maxlength="3" inputmode="numeric"></label>
@@ -28,7 +28,7 @@ function render(){
  <h3>${esc(r.nome)}</h3><p class="stone-age">${r.idade!==''?esc(r.idade)+' anos':'&nbsp;'}</p>
  <p class="stone-cause">${esc(r.causa)}</p>${r.frase?`<blockquote>“${esc(r.frase)}”</blockquote>`:''}
  <div class="stone-act"><button data-a="edit">Editar</button><button data-a="del">Remover</button></div></article>`).join('')
- :'<p class="cem-empty">Nenhum investigador morreu… ainda.<br>Arraste uma ficha até o botão Cemitério no painel.</p>';
+ :'<p class="cem-empty">Nenhum investigador morreu… ainda.<br><span class="cem-drag-hint">Arraste uma ficha até o botão Cemitério no painel.</span></p>';
 }
 function paint(c,w,h,s){ /* desenha a foto enquadrada (x,y em fração do quadro) */
  c.clearRect(0,0,w,h);const im=ed.img;
