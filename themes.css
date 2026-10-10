@@ -96,11 +96,6 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
  --cem-ink:#392f1c;--cem-muted:#665533;--cem-frame:#b38b26;--cem-photo-bg:#80744f;--cem-photo-mark:#f7edcf;
  --cem-edge:rgba(255,250,232,.65);--cem-etch:rgba(72,59,31,.24)
 }
-:root[data-theme=paper] body{
- background:repeating-linear-gradient(180deg,#fcf6e4 0 27px,rgba(196,156,44,.28) 28px,#fcf6e4 29px),linear-gradient(180deg,#fff9e8,#f0e4c3);
- background-repeat:repeat;background-attachment:fixed;background-color:#f0e4c3
-}
-:root[data-theme=paper] body::before{background:linear-gradient(90deg,rgba(126,91,23,.045),transparent 13%,transparent 87%,rgba(126,91,23,.045))}
 /* Pequenos detalhes de céu aparecem quando a lua recebe foco. */
 .moon::before{content:"";position:absolute;inset:-6px;border:1px solid rgba(var(--moonglow),.5);border-radius:50%;opacity:.16;transform:scale(.94);transition:opacity .3s,transform .4s;pointer-events:none}
 .moon::after{content:"✧";position:absolute;top:-4px;right:0;color:var(--moon1);font: .85rem/1 Georgia,serif;opacity:.18;transform:scale(.7);transition:opacity .25s,transform .3s;pointer-events:none}
