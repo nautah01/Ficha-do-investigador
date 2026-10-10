@@ -561,14 +561,11 @@ function body(p,i){
  const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<b>${l}</b> ${inp(p,i,'d:'+k)}`).join(' ');
  const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
  return`<div class="badge"><span class="ed" ${p.edit?'':'hidden'}>✎ Ficha editada</span></div>
-  <header class="sheet-head"><div class="sheet-ident"><p class="sheet-kicker">Sociedade de investigação · Arkham</p>
-   <h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2>
-   <div class="sub"><label>Ocupação<input class="in nm" data-i="${i}" data-k="n:occ" placeholder="Ocupação" value="${esc(p.occ)}"></label><label>Idade<input class="in" data-i="${i}" data-k="n:idade" placeholder="—" value="${esc(p.idade)}"></label>${p.sec?`<small class="sheet-sec">Secundária · ${esc(p.sec)}</small>`:''}</div>
-  </div><div class="sheet-portrait" aria-hidden="true"><span>RETRATO<br>DO INVESTIGADOR</span></div><div class="sheet-seal" aria-hidden="true"><b>★</b><small>ARQUIVO<br>ARKHAM</small></div></header>
-  <section class="sheet-section traits"><h3 class="st">Características</h3><div class="stats">${st}</div></section>
-  <section class="sheet-section derived"><h3 class="st">Estado e combate</h3><div class="der">${d}</div></section>
-  <section class="sheet-section history"><h3 class="st">Histórico</h3><div class="hist">${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}<textarea class="in bk" rows="3" data-i="${i}" data-k="n:back" placeholder="Histórico do investigador…">${esc(p.back||'')}</textarea></div></section>
-  <section class="sheet-section skills"><h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}</section>`;
+  <h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2>
+  <div class="sub"><input class="in nm" style="width:48%;font-size:.85rem;font-weight:normal" data-i="${i}" data-k="n:occ" placeholder="Ocupação" value="${esc(p.occ)}"> · <input class="in" data-i="${i}" data-k="n:idade" placeholder="idade" value="${esc(p.idade)}"> anos${p.sec?` · <small>+ ${esc(p.sec)}</small>`:''}</div>
+  <div class="stats">${st}</div><div class="der">${d}</div>
+  <h3 class="st">Histórico</h3><div class="hist">${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}<textarea class="in bk" rows="3" data-i="${i}" data-k="n:back" placeholder="Backstory: quem é, de onde vem, o que já viu…">${esc(p.back||'')}</textarea></div>
+  <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}`;
 }
 function card(p,i){
  const u=uiOf(p,i);
@@ -742,14 +739,16 @@ function sheetHTML(p){
  const rows=l=>l.map(([n,v])=>`<span><span class="sk-name">${esc(n)}</span><i>${v}% <small>${(v>>1)} / ${Math.floor(v/5)}</small></i></span>`).join('');
  const sk=rows(Object.entries(p.sk).sort((a,b)=>b[1]-a[1]));
  const fl=falta(p).map(([n])=>[n,+get(p,'s:'+n)||0]);
+ const meta=[esc(p.occ),p.idade!==''?esc(p.idade)+' anos':'',p.sec?'+ '+esc(p.sec):'',p.edit?'ficha editada':''].filter(Boolean).join(' · ')||'&nbsp;';
  return`<article class="win pdf-sheet" style="position:relative;left:auto;top:auto;width:800px;box-shadow:none">
   <div class="win-body" style="padding:18px 22px 22px 28px">
-   <header class="sheet-head"><div class="sheet-ident"><p class="sheet-kicker">Sociedade de investigação · Arkham</p><h2>${esc(p.nome)||'&nbsp;'}</h2><div class="sub"><b>Ocupação</b> ${esc(p.occ)||'—'}　 <b>Idade</b> ${p.idade!==''?esc(p.idade)+' anos':'—'}${p.sec?'　·　'+esc(p.sec):''}</div><small class="pdf-ed">${p.edit?'Ficha editada':''}</small></div><div class="sheet-portrait" aria-hidden="true"><span>RETRATO<br>DO INVESTIGADOR</span></div><div class="sheet-seal" aria-hidden="true"><b>★</b><small>ARQUIVO<br>ARKHAM</small></div></header>
-   <section class="sheet-section traits"><h3 class="st">Características</h3><div class="stats">${st}</div></section>
-   <section class="sheet-section derived"><h3 class="st">Estado e combate</h3><div class="der"><b>PV</b> ${p.der.hp} <b>Sanidade</b> ${p.der.san} <b>Sorte</b> ${p.der.luck} <b>PM</b> ${p.der.pm} <b>Mov</b> ${p.der.mov} <b>Bônus de Dano</b> ${esc(p.der.db)} <b>Corpo</b> ${p.der.corpo}</div></section>
-   ${(p.hist&&p.hist.length)||p.back?`<section class="sheet-section history"><h3 class="st">Histórico</h3><div class="pdf-history"><div>${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}</div><div class="pdf-back">${esc(p.back||'')}</div></div></section>`:''}
-   <section class="sheet-section skills"><h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div></section>
-   ${fl.length?`<section class="sheet-section skills"><h3 class="st">Perícias ainda não treinadas</h3><div class="sk">${rows(fl)}</div></section>`:''}
+   <h2 style="margin:0 0 4px">${esc(p.nome)||'&nbsp;'}</h2>
+   <div class="sub">${meta}</div>
+   <div class="stats">${st}</div>
+   <div class="der"><b>PV</b> ${p.der.hp} <b>Sanidade</b> ${p.der.san} <b>Sorte</b> ${p.der.luck} <b>PM</b> ${p.der.pm} <b>Mov</b> ${p.der.mov} <b>Bônus de Dano</b> ${esc(p.der.db)} <b>Corpo</b> ${p.der.corpo}</div>
+   ${(p.hist&&p.hist.length)||p.back?`<h3 class="st">Histórico</h3><div class="pdf-history"><div>${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}</div><div class="pdf-back">${esc(p.back||'')}</div></div>`:''}
+   <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>
+   ${fl.length?`<h3 class="st" style="margin-top:14px">Perícias que não tenho (valor inicial)</h3><div class="sk">${rows(fl)}</div>`:''}
   </div></article>`;
 }
 const themeValue=(name,fallback)=>getComputedStyle(document.documentElement).getPropertyValue(name).trim()||fallback;
