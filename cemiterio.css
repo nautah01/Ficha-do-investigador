@@ -49,6 +49,7 @@
 .cem-foot button:disabled{opacity:.6;cursor:wait}
 .burb{display:none}
 body.mobile #desk .burb{display:inline-block}
+@media (max-width:760px){body.mobile .cem .cem-x{display:none!important}}
 
 /* Atmosfera do cemitério */
 .cem{background:#101a17;border-color:rgba(var(--gr2),.65);box-shadow:0 18px 55px rgba(0,0,0,.72),inset 0 0 0 1px rgba(216,197,138,.07)}

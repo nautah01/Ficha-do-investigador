@@ -21,6 +21,10 @@ function sync(){
  was=m;
 }
 new MutationObserver(sync).observe(body,{attributes:true,attributeFilter:['class']});
-if(cem)new MutationObserver(()=>{if(body.classList.contains('mobile')&&!cem.hidden&&body.dataset.mtab!=='cemiterio')go('cemiterio')}).observe(cem,{attributes:true,attributeFilter:['hidden']});
+if(cem)new MutationObserver(()=>{
+ if(!body.classList.contains('mobile'))return;
+ if(!cem.hidden&&body.dataset.mtab!=='cemiterio')go('cemiterio');
+ else if(cem.hidden&&body.dataset.mtab==='cemiterio')go('fichas');
+}).observe(cem,{attributes:true,attributeFilter:['hidden']});
 sync();
 })();
