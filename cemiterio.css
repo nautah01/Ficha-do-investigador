@@ -1,5 +1,5 @@
 /* Cemitério dos investigadores */
-#notesFab{position:fixed;left:16px;bottom:16px;z-index:4000;width:54px;height:54px;padding:0;border-radius:50%;font-size:1.6rem;line-height:1;cursor:pointer;background:var(--k3);color:var(--ink2);border:2px solid rgba(var(--gr),.6);box-shadow:0 6px 18px rgba(0,0,0,.55);transition:transform .15s,box-shadow .15s,border-color .15s}
+#notesFab{position:fixed;left:16px;bottom:16px;z-index:4000;display:grid;place-items:center;width:54px;height:54px;padding:0;border-radius:50%;font-size:1.6rem;line-height:1;text-align:center;cursor:pointer;background:var(--k3);color:var(--ink2);border:2px solid rgba(var(--gr),.6);box-shadow:0 6px 18px rgba(0,0,0,.55);transition:transform .15s,box-shadow .15s,border-color .15s}
 #notesFab:hover,#notesFab[aria-pressed=true]{border-color:var(--head);background:var(--k5)}
 #cemPanelBtn.hot{transform:scale(1.08);border-color:#f87171;box-shadow:0 0 0 4px rgba(185,28,28,.3)}
 .cem{position:fixed;left:24px;bottom:84px;z-index:4900;display:flex;flex-direction:column;width:min(520px,calc(100vw - 48px));height:min(460px,calc(100vh - 120px));min-width:260px;min-height:200px;max-width:96vw;max-height:96vh;resize:both;overflow:hidden;color:var(--ink2);background:var(--k3);border:1px solid rgba(var(--gr2),.55);border-radius:7px 7px 4px 4px;box-shadow:0 14px 40px rgba(0,0,0,.6)}
