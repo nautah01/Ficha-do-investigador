@@ -62,11 +62,17 @@
   const transition=document.startViewTransition(()=>saveTheme(theme));
 
   transition.ready.then(()=>{
-   const reveal=root.animate([
+   const revealFrames=compact?[
     {clipPath:`circle(0 at ${x}px ${y}px)`,offset:0},
     {clipPath:`circle(${radius*.58}px at ${x}px ${y}px)`,offset:.64},
     {clipPath:`circle(${radius}px at ${x}px ${y}px)`,offset:1}
-   ],
+   ]:[
+    {clipPath:`circle(0 at ${x}px ${y}px)`,filter:'drop-shadow(0 0 0 rgba(var(--moonglow),0))',offset:0},
+    {clipPath:`circle(${radius*.58}px at ${x}px ${y}px)`,filter:'drop-shadow(0 0 18px rgba(var(--moonglow),.9))',offset:.64},
+    {clipPath:`circle(${radius}px at ${x}px ${y}px)`,filter:'drop-shadow(0 0 24px rgba(var(--moonglow),.55))',offset:.9},
+    {clipPath:`circle(${radius}px at ${x}px ${y}px)`,filter:'drop-shadow(0 0 0 rgba(var(--moonglow),0))',offset:1}
+   ];
+   const reveal=root.animate(revealFrames,
     {duration:compact?760:1050,easing:'cubic-bezier(.16,.72,.22,1)',fill:'both',pseudoElement:'::view-transition-new(root)'}
    );
    if(compact&&typeof transition.skipTransition==='function')
