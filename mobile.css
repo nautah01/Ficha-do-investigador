@@ -36,6 +36,7 @@ body.mobile .note-footer #noteHint{display:none}
 body.mobile h1~p{padding-right:52px}
 
 /* Painel e fichas mais compactos sem reduzir os campos abaixo de uma área tocável. */
+.mobile-card-actions{display:none}
 body.mobile{padding:8px 8px calc(62px + env(safe-area-inset-bottom))}
 body.mobile h1{font-size:1.34rem;line-height:1.15;letter-spacing:.7px}
 body.mobile .quote{display:none}
@@ -58,6 +59,13 @@ body.mobile #desk{gap:9px;padding-bottom:14px}
 body.mobile #desk .win{border-radius:6px}
 body.mobile #desk .win-bar{padding:4px 5px 4px 14px}
 body.mobile #desk .win-bar button{width:34px;height:34px;font-size:.88rem}
+body.mobile #desk .win-bar .copb,body.mobile #desk .win-bar .dupb{display:none}
+body.mobile #desk .ficha-heading{display:flex;align-items:center;gap:6px;margin:2px 0 4px;padding-bottom:4px;border-bottom:2px solid var(--rule)}
+body.mobile #desk .ficha-heading h2{flex:1;min-width:0;margin:0;padding:0;border:0}
+body.mobile #desk .ficha-heading .nm{width:100%;font-size:1.02rem}
+body.mobile #desk .ficha-heading .burb{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;gap:4px;min-height:36px;padding:4px 7px;font-size:.72rem;white-space:nowrap}
+body.mobile #desk .mobile-card-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}
+body.mobile #desk .mobile-card-actions button{min-height:34px;padding:5px 9px;font-size:.75rem;white-space:nowrap}
 body.mobile #desk .win-body{padding:8px 9px 11px 17px}
 body.mobile #desk h2{margin:2px 0;font-size:1.02rem;padding-bottom:4px}
 body.mobile #desk h3{margin:8px 0 5px;padding-top:5px;font-size:.86rem}

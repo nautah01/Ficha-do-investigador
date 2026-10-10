@@ -35,6 +35,12 @@
 @media (max-width:640px){.opk{width:100vw;max-height:100vh;border-radius:0}.opk-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
 @media (prefers-reduced-motion:reduce){.opk[open],.opk-card{animation:none}.opk-card{transition:none}}
 @media print{.opk{display:none!important}}
+.opk-grid{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+@media(max-width:640px){
+ .opk{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;border-radius:0}
+ .opk>header,.opk-tools,.opk-chips,.opk-det{flex:0 0 auto}
+ .opk-grid{min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+}
 .opk-hb{display:flex;gap:8px}
 .opk-hb button{padding:3px 12px;border-radius:4px;cursor:pointer}
 .opk-help{display:none;flex:1;min-height:0;overflow:auto;padding:6px 22px 18px;line-height:1.5;font-size:.92rem;outline:none}
