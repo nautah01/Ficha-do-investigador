@@ -147,10 +147,10 @@ body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-
 .pdf-sheet .der b{color:var(--head)!important}
 .pdf-sheet h3.st{margin:5px 0 3px!important;padding-bottom:2px!important;font-size:.73rem!important;letter-spacing:.5px;color:var(--head)!important;border-color:var(--line)!important}
 .pdf-sheet .pdf-history{display:block;font-size:.68rem;line-height:1.2}
-.pdf-sheet .pdf-history .orig{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:8px;align-items:start;margin:0 0 3px;font-size:.68rem;line-height:1.35;color:var(--muted)}
+.pdf-sheet .pdf-history .orig{display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:3px;align-items:start;margin:0 0 3px;font-size:.68rem;line-height:1.35;letter-spacing:normal;word-spacing:normal;color:var(--muted)}
 .pdf-sheet .pdf-history .orig b{margin:0}
-.pdf-sheet .pdf-history .orig-value{min-width:0}
-.pdf-sheet .pdf-history .orig-value small{margin-left:5px}
+.pdf-sheet .pdf-history .orig-value{min-width:0;letter-spacing:normal;word-spacing:normal}
+.pdf-sheet .pdf-history .orig-value small{margin-left:2px}
 .pdf-sheet .pdf-back{font-size:.68rem;line-height:1.2;white-space:pre-wrap;overflow-wrap:anywhere}
 .pdf-lore-sheet{min-height:1050px!important}
 .pdf-lore-sheet .pdf-lore-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.9rem;line-height:1.5;word-spacing:.08em;letter-spacing:.01em;color:var(--txt)}
@@ -764,18 +764,19 @@ document.getElementById('blank').onclick=()=>{
 };
 function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
 function sheetHTML(p){
+ const pdfEsc=s=>esc(String(s??'').replace(/[\s\u00a0]+/g,' ').trim());
  const st=Object.entries(p.c).map(([k,v])=>`<div><b>${esc(k)}</b><span style="display:block;font-size:1.05rem;margin:3px 0">${v}</span><small>${(v>>1)} / ${Math.floor(v/5)}</small></div>`).join('');
  const rows=l=>l.map(([n,v])=>`<span><span class="sk-name">${esc(n)}</span><i>${v}% <small>${(v>>1)} / ${Math.floor(v/5)}</small></i></span>`).join('');
  const sk=rows(Object.entries(p.sk).sort((a,b)=>b[1]-a[1]));
  const fl=falta(p).map(([n])=>[n,+get(p,'s:'+n)||0]);
- const meta=[esc(p.occ),p.idade!==''?esc(p.idade)+' anos':'',p.sec?'+ '+esc(p.sec):'',p.edit?'ficha editada':''].filter(Boolean).join(' · ')||'&nbsp;';
+ const meta=[pdfEsc(p.occ),p.idade!==''?pdfEsc(p.idade)+' anos':'',p.sec?'+ '+pdfEsc(p.sec):'',p.edit?'ficha editada':''].filter(Boolean).join(' · ')||'&nbsp;';
  return`<article class="win pdf-sheet" style="position:relative;left:auto;top:auto;width:800px;box-shadow:none">
   <div class="win-body" style="padding:18px 22px 22px 28px">
    <h2 style="margin:0 0 4px">${esc(p.nome)||'&nbsp;'}</h2>
    <div class="sub">${meta}</div>
    <div class="stats">${st}</div>
    <div class="der"><b>PV</b> ${p.der.hp} <b>Sanidade</b> ${p.der.san} <b>Sorte</b> ${p.der.luck} <b>PM</b> ${p.der.pm} <b>Mov</b> ${p.der.mov} <b>Bônus de Dano</b> ${esc(p.der.db)} <b>Corpo</b> ${p.der.corpo}</div>
-    ${(p.hist&&p.hist.length)||crRangeTxt(p)?`<h3 class="st">Histórico</h3><div class="pdf-history">${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b><span class="orig-value">${esc(g.n)}${g.sk&&g.sk.length?`<small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</span></div>`).join('')}${crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b><span class="orig-value">${esc(crRangeTxt(p))}</span></div>`:''}</div>`:''}
+    ${(p.hist&&p.hist.length)||crRangeTxt(p)?`<h3 class="st">Histórico</h3><div class="pdf-history">${(p.hist||[]).map(g=>`<div class="orig"><b>${pdfEsc(g.kind)}:</b><span class="orig-value">${pdfEsc(g.n)}${g.sk&&g.sk.length?`<small>+10 ${pdfEsc(g.sk.join(', +10 '))}</small>`:''}</span></div>`).join('')}${crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b><span class="orig-value">${pdfEsc(crRangeTxt(p))}</span></div>`:''}</div>`:''}
    <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>
    ${fl.length?`<h3 class="st" style="margin-top:14px">Perícias que não tenho (valor inicial)</h3><div class="sk">${rows(fl)}</div>`:''}
   </div></article>`;
@@ -806,7 +807,7 @@ function addCanvasToPdf(pdf,canvas,firstPage,pageRgb){
  const scale=Math.min((pageW-m*2)/canvas.width,(pageH-m*2)/canvas.height);
  const w=canvas.width*scale,h=canvas.height*scale,x=(pageW-w)/2,y=(pageH-h)/2;
  pdf.setFillColor(...pageRgb);pdf.rect(0,0,pageW,pageH,'F');
- pdf.addImage(canvas.toDataURL('image/jpeg',0.94),'JPEG',x,y,w,h);
+ pdf.addImage(canvas.toDataURL('image/png'),'PNG',x,y,w,h);
 }
 async function savePdf(list,b){
  if(!list.length||b.disabled)return;
