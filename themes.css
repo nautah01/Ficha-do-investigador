@@ -49,7 +49,7 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 ::view-transition-group(theme-moon){z-index:1}
 ::view-transition-old(theme-moon){animation:moonDepart .34s ease-in both}
 ::view-transition-new(theme-moon){animation:none}
-@keyframes moonDepart{to{transform:translateX(15px) scale(.72);opacity:0}}
+@keyframes moonDepart{to{transform:translateX(15px) rotate(150deg) scale(.72);opacity:0}}
 @media (max-width:640px){.moon{width:46px}h1{padding-right:54px}}
 @media (prefers-reduced-motion:reduce){
  .moon,.moon::before,.moon::after{transition:none!important}
