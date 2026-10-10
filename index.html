@@ -203,7 +203,6 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <button class="alt chip" id="cemPanelBtn" aria-pressed="false" title="Abrir ou fechar o cemitério">🪦 Cemitério</button>
 <button class="alt chip" id="bkpOut" title="Baixar fichas, bloco de notas e cemitério num arquivo de backup">💾 Baixar dados</button>
 <button class="alt chip" id="bkpIn" title="Carregar um arquivo de backup neste navegador">📂 Carregar dados</button>
-<button class="alt chip" id="mobBtn" aria-pressed="false" title="Alternar entre versão para celular e computador">📱 Versão para celular</button>
 <button class="alt chip sq" id="panelMin" title="Minimizar painel">–</button>
 </div>
 </div>
@@ -829,16 +828,15 @@ function printFallback(list){
  addEventListener('afterprint',done);window.print();setTimeout(()=>{if(h.isConnected)done()},1500);
 }
 sel.onchange=sel2.onchange=document.getElementById('qty').onchange=persist;
-(function mobileMode(){
- const KEY='coc7-mobile-v1',btn=document.getElementById('mobBtn');
- let on;try{const v=localStorage.getItem(KEY);on=v==='1'}catch(_){on=false}
+(function responsiveMode(){
+ const media=matchMedia('(max-width: 760px)');
  const apply=()=>{
-  document.body.classList.toggle('mobile',on);btn.classList.toggle('on',on);btn.setAttribute('aria-pressed',String(on));
-  btn.textContent=on?'🖥 Versão para computador':'📱 Versão para celular';
-  window.dispatchEvent(new Event('resize'));
+  const changed=document.body.classList.contains('mobile')!==media.matches;
+  document.body.classList.toggle('mobile',media.matches);
+  if(changed)window.dispatchEvent(new Event('resize'));
  };
- btn.onclick=()=>{on=!on;try{localStorage.setItem(KEY,on?'1':'0')}catch(_){}apply()};
  apply();
+ if(media.addEventListener)media.addEventListener('change',apply);else media.addListener(apply);
 })();
 (function panelMin(){
  const KEY='coc7-painel-v1',bar=document.getElementById('panel'),btn=document.getElementById('panelBtn'),mn=document.getElementById('panelMin');

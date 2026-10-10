@@ -26,6 +26,7 @@ body.mobile .note-tools{-webkit-mask-image:linear-gradient(90deg,#000 90%,transp
 /* Painel e fichas mais compactos sem reduzir os campos abaixo de uma área tocável. */
 body.mobile{padding:8px 8px calc(62px + env(safe-area-inset-bottom))}
 body.mobile h1{font-size:1.34rem;line-height:1.15;letter-spacing:.7px}
+body.mobile .quote{display:none}
 body.mobile .tag{margin:3px 0 6px;font-size:.78rem}
 body.mobile .quote{margin-bottom:8px;font-size:.74rem;line-height:1.35}
 body.mobile .bar{gap:7px;margin-bottom:9px;padding:7px 8px 8px;border-radius:8px}
