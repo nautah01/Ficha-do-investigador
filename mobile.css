@@ -7,22 +7,23 @@ body.mobile #mobTabs{position:fixed;left:0;right:0;bottom:0;z-index:6000;display
 #mobTabs button[aria-current=page]{color:var(--head);background:rgba(var(--gr),.16);font-weight:bold}
 body.mobile .note,body.mobile .cem{left:0!important;top:0!important;right:0!important;bottom:calc(64px + env(safe-area-inset-bottom))!important;width:auto!important;height:auto!important;min-width:0;max-width:none;max-height:none;border-radius:0;resize:none;z-index:5500}
 body.mobile .note-bar button,body.mobile .note-tabs{display:none}
+body.mobile[data-mtab]:not([data-mtab=fichas]) #moon{display:none}
 body.mobile .note-bar,body.mobile .cem-bar{cursor:default}
 body.mobile #notesFab{display:none}
 body.mobile #cemPanelBtn{display:none}
 body.mobile .cem-drag-hint{display:none}
 body.mobile[data-mtab]:not([data-mtab=fichas]){overflow:hidden}
-body.mobile .note-tools{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:thin}
-body.mobile .note-tools>*{flex:none}
-body.mobile .note-tools button,body.mobile .note-boards>button{padding:7px 11px;font-size:.85rem;white-space:nowrap}
+body.mobile .note-tools{flex-wrap:wrap;overflow:visible;gap:5px;padding:6px;mask-image:none;-webkit-mask-image:none}
+body.mobile .note-tools>*{flex:0 0 auto}
+body.mobile .note-tools .sep,body.mobile .note-tools .sp{display:none}
+body.mobile .note-tools button,body.mobile .note-boards>button{min-height:34px;padding:5px 8px;font-size:.76rem;white-space:nowrap}
+body.mobile .note-tools label{font-size:.72rem}
 body.mobile .diary{padding:10px}
 body.mobile .dia-index,body.mobile .dia-page{padding:12px 14px 10px}
 body.mobile .dia-text,body.mobile .dia-title,body.mobile .diary input[type=search]{font-size:16px}
 body.mobile .note-footer #noteHint{display:none}
 @media print{#mobTabs{display:none!important}}
 body.mobile h1~p{padding-right:52px}
-body.mobile .note-tools{-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent);mask-image:linear-gradient(90deg,#000 90%,transparent)}
-
 /* Painel e fichas mais compactos sem reduzir os campos abaixo de uma área tocável. */
 body.mobile{padding:8px 8px calc(62px + env(safe-area-inset-bottom))}
 body.mobile h1{font-size:1.34rem;line-height:1.15;letter-spacing:.7px}

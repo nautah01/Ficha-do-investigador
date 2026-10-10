@@ -11,7 +11,7 @@
  if(!button)return;
 
  const dots=[...button.querySelectorAll('.mdots i')];
- let scrollFrame=0, fallbackTimer;
+ let fallbackTimer;
 
  function currentTheme(){
   return themes.includes(root.dataset.theme)?root.dataset.theme:'green';
@@ -28,16 +28,6 @@
   button.title=`Cenário ${names[theme]} — clique para ${names[next]}`;
 
   try{localStorage.setItem(storageKey,theme)}catch(_){/* armazenamento pode estar bloqueado */}
- }
-
- function updateScrollFade(){
-  scrollFrame=0;
-  const progress=Math.min(1,Math.max(0,window.scrollY/620));
-  button.style.setProperty('--moon-scroll-opacity',String(.82-.66*progress));
- }
-
- function scheduleScrollFade(){
-  if(!scrollFrame)scrollFrame=requestAnimationFrame(updateScrollFade);
  }
 
  function revealTheme(theme){
@@ -89,8 +79,5 @@
   revealTheme(themes[(index+1)%themes.length]);
  });
 
- window.addEventListener('scroll',scheduleScrollFade,{passive:true});
- window.addEventListener('resize',scheduleScrollFade,{passive:true});
- updateScrollFade();
  saveTheme(currentTheme());
 })();
