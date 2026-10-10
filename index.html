@@ -360,15 +360,15 @@ const calc=c=>{const sum=c.FOR+c.TAM,[db,corpo]=sum<65?['-2',-2]:sum<85?['-1',-1
 /* Especializações: cada ocupação pode ter uma sub-lista. "at" são as posições das perícias da ocupação que são trocadas pelas da opção escolhida (! = perícia principal) */
 const SUB={
   'Cientista':{lbl:'Área de pesquisa',at:[0,1,2],o:{'Biologia':['!Ciência (Biologia)','!Ciência (Botânica)','Ciência (Zoologia)'],'Química':['!Ciência (Química)','!Ciência (Farmácia)','Ciência (Física)'],'Física':['!Ciência (Física)','!Ciência (Matemática)','Ciência (Engenharia)'],'Astronomia':['!Ciência (Astronomia)','!Ciência (Matemática)','Ciência (Física)'],'Geologia':['!Ciência (Geologia)','!Ciência (Química)','Ciência (Meteorologia)'],'Farmácia':['!Ciência (Farmácia)','!Ciência (Química)','Ciência (Biologia)'],'Zoologia':['!Ciência (Zoologia)','!Ciência (Biologia)','Mundo Natural'],'Ciência Forense':['!Ciência (Ciência Forense)','!Ciência (Química)','Ciência (Biologia)'],'Matemática':['!Ciência (Matemática)','!Ciência (Física)','Contabilidade'],'Meteorologia':['!Ciência (Meteorologia)','!Ciência (Física)','Ciência (Matemática)']},crMod:{'Ciência Forense':10,'Matemática':10}},
-  'Estudante':{lbl:'Área de estudo',at:[3,4,5],o:{'Humanas':['!História','!Antropologia','Arqueologia'],'Ciências Naturais':['!Ciência (Biologia)','!Ciência (Química)','Ciência (Física)'],'Exatas e Engenharia':['!Ciência (Matemática)','!Ciência (Física)','Ciência (Engenharia)'],'Medicina e Saúde':['!Medicina','!Primeiros Socorros','Ciência (Biologia)'],'Direito':['!Direito','!Persuasão','Contabilidade'],'Letras':['!Arte/Ofício (Literatura)','!Língua (Latim)','História'],'Artes':['!Arte/Ofício (Pintura)','!Arte/Ofício (Escultura)','História'],'Ocultismo e Folclore':['!Ocultismo','!Antropologia','História']},crMod:{'Direito':10,'Medicina e Saúde':-10,'Ocultismo e Folclore':-10}},
-  'Professor':{lbl:'Matéria',at:[4,5],o:{'História':['!História','Antropologia'],'Ciências':['!Ciência (Física)','!Ciência (Biologia)'],'Letras':['!Arte/Ofício (Literatura)','História'],'Matemática':['!Ciência (Matemática)','Contabilidade'],'Ocultismo e Folclore':['!Ocultismo','Antropologia']},crMod:{'Ciências':10,'Matemática':10,'Ocultismo e Folclore':-10}},
-  'Artista':{lbl:'Arte',at:[0],o:{'Pintura':['!Arte/Ofício (Pintura)'],'Escultura':['!Arte/Ofício (Escultura)'],'Desenho':['!Arte/Ofício (Desenho)'],'Fotografia':['!Arte/Ofício (Fotografia)'],'Poesia e Literatura':['!Arte/Ofício (Literatura)'],'Teatro':['!Arte/Ofício (Atuar)']},crMod:{'Pintura':10,'Escultura':10,'Poesia e Literatura':-10,'Teatro':10}},
-  'Músico':{lbl:'Instrumento',at:[0],o:{'Piano':['!Arte/Ofício (Piano)'],'Violino':['!Arte/Ofício (Violino)'],'Canto':['!Arte/Ofício (Canto)'],'Violão':['!Arte/Ofício (Violão)'],'Saxofone':['!Arte/Ofício (Saxofone)']},crMod:{'Piano':10,'Violino':10,'Saxofone':-10}},
-  'Médico':{lbl:'Especialidade',at:[0,1,5],o:{'Clínico geral':['Ciência (Biologia)','Ciência (Farmácia)','Psicologia'],'Cirurgião':['!Ciência (Biologia)','Encontrar','Escutar'],'Psiquiatra':['!Psicologia','Ciência (Biologia)','!Psicanálise'],'Legista / Patologista':['!Ciência (Biologia)','!Ciência (Ciência Forense)','Ciência (Farmácia)'],'Médico militar':['Ciência (Biologia)','Sobrevivência','!Armas de Fogo (Pistolas)']},crMod:{'Clínico geral':10,'Cirurgião':10,'Legista / Patologista':-10,'Médico militar':-10}},
+  'Estudante':{lbl:'Área de estudo',at:[3,4,5],o:{'Humanas':['!História','!Antropologia','Arqueologia'],'Ciências Naturais':['!Ciência (Biologia)','!Ciência (Química)','Ciência (Física)'],'Exatas e Engenharia':['!Ciência (Matemática)','!Ciência (Física)','Ciência (Engenharia)'],'Medicina e Saúde':['!Medicina','!Primeiros Socorros','Ciência (Biologia)'],'Direito':['!Direito','!Persuasão','Contabilidade'],'Letras':['!Arte/Ofício (Literatura)','!Língua (Latim)','História'],'Artes':['!Arte/Ofício (Pintura)','!Arte/Ofício (Escultura)','História'],'Ocultismo e Folclore':['!Ocultismo','!Antropologia','História']}},
+  'Professor':{lbl:'Matéria',at:[4,5],o:{'História':['!História','Antropologia'],'Ciências':['!Ciência (Física)','!Ciência (Biologia)'],'Letras':['!Arte/Ofício (Literatura)','História'],'Matemática':['!Ciência (Matemática)','Contabilidade'],'Ocultismo e Folclore':['!Ocultismo','Antropologia']}},
+  'Artista':{lbl:'Arte',at:[0],o:{'Pintura':['!Arte/Ofício (Pintura)'],'Escultura':['!Arte/Ofício (Escultura)'],'Desenho':['!Arte/Ofício (Desenho)'],'Fotografia':['!Arte/Ofício (Fotografia)'],'Poesia e Literatura':['!Arte/Ofício (Literatura)'],'Teatro':['!Arte/Ofício (Atuar)']},crMod:{'Pintura':10,'Escultura':10,'Teatro':10}},
+  'Músico':{lbl:'Instrumento',at:[0],o:{'Piano':['!Arte/Ofício (Piano)'],'Violino':['!Arte/Ofício (Violino)'],'Canto':['!Arte/Ofício (Canto)'],'Violão':['!Arte/Ofício (Violão)'],'Saxofone':['!Arte/Ofício (Saxofone)']},crMod:{'Piano':10,'Violino':10}},
+  'Médico':{lbl:'Especialidade',at:[0,1,5],o:{'Clínico geral':['Ciência (Biologia)','Ciência (Farmácia)','Psicologia'],'Cirurgião':['!Ciência (Biologia)','Encontrar','Escutar'],'Psiquiatra':['!Psicologia','Ciência (Biologia)','!Psicanálise'],'Legista / Patologista':['!Ciência (Biologia)','!Ciência (Ciência Forense)','Ciência (Farmácia)'],'Médico militar':['Ciência (Biologia)','Sobrevivência','!Armas de Fogo (Pistolas)']},crMod:{'Clínico geral':10,'Cirurgião':10}},
   'Engenheiro':{lbl:'Especialidade',at:[1,3,4,5],o:{'Mecânico':['Consertos Elétricos','Ciência (Física)','!Consertos Mecânicos','Operar Maquinário Pesado'],'Elétrico':['!Consertos Elétricos','Ciência (Física)','Consertos Mecânicos','Operar Maquinário'],'Civil':['Navegação','Ciência (Geologia)','Consertos Mecânicos','!Operar Maquinário Pesado'],'Químico':['Consertos Elétricos','!Ciência (Química)','Consertos Mecânicos','Operar Maquinário Pesado'],'Naval':['Consertos Mecânicos','Ciência (Física)','!Pilotar (Barcos)','Navegação'],'Aeronáutico':['Consertos Mecânicos','Ciência (Física)','!Pilotar (Aeronaves)','Consertos Elétricos']},crMod:{'Civil':10,'Naval':10,'Aeronáutico':10}},
-  'Soldado':{lbl:'Função',at:[0,4,5],o:{'Infantaria':['!Armas de Fogo (Rifles)','!Lutar (Brigar)','Sobrevivência'],'Atirador de elite':['!Armas de Fogo (Rifles)','Escutar','!Encontrar'],'Cavalaria':['!Armas de Fogo (Rifles)','!Cavalgar','Sobrevivência'],'Médico de campo':['Armas de Fogo (Pistolas)','!Primeiros Socorros','!Medicina'],'Sapador':['Armas de Fogo (Rifles)','Consertos Mecânicos','!Operar Maquinário Pesado'],'Aviador':['Armas de Fogo (Pistolas)','!Pilotar (Aeronaves)','Navegação']},crMod:{'Infantaria':-10,'Atirador de elite':10,'Cavalaria':10,'Médico de campo':-10,'Aviador':10}},
-  'Criminoso':{lbl:'Tipo de criminoso',at:[0,1,4,5],o:{'Ladrão':['Encontrar','!Furtividade','!Chaveiro','Prestidigitação'],'Assaltante':['!Armas de Fogo (Pistolas)','!Intimidação','Lutar (Brigar)','Dirigir Auto'],'Falsário / Golpista':['!Lábia','!Disfarce','Avaliação','Prestidigitação'],'Brigão':['!Lutar (Brigar)','!Intimidação','Esquivar','Armas de Fogo (Pistolas)'],'Batedor de carteiras':['!Prestidigitação','!Furtividade','Encontrar','Disfarce']},crMod:{'Ladrão':10,'Assaltante':-10,'Falsário / Golpista':10,'Brigão':-10,'Batedor de carteiras':-10}},
-  'Atleta':{lbl:'Esporte',at:[2,4,5,6],o:{'Nadador':['Escalar','Lutar (Brigar)','!Natação','Saltar'],'Boxeador':['Escalar','!Lutar (Brigar)','!Esquivar','Saltar'],'Corredor':['Escalar','!Esquivar','Natação','!Saltar'],'Alpinista':['!Escalar','Lutar (Brigar)','Natação','!Saltar']},crMod:{'Boxeador':10,'Corredor':-10}}
+  'Soldado':{lbl:'Função',at:[0,4,5],o:{'Infantaria':['!Armas de Fogo (Rifles)','!Lutar (Brigar)','Sobrevivência'],'Atirador de elite':['!Armas de Fogo (Rifles)','Escutar','!Encontrar'],'Cavalaria':['!Armas de Fogo (Rifles)','!Cavalgar','Sobrevivência'],'Médico de campo':['Armas de Fogo (Pistolas)','!Primeiros Socorros','!Medicina'],'Sapador':['Armas de Fogo (Rifles)','Consertos Mecânicos','!Operar Maquinário Pesado'],'Aviador':['Armas de Fogo (Pistolas)','!Pilotar (Aeronaves)','Navegação']},crMod:{'Atirador de elite':10,'Cavalaria':10,'Aviador':10}},
+  'Criminoso':{lbl:'Tipo de criminoso',at:[0,1,4,5],o:{'Ladrão':['Encontrar','!Furtividade','!Chaveiro','Prestidigitação'],'Assaltante':['!Armas de Fogo (Pistolas)','!Intimidação','Lutar (Brigar)','Dirigir Auto'],'Falsário / Golpista':['!Lábia','!Disfarce','Avaliação','Prestidigitação'],'Brigão':['!Lutar (Brigar)','!Intimidação','Esquivar','Armas de Fogo (Pistolas)'],'Batedor de carteiras':['!Prestidigitação','!Furtividade','Encontrar','Disfarce']},crMod:{'Ladrão':10,'Falsário / Golpista':10}},
+  'Atleta':{lbl:'Esporte',at:[2,4,5,6],o:{'Nadador':['Escalar','Lutar (Brigar)','!Natação','Saltar'],'Boxeador':['Escalar','!Lutar (Brigar)','!Esquivar','Saltar'],'Corredor':['Escalar','!Esquivar','Natação','!Saltar'],'Alpinista':['!Escalar','Lutar (Brigar)','Natação','!Saltar']},crMod:{'Boxeador':10}}
 };
 const tokens=(o,spec)=>{const S=OCC.includes(o)&&SUB[o.n],t=[...o.s];if(!S)return{t,spec:'',crMod:0};const k=spec&&S.o[spec]?spec:pick(Object.keys(S.o));S.at.forEach((ix,j)=>{if(S.o[k][j]!=null)t[ix]=S.o[k][j]});return{t,spec:k,crMod:S.crMod&&S.crMod[k]||0}};
 /* Histórico / origem: algumas ocupações perguntam de onde o personagem veio. Cada opção dá +10 em 2 perícias e escreve o início do backstory. "pool" = perícias oferecidas na opção "outro (escrever)" */
@@ -384,7 +384,7 @@ const WARS=[
  {id:'gol',n:'Guerra do Golfo (1990–1991)',sk:['Dirigir Auto','Armas de Fogo (Rifles)'],t:'Cruzou o deserto numa guerra curta, mas que deixou marcas longas.'}];
 const WAR_POOL=['Armas de Fogo (Rifles)','Armas de Fogo (Pistolas)','Lutar (Brigar)','Sobrevivência','Furtividade','Primeiros Socorros','Escalar','Natação','Cavalgar','Dirigir Auto','Navegação','Consertos Mecânicos','Esquivar','Escutar','Encontrar'];
 const UNIS=[
-  {id:'mis',n:'Universidade Miskatonic (Arkham)',sk:['Ocultismo','Usar Biblioteca'],t:'Passou pelos corredores de Miskatonic, onde o conhecimento proibido espreita nas estantes da biblioteca.'},
+  {id:'mis',n:'Universidade Miskatonic (Arkham)',sk:['Ocultismo','Usar Biblioteca'],t:'Passou pelos corredores de Miskatonic, onde o conhecimento proibido espreita nas estantes da biblioteca.',crMod:10},
   {id:'har',n:'Universidade de Harvard',sk:['Usar Biblioteca','Direito'],t:'Ligado a Harvard, entre bibliotecas imponentes e velhas famílias de Boston.',crMod:10},
   {id:'bos',n:'Universidade de Boston',sk:['História','Persuasão'],t:'Construiu sua vida acadêmica nas salas movimentadas de Boston.'},
   {id:'yal',n:'Universidade de Yale',sk:['História','Língua (Latim)'],t:'Passou por Yale, onde sociedades secretas sussurram atrás de portas fechadas.',crMod:10},
@@ -410,15 +410,15 @@ const BG={
   {id:'ark',n:'Sanatório e hospital de Arkham',sk:['Psicologia','Psicanálise'],t:'Atendeu em Arkham, onde certos pacientes dizem coisas que ninguém deveria ouvir.'},
   {id:'jh',n:'Johns Hopkins (Baltimore)',sk:['Medicina','Ciência (Biologia)'],t:'Formou-se em Johns Hopkins, uma das melhores escolas de medicina do país.',crMod:10},
   {id:'hm',n:'Harvard Medical School',sk:['Medicina','Ciência (Farmácia)'],t:'Estudou medicina em Harvard e trouxe de lá um respeito quase religioso pelo método.',crMod:10},
-  {id:'mil',n:'Hospital militar',sk:['Primeiros Socorros','Sobrevivência'],t:'Aprendeu a salvar vidas debaixo de fogo, em hospitais de campanha.',crMod:-10},
+  {id:'mil',n:'Hospital militar',sk:['Primeiros Socorros','Sobrevivência'],t:'Aprendeu a salvar vidas debaixo de fogo, em hospitais de campanha.'},
   {id:'rur',n:'Consultório no interior',sk:['Persuasão','Psicologia'],t:'Cuida de uma cidade pequena, onde todos têm segredos e poucos pagam em dinheiro.',crMod:-10},
   {id:'bel',n:'Hospital Bellevue (Nova York)',sk:['Primeiros Socorros','Psicologia'],t:'Trabalhou em Bellevue, onde viu o pior e o mais estranho que a cidade tem a oferecer.'}],
   pool:['Medicina','Primeiros Socorros','Psicologia','Psicanálise','Ciência (Biologia)','Ciência (Farmácia)','Ciência (Química)','Persuasão','Encontrar','Escutar','Língua (Latim)']},
  'Oficial de Polícia':POLICE,'Investigador de Polícia':POLICE,
  'Detetive Particular':{q:'De onde vem a sua carreira?',kind:'Origem',o:[
    {id:'pk',n:'Agência Pinkerton',sk:['Furtividade','Armas de Fogo (Pistolas)'],t:'Começou na Pinkerton, seguindo suspeitos e aprendendo a não ser visto.',crMod:10},
-   {id:'ex',n:'Ex-policial',sk:['Direito','Intimidação'],t:'Deixou o distintivo, mas não os hábitos nem os inimigos.',crMod:-10},
-   {id:'solo',n:'Escritório próprio',sk:['Lábia','Encontrar'],t:'Abriu o próprio escritório e vive de casos pequenos e promessas grandes.',crMod:-10},
+   {id:'ex',n:'Ex-policial',sk:['Direito','Intimidação'],t:'Deixou o distintivo, mas aproveitou a experiência, os contatos e a estabilidade que conquistou na polícia.',crMod:10},
+   {id:'solo',n:'Escritório próprio',sk:['Lábia','Encontrar'],t:'Abriu o próprio escritório e vive de casos pequenos e promessas grandes.'},
   {id:'mil',n:'Ex-militar',sk:['Armas de Fogo (Pistolas)','Sobrevivência'],t:'Trocou a farda pelo sobretudo, mas a disciplina ficou.'},
    {id:'seg',n:'Investigador de seguradora',sk:['Contabilidade','Avaliação'],t:'Passou anos desmascarando fraudes e acidentes suspeitos para uma seguradora.',crMod:10},
   {id:'div',n:'Casos de divórcio e fofocas',sk:['Disfarce','Escutar'],t:'Sabe mais segredos de família do que qualquer padre, e cobra por cada um.'}],
@@ -428,51 +428,52 @@ const BG={
   {id:'glo',n:'Boston Globe',sk:['Usar Biblioteca','Persuasão'],t:'Trabalhou em Boston, atrás de documentos e de fontes que só falam em off.'},
    {id:'nyt',n:'The New York Times',sk:['Usar Biblioteca','Lábia'],t:'Fez carreira em Nova York, onde um furo vale mais do que uma amizade.',crMod:10},
   {id:'chi',n:'Chicago Tribune',sk:['Encontrar','Intimidação'],t:'Cobriu a guerra das gangues em Chicago e nunca mais dormiu direito.'},
-   {id:'tab',n:'Tabloide sensacionalista',sk:['Lábia','Arte/Ofício (Fotografia)'],t:'Escreveu para um tabloide que vive de monstros, fantasmas e escândalos.',crMod:-10},
-   {id:'cor',n:'Correspondente no exterior',sk:['Sobrevivência','Persuasão'],t:'Enviou reportagens de lugares remotos, nem sempre em segurança.',crMod:-10}],
+   {id:'tab',n:'Tabloide sensacionalista',sk:['Lábia','Arte/Ofício (Fotografia)'],t:'Escreveu para um tabloide que vive de monstros, fantasmas e escândalos.'},
+   {id:'cor',n:'Correspondente no exterior',sk:['Sobrevivência','Persuasão'],t:'Enviou reportagens de lugares remotos, nem sempre em segurança.'}],
   pool:['Persuasão','Lábia','Encontrar','Escutar','Psicologia','História','Arte/Ofício (Fotografia)','Direito','Usar Biblioteca','Disfarce']},
  'Clero, Membro do':{q:'A qual igreja ou ordem você pertence?',kind:'Denominação',o:[
   {id:'cat',n:'Igreja Católica',sk:['Língua (Latim)','História'],t:'Foi ordenado na Igreja Católica e conhece de perto seus arquivos e seus segredos.'},
   {id:'bat',n:'Igreja Batista',sk:['Persuasão','Psicologia'],t:'Prega para uma congregação fiel e conhece os problemas de cada família.'},
    {id:'ang',n:'Igreja Anglicana',sk:['História','Usar Biblioteca'],t:'Serve numa paróquia antiga, cheia de registros que quase ninguém lê.',crMod:10},
   {id:'met',n:'Igreja Metodista',sk:['Persuasão','Primeiros Socorros'],t:'Aprendeu a consolar e a cuidar dos doentes de sua comunidade.'},
-   {id:'ord',n:'Ordem monástica',sk:['Usar Biblioteca','Ocultismo'],t:'Passou anos copiando manuscritos num mosteiro, entre textos que a Igreja guarda a sete chaves.',crMod:-10},
-   {id:'mis',n:'Missões no exterior',sk:['Sobrevivência','Antropologia'],t:'Levou a fé a terras distantes e voltou com perguntas novas.',crMod:-10}],
+   {id:'ord',n:'Ordem monástica',sk:['Usar Biblioteca','Ocultismo'],t:'Fez voto de pobreza e passou anos copiando manuscritos num mosteiro, sem acumular patrimônio.',crMod:-10},
+   {id:'mis',n:'Missões no exterior',sk:['Sobrevivência','Antropologia'],t:'Levou a fé a terras distantes e voltou com perguntas novas.'}],
   pool:['Psicologia','Persuasão','História','Ocultismo','Língua (Latim)','Primeiros Socorros','Antropologia','Usar Biblioteca','Escutar']},
  'Ocultista':{q:'O que despertou seu interesse pelo oculto?',kind:'Origem',o:[
    {id:'family',n:'Família de ocultistas',sk:['Ocultismo','História'],t:'Cresceu entre símbolos, livros e rituais de família; alguns segredos foram passados como herança.',crMod:10},
   {id:'forbidden',n:'Achado que não devia',sk:['Usar Biblioteca','Ocultismo'],t:'Encontrou um objeto ou manuscrito que abriu uma porta para perguntas que era melhor não fazer.'},
    {id:'society',n:'Sociedade secreta',sk:['Persuasão','Língua (Latim)'],t:'Foi iniciado numa sociedade que estuda aquilo que o mundo prefere tratar como superstição.',crMod:10},
-   {id:'survivor',n:'Sobreviveu a um ritual',sk:['Psicologia','Ocultismo'],t:'Sobreviveu a uma cerimônia inexplicável e desde então tenta entender o que aconteceu.',crMod:-10},
+   {id:'survivor',n:'Sobreviveu a um ritual',sk:['Psicologia','Ocultismo'],t:'Sobreviveu a uma cerimônia inexplicável e desde então tenta entender o que aconteceu.'},
   {id:'research',n:'Pesquisa acadêmica',sk:['Antropologia','Usar Biblioteca'],t:'Começou pesquisando crenças antigas, até que as fontes passaram a responder de formas impossíveis.'}],
   pool:['Ocultismo','História','Antropologia','Usar Biblioteca','Psicologia','Língua (Latim)','Ciência (Astronomia)','Persuasão','Encontrar']},
   'Antiquário':{q:'O que despertou seu interesse por antiguidades?',kind:'Origem',o:[
-    {id:'wealth',n:'Busca por riquezas',sk:['Avaliação','Encontrar'],t:'Aprendeu a reconhecer peças valiosas e percorre leilões, escavações e espólios atrás da próxima fortuna.',crMod:10},
-    {id:'history',n:'Paixão pela história',sk:['História','Usar Biblioteca'],t:'Cada objeto antigo é uma pista sobre quem viveu antes; pesquisa sua procedência e preserva suas histórias.',crMod:-10},
-    {id:'supernatural',n:'Relíquias sobrenaturais e de culto',sk:['Ocultismo','Avaliação'],t:'Coleciona objetos ligados a cultos e fenômenos inexplicáveis, tentando separar superstição de perigo real.',crMod:-10},
+    {id:'wealth',n:'Busca por riquezas',sk:['Avaliação','Encontrar'],t:'Aprendeu a reconhecer peças valiosas e percorre leilões, escavações e espólios atrás da próxima fortuna.'},
+    {id:'history',n:'Paixão pela história',sk:['História','Usar Biblioteca'],t:'Cada objeto antigo é uma pista sobre quem viveu antes; pesquisa sua procedência e preserva suas histórias.'},
+    {id:'supernatural',n:'Relíquias sobrenaturais e de culto',sk:['Ocultismo','Avaliação'],t:'Gastou grande parte das economias em objetos ligados a cultos e fenômenos inexplicáveis, tentando separar superstição de perigo real.',crMod:-10},
     {id:'heir',n:'Negócio de família',sk:['Contabilidade','Persuasão'],t:'Herdou uma loja ou coleção e aprendeu a negociar com clientes, credores e parentes que disputam cada peça.',crMod:10},
-    {id:'expedition',n:'Caçador de antiguidades',sk:['Arqueologia','Sobrevivência'],t:'Vai a campo atrás de artefatos esquecidos, mesmo quando a expedição promete mais riscos do que lucro.',crMod:-10}],
+    {id:'expedition',n:'Caçador de antiguidades',sk:['Arqueologia','Sobrevivência'],t:'Financiou expedições caras atrás de artefatos esquecidos e consumiu boa parte das próprias economias.',crMod:-10}],
    pool:['Avaliação','Encontrar','História','Usar Biblioteca','Ocultismo','Arqueologia','Contabilidade','Persuasão','Sobrevivência','Antropologia']},
   'Fanático':{q:'O que alimenta seu fanatismo?',kind:'Origem',o:[
-    {id:'faith',n:'Devoção religiosa',sk:['Persuasão','História'],t:'Uma fé profunda guia suas escolhas; conhece escrituras e tenta convencer os outros de que seu caminho é o certo.',crMod:-10},
-    {id:'cause',n:'Causa política ou social',sk:['Persuasão','Intimidação'],t:'Dedica a vida a uma causa e mobiliza aliados, enfrentando quem considera responsável pela injustiça.',crMod:-10},
+    {id:'faith',n:'Devoção religiosa',sk:['Persuasão','História'],t:'Uma fé profunda guia suas escolhas; conhece escrituras e tenta convencer os outros de que seu caminho é o certo.'},
+    {id:'cause',n:'Causa política ou social',sk:['Persuasão','Intimidação'],t:'Dedica a vida a uma causa e mobiliza aliados, enfrentando quem considera responsável pela injustiça.'},
+    {id:'donor',n:'Doou quase todo o patrimônio',sk:['Persuasão','Usar Biblioteca'],t:'Entregou a maior parte de suas economias à causa ou instituição que considera essencial.',crMod:-10},
    {id:'conspiracy',n:'Teorias da conspiração',sk:['Usar Biblioteca','Psicologia'],t:'Reúne recortes, relatos e coincidências numa grande teoria, convencido de que alguém está escondendo a verdade.'},
-    {id:'celebrity',n:'Obcecado por uma pessoa',sk:['Psicologia','Escutar'],t:'Acompanha cada gesto de sua figura de interesse e acredita compreender motivações que ninguém mais percebe.',crMod:10},
-    {id:'cult',n:'Culto sobrenatural',sk:['Ocultismo','História'],t:'Acredita numa entidade ou doutrina proibida e procura sinais de que forças ocultas estão agindo no mundo.',crMod:10}],
+    {id:'celebrity',n:'Obcecado por uma pessoa',sk:['Psicologia','Escutar'],t:'Acompanha cada gesto de sua figura de interesse e acredita compreender motivações que ninguém mais percebe.'},
+    {id:'cult',n:'Culto sobrenatural',sk:['Ocultismo','História'],t:'Acredita numa entidade ou doutrina proibida e procura sinais de que forças ocultas estão agindo no mundo.'}],
    pool:['Persuasão','Intimidação','Usar Biblioteca','Psicologia','Escutar','Ocultismo','História','Lábia','Encontrar','Antropologia']},
   'Motorista':{q:'Para quem ou para que você dirige?',kind:'Origem',o:[
    {id:'escape',n:'Motorista de fuga',sk:['Dirigir Auto','Furtividade'],t:'Conhece rotas de saída e sabe manter a calma quando cada segundo conta; seu passado pode envolver trabalhos ilegais.'},
     {id:'valet',n:'Manobrista',sk:['Dirigir Auto','Charme'],t:'Estacionou carros de clientes exigentes e aprendeu a lidar com gente importante sem chamar atenção.'},
     {id:'chauffeur',n:'Motorista particular de ricos',sk:['Dirigir Auto','Escutar'],t:'Passou anos transportando famílias influentes e ouviu conversas que nunca deveriam sair do carro.',crMod:10},
-    {id:'taxi',n:'Taxista',sk:['Dirigir Auto','Navegação'],t:'Conhece as ruas, os atalhos e os hábitos da cidade, além das histórias que os passageiros contam durante a corrida.',crMod:-10},
-    {id:'ambulance',n:'Motorista de ambulância',sk:['Dirigir Auto','Primeiros Socorros'],t:'Levou feridos ao hospital contra o relógio e viu de perto acidentes que pareciam impossíveis.',crMod:-10}],
+    {id:'taxi',n:'Taxista',sk:['Dirigir Auto','Navegação'],t:'Conhece as ruas, os atalhos e os hábitos da cidade, além das histórias que os passageiros contam durante a corrida.'},
+    {id:'ambulance',n:'Motorista de ambulância',sk:['Dirigir Auto','Primeiros Socorros'],t:'Levou feridos ao hospital contra o relógio e viu de perto acidentes que pareciam impossíveis.'}],
    pool:['Dirigir Auto','Furtividade','Charme','Escutar','Navegação','Primeiros Socorros','Consertos Mecânicos','Encontrar','Psicologia','Intimidação']},
  'Criminoso':{q:'Você já foi preso?',kind:'Passado criminal',o:[
-   {id:'served',n:'Sim, cumpri pena',sk:['Lutar (Brigar)','Psicologia'],t:'Cumpriu pena e aprendeu a sobreviver numa cela sem perder todos os contatos.',crMod:-10},
-   {id:'escaped',n:'Sim, mas escapei',sk:['Furtividade','Escalar'],t:'Foi preso, mas conseguiu fugir; desde então, vive olhando por cima do ombro.',crMod:-10},
-   {id:'never',n:'Nunca fui pego',sk:['Disfarce','Furtividade'],t:'Nunca passou pela cadeia e tem orgulho de não deixar rastros.',crMod:10},
-   {id:'wrongful',n:'Fui preso injustamente',sk:['Direito','Lábia'],t:'Foi detido por um crime que não cometeu e aprendeu a desconfiar da lei.',crMod:-10},
-   {id:'reformatory',n:'Passei por um reformatório',sk:['Intimidação','Psicologia'],t:'Cresceu num reformatório, onde aprendeu cedo a ler as pessoas e se defender.',crMod:-10}],
+   {id:'served',n:'Sim, cumpri pena',sk:['Lutar (Brigar)','Psicologia'],t:'Cumpriu pena, perdeu o emprego e boa parte dos bens; agora tenta reconstruir a vida.',crMod:-10},
+   {id:'escaped',n:'Sim, mas escapei',sk:['Furtividade','Escalar'],t:'Foi preso, mas conseguiu fugir; desde então, vive olhando por cima do ombro.'},
+   {id:'never',n:'Nunca fui pego',sk:['Disfarce','Furtividade'],t:'Nunca passou pela cadeia e tem orgulho de não deixar rastros.'},
+   {id:'wrongful',n:'Fui preso injustamente',sk:['Direito','Lábia'],t:'Foi detido por um crime que não cometeu e aprendeu a desconfiar da lei.'},
+   {id:'reformatory',n:'Passei por um reformatório',sk:['Intimidação','Psicologia'],t:'Cresceu num reformatório, onde aprendeu cedo a ler as pessoas e se defender.'}],
   pool:['Furtividade','Disfarce','Lábia','Direito','Lutar (Brigar)','Intimidação','Escalar','Encontrar','Psicologia']}
 };
 /* escolha feita no seletor (ocupacoes.js): {p:{occ,pick},s:{occ,pick}}; pick = {id} | {none:true} | {custom:true,name,sk:[...]} | vazio = sortear */
@@ -497,7 +498,8 @@ function gen(sel,sel2){
  const requestedSec=sel2==='*'?pick(OCC.filter(x=>!window.secondaryBlocked(o.n,x.n))):isOcc2?OCC.find(x=>x.n===s2N):null;
   const sec=requestedSec&&!window.secondaryBlocked(o.n,requestedSec.n)?requestedSec:null,secT=sec?tokens(sec,s2Spec):null;
   const hist=[bgFor('p',o),isOcc2&&sec?bgFor('s',sec):null].filter(Boolean);
-  const creditMod=(oT.crMod||0)+(secT?secT.crMod||0:0)+hist.reduce((sum,g)=>sum+(g.crMod||0),0);
+  const rawCreditMod=(oT.crMod||0)+(secT?secT.crMod||0:0)+hist.reduce((sum,g)=>sum+(g.crMod||0),0);
+  const creditMod=Math.max(-10,Math.min(20,rawCreditMod));
  const occS=oT.t.map(t=>{const k=t[0]==='!',n=res(k?t.slice(1):t);if(k)keys.push(n);return n});
  const s2=[],keys2=[];
  if(sec){const hasK=secT.t.some(t=>t[0]==='!');secT.t.forEach((t,i)=>{if(t==='@any')return;const n=res(t.replace(/^!/,''),true);if(!s2.includes(n))s2.push(n);if((t[0]==='!'||(!hasK&&i===0))&&!keys2.includes(n))keys2.push(n)})}

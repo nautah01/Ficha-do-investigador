@@ -106,20 +106,23 @@ function render(){
 }
 
 /* ---------- ajuda: o que é Nível de Crédito ---------- */
-const BANDS=[['Sem recursos',0,0,'#6b2323'],['Pobre',1,9,'#8a5a2b'],['Médio',10,49,'#5b7a3a'],['Rico',50,89,'#3f7f86'],['Muito rico',90,99,'#8a6fc0']];
+const BANDS=[['Sem recursos',0,0,'#6b2323'],['Pobre',1,9,'#8a5a2b'],['Médio',10,49,'#5b7a3a'],['Abastado',50,89,'#3f7f86'],['Rico',90,98,'#8a6fc0'],['Podre de rico',99,99,'#a88732']];
 function helpHtml(){
  const ex=n=>{const o=OCC.find(x=>x.n===n);return o?`<div class="hx"><span>${meta(n)[0]} ${esc(n)} <b>${o.c[0]}–${o.c[1]}</b></span><div class="hbar"><i style="left:${o.c[0]}%;width:${Math.max(1.5,o.c[1]-o.c[0])}%"></i></div></div>`:''};
  return`<h5>O que é o Nível de Crédito?</h5>
-<p>É uma perícia especial que mede o <strong>dinheiro, o status e a reputação</strong> do investigador. Quanto mais alto, melhor o padrão de vida: casa, roupas, contatos e o quanto ele consegue gastar sem pensar duas vezes. Vai de <strong>0 a 99</strong>.</p>
+<p>É uma perícia especial que representa a <strong>riqueza, a classe social e o padrão de vida</strong> do investigador: renda, patrimônio, moradia, roupas e acesso a recursos. Não mede caráter nem competência. Vai de <strong>0 a 99</strong>.</p>
 <div class="hscale">${BANDS.map(([n,a,b,c])=>`<div style="flex:${Math.max(b-a+1,6)};background:${c}"><b>${n}</b><small>${a===b?a:a+'–'+b}</small></div>`).join('')}</div>
-<h5>O que significam os números do cartão?</h5>
-<p>Em cada ocupação aparece algo como <strong>Crédito 30–80</strong>. São o <strong>mínimo e o máximo</strong> que aquela profissão permite: um Advogado precisa ter pelo menos 30 (ninguém contrata um advogado falido) e não passa de 80. Ao gerar a ficha, o Nível de Crédito é sorteado dentro dessa faixa. Veja onde algumas ocupações ficam na escala de 0 a 99:</p>
+<p>As faixas são: <strong>0</strong> sem recursos; <strong>1–9</strong> pobre; <strong>10–49</strong> padrão médio; <strong>50–89</strong> abastado; <strong>90–98</strong> rico; <strong>99</strong> podre de rico.</p>
+<h5>Como a ocupação define a faixa?</h5>
+<p>O intervalo no cartão (por exemplo, <strong>Crédito 9–30</strong>) é a faixa plausível daquela ocupação. A ficha sorteia um valor dentro do intervalo final. A profissão dá um ponto de partida; origem, especialidade e histórico podem ajustá-lo quando descrevem uma mudança concreta de recursos.</p>
 <div class="hex">${ex('Andarilho')}${ex('Detetive Particular')}${ex('Advogado')}${ex('Diletante')}</div>
+<h5>Como funcionam os ajustes de +10 e −10?</h5>
+<p>Um ajuste desloca <strong>os dois limites</strong> da faixa em 10 pontos. Os ajustes das escolhas aplicáveis se somam, com o efeito total limitado a <strong>−10 até +20</strong>. Eles não alteram os pontos de perícia já distribuídos pelo gerador.</p>
+<p>Exemplo: um <strong>Detetive Particular</strong> começa em <strong>9–30</strong>. Ter servido como ex-policial acrescenta <strong>+10</strong>; ter estudado na <strong>Universidade Miskatonic</strong> acrescenta mais <strong>+10</strong>. A faixa passa a <strong>29–50</strong>, coerente com experiência profissional e formação universitária. Ser estudante, policial ou médico, por si só, não reduz Crédito. Um −10 representa uma perda ou renúncia financeira explícita, como gastar as economias numa coleção ou fazer voto de pobreza.</p>
 <h5>Por que isso afeta as perícias?</h5>
-<p>Os pontos de Crédito saem dos <strong>pontos de perícia da ocupação</strong>. Um Crédito alto deixa o investigador rico, mas com menos pontos para as perícias de trabalho. Um Crédito baixo faz o contrário: sobra mais para as perícias, mas ele vive com pouco.</p>
-<h5>E as outras informações do cartão?</h5>
- <p>As <strong>etiquetas</strong> mostram as perícias principais da ocupação, que recebem mais pontos. Passe o mouse no cartão para ver a lista completa. Na <strong>ocupação secundária</strong> não há faixa de crédito: ela só reforça algumas perícias com os pontos de interesse pessoal (INT × 2). Ela deve ser diferente da ocupação principal para evitar repetições.</p>
- <p>Na lista principal, cartões com <strong>▸ opções</strong> (como Cientista, Estudante ou Médico) permitem escolher uma área, especialidade ou tipo. Essa escolha continua disponível na ocupação principal. A lista secundária contém ocupações completas e não repete a principal.</p>
+<p>Na criação de personagem de Chamado de Cthulhu, o Crédito é comprado com os <strong>pontos de perícia da ocupação</strong>. Quanto maior o valor escolhido, menos pontos sobram para as outras perícias profissionais; a faixa mínima e máxima da ocupação continua valendo.</p>
+<h5>Ocupação secundária e especialidades</h5>
+<p>As <strong>etiquetas</strong> mostram perícias principais da ocupação. Na ocupação secundária não há outra faixa de Crédito: ela reforça perícias com pontos de interesse pessoal (INT × 2) e deve ser diferente da ocupação principal. Cartões com <strong>▸ opções</strong> permitem escolher uma área, especialidade ou origem; essas escolhas também podem afetar a faixa quando indicado.</p>
 <button type="button" class="opk-back">← Voltar à lista</button>`;
 }
 function setHelp(on){dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',on);helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.innerHTML=helpHtml();helpBox.scrollTop=0;helpBox.focus()}else q.focus()}
