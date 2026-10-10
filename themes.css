@@ -103,3 +103,5 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 .moon:hover::after,.moon:focus-visible::after{opacity:.9;transform:scale(1) rotate(0);filter:drop-shadow(0 0 4px rgba(var(--moonglow),.7))}
 }
 @media (prefers-reduced-motion:reduce){.moon::before,.moon::after{transition:none}}
+ /* Em telas estreitas, evita manter a captura antiga da lua acima da onda da página. */
+@media (max-width:640px){.moon{view-transition-name:none!important}}
