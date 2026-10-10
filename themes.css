@@ -193,4 +193,48 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 :root[data-theme=paper] .dia-index h5,:root[data-theme=paper] .dia-title{color:#344b5a}
 :root[data-theme=paper] .cem{box-shadow:0 14px 40px rgba(22,14,9,.52)}
 :root[data-theme=paper] .pdf-sheet{background-color:#f0e2bd!important;background-image:repeating-linear-gradient(0deg,transparent 0 27px,rgba(58,84,91,.12) 28px,transparent 29px),linear-gradient(120deg,#f5e9c9,#e9d8af)!important}
+:root[data-theme=paper] .win-body{background-image:radial-gradient(ellipse at 6% 12%,rgba(255,255,255,.26),transparent 33%),radial-gradient(ellipse at 92% 88%,rgba(116,78,34,.07),transparent 28%),repeating-linear-gradient(113deg,rgba(93,69,38,.018) 0 1px,transparent 1px 5px)}
+:root[data-theme=paper] .win-body>.stamp{display:none}
+:root[data-theme=paper] .sheet-head{display:grid;grid-template-columns:minmax(0,1fr) 90px 58px;gap:8px;align-items:start;min-height:128px;padding:2px 0 10px;border-bottom:2px solid rgba(52,75,88,.48);position:relative}
+:root[data-theme=paper] .sheet-ident{min-width:0;padding:2px 0 0}
+:root[data-theme=paper] .sheet-kicker{margin:0 0 8px;color:#873b2d;font:700 .62rem/1.2 "Courier New",Courier,monospace;letter-spacing:1px;text-transform:uppercase}
+:root[data-theme=paper] .sheet-head h2{margin:0 0 9px;padding:0 0 5px;border-bottom:1px solid rgba(52,75,88,.42);font-size:1.24rem}
+:root[data-theme=paper] .sheet-head .nm{width:100%;font-size:1.14rem}
+:root[data-theme=paper] .sheet-head .sub{display:flex;flex-wrap:wrap;gap:5px 12px;align-items:end;font-size:.72rem}
+:root[data-theme=paper] .sheet-head .sub label{display:flex;flex:1 1 115px;min-width:0;gap:2px;color:#71624a;font:700 .58rem/1.1 "Courier New",Courier,monospace;text-transform:uppercase}
+:root[data-theme=paper] .sheet-head .sub .in{width:100%!important;max-width:100%;font: .78rem Georgia,"Palatino Linotype",serif}
+:root[data-theme=paper] .sheet-sec{flex-basis:100%;color:#873b2d;font:.63rem "Courier New",Courier,monospace}
+:root[data-theme=paper] .sheet-portrait{position:relative;width:90px;height:116px;margin:1px 0 0;background-color:#c7b38c;background-image:radial-gradient(ellipse 31% 28% at 52% 38%,#d9c49c 0 60%,#b09970 63%,transparent 69%),radial-gradient(ellipse 42% 39% at 51% 27%,#40372d 0 54%,transparent 57%),radial-gradient(ellipse 59% 38% at 51% 93%,#43444a 0 60%,transparent 63%),linear-gradient(135deg,#d9c9a5,#aa9773);border:3px solid #e4d2ab;outline:1px solid #706049;box-shadow:2px 3px 5px rgba(47,34,20,.36),inset 0 0 0 1px rgba(53,42,29,.34);overflow:hidden}
+:root[data-theme=paper] .sheet-portrait::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(40,36,31,.09) 4px),linear-gradient(90deg,rgba(30,26,23,.2),transparent 25% 78%,rgba(30,26,23,.2));mix-blend-mode:multiply}
+:root[data-theme=paper] .sheet-portrait::after{content:"";position:absolute;left:25%;right:25%;top:36%;height:2px;background:rgba(45,40,34,.55);box-shadow:18px 0 rgba(45,40,34,.55),9px 15px 0 -0.5px rgba(90,54,43,.6)}
+:root[data-theme=paper] .sheet-portrait span{position:absolute;z-index:1;bottom:0;left:0;right:0;padding:3px 1px;background:rgba(241,226,190,.88);color:#3d4850;text-align:center;font:600 .44rem/1.1 "Courier New",Courier,monospace;letter-spacing:.35px}
+:root[data-theme=paper] .sheet-seal{width:56px;height:56px;margin:10px auto 0;border:2px solid rgba(135,59,45,.72);border-radius:50%;color:rgba(135,59,45,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;transform:rotate(-11deg);box-shadow:inset 0 0 0 2px rgba(135,59,45,.18)}
+:root[data-theme=paper] .sheet-seal b{font:1.2rem Georgia,serif;line-height:1}
+:root[data-theme=paper] .sheet-seal small{font:600 .39rem/1.05 "Courier New",Courier,monospace;letter-spacing:.4px}
+:root[data-theme=paper] .sheet-section{margin-top:10px}
+:root[data-theme=paper] .sheet-section h3.st{display:flex;align-items:center;gap:7px;margin:0 0 5px;padding:0 0 4px;border-bottom:1px solid rgba(52,75,88,.38);font:700 .68rem/1.2 "Courier New",Courier,monospace;letter-spacing:1px;text-transform:uppercase}
+:root[data-theme=paper] .sheet-section h3.st::before{content:"";width:5px;height:5px;flex:none;border:1px solid #873b2d;transform:rotate(45deg)}
+:root[data-theme=paper] .sheet-section .stats{gap:4px;margin:5px 0 0}
+:root[data-theme=paper] .sheet-section .stats div{padding:4px 2px}
+:root[data-theme=paper] .sheet-section .stats b{font-size:.64rem}
+:root[data-theme=paper] .sheet-section .stats small{color:#655841}
+:root[data-theme=paper] .sheet-section .der{gap:4px 9px;margin:0;padding:6px 8px;font: .65rem/1.4 "Courier New",Courier,monospace}
+:root[data-theme=paper] .sheet-section .der b{color:#873b2d;font-size:.59rem;text-transform:uppercase}
+:root[data-theme=paper] .sheet-section.history .orig{font-size:.75rem;line-height:1.35}
+:root[data-theme=paper] .sheet-section .bk{min-height:74px;border:0;border-radius:0;background:repeating-linear-gradient(0deg,transparent 0 19px,rgba(52,75,88,.2) 20px,transparent 21px);font: .78rem/20px Georgia,"Palatino Linotype",serif}
+:root[data-theme=paper] .sheet-section .sk{grid-template-columns:repeat(3,minmax(0,1fr));gap:1px 8px;font:.63rem/1.3 "Courier New",Courier,monospace}
+:root[data-theme=paper] .sheet-section .sk>span{position:relative;align-items:center;gap:3px;padding:2px 0;border-bottom:1px solid rgba(94,80,57,.18)}
+:root[data-theme=paper] .sheet-section .sk>span::before{content:"";width:7px;height:7px;flex:none;border:1px solid rgba(73,67,52,.58);border-radius:50%;box-shadow:inset 0 0 0 2px rgba(248,237,207,.8)}
+:root[data-theme=paper] .sheet-section .sk i{display:flex;align-items:baseline;gap:2px;font:700 .61rem "Courier New",Courier,monospace}
+:root[data-theme=paper] .sheet-section .sk small{font: .48rem "Courier New",Courier,monospace}
+:root[data-theme=paper] .sheet-section .sk .rmb{padding:0 3px;font-size:.55rem}
+:root[data-theme=paper] .sheet-section .add{font-size:.72rem}
+:root[data-theme=paper] .sheet-section .ftg{margin-top:7px}
+:root[data-theme=paper] .pdf-sheet .sheet-head{grid-template-columns:minmax(0,1fr) 125px 80px;min-height:175px}
+:root[data-theme=paper] .pdf-sheet .sheet-portrait{width:125px;height:160px}
+:root[data-theme=paper] .pdf-sheet .sheet-seal{width:74px;height:74px}
+:root[data-theme=paper] .pdf-sheet .sheet-section{margin-top:12px}
+:root[data-theme=paper] .pdf-sheet .sheet-section .sk{font-size:.68rem}
+:root[data-theme=paper] .win::after{content:"";position:absolute;inset:0;z-index:10;pointer-events:none;opacity:.1;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E")}
+@media(max-width:560px){:root[data-theme=paper] .sheet-head{grid-template-columns:minmax(0,1fr) 72px 46px;gap:5px;min-height:112px}:root[data-theme=paper] .sheet-portrait{width:72px;height:96px}:root[data-theme=paper] .sheet-seal{width:44px;height:44px;margin-top:6px}:root[data-theme=paper] .sheet-seal b{font-size:.9rem}:root[data-theme=paper] .sheet-section .sk{grid-template-columns:repeat(2,minmax(0,1fr));font-size:.67rem}}
 }
