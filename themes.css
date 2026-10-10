@@ -28,8 +28,8 @@
  --vp:#ecd2cc;--board:#f6e1dc;--zoombg:255,244,241;--onhead:#fff6f2;--tab1:#d98a84;--tab2:#a8433a;--tab3:#6a2020;--ok:#b86a6a;--warn2:#a8431f;
  --moon1:#fff0ec;--moon2:#f0a9a0;--moon3:#c96b66;--moonglow:220,110,100;--crater:140,50,50}
 
-/* Lua alinhada ao título, dentro da linha que permanece no topo durante a rolagem. */
-.moon{position:relative;flex:0 0 auto;width:58px;aspect-ratio:1;padding:0;border:0;border-radius:50%;cursor:pointer;opacity:1;
+/* Lua permanece fixa no canto do viewport. */
+.moon{position:fixed!important;top:max(10px,env(safe-area-inset-top))!important;right:max(10px,env(safe-area-inset-right))!important;left:auto!important;bottom:auto!important;z-index:6000;width:58px;aspect-ratio:1;padding:0;border:0;border-radius:50%;cursor:pointer;opacity:1;
  background:radial-gradient(circle at 30% 32%,rgba(255,255,255,.6),transparent 26%),
   radial-gradient(circle at 64% 28%,rgba(var(--crater),.34) 0 7%,transparent 8%),radial-gradient(circle at 36% 62%,rgba(var(--crater),.3) 0 10%,transparent 11%),
   radial-gradient(circle at 72% 68%,rgba(var(--crater),.28) 0 6%,transparent 7%),radial-gradient(circle at 54% 47%,rgba(var(--crater),.2) 0 4%,transparent 5%),
@@ -50,7 +50,8 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 ::view-transition-old(theme-moon){animation:moonDepart .34s ease-in both}
 ::view-transition-new(theme-moon){animation:none}
 @keyframes moonDepart{to{transform:translateX(15px) rotate(150deg) scale(.72);opacity:0}}
-@media (max-width:640px){.moon{width:42px}.title-row{gap:7px;padding-top:max(6px,env(safe-area-inset-top));padding-bottom:6px}.title-row h1{font-size:1.25rem;letter-spacing:.6px}}
+@media (max-width:640px){.moon{width:46px}h1{padding-right:54px}}
+body.mobile[data-mtab]:not([data-mtab=fichas]) #moon{display:none}
 @media (prefers-reduced-motion:reduce){
  .moon,.moon::before,.moon::after{transition:none!important}
  html.tswap *,html.tswap *::before,html.tswap *::after{transition:none!important}

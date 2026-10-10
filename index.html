@@ -13,8 +13,6 @@ body{font-family:"Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;color
  linear-gradient(180deg,var(--k1),var(--k2) 48%,var(--k0));background-repeat:no-repeat;background-attachment:fixed;background-color:var(--k0);padding:16px 16px 48px}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
  background:radial-gradient(ellipse 120% 95% at 50% 45%,transparent 45%,rgba(var(--vig),.72) 100%)}
-.title-row{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:1100px;margin:-8px 0 6px;padding:8px 0;background:linear-gradient(var(--k2),var(--k1));}
-.title-row h1{min-width:0}
 .top{position:relative;z-index:2;max-width:1100px}
 h1{margin:0;font-size:1.85rem;font-variant:small-caps;letter-spacing:2px;color:var(--head);text-shadow:0 2px 0 var(--k2),0 0 18px rgba(var(--gr),.25)}
 .tag{color:var(--quote);margin:4px 0 8px;font-size:.95rem}
@@ -193,8 +191,9 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 .hist{margin:2px 0 6px}.hist .orig{font-size:.88rem;margin:0 0 3px}.hist .orig small{color:var(--muted)}
 .hist .bk{text-align:left;display:block;width:100%;min-height:64px;margin-top:4px;padding:6px 8px;resize:vertical;font:inherit;font-size:.9rem;line-height:1.4}
 </style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"></head><body>
-<div class="title-row"><h1>Gerador de Investigadores</h1><button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button></div>
+<button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <div class="top">
+<h1>Gerador de Investigadores</h1>
 <p class="tag">Chamado de Cthulhu 7ª ed. · Década de 1920 · fichas offline · notas salvas no navegador</p>
 <p class="quote">“O mais misericordioso no mundo é a incapacidade da mente humana de correlacionar todos os seus conteúdos.” — H. P. Lovecraft</p>
 <div class="bar" id="panel">
