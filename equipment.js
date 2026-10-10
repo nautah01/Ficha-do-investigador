@@ -9,7 +9,7 @@
  /* q = termo de busca (título de artigo da Wikipédia em inglês) usado para achar a imagem de referência */
  const CATALOG=[
   {id:'wallet',cat:'Geral',name:'Carteira com identidade',q:'Wallet',notes:'Carteira, documentos e identificação.'},
-  {id:'notebook',cat:'Geral',name:'Caderno e lápis',q:'Pencil'},
+  {id:'notebook',cat:'Geral',name:'Caderno e lápis',q:'Pencil',imgSrc:'Novas%20alterações/equip-images/notebook-pencil.png',imgRev:2},
   {id:'pen',cat:'Geral',name:'Caneta-tinteiro',q:'Fountain pen'},
   {id:'flashlight',cat:'Geral',name:'Lanterna elétrica',q:'Flashlight'},
   {id:'batteries',cat:'Geral',name:'Pilhas',q:'Battery (electricity)',imgRev:2},
@@ -20,9 +20,9 @@
   {id:'camera',cat:'Geral',name:'Câmera fotográfica',q:'Kodak Brownie'},
   {id:'typewriter',cat:'Geral',name:'Máquina de escrever Remington',q:'Typewriter'},
   {id:'dictaphone',cat:'Geral',name:'Ditafone',q:'Dictaphone',imgRev:2},
-  {id:'handcuffs',cat:'Geral',name:'Algemas',q:'Handcuff',imgRev:2},
+  {id:'handcuffs',cat:'Geral',name:'Algemas',q:'Handcuff',imgSrc:'Novas%20alterações/equip-images/handcuffs.png',imgRev:3},
   {id:'rope',cat:'Geral',name:'Corda (50 pés)',q:'Rope'},
-  {id:'crowbar',cat:'Geral',name:'Pé de cabra',q:'Crowbar',imgRev:2},
+  {id:'crowbar',cat:'Geral',name:'Pé de cabra',q:'Crowbar',imgSrc:'Novas%20alterações/equip-images/crowbar.png',imgRev:3},
   {id:'tools',cat:'Geral',name:'Estojo de ferramentas',q:'Toolbox',imgRev:2},
   {id:'fieldbag',cat:'Geral',name:'Bolsa de lona',q:'Duffel bag'},
   {id:'canteen',cat:'Geral',name:'Cantil',q:'Canteen (bottle)'},
@@ -45,7 +45,7 @@
   {id:'thermometer',cat:'Cura',name:'Termômetro clínico',q:'Medical thermometer'},
   {id:'syringe',cat:'Cura',name:'Seringas hipodérmicas',q:'Hypodermic needle'},
   {id:'alcohol',cat:'Cura',name:'Álcool medicinal',q:'Rubbing alcohol'},
-  {id:'crutches',cat:'Cura',name:'Muletas',q:'Crutch',imgRev:2},
+  {id:'crutches',cat:'Cura',name:'Muletas',q:'Crutch',imgSrc:'Novas%20alterações/equip-images/crutches.png',imgRev:3},
   {id:'pistol22',cat:'Arma de fogo',name:'Pistola automática .22 Short',q:'Semi-automatic pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'10 jardas',rate:'1 (até 3)',capacity:6,ammo:'.22 Short',mal:100},
   {id:'derringer25',cat:'Arma de fogo',name:'Derringer .25 (cano único)',q:'Derringer',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'3 jardas',rate:'1',capacity:1,ammo:'.25',mal:100},
   {id:'revolver32',cat:'Arma de fogo',name:'Revólver .32 / 7,65 mm',q:'Colt Police Positive',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.32',mal:100},
@@ -62,15 +62,14 @@
   {id:'shotgun12auto',cat:'Arma de fogo',name:'Espingarda calibre 12 semiautomática',q:'Browning Auto-5',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1 (até 2)',capacity:5,ammo:'calibre 12',mal:100,creditMin:40,imgRev:2},
   {id:'thompson',cat:'Arma de fogo',name:'Submetralhadora Thompson',q:'Thompson submachine gun',skill:'Armas de Fogo (Metralhadoras)',damage:'1D10+2',range:'20 jardas',rate:'1 ou rajada automática',capacity:20,ammo:'.45',mal:96,creditMin:60,imgRev:2,caution:'Arma automática rara e normalmente indisponível a civis; confirme a disponibilidade com o Guardião.',notes:'Inclui carregador de 20 cartuchos na configuração de referência.'},
   {id:'crossbow',cat:'Arma de fogo',name:'Besta',q:'Crossbow',skill:'Armas de Fogo (Arco)',damage:'1D8+2',range:'50 jardas',rate:'1 a cada 2 rodadas',capacity:1,ammo:'virote',mal:96},
-  {id:'club',cat:'Arma corpo a corpo',name:'Cassetete / porrete pequeno',q:'Baton (law enforcement)',imgRev:2,skill:'Lutar (Brigar)',damage:'1D6 + BD',range:'Toque'},
+  {id:'club',cat:'Arma corpo a corpo',name:'Cassetete / porrete pequeno',q:'Baton (law enforcement)',imgSrc:'Novas%20alterações/equip-images/small-club.png',imgRev:3,skill:'Lutar (Brigar)',damage:'1D6 + BD',range:'Toque'},
   {id:'baseballbat',cat:'Arma corpo a corpo',name:'Porrete grande / taco',q:'Baseball bat',skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'},
   {id:'brassknuckles',cat:'Arma corpo a corpo',name:'Soco-inglês',q:'Brass knuckles',skill:'Lutar (Brigar)',damage:'1D3+1 + BD',range:'Toque'},
   {id:'knife_small',cat:'Arma corpo a corpo',name:'Faca pequena',q:'Pocketknife',skill:'Lutar (Brigar)',damage:'1D4 + BD',range:'Toque'},
   {id:'knife_medium',cat:'Arma corpo a corpo',name:'Faca média',q:'Hunting knife',skill:'Lutar (Brigar)',damage:'1D4+2 + BD',range:'Toque'},
-  {id:'knife_large',cat:'Arma corpo a corpo',name:'Faca grande / machete',q:'Machete',skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'},
+  {id:'knife_large',cat:'Arma corpo a corpo',name:'Faca grande / machete',q:'Machete',imgSrc:'Novas%20alterações/equip-images/machete.png',imgRev:2,skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'},
   {id:'hatchet',cat:'Arma corpo a corpo',name:'Machadinha',q:'Hand axe',imgRev:2,skill:'Lutar (Machado)',damage:'1D6+1 + BD',range:'Toque'},
   {id:'bullwhip',cat:'Arma corpo a corpo',name:'Chicote',q:'Bullwhip',skill:'Lutar (Chicote)',damage:'1D3 + metade do BD',range:'10 pés'},
-  {id:'blackjack',cat:'Arma corpo a corpo',name:'Cassetete flexível (blackjack)',q:'Blackjack (weapon)',skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'}
  ];
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
@@ -83,7 +82,7 @@
   if(it.kind==='ammo'){it.kind='general';it.cat='Geral';if(!it.notes&&it.ammo)it.notes='Calibre '+it.ammo+'.'}
   if(it.kind==='protection'||it.cat==='Proteção'){it.kind='general';it.cat='Geral'}
   const latest=CATALOG.find(x=>x.id===it.id&&x.imgRev);
-  if(latest&&it.imgRev!==latest.imgRev&&!it.imgManual){it.q=latest.q;it.img='';it.imgNone=false;it.imgI=0;it.imgRev=latest.imgRev}
+  if(latest&&it.imgRev!==latest.imgRev&&!it.imgManual){it.q=latest.q;it.img=latest.imgSrc||'';it.imgFixed=!!latest.imgSrc;it.imgNone=false;it.imgI=0;it.imgRev=latest.imgRev}
   return it;
  }
  const ensure=p=>{if(!Array.isArray(p.equipment))p.equipment=[];p.equipment.forEach(migrateItem);return p.equipment};
@@ -101,6 +100,7 @@
  }
  function newItem(template){
   const item={...template,uid:uid(),quantity:template.quantity||1};
+  if(item.imgSrc){item.img=item.imgSrc;item.imgFixed=true}
   if(item.kind==='firearm'){item.loaded=item.capacity||0;item.reserve=0}
   if(item.kind==='healing'&&item.uses==null)item.uses=item.quantity;
   return item;
@@ -108,7 +108,7 @@
  function addCatalog(p,id){
   const t=CATALOG.find(x=>x.id===id);if(!t)return null;
   const item=newItem({...t,kind:kindOf(t.cat)});
-  const urls=cachedUrls(item);if(urls.length){item.img=urls[0];item.imgI=0}
+  const urls=cachedUrls(item);if(urls.length&&!item.imgFixed){item.img=urls[0];item.imgI=0}
   ensure(p).push(item);return item;
  }
  function buildCustom(data){
@@ -172,7 +172,7 @@
   return{urls:[],error};
  }
  async function resolveImage(item){
-  if(item.img||item.imgNone||item.imgManual||busy.has(item))return;
+  if(item.img||item.imgNone||item.imgManual||item.imgFixed||busy.has(item))return;
   busy.add(item);
   try{
    const{urls,error}=await findImages(item);
@@ -181,7 +181,7 @@
   }finally{busy.delete(item)}
  }
  async function cycleImage(item,thumb){
-  if(!item||item.imgManual)return;
+  if(!item||item.imgManual||item.imgFixed)return;
   const{urls}=await findImages(item);if(urls.length<2)return;
   item.imgI=((+item.imgI||0)+1)%urls.length;item.img=urls[item.imgI];item.imgNone=false;
   if(thumb&&thumb.isConnected)paintThumb(thumb,item);
@@ -189,16 +189,18 @@
  }
  function thumbInner(item){
   const img=item.img?`<img class="eq-thumb-backdrop" src="${esc(item.img)}" alt="" aria-hidden="true" loading="lazy" decoding="async" referrerpolicy="no-referrer"><img class="eq-thumb-foreground" src="${esc(item.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">`:`<span class="eq-ph" aria-hidden="true">${icon(item)}</span>`;
-  const cyc=item.img&&!item.imgManual?`<button type="button" class="eq-cycle" data-eq-action="cycle-img" data-eq-id="${esc(item.uid)}" title="Trocar a imagem de referência" aria-label="Trocar a imagem de referência">↻</button>`:'';
+  const cyc=item.img&&!item.imgManual&&!item.imgFixed?`<button type="button" class="eq-cycle" data-eq-action="cycle-img" data-eq-id="${esc(item.uid)}" title="Trocar a imagem de referência" aria-label="Trocar a imagem de referência">↻</button>`:'';
   return img+cyc;
  }
  const thumbHtml=item=>`<div class="eq-thumb${item.img?' has':''}" data-eq-thumb="${esc(item.uid)}">${thumbInner(item)}</div>`;
  function wireThumb(th,item){
   const im=th.querySelector('.eq-thumb-foreground');if(!im||im.dataset.wired)return;im.dataset.wired='1';
   im.addEventListener('error',()=>{
-   item.img='';
-   if(item.imgManual){item.imgManual=false;item.imgNone=false}else item.imgNone=true;
+   const wasFixed=item.imgFixed;
+   item.img='';item.imgFixed=false;
+   if(item.imgManual){item.imgManual=false;item.imgNone=false}else item.imgNone=wasFixed?false:true;
    if(th.isConnected)paintThumb(th,item);persistSoon();
+   if(wasFixed)resolveImage(item).then(()=>{if(item.img&&th.isConnected)paintThumb(th,item);persistSoon()});
   },{once:true});
  }
  function paintThumb(th,item){th.classList.toggle('has',!!item.img);th.innerHTML=thumbInner(item);wireThumb(th,item)}
@@ -297,7 +299,7 @@
  }
  async function loadCardImg(card){
   const t=CATALOG.find(x=>x.id===card.dataset.v),box=card.querySelector('[data-eqk-img]');if(!t||!box)return;
-  let urls=cachedUrls(t);if(!urls.length)urls=(await findImages(t)).urls;
+  let urls=t.imgSrc?[t.imgSrc]:cachedUrls(t);if(!urls.length)urls=(await findImages(t)).urls;
   if(!urls.length||!box.isConnected)return;
   const im=new Image();im.alt='';im.decoding='async';im.referrerPolicy='no-referrer';
   im.onload=()=>{if(box.isConnected){const back=im.cloneNode();back.className='eqk-backdrop';back.alt='';back.setAttribute('aria-hidden','true');im.className='eqk-foreground';box.replaceChildren(back,im);box.classList.add('has')}};
