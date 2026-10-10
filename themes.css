@@ -29,7 +29,7 @@
  --moon1:#fff0ec;--moon2:#f0a9a0;--moon3:#c96b66;--moonglow:220,110,100;--crater:140,50,50}
 
 /* Lua posicionada no topo do documento; rola para fora da tela junto com a página. */
-.moon{position:absolute!important;top:max(10px,env(safe-area-inset-top))!important;right:max(-8px,calc(env(safe-area-inset-right) - 8px))!important;left:auto!important;bottom:auto!important;z-index:6000;width:58px;aspect-ratio:1;padding:0;border:0;border-radius:50%;cursor:pointer;opacity:1;
+.moon{position:absolute!important;top:10px!important;right:max(10px,env(safe-area-inset-right))!important;left:auto!important;bottom:auto!important;z-index:6000;width:58px;aspect-ratio:1;padding:0;border:0;border-radius:50%;cursor:pointer;opacity:1;
  background:radial-gradient(circle at 30% 32%,rgba(255,255,255,.6),transparent 26%),
   radial-gradient(circle at 64% 28%,rgba(var(--crater),.34) 0 7%,transparent 8%),radial-gradient(circle at 36% 62%,rgba(var(--crater),.3) 0 10%,transparent 11%),
   radial-gradient(circle at 72% 68%,rgba(var(--crater),.28) 0 6%,transparent 7%),radial-gradient(circle at 54% 47%,rgba(var(--crater),.2) 0 4%,transparent 5%),
@@ -46,7 +46,7 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 ::view-transition-group(root){z-index:0}
 ::view-transition-image-pair(root){isolation:auto}
 ::view-transition-old(root),::view-transition-new(root){display:block;animation:none;mix-blend-mode:normal}
-@media (max-width:640px){.moon{width:46px}h1{padding-right:54px}}
+@media (max-width:640px){.moon{width:46px;top:8px!important;right:max(8px,env(safe-area-inset-right))!important}h1{padding-right:54px}}
 @media (prefers-reduced-motion:reduce){
  .moon,.moon::before,.moon::after{transition:none!important}
  html.tswap *,html.tswap *::before,html.tswap *::after{transition:none!important}

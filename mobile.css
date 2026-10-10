@@ -1,7 +1,7 @@
 /* Modo celular por abas */
 #mobTabs{display:none}
 body.mobile{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
-body.mobile #mobTabs{position:fixed;left:0;right:0;bottom:0;z-index:6000;display:flex;gap:4px;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:var(--k3);border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(0,0,0,.35)}
+body.mobile #mobTabs{position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:6000;display:flex;gap:4px;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:var(--k3);border-top:1px solid var(--line);box-shadow:0 -6px 18px rgba(0,0,0,.35);transform:translate3d(0,0,0);will-change:transform}
 #mobTabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:6px 2px;font-size:.72rem;color:var(--muted2);background:transparent;border:0;border-radius:8px;box-shadow:none;text-shadow:none;cursor:pointer}
 #mobTabs button span{font-size:1.3rem;line-height:1.1}
 #mobTabs button[aria-current=page]{color:var(--head);background:rgba(var(--gr),.16);font-weight:bold}
@@ -20,6 +20,7 @@ body.mobile .note-draw-tools{top:8px;left:8px}
 body.mobile .note-draw-content{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
 body.mobile .note-draw-content button{min-height:34px;padding:4px;font-size:.72rem}
 body.mobile .note-draw-content label{font-size:.68rem;justify-content:center}
+body.mobile .note-draw-content button[aria-pressed=true]{background:linear-gradient(rgba(var(--gr),.4),rgba(var(--gr),.2));border:2px solid var(--head);color:var(--head);box-shadow:0 0 0 2px rgba(var(--gr),.2),inset 0 0 8px rgba(var(--gr),.3)}
 body.mobile .note-selection-actions{right:6px;bottom:6px;gap:4px;padding:4px}
 body.mobile .note-selection-actions button{min-height:34px;padding:4px 8px;font-size:.72rem}
 body.mobile .note-zoom{top:auto;right:auto;bottom:6px;left:6px}
