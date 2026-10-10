@@ -22,10 +22,22 @@
 .note-tabs button[aria-selected=true]{color:var(--ink2);background:var(--k6);border-color:rgba(var(--gr),.6)}
 .note-viewport{user-select:none;-webkit-user-select:none;flex:1;min-height:0;overflow:hidden;position:relative;background:var(--vp);touch-action:none;cursor:grab}
 .note-viewport.grabbing,.note-viewport.grabbing *{cursor:grabbing!important}
-.note-zoom{position:absolute;right:10px;bottom:10px;z-index:6;display:flex;align-items:center;gap:2px;padding:3px;background:rgba(var(--zoombg),.92);border:1px solid rgba(var(--gr),.45);border-radius:6px}
+.note-zoom{position:absolute;left:10px;bottom:10px;z-index:6;display:flex;align-items:center;gap:2px;padding:3px;background:rgba(var(--zoombg),.92);border:1px solid rgba(var(--gr),.45);border-radius:6px}
 .note-zoom button{min-width:28px;padding:3px 7px;font-size:.85rem;color:var(--ink2);background:transparent;border:0;border-radius:4px;cursor:pointer}
 .note-zoom button:hover{background:rgba(var(--gr),.18)}
 .note-zoom output{min-width:44px;text-align:center;font-size:.78rem}
+.note-draw-tools{position:absolute;top:10px;left:10px;z-index:7}
+.note-draw-tools>summary{display:block;padding:6px 10px;border:1px solid rgba(var(--gr),.45);border-radius:5px;background:rgba(var(--zoombg),.94);font-size:.8rem;cursor:pointer;list-style:none}
+.note-draw-tools>summary::-webkit-details-marker{display:none}
+.note-draw-content{display:flex;align-items:center;gap:5px;margin-top:5px;padding:6px;background:rgba(var(--zoombg),.96);border:1px solid rgba(var(--gr),.4);border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.note-draw-content button{min-height:34px;padding:4px 8px;font-size:.76rem}
+.note-draw-content label{display:flex;flex-direction:row;align-items:center;gap:4px;font-size:.72rem;white-space:nowrap}
+.note-draw-content input[type=color]{width:28px;height:26px;padding:1px}
+.note-draw-content input[type=range]{width:62px}
+.note-selection-actions{position:absolute;right:10px;bottom:10px;z-index:7;display:flex;align-items:center;gap:6px;padding:5px;background:rgba(var(--zoombg),.96);border:1px solid rgba(var(--gr),.45);border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.note-selection-actions[hidden]{display:none!important}
+.note-selection-actions button{min-height:34px;padding:4px 10px;font-size:.78rem}
+.note-selection-actions .selinfo{font-size:.72rem}
 .note-viewport:focus{outline:none}
 .note-board{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;width:2400px;height:1600px;background-color:var(--board);background-image:radial-gradient(rgba(var(--ov),.05) 1px,transparent 1.6px),radial-gradient(ellipse at 50% 40%,rgba(255,235,190,.07),transparent 70%);background-size:22px 22px,100% 100%}
 .note-lines,.note-ink,#noteCards{position:absolute;left:0;top:0;width:2400px;height:1600px}
@@ -74,10 +86,6 @@
 .bt-in{flex:none;width:150px;padding:4px 8px;font:inherit;font-size:.8rem;color:var(--field-ink);background:var(--field);border:1px solid var(--head);border-radius:6px 6px 0 0}
 .note-tools .sep{width:1px;height:20px;margin:0 2px;background:rgba(var(--gr),.3)}
 .note-tools button:disabled{opacity:.4;cursor:default}
-.note-more{display:contents}
-.note-more>summary{display:none}
-.note-more-content{display:contents}
-.note-more:not([open])>.note-more-content{display:contents}
 .selinfo{font-size:.78rem;color:var(--head)}
 .yarn{stroke:#b91c1c;stroke-width:3;stroke-linecap:round}
 .head{fill:#b91c1c;stroke:none}.lsel .head{fill:#f87171}

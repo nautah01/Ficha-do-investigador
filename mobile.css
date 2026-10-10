@@ -13,26 +13,16 @@ body.mobile[data-mtab]:not([data-mtab=fichas]) #moon{display:none!important}
 body.mobile #cemPanelBtn{display:none}
 body.mobile .cem-drag-hint{display:none}
 body.mobile[data-mtab]:not([data-mtab=fichas]){overflow:hidden}
-body.mobile .note-tools{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-content:start;gap:4px;padding:5px;overflow:visible;mask-image:none;-webkit-mask-image:none}
+body.mobile .note-tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-content:start;gap:4px;padding:5px;overflow:visible;mask-image:none;-webkit-mask-image:none}
 body.mobile .note-tools>*{min-width:0}
-body.mobile .note-tools .sep,body.mobile .note-tools .sp{display:none}
-body.mobile .note-tools>button{min-height:38px;padding:3px 2px;font-size:0;line-height:1;white-space:normal}
-body.mobile .note-tools>button::before{font-size:1.15rem;line-height:1;color:var(--ink2)}
-body.mobile #noteSelect::before{content:'⬚'}
-body.mobile #noteAdd::before{content:'▧'}
-body.mobile #noteAddText::before{content:'T'}
-body.mobile #noteExport::before{content:'⇩'}
-body.mobile #noteConnect::before{content:'↗'}
-body.mobile .note-more{display:block;grid-column:1/-1;min-width:0}
-body.mobile .note-more>summary{display:block;min-height:34px;padding:6px 9px;border:1px solid rgba(var(--gr),.45);border-radius:5px;text-align:center;font-size:.75rem;list-style:none;cursor:pointer;background:rgba(var(--gr),.08)}
-body.mobile .note-more>summary::-webkit-details-marker{display:none}
-body.mobile .note-more:not([open])>.note-more-content{display:none}
-body.mobile .note-more[open]>.note-more-content{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;gap:4px;padding-top:5px}
-body.mobile .note-more .note-more-content>button{min-width:0;min-height:36px;padding:3px 2px;font-size:.67rem;line-height:1.1;white-space:normal;overflow-wrap:anywhere}
-body.mobile .note-more .note-more-content>label{min-width:0;min-height:36px;justify-content:center;gap:2px;font-size:.65rem}
-body.mobile .note-more .note-more-content input[type=color]{width:22px;height:22px}
-body.mobile .note-more .note-more-content input[type=range]{width:40px}
-body.mobile .note-more .note-more-content .selinfo{grid-column:1/-1;text-align:center}
+body.mobile .note-tools>button{min-height:34px;padding:3px 4px;font-size:.68rem;line-height:1.1;white-space:normal;overflow-wrap:anywhere}
+body.mobile .note-draw-tools{top:8px;left:8px}
+body.mobile .note-draw-content{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+body.mobile .note-draw-content button{min-height:34px;padding:4px;font-size:.72rem}
+body.mobile .note-draw-content label{font-size:.68rem;justify-content:center}
+body.mobile .note-selection-actions{right:6px;bottom:6px;gap:4px;padding:4px}
+body.mobile .note-selection-actions button{min-height:34px;padding:4px 8px;font-size:.72rem}
+body.mobile .note-zoom{top:auto;right:auto;bottom:6px;left:6px}
 body.mobile .note-boards{flex-wrap:wrap;align-items:center;gap:4px;padding:5px 6px}
 body.mobile .note-boards .btabs{flex:1 1 100%;order:2}
 body.mobile .note-boards .btabs{flex-wrap:wrap;overflow:visible}

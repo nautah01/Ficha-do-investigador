@@ -58,6 +58,7 @@ function refresh(){
  cards.querySelectorAll('.nc').forEach(e=>{const s=sel.has(e.dataset.id);e.classList.toggle('sel',s);e.classList.toggle('one',s&&sel.size===1);e.classList.toggle('pick',!!pick&&pick.id===e.dataset.id)});
  drawLinks();
  $('noteDelete').disabled=!sel.size&&selLink<0;$('noteDup').disabled=!sel.size;$('noteDir').disabled=selLink<0;
+ $('noteSelectionActions').hidden=!sel.size&&selLink<0;
  $('noteUndo').disabled=hi<1;$('noteRedo').disabled=hi>=hist.length-1;
  $('noteSelInfo').textContent=sel.size>1?sel.size+' peças selecionadas':'';
 }
