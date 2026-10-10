@@ -67,10 +67,6 @@
    );
    if(compact&&typeof transition.skipTransition==='function')
     reveal.finished.then(()=>transition.skipTransition()).catch(()=>{});
-   if(!compact)root.animate(
-    {transform:['translateX(-25px) scale(.72)','translateX(5px) scale(1.08)','translateX(0) scale(1)'],filter:['brightness(.72) saturate(.6)','brightness(1.35) saturate(1.3)','brightness(1) saturate(1)']},
-    {duration:780,easing:'cubic-bezier(.2,.75,.25,1)',pseudoElement:'::view-transition-new(theme-moon)'}
-   );
   }).catch(()=>{/* uma transição interrompida não impede a troca do tema */});
  }
 
