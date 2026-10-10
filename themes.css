@@ -35,7 +35,7 @@
   radial-gradient(circle at 72% 68%,rgba(var(--crater),.28) 0 6%,transparent 7%),radial-gradient(circle at 54% 47%,rgba(var(--crater),.2) 0 4%,transparent 5%),
   radial-gradient(circle at 38% 36%,var(--moon1),var(--moon2) 58%,var(--moon3));
  box-shadow:inset -6px -5px 10px rgba(0,0,0,.24),inset 3px 3px 7px rgba(255,255,255,.22),0 0 18px 4px rgba(var(--moonglow),.12);
- filter:saturate(.72);transition:opacity .35s,filter .35s,transform .4s,box-shadow .4s}
+ filter:saturate(.72);transition:opacity .35s,filter .35s,transform .4s,box-shadow .4s;view-transition-name:theme-moon}
 .moon:hover,.moon:focus-visible{opacity:1!important;filter:saturate(1);transform:scale(1.07);box-shadow:inset -6px -5px 10px rgba(0,0,0,.24),inset 3px 3px 7px rgba(255,255,255,.28),0 0 24px 6px rgba(var(--moonglow),.32)}
 .moon:active{transform:scale(.96)}
 .moon:focus-visible{outline:2px solid var(--head);outline-offset:5px}
@@ -46,6 +46,10 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 ::view-transition-group(root){z-index:0}
 ::view-transition-image-pair(root){isolation:auto}
 ::view-transition-old(root),::view-transition-new(root){display:block;animation:none;mix-blend-mode:normal}
+::view-transition-group(theme-moon){z-index:1}
+::view-transition-old(theme-moon){animation:moonDepart .34s ease-in both}
+::view-transition-new(theme-moon){animation:none}
+@keyframes moonDepart{to{transform:translateX(15px) rotate(150deg) scale(.72);opacity:0}}
 @media (max-width:640px){.moon{width:46px}h1{padding-right:54px}}
 @media (prefers-reduced-motion:reduce){
  .moon,.moon::before,.moon::after{transition:none!important}
@@ -100,7 +104,7 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 /* Pequenos detalhes de céu aparecem quando a lua recebe foco. */
 .moon::before{content:"";position:absolute;inset:-6px;border:1px solid rgba(var(--moonglow),.5);border-radius:50%;opacity:.16;transform:scale(.94);transition:opacity .3s,transform .4s;pointer-events:none}
 .moon::after{content:"✧";position:absolute;top:-4px;right:0;color:var(--moon1);font: .85rem/1 Georgia,serif;opacity:.18;transform:scale(.7);transition:opacity .25s,transform .3s;pointer-events:none}
-.moon:hover::before,.moon:focus-visible::before{opacity:.85;transform:scale(1.08)}
-.moon:hover::after,.moon:focus-visible::after{opacity:.9;transform:scale(1);filter:drop-shadow(0 0 4px rgba(var(--moonglow),.7))}
+.moon:hover::before,.moon:focus-visible::before{opacity:.85;transform:scale(1.08) rotate(8deg)}
+.moon:hover::after,.moon:focus-visible::after{opacity:.9;transform:scale(1) rotate(0);filter:drop-shadow(0 0 4px rgba(var(--moonglow),.7))}
 }
 @media (prefers-reduced-motion:reduce){.moon::before,.moon::after{transition:none}}
