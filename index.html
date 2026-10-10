@@ -804,17 +804,28 @@ function pdfInvestigator(doc,p,C){
  }
  let ySkills=pdfSkillColumns(doc,p,Object.entries(p.sk||{}).sort((a,b)=>b[1]-a[1]),'Perícias do personagem',y,C);
  const absent=falta(p).map(([name])=>[name,+get(p,'s:'+name)||0]);
- if(absent.length)pdfSkillColumns(doc,p,absent,'Perícias que não tenho (valor inicial)',ySkills,C);
+ if(absent.length)ySkills=pdfSkillColumns(doc,p,absent,'Perícias que não tenho (valor inicial)',ySkills,C);
+ return ySkills;
 }
-function pdfLore(doc,p,C){
- const W=doc.internal.pageSize.getWidth(),left=39,right=W-39,top=112,bottom=802,font=10.5,lineH=14;
+function pdfLore(doc,p,C,startY){
+ const W=doc.internal.pageSize.getWidth(),left=39,right=W-39,bottom=802,font=10.5,lineH=14;
  doc.setFont('times','normal');doc.setFontSize(font);const lines=doc.splitTextToSize(String(p.back||''),right-left);
- const pageLines=Math.floor((bottom-top)/lineH),chunks=[];for(let i=0;i<lines.length;i+=pageLines)chunks.push(lines.slice(i,i+pageLines));
- chunks.forEach((part,i)=>{doc.addPage('a4','portrait');pdfFrame(doc,C);
-  pdfText(doc,p.nome||'Investigador',left,50,19,C.head,'bold');pdfText(doc,`${p.occ||''} · História do investigador`,left,70,9,C.muted);
-  const heading=`Backstory${chunks.length>1?` · página ${i+1} de ${chunks.length}`:''}`;pdfSection(doc,heading,91,C,right);
-  doc.setFont('times','normal');doc.setFontSize(font);doc.setTextColor(...C.text);doc.text(part,left,top,{lineHeightFactor:lineH/font});
- });
+ let offset=0,page=0,y=startY;
+ while(offset<lines.length){
+  if(page>0){
+   doc.addPage('a4','portrait');pdfFrame(doc,C);
+   pdfText(doc,p.nome||'Investigador',left,50,19,C.head,'bold');pdfText(doc,`${p.occ||''} · História do investigador`,left,70,9,C.muted);
+   y=91;
+  }
+  const heading=page===0?'Backstory':'Backstory (continuação)';
+  if(page===0&&Math.floor((bottom-(y+16))/lineH)<1){page=1;continue;}
+  const textY=pdfSection(doc,heading,y,C,right),capacity=Math.floor((bottom-textY)/lineH);
+  if(capacity<1){
+   break;
+  }
+  const part=lines.slice(offset,offset+capacity);doc.setFont('times','normal');doc.setFontSize(font);doc.setTextColor(...C.text);
+  doc.text(part,left,textY,{lineHeightFactor:lineH/font});offset+=part.length;page++;
+ }
 }
 async function savePdf(list,b){
  if(!list.length||b.disabled)return;
@@ -822,7 +833,11 @@ async function savePdf(list,b){
  try{
   if(!window.jspdf)await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
   const {jsPDF}=window.jspdf,C=pdfColors(),pdf=new jsPDF({unit:'pt',format:'a4',orientation:'portrait',compress:true});
-  for(const [i,p] of list.entries()){if(i)pdf.addPage('a4','portrait');pdfInvestigator(pdf,p,C);if(String(p.back||'').trim())pdfLore(pdf,p,C)}
+  for(const [i,p] of list.entries()){
+   if(i)pdf.addPage('a4','portrait');
+   const loreStart=pdfInvestigator(pdf,p,C);
+   if(String(p.back||'').trim())pdfLore(pdf,p,C,loreStart);
+  }
   const name=(list.length===1?list[0].nome:'investigadores').replace(/[^\w\u00C0-\u017F -]/g,'').trim().replace(/\s+/g,'_')||'ficha';
   pdf.save(name+'.pdf');
  }catch(_){alert('Não foi possível gerar o PDF. Verifique sua conexão e tente novamente.');}
