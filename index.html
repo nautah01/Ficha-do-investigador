@@ -177,11 +177,11 @@ body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-
 .atmo .tent.tl{left:-30px}
 .atmo .tent.tr{right:-30px;transform:scaleX(-1)}
 .atmo .fog{position:absolute;left:0;bottom:0;width:200%;height:46vh;background-repeat:repeat-x;background-size:50% 100%;will-change:transform}
-.atmo .fog.f1{height:52vh;animation:drift 100s linear infinite;
+.atmo .fog.f1{height:52vh;animation:drift 42s linear infinite;
  background-image:radial-gradient(ellipse 28% 42% at 30% 66%,rgba(var(--glow),.10),transparent 100%),radial-gradient(ellipse 24% 34% at 74% 44%,rgba(var(--glow),.07),transparent 100%)}
-.atmo .fog.f2{height:34vh;animation:drift 75s linear infinite reverse;
+.atmo .fog.f2{height:34vh;animation:drift 31s linear infinite reverse;
  background-image:radial-gradient(ellipse 26% 46% at 24% 70%,rgba(var(--glow),.09),transparent 100%),radial-gradient(ellipse 22% 38% at 70% 58%,rgba(var(--glow),.08),transparent 100%)}
-@keyframes drift{0%{transform:translate3d(0,0,0)}45%{transform:translate3d(-22.5%,-4px,0)}55%{transform:translate3d(-27.5%,-4px,0)}100%{transform:translate3d(-50%,0,0)}}
+@keyframes drift{0%{transform:translate3d(0,0,0)}25%{transform:translate3d(-12.5%,-6px,0)}50%{transform:translate3d(-25%,-10px,0)}75%{transform:translate3d(-37.5%,-6px,0)}100%{transform:translate3d(-50%,0,0)}}
 /* título: uma única falha de lamparina ao carregar */
 h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28);animation:lamp 2.4s ease-out 1}
 @keyframes lamp{0%,18%{opacity:.25}22%{opacity:.9}27%{opacity:.35}34%{opacity:1}41%{opacity:.6}48%,100%{opacity:1}}
