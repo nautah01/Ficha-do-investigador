@@ -27,6 +27,7 @@
 .eq-main{min-width:0}
 .eq-thumb{position:relative;isolation:isolate;display:flex;align-items:center;justify-content:center;width:64px;height:64px;overflow:hidden;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.08)}
 .eq-thumb.has{background:#efe8d6}
+.eq-thumb.transparent{background:transparent;border-color:transparent}
 .eq-thumb img{position:absolute;inset:0;display:block;width:100%;height:100%}
 .eq-thumb .eq-thumb-backdrop{z-index:0;object-fit:cover;filter:blur(7px) brightness(.68);opacity:.78;transform:scale(1.16)}
 .eq-thumb .eq-thumb-foreground{z-index:1;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
@@ -62,6 +63,7 @@
 .eqk-img{position:relative;isolation:isolate;border-radius:7px 7px 0 0;display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;overflow:hidden;background:rgba(var(--ov),.07);border-bottom:1px solid var(--line)}
 .eqk-img .eq-ph{font-size:2.2rem}
 .eqk-img.has{background:#efe8d6}
+.eqk-img.transparent{background:transparent}
 .eqk-img img{position:absolute;inset:0;display:block;width:100%;height:100%}
 .eqk-img .eqk-backdrop{z-index:0;object-fit:cover;filter:blur(12px) brightness(.7);opacity:.62;transform:scale(1.12)}
 .eqk-img .eqk-foreground{z-index:1;object-fit:contain;filter:drop-shadow(0 3px 5px rgba(0,0,0,.5))}

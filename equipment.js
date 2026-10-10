@@ -1,42 +1,43 @@
 /* Catálogo e edição do inventário por investigador. Dados novos ficam dentro de cada ficha.
    - O catálogo é escolhido num seletor em cartões (busca + categorias), como o de ocupações.
-   - Cada item mostra uma imagem de referência buscada na Wikipédia (cache no navegador).
+   - Cada item prioriza imagens locais do catálogo e usa referências da Wikipédia como alternativa.
    - Munição não é mais um item: ela é controlada dentro da própria arma de fogo. */
 (()=>{
  const SKILLS=['Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Armas de Fogo (Arco)','Armas de Fogo (Metralhadoras)','Lutar (Brigar)','Lutar (Machado)','Lutar (Chicote)','Arremessar','Primeiros Socorros','Medicina','Psicologia','Dirigir Auto','Outro (escrever)'];
  const CATS=['Geral','Cura','Arma de fogo','Arma corpo a corpo'];
  const ICON={'Geral':'🎒','Cura':'🩹','Arma de fogo':'🔫','Arma corpo a corpo':'🗡️'};
  /* q = termo de busca (título de artigo da Wikipédia em inglês) usado para achar a imagem de referência */
+ const assetPaths=file=>{const enc=s=>s.split('/').map(encodeURIComponent).join('/'),v='20261010';return[`equip-images/${enc(file)}?v=${v}`,`Novas alterações/equip-images/${enc(file)}?v=${v}`,`Novas alterações/${enc(file)}?v=${v}`,`${enc(file)}?v=${v}`]};
  const CATALOG=[
-  {id:'wallet',cat:'Geral',name:'Carteira com identidade',q:'Wallet',notes:'Carteira, documentos e identificação.'},
-  {id:'notebook',cat:'Geral',name:'Caderno e lápis',q:'Pencil',imgPaths:['equip-images/notebook-pencil.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/notebook-pencil.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/notebook-pencil.png?v=20261010','notebook-pencil.png?v=20261010'],imgRev:3},
-  {id:'pen',cat:'Geral',name:'Caneta-tinteiro',q:'Fountain pen'},
-  {id:'flashlight',cat:'Geral',name:'Lanterna elétrica',q:'Flashlight'},
-  {id:'batteries',cat:'Geral',name:'Pilhas',q:'Battery (electricity)',imgRev:2},
-  {id:'compass',cat:'Geral',name:'Bússola com tampa',q:'Compass'},
-  {id:'binoculars',cat:'Geral',name:'Binóculos',q:'Binoculars'},
-  {id:'telescope',cat:'Geral',name:'Telescópio portátil',q:'Refracting telescope'},
-  {id:'watch',cat:'Geral',name:'Relógio de bolso',q:'Pocket watch'},
-  {id:'camera',cat:'Geral',name:'Câmera fotográfica',q:'Kodak Brownie'},
-  {id:'typewriter',cat:'Geral',name:'Máquina de escrever Remington',q:'Typewriter'},
-  {id:'dictaphone',cat:'Geral',name:'Ditafone',q:'Dictaphone',imgRev:2},
-  {id:'handcuffs',cat:'Geral',name:'Algemas',q:'Handcuff',imgPaths:['equip-images/handcuffs.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/handcuffs.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/handcuffs.png?v=20261010','handcuffs.png?v=20261010'],imgRev:4},
-  {id:'rope',cat:'Geral',name:'Corda (50 pés)',q:'Rope'},
-  {id:'crowbar',cat:'Geral',name:'Pé de cabra',q:'Crowbar',imgPaths:['equip-images/crowbar.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/crowbar.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/crowbar.png?v=20261010','crowbar.png?v=20261010'],imgRev:4},
-  {id:'tools',cat:'Geral',name:'Estojo de ferramentas',q:'Toolbox',imgPaths:['equip-images/toolbox.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/toolbox.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/toolbox.png?v=20261010','toolbox.png?v=20261010'],imgRev:3},
-  {id:'fieldbag',cat:'Geral',name:'Bolsa de lona',q:'Duffel bag'},
-  {id:'canteen',cat:'Geral',name:'Cantil',q:'Canteen (bottle)'},
-  {id:'matches',cat:'Geral',name:'Fósforos à prova d’água',q:'Match'},
-  {id:'lantern',cat:'Geral',name:'Lanterna a querosene',q:'Kerosene lamp'},
-  {id:'lockpick',cat:'Geral',name:'Kit de chaveiro',q:'Lock picking',notes:'Ferramentas de precisão para fechaduras.'},
-  {id:'shovel',cat:'Geral',name:'Pá',q:'Shovel'},
-  {id:'umbrella',cat:'Geral',name:'Guarda-chuva',q:'Umbrella'},
-  {id:'identity',cat:'Geral',name:'Crachá ou distintivo',q:'Badge'},
-  {id:'camera_flash',cat:'Geral',name:'Flash de magnésio',q:'Flash-lamp',imgRev:2},
-  {id:'map',cat:'Geral',name:'Mapa da região',q:'Map'},
-  {id:'coat',cat:'Geral',name:'Casaco pesado',q:'Overcoat',notes:'Proteção narrativa contra frio e chuva; sem armadura automática.'},
-  {id:'gloves',cat:'Geral',name:'Luvas resistentes',q:'Protective glove',imgRev:2},
-  {id:'respirator',cat:'Geral',name:'Máscara de proteção',q:'Respirator'},
+  {id:'wallet',cat:'Geral',name:'Carteira com identidade',q:'Wallet',imgPaths:assetPaths('download.png'),imgTransparent:true,imgRev:5,notes:'Carteira, documentos e identificação.'},
+  {id:'notebook',cat:'Geral',name:'Caderno e lápis',q:'Pencil',imgPaths:assetPaths('caderno de anotações.png'),imgTransparent:true,imgRev:5},
+  {id:'pen',cat:'Geral',name:'Caneta-tinteiro',q:'Fountain pen',imgPaths:assetPaths('caneta tinteiro.png'),imgTransparent:true,imgRev:5},
+  {id:'flashlight',cat:'Geral',name:'Lanterna elétrica',q:'Flashlight',imgPaths:assetPaths('lanterna eletrica.png'),imgTransparent:true,imgRev:5},
+  {id:'batteries',cat:'Geral',name:'Pilhas',q:'Battery (electricity)',imgPaths:assetPaths('pilhas.png'),imgTransparent:true,imgRev:5},
+  {id:'compass',cat:'Geral',name:'Bússola com tampa',q:'Compass',imgPaths:assetPaths('busola.png'),imgTransparent:true,imgRev:5},
+  {id:'binoculars',cat:'Geral',name:'Binóculos',q:'Binoculars',imgPaths:assetPaths('Binoculos.png'),imgTransparent:true,imgRev:5},
+  {id:'telescope',cat:'Geral',name:'Telescópio portátil',q:'Refracting telescope',imgPaths:assetPaths('telescopio portatil.png'),imgTransparent:true,imgRev:5},
+  {id:'watch',cat:'Geral',name:'Relógio de bolso',q:'Pocket watch',imgPaths:assetPaths('relogio de bolso.png'),imgTransparent:true,imgRev:5},
+  {id:'camera',cat:'Geral',name:'Câmera fotográfica',q:'Kodak Brownie',imgPaths:assetPaths('camera.png'),imgTransparent:true,imgRev:5},
+  {id:'typewriter',cat:'Geral',name:'Máquina de escrever Remington',q:'Typewriter',imgPaths:assetPaths('maquina de escrever.png'),imgTransparent:true,imgRev:5},
+  {id:'dictaphone',cat:'Geral',name:'Ditafone',q:'Dictaphone',imgPaths:assetPaths('ditafone.png'),imgTransparent:true,imgRev:5},
+  {id:'handcuffs',cat:'Geral',name:'Algemas',q:'Handcuff',imgPaths:assetPaths('algemas.png'),imgTransparent:true,imgRev:5},
+  {id:'rope',cat:'Geral',name:'Corda (50 pés)',q:'Rope',imgPaths:assetPaths('cordas.png'),imgTransparent:true,imgRev:5},
+  {id:'crowbar',cat:'Geral',name:'Pé de cabra',q:'Crowbar',imgPaths:assetPaths('pé de cabra.png'),imgTransparent:true,imgRev:5},
+  {id:'tools',cat:'Geral',name:'Estojo de ferramentas',q:'Toolbox',imgPaths:assetPaths('estojo de ferramentas.png'),imgTransparent:true,imgRev:5},
+  {id:'fieldbag',cat:'Geral',name:'Bolsa de lona',q:'Duffel bag',imgPaths:assetPaths('Bolsa de lona.png'),imgTransparent:true,imgRev:5},
+  {id:'canteen',cat:'Geral',name:'Cantil',q:'Canteen (bottle)',imgPaths:assetPaths('Cantil.png'),imgTransparent:true,imgRev:5},
+  {id:'matches',cat:'Geral',name:'Fósforos à prova d’água',q:'Match',imgPaths:assetPaths('Caixa de fosforos.png'),imgTransparent:true,imgRev:5},
+  {id:'lantern',cat:'Geral',name:'Lanterna a querosene',q:'Kerosene lamp',imgPaths:assetPaths('Lanterna a querosene.png'),imgTransparent:true,imgRev:5},
+  {id:'lockpick',cat:'Geral',name:'Kit de chaveiro',q:'Lock picking',imgPaths:assetPaths('Kit de chaveiro.png'),imgTransparent:true,imgRev:5,notes:'Ferramentas de precisão para fechaduras.'},
+  {id:'shovel',cat:'Geral',name:'Pá',q:'Shovel',imgPaths:assetPaths('Pá.png'),imgTransparent:true,imgRev:5},
+  {id:'umbrella',cat:'Geral',name:'Guarda-chuva',q:'Umbrella',imgPaths:assetPaths('Guarda chuva.png'),imgTransparent:true,imgRev:5},
+  {id:'identity',cat:'Geral',name:'Crachá ou distintivo',q:'Badge',imgPaths:assetPaths('dinstintivo.png'),imgTransparent:true,imgRev:5},
+  {id:'camera_flash',cat:'Geral',name:'Flash de magnésio',q:'Flash-lamp',imgPaths:assetPaths('Flash de magnesio.png'),imgTransparent:true,imgRev:5},
+  {id:'map',cat:'Geral',name:'Mapa da região',q:'Map',imgPaths:assetPaths('mapa.jpg'),imgTransparent:false,imgRev:5},
+  {id:'coat',cat:'Geral',name:'Casaco pesado',q:'Overcoat',imgPaths:assetPaths('casaco.png'),imgTransparent:true,imgRev:5,notes:'Proteção narrativa contra frio e chuva; sem armadura automática.'},
+  {id:'gloves',cat:'Geral',name:'Luvas resistentes',q:'Protective glove',imgPaths:assetPaths('Luvas resistentes.png'),imgTransparent:true,imgRev:5},
+  {id:'respirator',cat:'Geral',name:'Máscara de proteção',q:'Respirator',imgPaths:assetPaths('Mascara.png'),imgTransparent:true,imgRev:5},
   {id:'medicalcase',cat:'Cura',name:'Maleta médica',q:'Doctor\'s bag',notes:'Equipamento de atendimento; não concede cura automática.'},
   {id:'bandage',cat:'Cura',name:'Gaze e bandagens',q:'Bandage',notes:'Primeiros Socorros pode recuperar 1 PV se aplicada em até uma hora da lesão.'},
   {id:'aspirin',cat:'Cura',name:'Aspirina (12 comprimidos)',q:'Aspirin',uses:12,notes:'Alívio de sintomas; não recupera PV por si só.'},
@@ -83,7 +84,7 @@
   if(it.kind==='ammo'){it.kind='general';it.cat='Geral';if(!it.notes&&it.ammo)it.notes='Calibre '+it.ammo+'.'}
   if(it.kind==='protection'||it.cat==='Proteção'){it.kind='general';it.cat='Geral'}
   const latest=CATALOG.find(x=>x.id===it.id&&x.imgRev);
-  if(latest&&it.imgRev!==latest.imgRev&&!it.imgManual){it.q=latest.q;it.imgPaths=localImagePaths(latest);it.img=it.imgPaths[0]||'';it.imgFixed=!!it.imgPaths.length;it.imgNone=false;it.imgI=0;it.imgRev=latest.imgRev}
+  if(latest&&it.imgRev!==latest.imgRev&&!it.imgManual){it.q=latest.q;it.imgPaths=localImagePaths(latest);it.img=it.imgPaths[0]||'';it.imgFixed=!!it.imgPaths.length;it.imgTransparent=!!latest.imgTransparent;it.imgNone=false;it.imgI=0;it.imgRev=latest.imgRev}
   return it;
  }
  const ensure=p=>{if(!Array.isArray(p.equipment))p.equipment=[];p.equipment.forEach(migrateItem);return p.equipment};
@@ -190,11 +191,12 @@
   persistSoon();
  }
  function thumbInner(item){
-  const img=item.img?`<img class="eq-thumb-backdrop" src="${esc(item.img)}" alt="" aria-hidden="true" loading="lazy" decoding="async" referrerpolicy="no-referrer"><img class="eq-thumb-foreground" src="${esc(item.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">`:`<span class="eq-ph" aria-hidden="true">${icon(item)}</span>`;
+  const fg=item.img?`<img class="eq-thumb-foreground" src="${esc(item.img)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">`:'';
+  const img=item.img?(item.imgTransparent?fg:`<img class="eq-thumb-backdrop" src="${esc(item.img)}" alt="" aria-hidden="true" loading="lazy" decoding="async" referrerpolicy="no-referrer">${fg}`):`<span class="eq-ph" aria-hidden="true">${icon(item)}</span>`;
   const cyc=item.img&&!item.imgManual&&!item.imgFixed?`<button type="button" class="eq-cycle" data-eq-action="cycle-img" data-eq-id="${esc(item.uid)}" title="Trocar a imagem de referência" aria-label="Trocar a imagem de referência">↻</button>`:'';
   return img+cyc;
  }
- const thumbHtml=item=>`<div class="eq-thumb${item.img?' has':''}" data-eq-thumb="${esc(item.uid)}">${thumbInner(item)}</div>`;
+ const thumbHtml=item=>`<div class="eq-thumb${item.img?' has':''}${item.imgTransparent?' transparent':''}" data-eq-thumb="${esc(item.uid)}">${thumbInner(item)}</div>`;
  function wireThumb(th,item){
   const im=th.querySelector('.eq-thumb-foreground');if(!im||im.dataset.wired)return;im.dataset.wired='1';
   im.addEventListener('error',()=>{
@@ -206,7 +208,7 @@
    if(wasFixed)resolveImage(item).then(()=>{if(item.img&&th.isConnected)paintThumb(th,item);persistSoon()});
   },{once:true});
  }
- function paintThumb(th,item){th.classList.toggle('has',!!item.img);th.innerHTML=thumbInner(item);wireThumb(th,item)}
+ function paintThumb(th,item){th.classList.toggle('has',!!item.img);th.classList.toggle('transparent',!!item.imgTransparent);th.innerHTML=thumbInner(item);wireThumb(th,item)}
  /* Percorre as fichas com a aba de equipamentos aberta: liga o tratamento de erro e busca imagens que faltam. */
  function hydrate(root,list){
   if(!root||!Array.isArray(list))return;
@@ -304,7 +306,7 @@
   const t=CATALOG.find(x=>x.id===card.dataset.v),box=card.querySelector('[data-eqk-img]');if(!t||!box)return;
   const local=localImagePaths(t);let urls=local.length?local:cachedUrls(t);if(!urls.length)urls=(await findImages(t)).urls;
   if(!urls.length||!box.isConnected)return;
-  const show=im=>{if(!box.isConnected)return;const back=im.cloneNode();back.className='eqk-backdrop';back.alt='';back.setAttribute('aria-hidden','true');im.className='eqk-foreground';box.replaceChildren(back,im);box.classList.add('has')};
+  const show=im=>{if(!box.isConnected)return;im.className='eqk-foreground';if(t.imgTransparent){box.replaceChildren(im);box.classList.add('has','transparent')}else{const back=im.cloneNode();back.className='eqk-backdrop';back.alt='';back.setAttribute('aria-hidden','true');box.replaceChildren(back,im);box.classList.add('has');box.classList.remove('transparent')}};
   const load=async(list,index=0)=>{
    for(let i=index;i<list.length;i++){
     const im=new Image();im.alt='';im.decoding='async';im.referrerPolicy='no-referrer';
