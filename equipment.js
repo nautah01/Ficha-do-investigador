@@ -23,7 +23,7 @@
   {id:'handcuffs',cat:'Geral',name:'Algemas',q:'Handcuff',imgPaths:['equip-images/handcuffs.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/handcuffs.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/handcuffs.png?v=20261010','handcuffs.png?v=20261010'],imgRev:4},
   {id:'rope',cat:'Geral',name:'Corda (50 pés)',q:'Rope'},
   {id:'crowbar',cat:'Geral',name:'Pé de cabra',q:'Crowbar',imgPaths:['equip-images/crowbar.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/crowbar.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/crowbar.png?v=20261010','crowbar.png?v=20261010'],imgRev:4},
-  {id:'tools',cat:'Geral',name:'Estojo de ferramentas',q:'Toolbox',imgRev:2},
+  {id:'tools',cat:'Geral',name:'Estojo de ferramentas',q:'Toolbox',imgPaths:['equip-images/toolbox.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/toolbox.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/toolbox.png?v=20261010','toolbox.png?v=20261010'],imgRev:3},
   {id:'fieldbag',cat:'Geral',name:'Bolsa de lona',q:'Duffel bag'},
   {id:'canteen',cat:'Geral',name:'Cantil',q:'Canteen (bottle)'},
   {id:'matches',cat:'Geral',name:'Fósforos à prova d’água',q:'Match'},
@@ -68,7 +68,7 @@
   {id:'knife_small',cat:'Arma corpo a corpo',name:'Faca pequena',q:'Pocketknife',skill:'Lutar (Brigar)',damage:'1D4 + BD',range:'Toque'},
   {id:'knife_medium',cat:'Arma corpo a corpo',name:'Faca média',q:'Hunting knife',skill:'Lutar (Brigar)',damage:'1D4+2 + BD',range:'Toque'},
   {id:'knife_large',cat:'Arma corpo a corpo',name:'Faca grande / machete',q:'Machete',imgPaths:['equip-images/machete.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/machete.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/machete.png?v=20261010','machete.png?v=20261010'],imgRev:3,skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'},
-  {id:'hatchet',cat:'Arma corpo a corpo',name:'Machadinha',q:'Hand axe',imgRev:2,skill:'Lutar (Machado)',damage:'1D6+1 + BD',range:'Toque'},
+  {id:'hatchet',cat:'Arma corpo a corpo',name:'Machadinha',q:'Hand axe',imgPaths:['equip-images/hatchet.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/hatchet.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/hatchet.png?v=20261010','hatchet.png?v=20261010'],imgRev:3,skill:'Lutar (Machado)',damage:'1D6+1 + BD',range:'Toque'},
   {id:'bullwhip',cat:'Arma corpo a corpo',name:'Chicote',q:'Bullwhip',skill:'Lutar (Chicote)',damage:'1D3 + metade do BD',range:'10 pés'},
  ];
  const localImagePaths=item=>Array.isArray(item&&item.imgPaths)?item.imgPaths:(item&&item.imgSrc?[item.imgSrc]:[]);
