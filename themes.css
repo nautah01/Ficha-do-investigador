@@ -42,6 +42,8 @@
 .mdots{position:absolute;top:100%;left:50%;display:flex;gap:4px;margin-top:5px;transform:translateX(-50%)}
 .mdots i{width:4px;height:4px;border-radius:50%;background:rgba(var(--moonglow),.3);transition:background .3s,box-shadow .3s}
 .mdots i.on{background:var(--moon1);box-shadow:0 0 7px 1px rgb(var(--moonglow))}
+.theme-wave{position:fixed!important;top:var(--wave-y);left:var(--wave-x);z-index:5999;width:8px;height:8px;box-sizing:border-box;border:1px solid rgba(var(--moonglow),.9);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%) scale(0);box-shadow:0 0 12px 4px rgba(var(--moonglow),.4),inset 0 0 8px rgba(var(--moonglow),.35);animation:theme-wave var(--wave-duration,900ms) cubic-bezier(.16,.72,.22,1) both}
+@keyframes theme-wave{22%{opacity:.95}100%{transform:translate(-50%,-50%) scale(var(--wave-scale));opacity:0}}
 html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-color .55s,color .55s,border-color .55s,fill .55s,stroke .55s,stop-color .55s!important}
 ::view-transition-group(root){z-index:0}
 ::view-transition-image-pair(root){isolation:auto}
@@ -53,6 +55,7 @@ html.tswap *,html.tswap *::before,html.tswap *::after{transition:background-colo
 @media (max-width:640px){.moon{width:46px}h1{padding-right:54px}}
 @media (prefers-reduced-motion:reduce){
  .moon,.moon::before,.moon::after{transition:none!important}
+ .theme-wave{box-shadow:0 0 6px 2px rgba(var(--moonglow),.22),inset 0 0 4px rgba(var(--moonglow),.2)}
  html.tswap *,html.tswap *::before,html.tswap *::after{transition:none!important}
  ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
 }
