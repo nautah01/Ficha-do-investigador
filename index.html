@@ -902,7 +902,7 @@ async function pdfInvestigator(doc,p,C){
  const portrait=await pdfPortrait(p,C),photoW=64,photoH=79,photoX=right-photoW,photoY=32,titleRight=portrait?photoX-10:right-39;
  let y=55;y=pdfWrapped(doc,p.nome||'Investigador',39,y,titleRight-39,20,22,C.head,'bold');
  if(portrait){doc.setDrawColor(...C.gold);doc.setLineWidth(.6);doc.roundedRect(photoX-2,photoY-2,photoW+4,photoH+4,2,2,'S');doc.addImage(portrait,'JPEG',photoX,photoY,photoW,photoH,undefined,'FAST')}
- doc.setDrawColor(...C.line);doc.setLineWidth(.7);doc.line(39,y+2,right,y+2);y+=19;
+ doc.setDrawColor(...C.line);doc.setLineWidth(.7);doc.line(39,y+2,portrait?titleRight:right,y+2);y+=19;
  const meta=[p.occ,p.idade!==''?`${p.idade} anos`:'',p.sec?`+ ${p.sec}`:'',p.edit?'ficha editada':''].filter(Boolean).join(' · ');
  y=pdfWrapped(doc,meta,39,y,titleRight-39,9,11,C.muted)+7;
  if(portrait)y=Math.max(y,photoY+photoH+9);
