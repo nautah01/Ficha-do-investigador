@@ -8,7 +8,7 @@
  const ICON={'Geral':'🎒','Cura':'🩹','Arma de fogo':'🔫','Arma corpo a corpo':'🗡️'};
  const EQUIPMENT_YEARS=[1850,1900,1920,1950,1980,2000,2020,2026];
  /* q = termo de busca (título de artigo da Wikipédia em inglês) usado para achar a imagem de referência */
- const assetPaths=file=>{const enc=s=>s.split('/').map(encodeURIComponent).join('/'),v='20261010';return[`equip-images/${enc(file)}?v=${v}`,`Novas alterações/equip-images/${enc(file)}?v=${v}`,`Novas alterações/${enc(file)}?v=${v}`,`${enc(file)}?v=${v}`]};
+ const assetPaths=file=>{const enc=s=>s.split('/').map(encodeURIComponent).join('/'),v='20261011',staged=enc('Novas alterações');return[`equip-images/${enc(file)}?v=${v}`,`${staged}/equip-images/${enc(file)}?v=${v}`,`${staged}/${enc(file)}?v=${v}`,`${enc(file)}?v=${v}`]};
  const CATALOG=[
   {id:'wallet',cat:'Geral',name:'Carteira com identidade',q:'Wallet',imgPaths:assetPaths('download.png'),imgTransparent:true,imgRev:5,notes:'Carteira, documentos e identificação.'},
   {id:'notebook',cat:'Geral',name:'Caderno e lápis',q:'Pencil',imgPaths:assetPaths('caderno de anotações.png'),imgTransparent:true,imgRev:5},
@@ -87,6 +87,18 @@
   {id:'hatchet',cat:'Arma corpo a corpo',name:'Machadinha',q:'Hand axe',imgPaths:['equip-images/hatchet.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/hatchet.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/hatchet.png?v=20261010','hatchet.png?v=20261010'],imgRev:3,skill:'Lutar (Machado)',damage:'1D6+1 + BD',range:'Toque'},
   {id:'bullwhip',cat:'Arma corpo a corpo',name:'Chicote',q:'Bullwhip',skill:'Lutar (Chicote)',damage:'1D3 + metade do BD',range:'10 pés'},
  ];
+ const NEW_LOCAL_IMAGES={
+  ak47:'Ak 47.png',alcohol:'Alcool medicinal.png',aspirin:'Aspirina.png',bandage:'Bandagem.png',crossbow:'Besta.png',cigar:'Caixa de charutos.png',
+  carbine30:'Carabina .30 de alavanca.png',m1carbine:'Carabina M1.png',beer:'Cerveja.png',bullwhip:'Chicote.png',cigarettes:'Cigarros.png',
+  derringer25:'Derringer .25.png',shotgun12auto:'Espingada calibre 12 semiautomatica.png',shotgun12:'Espingarda calibre 12 cano duplo.png',remington870:'Espingarda remington 870.png',
+  knife_medium:'Faca média.png',knife_small:'Faca pequena.png',flask:'Frasco de bolso.png',whiskey:'Garrafa de uisque.png',lighter:'Isqueiro.png',scalpel:'Jogo de bisturis.png',
+  m1911model:'M1911.png',hatchet:'Machadinha.png',knife_large:'Machete.png',medicalcase:'Maleta medica.png',map:'Mapa da região.png',crutches:'Muletas.png',forceps:'Pinças medicas.png',
+  pistol22:'Pistola automatica .22.png',auto32:'Pistola automatica .32.png',auto45:'Pistola automatica .45.png',glock17:'Pistola Glock-17.png',luger:'Pistola Luger P08.png',club:'Porrete pequeno.png',
+  revolver32:'Revolver .32.png',revolver45:'Revolver .45.png',coltsa:'Revolver colt action single army.png',smithwesson10:'Revolver Smith.png',leeenfield:'Rifel Lee-Enfield .303.png',
+  rifle22:'Rifle .22 de ferrolho.png',rifle3006:'Rifle .30-06 de ferrolho.png',ar15:'Rifle ar-15.png',elephantgun:'Rifle´para elefante cano duplo.png',syringe:'Seringa.png',
+  brassknuckles:'Soco ingles.png',baseballbat:'Taco de beisebol.png',thermometer:'Termometro.png',thompson:'Thompson.png'
+ };
+ for(const item of CATALOG){const file=NEW_LOCAL_IMAGES[item.id];if(file){item.imgPaths=assetPaths(file);item.imgTransparent=true;item.imgRev=(item.imgRev||0)+1}}
  const CREDIT_REFERENCE={wallet:5,notebook:0,pen:5,flashlight:10,batteries:5,compass:10,binoculars:20,telescope:35,watch:15,camera:20,typewriter:25,dictaphone:25,handcuffs:20,rope:5,crowbar:5,tools:15,fieldbag:5,canteen:5,matches:0,lantern:10,lockpick:20,shovel:5,umbrella:5,identity:20,camera_flash:20,map:0,coat:10,gloves:10,respirator:20,medicalcase:30,bandage:5,aspirin:5,forceps:15,scalpel:20,thermometer:5,syringe:10,alcohol:5,crutches:10,pistol22:25,rifle22:25,carbine30:25,shotgun12:30,crossbow:20,club:10,baseballbat:5,brassknuckles:10,knife_small:5,knife_medium:10,knife_large:15,hatchet:10,bullwhip:15,cigarettes:0};
  CATALOG.forEach(item=>{if(item.creditMin==null)item.creditMin=CREDIT_REFERENCE[item.id]??(item.cat==='Arma de fogo'?35:item.cat==='Arma corpo a corpo'?10:item.cat==='Cura'?10:5)});
  const localImagePaths=item=>Array.isArray(item&&item.imgPaths)?item.imgPaths:(item&&item.imgSrc?[item.imgSrc]:[]);
