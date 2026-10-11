@@ -174,7 +174,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 .portrait-controls button{min-height:32px;padding:4px 7px;font-size:.75rem}
 .portrait-tip{display:block;color:var(--muted);font-size:.68rem;line-height:1.35}
 .backstory-text h3{margin-top:0}
-.backstory-text .bk{min-height:170px}
+.backstory-text textarea.bk{display:block;width:100%;min-width:0;min-height:220px;margin-top:4px;padding:8px;text-align:left;white-space:pre-wrap;resize:vertical;font:inherit;font-size:.9rem;line-height:1.45}
 @media(max-width:640px){.backstory-layout{grid-template-columns:1fr}.backstory-photo{display:grid;grid-template-columns:minmax(115px,156px) minmax(0,1fr);gap:8px;align-items:start}.backstory-photo h3{grid-column:1/-1}.portrait-canvas{grid-row:span 2;width:100%;height:auto;aspect-ratio:156/192}.portrait-controls{min-width:0}}
 </style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><script src="equipment.js"></script></head><body>
 <button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
@@ -599,7 +599,7 @@ function card(p,i){
    <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>
   </header>
-  <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" data-sheet-tab="sheet" role="tab" aria-selected="${!isEq&&!isBack}">🗂 Ficha</button><button type="button" data-sheet-tab="equipment" role="tab" aria-selected="${isEq}">🎒 Equipamentos${p.equipment&&p.equipment.length?` (${p.equipment.length})`:''}</button><button type="button" data-sheet-tab="backstory" role="tab" aria-selected="${isBack}">📖 Backstory</button></div>
+  <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" data-sheet-tab="sheet" role="tab" aria-selected="${!isEq&&!isBack}">🗂 Ficha</button><button type="button" data-sheet-tab="backstory" role="tab" aria-selected="${isBack}">📖 Backstory</button><button type="button" data-sheet-tab="equipment" role="tab" aria-selected="${isEq}">🎒 Equipamentos${p.equipment&&p.equipment.length?` (${p.equipment.length})`:''}</button></div>
   <div class="win-body"><div class="win-pane sheet-pane" role="tabpanel" ${isEq||isBack?'hidden':''}><div class="stamp">Arquivo<br>Arkham</div>${body(p,i)}</div><div class="win-pane equipment-pane" role="tabpanel" ${isEq?'':'hidden'}>${window.CthEquipment.render(p,i)}</div><div class="win-pane backstory-pane" role="tabpanel" ${isBack?'':'hidden'}>${backstory(p,i)}</div></div>
   <div class="rsz" data-i="${i}"></div>
  </section>`;
@@ -893,13 +893,13 @@ function pdfSkillColumns(doc,p,items,title,y,C){
  });
  return startY+Math.max(...heights)+5;
 }
-async function pdfPortrait(p){
+async function pdfPortrait(p,C){
  const photo=p.portrait;if(!photo||!photo.src)return null;
- try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=photo.src});const canvas=document.createElement('canvas');canvas.width=234;canvas.height=288;const ctx=canvas.getContext('2d'),g=portraitGeometry(img,234,288,photo);ctx.drawImage(img,g.x,g.y,g.iw,g.ih);return canvas.toDataURL('image/jpeg',.88)}catch(_){return null}
+ try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=photo.src});const canvas=document.createElement('canvas');canvas.width=468;canvas.height=576;const ctx=canvas.getContext('2d'),g=portraitGeometry(img,canvas.width,canvas.height,photo);ctx.fillStyle=`rgb(${C.bg.join(',')})`;ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,g.x,g.y,g.iw,g.ih);return canvas.toDataURL('image/jpeg',.92)}catch(_){return null}
 }
 async function pdfInvestigator(doc,p,C){
  pdfFrame(doc,C);const W=doc.internal.pageSize.getWidth(),right=W-36;
- const portrait=await pdfPortrait(p),photoW=46,photoH=57,photoX=right-photoW,photoY=35,titleRight=portrait?photoX-10:right-39;
+ const portrait=await pdfPortrait(p,C),photoW=64,photoH=79,photoX=right-photoW,photoY=32,titleRight=portrait?photoX-10:right-39;
  let y=55;y=pdfWrapped(doc,p.nome||'Investigador',39,y,titleRight-39,20,22,C.head,'bold');
  if(portrait){doc.setDrawColor(...C.gold);doc.setLineWidth(.6);doc.roundedRect(photoX-2,photoY-2,photoW+4,photoH+4,2,2,'S');doc.addImage(portrait,'JPEG',photoX,photoY,photoW,photoH,undefined,'FAST')}
  doc.setDrawColor(...C.line);doc.setLineWidth(.7);doc.line(39,y+2,right,y+2);y+=19;
