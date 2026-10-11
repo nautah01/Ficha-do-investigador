@@ -6,21 +6,22 @@
  const SKILLS=['Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Armas de Fogo (Arco)','Armas de Fogo (Metralhadoras)','Lutar (Brigar)','Lutar (Machado)','Lutar (Chicote)','Arremessar','Primeiros Socorros','Medicina','Psicologia','Dirigir Auto','Outro (escrever)'];
  const CATS=['Geral','Cura','Arma de fogo','Arma corpo a corpo'];
  const ICON={'Geral':'🎒','Cura':'🩹','Arma de fogo':'🔫','Arma corpo a corpo':'🗡️'};
+ const EQUIPMENT_YEARS=[1850,1900,1920,1950,1980,2000,2020,2026];
  /* q = termo de busca (título de artigo da Wikipédia em inglês) usado para achar a imagem de referência */
  const assetPaths=file=>{const enc=s=>s.split('/').map(encodeURIComponent).join('/'),v='20261010';return[`equip-images/${enc(file)}?v=${v}`,`Novas alterações/equip-images/${enc(file)}?v=${v}`,`Novas alterações/${enc(file)}?v=${v}`,`${enc(file)}?v=${v}`]};
  const CATALOG=[
   {id:'wallet',cat:'Geral',name:'Carteira com identidade',q:'Wallet',imgPaths:assetPaths('download.png'),imgTransparent:true,imgRev:5,notes:'Carteira, documentos e identificação.'},
   {id:'notebook',cat:'Geral',name:'Caderno e lápis',q:'Pencil',imgPaths:assetPaths('caderno de anotações.png'),imgTransparent:true,imgRev:5},
   {id:'pen',cat:'Geral',name:'Caneta-tinteiro',q:'Fountain pen',imgPaths:assetPaths('caneta tinteiro.png'),imgTransparent:true,imgRev:5},
-  {id:'flashlight',cat:'Geral',name:'Lanterna elétrica',q:'Flashlight',imgPaths:assetPaths('lanterna eletrica.png'),imgTransparent:true,imgRev:5},
-  {id:'batteries',cat:'Geral',name:'Pilhas',q:'Battery (electricity)',imgPaths:assetPaths('pilhas.png'),imgTransparent:true,imgRev:5},
+  {id:'flashlight',cat:'Geral',name:'Lanterna elétrica',q:'Flashlight',eraFrom:1899,imgPaths:assetPaths('lanterna eletrica.png'),imgTransparent:true,imgRev:5},
+  {id:'batteries',cat:'Geral',name:'Pilhas',q:'Battery (electricity)',eraFrom:1896,imgPaths:assetPaths('pilhas.png'),imgTransparent:true,imgRev:5},
   {id:'compass',cat:'Geral',name:'Bússola com tampa',q:'Compass',imgPaths:assetPaths('busola.png'),imgTransparent:true,imgRev:5},
-  {id:'binoculars',cat:'Geral',name:'Binóculos',q:'Binoculars',imgPaths:assetPaths('Binoculos.png'),imgTransparent:true,imgRev:5},
+  {id:'binoculars',cat:'Geral',name:'Binóculos',q:'Binoculars',eraFrom:1854,imgPaths:assetPaths('Binoculos.png'),imgTransparent:true,imgRev:5},
   {id:'telescope',cat:'Geral',name:'Telescópio portátil',q:'Refracting telescope',imgPaths:assetPaths('telescopio portatil.png'),imgTransparent:true,imgRev:5},
   {id:'watch',cat:'Geral',name:'Relógio de bolso',q:'Pocket watch',imgPaths:assetPaths('relogio de bolso.png'),imgTransparent:true,imgRev:5},
-  {id:'camera',cat:'Geral',name:'Câmera fotográfica',q:'Kodak Brownie',imgPaths:assetPaths('camera.png'),imgTransparent:true,imgRev:5},
-  {id:'typewriter',cat:'Geral',name:'Máquina de escrever Remington',q:'Typewriter',imgPaths:assetPaths('maquina de escrever.png'),imgTransparent:true,imgRev:5},
-  {id:'dictaphone',cat:'Geral',name:'Ditafone',q:'Dictaphone',imgPaths:assetPaths('ditafone.png'),imgTransparent:true,imgRev:5},
+  {id:'camera',cat:'Geral',name:'Câmera fotográfica',q:'Kodak Brownie',eraFrom:1888,imgPaths:assetPaths('camera.png'),imgTransparent:true,imgRev:5},
+  {id:'typewriter',cat:'Geral',name:'Máquina de escrever Remington',q:'Typewriter',eraFrom:1870,imgPaths:assetPaths('maquina de escrever.png'),imgTransparent:true,imgRev:5},
+  {id:'dictaphone',cat:'Geral',name:'Ditafone',q:'Dictaphone',eraFrom:1907,imgPaths:assetPaths('ditafone.png'),imgTransparent:true,imgRev:5},
   {id:'handcuffs',cat:'Geral',name:'Algemas',q:'Handcuff',imgPaths:assetPaths('algemas.png'),imgTransparent:true,imgRev:5},
   {id:'rope',cat:'Geral',name:'Corda (50 pés)',q:'Rope',imgPaths:assetPaths('cordas.png'),imgTransparent:true,imgRev:5},
   {id:'crowbar',cat:'Geral',name:'Pé de cabra',q:'Crowbar',imgPaths:assetPaths('pé de cabra.png'),imgTransparent:true,imgRev:5},
@@ -47,22 +48,36 @@
   {id:'syringe',cat:'Cura',name:'Seringas hipodérmicas',q:'Hypodermic needle'},
   {id:'alcohol',cat:'Cura',name:'Álcool medicinal',q:'Rubbing alcohol'},
   {id:'crutches',cat:'Cura',name:'Muletas',q:'Crutch',imgPaths:['equip-images/crutches.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/crutches.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/crutches.png?v=20261010','crutches.png?v=20261010'],imgRev:4},
-  {id:'pistol22',cat:'Arma de fogo',name:'Pistola automática .22 Short',q:'Semi-automatic pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'10 jardas',rate:'1 (até 3)',capacity:6,ammo:'.22 Short',mal:100},
-  {id:'derringer25',cat:'Arma de fogo',name:'Derringer .25 (cano único)',q:'Derringer',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'3 jardas',rate:'1',capacity:1,ammo:'.25',mal:100},
-  {id:'revolver32',cat:'Arma de fogo',name:'Revólver .32 / 7,65 mm',q:'Colt Police Positive',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.32',mal:100},
-  {id:'auto32',cat:'Arma de fogo',name:'Pistola automática .32 / 7,65 mm',q:'Colt Model 1903 Pocket Hammerless',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:8,ammo:'.32',mal:99},
-  {id:'luger',cat:'Arma de fogo',name:'Pistola Luger P08',q:'Luger pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1 (até 3)',capacity:8,ammo:'9 mm',mal:99,creditMin:40,imgRev:2},
-  {id:'revolver45',cat:'Arma de fogo',name:'Revólver .45',q:'Colt New Service',skill:'Armas de Fogo (Pistolas)',damage:'1D10+2',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.45 Colt',mal:100,creditMin:30,imgRev:2},
-  {id:'auto45',cat:'Arma de fogo',name:'Pistola automática .45',q:'M1911 pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D10+2',range:'15 jardas',rate:'1 (até 3)',capacity:7,ammo:'.45',mal:100,creditMin:40,imgRev:2},
-  {id:'rifle22',cat:'Arma de fogo',name:'Rifle .22 de ferrolho',q:'Bolt action',skill:'Armas de Fogo (Rifles)',damage:'1D6+1',range:'30 jardas',rate:'1',capacity:6,ammo:'.22 Long Rifle',mal:99},
-  {id:'carbine30',cat:'Arma de fogo',name:'Carabina .30 de alavanca',q:'Winchester Model 1894',skill:'Armas de Fogo (Rifles)',damage:'2D6',range:'50 jardas',rate:'1',capacity:6,ammo:'.30',mal:98},
-  {id:'leeenfield',cat:'Arma de fogo',name:'Rifle Lee-Enfield .303',q:'Lee–Enfield',skill:'Armas de Fogo (Rifles)',damage:'2D6+4',range:'110 jardas',rate:'1',capacity:10,ammo:'.303',mal:100},
-  {id:'rifle3006',cat:'Arma de fogo',name:'Rifle .30-06 de ferrolho',q:'M1903 Springfield',skill:'Armas de Fogo (Rifles)',damage:'2D6+4',range:'110 jardas',rate:'1',capacity:5,ammo:'.30-06',mal:100,creditMin:40,imgRev:2},
-  {id:'elephantgun',cat:'Arma de fogo',name:'Rifle para elefantes (cano duplo)',q:'Double rifle',skill:'Armas de Fogo (Rifles)',damage:'3D6+4',range:'100 jardas',rate:'1 ou 2',capacity:2,ammo:'calibre pesado',mal:100,creditMin:60,imgRev:2},
-  {id:'shotgun12',cat:'Arma de fogo',name:'Espingarda calibre 12 (cano duplo)',q:'Double-barreled shotgun',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1 ou 2',capacity:2,ammo:'calibre 12',mal:100},
-  {id:'shotgun12auto',cat:'Arma de fogo',name:'Espingarda calibre 12 semiautomática',q:'Browning Auto-5',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1 (até 2)',capacity:5,ammo:'calibre 12',mal:100,creditMin:40,imgRev:2},
-  {id:'thompson',cat:'Arma de fogo',name:'Submetralhadora Thompson',q:'Thompson submachine gun',skill:'Armas de Fogo (Metralhadoras)',damage:'1D10+2',range:'20 jardas',rate:'1 ou rajada automática',capacity:20,ammo:'.45',mal:96,creditMin:60,imgRev:2,caution:'Arma automática rara e normalmente indisponível a civis; confirme a disponibilidade com o Guardião.',notes:'Inclui carregador de 20 cartuchos na configuração de referência.'},
+  {id:'pistol22',cat:'Arma de fogo',name:'Pistola automática .22 Short',q:'Semi-automatic pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'10 jardas',rate:'1 (até 3)',capacity:6,ammo:'.22 Short',mal:100,eraFrom:1900},
+  {id:'derringer25',cat:'Arma de fogo',name:'Derringer .25 (cano único)',q:'Derringer',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'3 jardas',rate:'1',capacity:1,ammo:'.25',mal:100,eraFrom:1900,creditMin:15,creditVintage:10},
+  {id:'revolver32',cat:'Arma de fogo',name:'Revólver .32 / 7,65 mm',q:'Colt Police Positive',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.32',mal:100,eraFrom:1900,creditMin:20,creditVintage:10},
+  {id:'auto32',cat:'Arma de fogo',name:'Pistola automática .32 / 7,65 mm',q:'Colt Model 1903 Pocket Hammerless',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:8,ammo:'.32',mal:99,eraFrom:1903,creditMin:30,creditVintage:10},
+  {id:'luger',cat:'Arma de fogo',name:'Pistola Luger P08',q:'Luger pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1 (até 3)',capacity:8,ammo:'9 mm',mal:99,creditMin:40,eraFrom:1908,eraTo:1942,creditVintage:20,imgRev:2},
+  {id:'revolver45',cat:'Arma de fogo',name:'Revólver .45',q:'Colt New Service',skill:'Armas de Fogo (Pistolas)',damage:'1D10+2',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.45 Colt',mal:100,creditMin:30,eraFrom:1898,eraTo:1944,creditVintage:20,imgRev:2},
+  {id:'auto45',cat:'Arma de fogo',name:'Pistola automática .45',q:'M1911 pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D10+2',range:'15 jardas',rate:'1 (até 3)',capacity:7,ammo:'.45',mal:100,creditMin:40,eraFrom:1911,creditVintage:10,imgRev:2},
+  {id:'rifle22',cat:'Arma de fogo',name:'Rifle .22 de ferrolho',q:'Bolt action',skill:'Armas de Fogo (Rifles)',damage:'1D6+1',range:'30 jardas',rate:'1',capacity:6,ammo:'.22 Long Rifle',mal:99,eraFrom:1880},
+  {id:'carbine30',cat:'Arma de fogo',name:'Carabina .30 de alavanca',q:'Winchester Model 1894',skill:'Armas de Fogo (Rifles)',damage:'2D6',range:'50 jardas',rate:'1',capacity:6,ammo:'.30',mal:98,eraFrom:1894},
+  {id:'leeenfield',cat:'Arma de fogo',name:'Rifle Lee-Enfield .303',q:'Lee–Enfield',skill:'Armas de Fogo (Rifles)',damage:'2D6+4',range:'110 jardas',rate:'1',capacity:10,ammo:'.303',mal:100,eraFrom:1895,eraTo:1957,creditMin:35,creditVintage:-15},
+  {id:'rifle3006',cat:'Arma de fogo',name:'Rifle .30-06 de ferrolho',q:'M1903 Springfield',skill:'Armas de Fogo (Rifles)',damage:'2D6+4',range:'110 jardas',rate:'1',capacity:5,ammo:'.30-06',mal:100,creditMin:40,eraFrom:1903,creditVintage:10,imgRev:2},
+  {id:'elephantgun',cat:'Arma de fogo',name:'Rifle para elefantes (cano duplo)',q:'Double rifle',skill:'Armas de Fogo (Rifles)',damage:'3D6+4',range:'100 jardas',rate:'1 ou 2',capacity:2,ammo:'calibre pesado',mal:100,creditMin:60,eraFrom:1850,creditVintage:15,imgRev:2},
+  {id:'shotgun12',cat:'Arma de fogo',name:'Espingarda calibre 12 (cano duplo)',q:'Double-barreled shotgun',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1 ou 2',capacity:2,ammo:'calibre 12',mal:100,eraFrom:1870},
+  {id:'shotgun12auto',cat:'Arma de fogo',name:'Espingarda calibre 12 semiautomática',q:'Browning Auto-5',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1 (até 2)',capacity:5,ammo:'calibre 12',mal:100,creditMin:40,eraFrom:1902,eraTo:1998,creditVintage:10,imgRev:2},
+  {id:'thompson',cat:'Arma de fogo',name:'Submetralhadora Thompson',q:'Thompson submachine gun',skill:'Armas de Fogo (Metralhadoras)',damage:'1D10+2',range:'20 jardas',rate:'1 ou rajada automática',capacity:20,ammo:'.45',mal:96,creditMin:60,eraFrom:1921,eraTo:1945,creditVintage:20,imgRev:2,caution:'Arma automática rara e normalmente indisponível a civis; confirme a disponibilidade com o Guardião.',notes:'Inclui carregador de 20 cartuchos na configuração de referência.'},
   {id:'crossbow',cat:'Arma de fogo',name:'Besta',q:'Crossbow',skill:'Armas de Fogo (Arco)',damage:'1D8+2',range:'50 jardas',rate:'1 a cada 2 rodadas',capacity:1,ammo:'virote',mal:96},
+  {id:'smithwesson10',cat:'Arma de fogo',name:'Revólver Smith & Wesson Model 10 (.38)',q:'Smith & Wesson Model 10',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.38 Special',mal:100,eraFrom:1899,creditMin:25,creditVintage:10,imgPaths:assetPaths('revólver-modelo-10.svg'),imgTransparent:true,imgRev:1},
+  {id:'coltsa',cat:'Arma de fogo',name:'Revólver Colt Single Action Army (.45)',q:'Colt Single Action Army',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1',capacity:6,ammo:'.45 Colt',mal:100,eraFrom:1873,eraTo:1940,creditMin:30,creditVintage:20,imgPaths:assetPaths('revolver-antigo.svg'),imgTransparent:true,imgRev:1},
+  {id:'m1911model',cat:'Arma de fogo',name:'Pistola Colt M1911 (.45)',q:'Colt M1911',skill:'Armas de Fogo (Pistolas)',damage:'1D10+2',range:'15 jardas',rate:'1 (até 3)',capacity:7,ammo:'.45 ACP',mal:100,creditMin:40,eraFrom:1911,creditVintage:10,imgPaths:assetPaths('pistola-1911.svg'),imgTransparent:true,imgRev:1},
+  {id:'m1carbine',cat:'Arma de fogo',name:'Carabina M1 (.30 Carbine)',q:'M1 carbine',skill:'Armas de Fogo (Rifles)',damage:'2D6',range:'50 jardas',rate:'1 (até 2)',capacity:15,ammo:'.30 Carbine',mal:99,creditMin:50,eraFrom:1942,creditVintage:10,imgPaths:assetPaths('carabina-m1.svg'),imgTransparent:true,imgRev:1},
+  {id:'remington870',cat:'Arma de fogo',name:'Espingarda Remington 870',q:'Remington Model 870',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1',capacity:5,ammo:'calibre 12',mal:100,creditMin:35,eraFrom:1950,imgPaths:assetPaths('espingarda-870.svg'),imgTransparent:true,imgRev:1},
+  {id:'ar15',cat:'Arma de fogo',name:'Rifle AR-15 (.223)',q:'AR-15',skill:'Armas de Fogo (Rifles)',damage:'2D6+4',range:'110 jardas',rate:'1 (até 2)',capacity:20,ammo:'.223 Remington',mal:99,creditMin:55,eraFrom:1959,creditVintage:10,imgPaths:assetPaths('rifle-ar15.svg'),imgTransparent:true,imgRev:1},
+  {id:'glock17',cat:'Arma de fogo',name:'Pistola Glock 17 (9 mm)',q:'Glock 17',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1 (até 3)',capacity:17,ammo:'9 mm',mal:98,creditMin:45,eraFrom:1982,imgPaths:assetPaths('pistola-moderna.svg'),imgTransparent:true,imgRev:1},
+  {id:'ak47',cat:'Arma de fogo',name:'Fuzil AK-47 (7,62 mm)',q:'AK-47',skill:'Armas de Fogo (Rifles)',damage:'2D6+1',range:'100 jardas',rate:'1 ou rajada automática',capacity:30,ammo:'7,62×39 mm',mal:100,creditMin:65,eraFrom:1949,creditVintage:10,caution:'Arma militar de acesso restrito; disponibilidade e posse dependem do cenário e do Guardião.',imgPaths:assetPaths('fuzil-classico.svg'),imgTransparent:true,imgRev:1},
+  {id:'cigarettes',cat:'Geral',name:'Maço de cigarros',q:'Cigarette pack',eraFrom:1880,imgPaths:assetPaths('cigarros.svg'),imgTransparent:true,imgRev:1,notes:'Consumível narrativo; a quantidade e o hábito ficam a critério da mesa.'},
+  {id:'cigar',cat:'Geral',name:'Caixa de charutos',q:'Cigar box',eraFrom:1850,creditMin:15,creditVintage:5,imgPaths:assetPaths('charutos.svg'),imgTransparent:true,imgRev:1},
+  {id:'whiskey',cat:'Geral',name:'Garrafa de uísque',q:'Whiskey bottle',eraFrom:1850,creditMin:10,imgPaths:assetPaths('whisky.svg'),imgTransparent:true,imgRev:1},
+  {id:'flask',cat:'Geral',name:'Frasco de bolso',q:'Hip flask',eraFrom:1850,creditMin:10,creditVintage:10,imgPaths:assetPaths('frasco-bolso.svg'),imgTransparent:true,imgRev:1},
+  {id:'beer',cat:'Geral',name:'Garrafa de cerveja',q:'Beer bottle',eraFrom:1850,creditMin:5,imgPaths:assetPaths('cerveja.svg'),imgTransparent:true,imgRev:1},
+  {id:'lighter',cat:'Geral',name:'Isqueiro de bolso',q:'Zippo lighter',eraFrom:1933,creditMin:10,imgPaths:assetPaths('isqueiro.svg'),imgTransparent:true,imgRev:1},
   {id:'club',cat:'Arma corpo a corpo',name:'Cassetete / porrete pequeno',q:'Baton (law enforcement)',imgPaths:['equip-images/small-club.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/small-club.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/small-club.png?v=20261010','small-club.png?v=20261010'],imgRev:4,skill:'Lutar (Brigar)',damage:'1D6 + BD',range:'Toque'},
   {id:'baseballbat',cat:'Arma corpo a corpo',name:'Porrete grande / taco',q:'Baseball bat',skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'},
   {id:'brassknuckles',cat:'Arma corpo a corpo',name:'Soco-inglês',q:'Brass knuckles',skill:'Lutar (Brigar)',damage:'1D3+1 + BD',range:'Toque'},
@@ -93,10 +108,29 @@
   const defaults={'Armas de Fogo (Pistolas)':20,'Armas de Fogo (Rifles)':25,'Armas de Fogo (Arco)':15,'Armas de Fogo (Metralhadoras)':10,'Lutar (Brigar)':25,'Lutar (Machado)':15,'Lutar (Chicote)':5,'Arremessar':20,'Primeiros Socorros':30,'Medicina':1,'Psicologia':10,'Dirigir Auto':20};
   return p.sk&&p.sk[skill]!=null?(+p.sk[skill]||0):(defaults[skill]||0);
  }
+ function yearOf(p){const y=Number(p&&p.equipmentYear);return Number.isInteger(y)&&y>=1&&y<=9999?y:1920}
+ function periodState(p,item){
+  const source=CATALOG.find(x=>x.id===item.id)||{},from=item.eraFrom??source.eraFrom,to=item.eraTo??source.eraTo,year=yearOf(p);
+  if(from&&year<from)return{state:'future',message:`Ainda não existia em ${year}; só passa a existir a partir de ${from}.`};
+  if(to&&year>to)return{state:'retired',message:`Saiu de linha por volta de ${to}; em ${year} pode ser difícil de encontrar e custar mais.`};
+  return{state:'available',message:''};
+ }
+ function suggestedCredit(p,item){
+  const source=CATALOG.find(x=>x.id===item.id)||{},base=+((item.creditMin??source.creditMin)||0),period=periodState(p,item);
+  let required=base;
+  if(period.state==='retired')required+=+((item.creditVintage??source.creditVintage)||10);
+  const owned=item.id?ensure(p).filter(x=>x.id===item.id).reduce((sum,x)=>sum+Math.max(0,+x.quantity||0),0):0;
+  const qty=item.id?owned+(item.uid?0:Math.max(0,+item.quantity||1)):Math.max(0,+item.quantity||1),isGun=(item.kind||kindOf(item.cat||source.cat))==='firearm';
+  const extra=qty>(isGun?1:5)?Math.min(20,Math.ceil((qty-(isGun?1:5))/(isGun?1:5))*5):0;
+  required=Math.max(0,required+extra);
+  return{required,base,extra,period};
+ }
  function warnings(p,item){
   const out=[];
+  const creditRule=suggestedCredit(p,item),period=creditRule.period;
+  if(period.state!=='available')out.push(period.message);
   if(item.skill&&item.warnSkill!==false){const val=skillValue(p,item.skill);if(val<30)out.push(`Perícia ${item.skill}: ${val}%. É uma chance baixa; usar este item pode ser arriscado.`)}
-  if(+item.creditMin>0){const credit=skillValue(p,'Nível de Crédito');if(credit<+item.creditMin)out.push(`Nível de Crédito ${credit}% está abaixo do patamar sugerido de ${+item.creditMin}% para este item. Converse com o Guardião ou acrescente uma justificativa narrativa à backstory; você ainda pode escolhê-lo.`)}
+  if(creditRule.required>0){const credit=skillValue(p,'Nível de Crédito');if(credit<creditRule.required){const reason=creditRule.extra?' A quantidade também eleva a referência.':period.state==='retired'&&creditRule.required>creditRule.base?' A raridade pode elevar a referência.':'';out.push(`Nível de Crédito ${credit}% está abaixo da referência narrativa de ${creditRule.required}% para este item.${reason} Converse com o Guardião ou acrescente uma justificativa à backstory; você ainda pode escolhê-lo.`)}}
   if(item.caution)out.push(item.caution);
   return out;
  }
@@ -228,7 +262,7 @@
  }
 
  /* ---------- seletor de itens (cartões) ---------- */
- const DEFAULT_DET='Passe o mouse (ou foque) sobre um item para ver os detalhes. Imagens de referência buscadas na Wikipédia.';
+ const DEFAULT_DET='Os itens fora de época continuam selecionáveis. Consulte os avisos e combine exceções com o Guardião.';
  let dlg,q,grid,chips,bar,det,io,pk=null;
  const shortSkill=s=>String(s||'').replace(/^Armas de Fogo \((.*)\)$/,'Fogo · $1').replace(/^Lutar \((.*)\)$/,'Lutar · $1');
  function describe(t){
@@ -278,13 +312,14 @@
   return CATALOG.filter(x=>(!pk.cat||x.cat===pk.cat)&&(!t||norm([x.name,x.cat,x.skill,x.damage,x.ammo,x.notes].filter(Boolean).join(' ')).includes(t)))
    .sort((a,b)=>CATS.indexOf(a.cat)-CATS.indexOf(b.cat));
  }
- function cardHtml(t,i,have){
+ function cardHtml(t,i,have,p){
   const tags=[];
   if(t.skill)tags.push(shortSkill(t.skill));
   if(t.damage)tags.push('Dano '+t.damage);
   if(t.capacity)tags.push(t.capacity+(t.capacity===1?' tiro':' tiros'));
   if(t.uses)tags.push(t.uses+' usos');
-  return`<button type="button" class="opk-card eqk-card" role="option" aria-selected="false" data-v="${esc(t.id)}" data-d="${esc(describe(t))}" style="--d:${Math.min(i,24)*14}ms"><span class="eqk-img" data-eqk-img><span class="eq-ph" aria-hidden="true">${icon(t)}</span></span><span class="eqk-body"><span class="oname">${esc(t.name)}</span><span class="os">${esc(t.cat)}</span>${tags.length?`<span class="ot">${tags.slice(0,3).map(x=>`<i>${esc(x)}</i>`).join('')}</span>`:''}</span>${have?`<span class="eqk-have" title="Já está na ficha">✔ ×${have}</span>`:''}</button>`;
+  const era=periodState(p,t),stateClass=era.state==='available'?'':` eqk-${era.state}`;
+  return`<button type="button" class="opk-card eqk-card${stateClass}" role="option" aria-selected="false" data-v="${esc(t.id)}" data-d="${esc(describe(t)+' · '+(era.message||`Disponível em ${yearOf(p)}`))}" style="--d:${Math.min(i,24)*14}ms"><span class="eqk-img${t.imgTransparent?' transparent':''}" data-eqk-img><span class="eq-ph" aria-hidden="true">${icon(t)}</span></span><span class="eqk-body"><span class="oname">${esc(t.name)}</span><span class="os">${esc(t.cat)}</span>${era.state!=='available'?`<span class="eqk-era">${era.state==='retired'?'Saiu de linha · difícil de achar':'Ainda não existia nesta época'}</span>`:''}${tags.length?`<span class="ot">${tags.slice(0,3).map(x=>`<i>${esc(x)}</i>`).join('')}</span>`:''}</span>${have?`<span class="eqk-have" title="Já está na ficha">✔ ×${have}</span>`:''}</button>`;
  }
  function renderGrid(keepScroll){
   if(!pk)return;
@@ -293,14 +328,14 @@
   const sections=!pk.cat&&new Set(list.map(x=>x.cat)).size>1;
   for(const t of list){
    if(sections&&t.cat!==last){html+=`<h5 class="eqk-sec">${ICON[t.cat]} ${esc(t.cat)}</h5>`;last=t.cat}
-   html+=cardHtml(t,i++,owned.filter(x=>x.id===t.id).length);
+   html+=cardHtml(t,i++,owned.filter(x=>x.id===t.id).length,pk.p);
   }
   grid.innerHTML=html||'<p class="opk-none">Nada encontrado. Tente outra palavra ou outra categoria.</p>';
   grid.scrollTop=top;
   if(io)io.disconnect();
   io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){io&&io.unobserve(en.target);loadCardImg(en.target)}}),{root:grid,rootMargin:'160px'});
   grid.querySelectorAll('.eqk-card').forEach(c=>io.observe(c));
-  det.textContent=pk.flash?`✔ ${pk.flash} adicionado à ficha. Escolha outro item ou feche a janela.`:DEFAULT_DET;
+  det.textContent=pk.flash?`✔ ${pk.flash} adicionado à ficha. Escolha outro item ou feche a janela.`:`${yearOf(pk.p)} · Os itens fora de época aparecem esmaecidos, mas não ficam bloqueados.`;
  }
  async function loadCardImg(card){
   const t=CATALOG.find(x=>x.id===card.dataset.v),box=card.querySelector('[data-eqk-img]');if(!t||!box)return;
@@ -346,7 +381,7 @@
   return`<label>Descrição<input name="description" placeholder="O que é e para que serve"></label>`;
  }
  function itemHtml(p,item){
-  const warn=warnings(p,item),isGun=item.kind==='firearm';
+  const warn=warnings(p,item),isGun=item.kind==='firearm',era=periodState(p,item),eraClass=era.state==='available'?'':` ${era.state}`;
   const skill=item.skill?`<span><b>Perícia</b> ${esc(item.skill)} (${skillValue(p,item.skill)}%)</span>`:'';
   const weaponDetails=(item.damage?`<span><b>Dano</b> ${esc(item.damage)}</span>`:'')+(item.range?`<span><b>Alcance</b> ${esc(item.range)}</span>`:'')+(item.rate?`<span><b>Ataques</b> ${esc(item.rate)}/rodada</span>`:'')+(item.mal!=null?`<span><b>Falha</b> ${esc(item.mal)}</span>`:'');
   const ammo=isGun?`<div class="eq-ammo"><span>Munição ${esc(item.ammo||'')}</span><label>Na arma <input type="number" min="0" max="9999" value="${+item.loaded||0}" data-eq-field="loaded" data-eq-id="${esc(item.uid)}"> / ${+item.capacity||0}</label><button type="button" data-eq-action="shot" data-eq-id="${esc(item.uid)}" title="Gastar uma bala">−1</button><label>Reserva <input type="number" min="0" max="9999" value="${+item.reserve||0}" data-eq-field="reserve" data-eq-id="${esc(item.uid)}"></label><button type="button" data-eq-action="reload" data-eq-id="${esc(item.uid)}" ${(+item.reserve||0)<1||(+item.loaded||0)>=(+item.capacity||0)?'disabled':''}>Recarregar</button><button type="button" data-eq-action="reserve" data-eq-id="${esc(item.uid)}" title="Adicionar 10 cartuchos à reserva">+10 reserva</button></div>`:'';
@@ -354,13 +389,13 @@
   const uses=item.kind==='healing'?`<div class="eq-uses"><label>Usos <input type="number" min="0" max="9999" value="${+item.uses||0}" data-eq-field="uses" data-eq-id="${esc(item.uid)}"></label><button type="button" data-eq-action="use" data-eq-id="${esc(item.uid)}">−1 uso</button></div>`:'';
   const note=item.notes?`<p class="eq-note">${esc(item.notes)}</p>`:'';
   const warning=warn.length?`<div class="eq-warning" role="status">⚠ ${warn.map(esc).join(' ')}</div>`:'';
-  return`<article class="eq-item" data-eq-item="${esc(item.uid)}">${thumbHtml(item)}<div class="eq-main"><div class="eq-item-head"><div><strong>${esc(item.name||'Item sem nome')}</strong><span class="eq-kind">${esc(item.cat||'Geral')}</span></div><button type="button" class="eq-remove danger" data-eq-action="remove" data-eq-id="${esc(item.uid)}" title="Remover item" aria-label="Remover ${esc(item.name)}">×</button></div><div class="eq-meta"><label>Qtd. <input type="number" min="0" max="9999" value="${+item.quantity||0}" data-eq-field="quantity" data-eq-id="${esc(item.uid)}"></label>${skill}${weaponDetails}${item.protection?`<span><b>Efeito</b> ${esc(item.protection)}</span>`:''}</div>${ammo}${uses}${extra?`<div class="eq-meta">${extra}</div>`:''}${note}${warning}</div></article>`;
+  return`<article class="eq-item${eraClass}" data-eq-item="${esc(item.uid)}">${thumbHtml(item)}<div class="eq-main"><div class="eq-item-head"><div><strong>${esc(item.name||'Item sem nome')}</strong><span class="eq-kind">${esc(item.cat||'Geral')}</span>${era.state!=='available'?`<span class="eq-era-label">${era.state==='retired'?'Fora de linha':'Fora de época'}</span>`:''}</div><button type="button" class="eq-remove danger" data-eq-action="remove" data-eq-id="${esc(item.uid)}" title="Remover item" aria-label="Remover ${esc(item.name)}">×</button></div><div class="eq-meta"><label>Qtd. <input type="number" min="0" max="9999" value="${+item.quantity||0}" data-eq-field="quantity" data-eq-id="${esc(item.uid)}"></label>${skill}${weaponDetails}${item.protection?`<span><b>Efeito</b> ${esc(item.protection)}</span>`:''}</div>${ammo}${uses}${extra?`<div class="eq-meta">${extra}</div>`:''}${note}${warning}</div></article>`;
  }
  function render(p,i){
-  const list=ensure(p),catOpts=CATS.map(c=>`<option>${c}</option>`).join('');
+  const list=ensure(p),catOpts=CATS.map(c=>`<option>${c}</option>`).join(''),year=yearOf(p);
   const items=list.length?list.map(item=>itemHtml(p,item)).join(''):'<p class="eq-empty">Ainda não há equipamentos. Use “Adicionar equipamento” para escolher no catálogo ou crie um item personalizado.</p>';
   const skillsId=`eqSkills-${i}`;
-  return`<section class="eq-panel" data-eq-panel data-i="${i}"><div class="eq-intro"><b>Equipamentos do investigador</b><span>Itens, armas e controle de munição ficam salvos nesta ficha.</span></div><div class="eq-add-row"><button type="button" data-eq-action="open-picker">＋ Adicionar equipamento</button><button type="button" class="alt" data-eq-action="open-custom">✍ Personalizado</button></div><datalist id="${skillsId}">${SKILLS.map(s=>`<option value="${esc(s)}">`).join('')}</datalist><form class="eq-custom" hidden><div class="eq-custom-head"><b>Novo equipamento</b><button type="button" class="alt" data-eq-action="cancel-custom">Cancelar</button></div><div class="eq-custom-grid"><label>Categoria<select name="category" data-eq-custom-category>${catOpts}</select></label><label class="eq-wide">Nome<input name="name" maxlength="90" required placeholder="Nome do item"></label><label>Quantidade<input type="number" name="quantity" min="0" value="1"></label><div class="eq-dynamic-fields" data-eq-custom-fields></div><label>Nível de Crédito sugerido<input type="number" name="creditMin" min="0" max="99" placeholder="Opcional"><small>Use apenas se o acesso ao item for restrito; deixe vazio para não avisar.</small></label><label class="eq-wide">Imagem (URL, opcional)<input type="url" name="img" placeholder="https://… — vazio: busca automática pelo nome"></label><label class="eq-wide">Observações<textarea name="notes" rows="2" maxlength="300" placeholder="Regras combinadas, origem ou explicação narrativa"></textarea></label></div><div class="eq-custom-actions"><button type="button" data-eq-action="save-custom">Adicionar item</button></div></form><div class="eq-list">${items}</div><p class="eq-footnote">Avisos de perícia baixa e restrições especiais são orientativos. Converse com o Guardião ou explique a escolha no histórico; o sistema não bloqueia equipamentos nem aplica cura ou dano automaticamente. Imagens de referência: Wikipédia.</p></section>`;
+  return`<section class="eq-panel" data-eq-panel data-i="${i}"><div class="eq-intro"><b>Equipamentos do investigador</b><span>Itens, armas e controle de munição ficam salvos nesta ficha.</span></div><div class="eq-era-control"><label for="eq-year-${i}">Época do cenário</label><select id="eq-year-${i}" data-eq-year data-i="${i}">${EQUIPMENT_YEARS.map(y=>`<option value="${y}"${y===year?' selected':''}>${y}</option>`).join('')}<option value="custom"${EQUIPMENT_YEARS.includes(year)?'':' selected'}>Outro ano…</option></select><input type="number" min="1" max="9999" value="${year}" data-eq-year-custom data-i="${i}" aria-label="Ano personalizado" ${EQUIPMENT_YEARS.includes(year)?'hidden':''}></div><div class="eq-add-row"><button type="button" data-eq-action="open-picker">＋ Adicionar equipamento</button><button type="button" class="alt" data-eq-action="open-custom">✍ Personalizado</button></div><details class="eq-help"><summary>Ajuda: época, crédito e quantidade</summary><p>O ano escolhido muda os avisos de disponibilidade: itens que ainda não existiam ou saíram de linha continuam no catálogo e podem ser adicionados, mas podem exigir justificativa ou negociação com o Guardião. Modelos raros podem elevar a referência de Crédito; uma arma aposentada pode valer menos como excedente ou mais como peça de coleção. A partir da segunda arma igual, cada arma adicional acrescenta 5 pontos à referência; itens comuns começam a receber acréscimo por grupo de cinco unidades depois das cinco primeiras. Nenhum aviso bloqueia a escolha: a mesa decide o que faz sentido para o personagem e a época.</p></details><datalist id="${skillsId}">${SKILLS.map(s=>`<option value="${esc(s)}">`).join('')}</datalist><form class="eq-custom" hidden><div class="eq-custom-head"><b>Novo equipamento</b><button type="button" class="alt" data-eq-action="cancel-custom">Cancelar</button></div><div class="eq-custom-grid"><label>Categoria<select name="category" data-eq-custom-category>${catOpts}</select></label><label class="eq-wide">Nome<input name="name" maxlength="90" required placeholder="Nome do item"></label><label>Quantidade<input type="number" name="quantity" min="0" value="1"></label><div class="eq-dynamic-fields" data-eq-custom-fields></div><label>Nível de Crédito sugerido<input type="number" name="creditMin" min="0" max="99" placeholder="Opcional"><small>Use apenas se o acesso ao item for restrito; deixe vazio para não avisar.</small></label><label class="eq-wide">Imagem (URL, opcional)<input type="url" name="img" placeholder="https://… — vazio: busca automática pelo nome"></label><label class="eq-wide">Observações<textarea name="notes" rows="2" maxlength="300" placeholder="Regras combinadas, origem ou explicação narrativa"></textarea></label></div><div class="eq-custom-actions"><button type="button" data-eq-action="save-custom">Adicionar item</button></div></form><div class="eq-list">${items}</div><p class="eq-footnote">As ilustrações locais têm fundo transparente; as imagens de referência externas podem variar.</p></section>`;
  }
  function refreshWarnings(p,root){
   if(!root)return;
@@ -374,7 +409,7 @@
  }
  const addConfirmation=(p,item)=>warnings(p,item);
  function customData(form){const val=n=>form.elements[n]?form.elements[n].value:'';return{category:val('category'),name:val('name'),quantity:val('quantity'),creditMin:val('creditMin'),notes:[val('notes'),val('description')].filter(Boolean).join(' · '),skill:val('skill'),damage:val('damage'),range:val('range'),rate:val('rate'),ammo:val('ammo'),capacity:val('capacity'),reserve:val('reserve'),mal:val('mal'),effect:val('effect'),uses:val('uses'),img:val('img')}}
- function pdfRows(p){return ensure(p).map(x=>({name:x.name||'Item',category:x.cat||'Geral',quantity:+x.quantity||0,detail:[x.skill&&`Perícia ${x.skill} (${skillValue(p,x.skill)}%)`,x.damage&&`dano ${x.damage}`,x.range&&`alcance ${x.range}`,x.kind==='firearm'&&`munição ${+x.loaded||0}/${+x.capacity||0} + ${+x.reserve||0} reserva`,x.kind==='firearm'&&x.ammo&&`calibre ${x.ammo}`,x.kind==='healing'&&x.effect&&`efeito ${x.effect}`,x.kind==='healing'&&`usos ${+x.uses||0}`,x.protection&&`efeito ${x.protection}`,x.notes].filter(Boolean).join(' · ')}))}
+ function pdfRows(p){return ensure(p).map(x=>{const source=CATALOG.find(t=>t.id===x.id)||{},era=periodState(p,x),credit=suggestedCredit(p,x);return{name:x.name||'Item',category:x.cat||'Geral',quantity:+x.quantity||0,image:x.img||localImagePaths(x)[0]||localImagePaths(source)[0]||'',detail:[x.skill&&`Perícia ${x.skill} (${skillValue(p,x.skill)}%)`,x.damage&&`dano ${x.damage}`,x.range&&`alcance ${x.range}`,x.kind==='firearm'&&`munição ${+x.loaded||0}/${+x.capacity||0} + ${+x.reserve||0} reserva`,x.kind==='firearm'&&x.ammo&&`calibre ${x.ammo}`,x.kind==='healing'&&x.effect&&`efeito ${x.effect}`,x.kind==='healing'&&`usos ${+x.uses||0}`,era.state!=='available'&&era.message,credit.required>0&&`Nível de Crédito sugerido ${credit.required}%`,x.protection&&`efeito ${x.protection}`,x.notes].filter(Boolean).join(' · ')}})}
  function plainText(p){const rows=pdfRows(p);return rows.length?'\nEquipamentos:\n'+rows.map(x=>`- ${x.quantity}× ${x.name} [${x.category}]${x.detail?' — '+x.detail:''}`).join('\n'):''}
 
  /* ---------- ligação com a página (sem depender de alterações no index.html) ---------- */
@@ -398,5 +433,5 @@
  });
  addEventListener('online',()=>{failed.clear();scheduleHydrate()});
 
- window.CthEquipment={catalog:CATALOG,categories:cats,ensure,find,render,addCatalog,addCustom,buildCustom,customFields,customData,warnings,addConfirmation,refreshWarnings,skillValue,pdfRows,plainText,openPicker,hydrate,cycleImage};
+ window.CthEquipment={catalog:CATALOG,categories:cats,ensure,find,render,addCatalog,addCustom,buildCustom,customFields,customData,warnings,addConfirmation,refreshWarnings,skillValue,pdfRows,plainText,openPicker,hydrate,cycleImage,yearOf,periodState,suggestedCredit};
 })();
