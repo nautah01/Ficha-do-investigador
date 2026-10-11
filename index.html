@@ -141,11 +141,12 @@ body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-
 .atmo .tent.tl{left:-1.5vw}
 .atmo .tent.tr{right:-1.5vw;transform:scaleX(-1)}
 .atmo .fog{position:absolute;left:0;bottom:0;width:200%;height:50vh;background-repeat:repeat-x;background-size:50% 100%;will-change:transform,opacity;filter:blur(13px);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 14%,#000 76%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 14%,#000 76%,transparent 100%)}
-.atmo .fog.f1{height:62vh;animation:drift 22s ease-in-out infinite,fogBreath 7s ease-in-out infinite alternate;
+.atmo .fog.f1{height:62vh;animation:fogDriftLeft 34s linear infinite,fogBreath 7s ease-in-out infinite alternate;
  background-image:linear-gradient(180deg,transparent 0%,rgba(var(--glow),.045) 30%,rgba(var(--glow),.12) 68%,rgba(var(--glow),.045) 100%),radial-gradient(ellipse 115% 58% at 50% 62%,rgba(var(--glow),.23) 0%,rgba(var(--glow),.105) 48%,transparent 100%),radial-gradient(ellipse 42% 38% at 0% 58%,rgba(var(--glow),.13),transparent 100%),radial-gradient(ellipse 42% 38% at 100% 58%,rgba(var(--glow),.13),transparent 100%),radial-gradient(ellipse 58% 36% at 50% 84%,rgba(var(--glow),.13),transparent 100%)}
-.atmo .fog.f2{height:46vh;animation:drift 16s ease-in-out infinite reverse,fogBreath 9s ease-in-out infinite alternate-reverse;
+.atmo .fog.f2{height:46vh;animation:fogDriftRight 27s linear infinite,fogBreath 9s ease-in-out infinite alternate-reverse;
  background-image:linear-gradient(180deg,transparent 0%,rgba(var(--glow),.035) 28%,rgba(var(--glow),.1) 70%,rgba(var(--glow),.035) 100%),radial-gradient(ellipse 120% 62% at 50% 60%,rgba(var(--glow),.2) 0%,rgba(var(--glow),.09) 52%,transparent 100%),radial-gradient(ellipse 38% 42% at 0% 66%,rgba(var(--glow),.12),transparent 100%),radial-gradient(ellipse 38% 42% at 100% 66%,rgba(var(--glow),.12),transparent 100%),radial-gradient(ellipse 54% 38% at 50% 42%,rgba(var(--glow),.11),transparent 100%)}
-@keyframes drift{0%{transform:translate3d(0,0,0)}25%{transform:translate3d(-12.5%,-20px,0)}50%{transform:translate3d(-25%,-38px,0)}75%{transform:translate3d(-37.5%,-18px,0)}100%{transform:translate3d(-50%,0,0)}}
+@keyframes fogDriftLeft{0%{transform:translate3d(0,0,0)}25%{transform:translate3d(-12.5%,-16px,0)}50%{transform:translate3d(-25%,-28px,0)}75%{transform:translate3d(-37.5%,-14px,0)}100%{transform:translate3d(-50%,0,0)}}
+@keyframes fogDriftRight{0%{transform:translate3d(-50%,0,0)}25%{transform:translate3d(-37.5%,14px,0)}50%{transform:translate3d(-25%,26px,0)}75%{transform:translate3d(-12.5%,12px,0)}100%{transform:translate3d(0,0,0)}}
 @keyframes fogBreath{from{opacity:.78}to{opacity:1}}
 /* título: uma única falha de lamparina ao carregar */
 h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28);animation:lamp 2.4s ease-out 1}
