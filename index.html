@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Gerador de Investigadores — Chamado de Cthulhu 7e</title>
+<title>Criador de Investigadores — Chamado de Cthulhu 7e</title>
 <style>
 :root{--gold:#a88b4a;--felt:#08100f;--felt2:#040a0a;
  --card:#0d1e1c;--txt:#e6dcc3;--muted:#9fb0a3;--head:#d8c58a;--rule:rgba(216,197,138,.4);--line:rgba(168,139,74,.3);
@@ -77,6 +77,14 @@ button.alt:hover{background:rgba(var(--gr),.12)}
 .clip{width:18px;height:28px;border:2px solid var(--gold);border-bottom:none;border-radius:4px 4px 0 0;background:linear-gradient(var(--tab1),var(--tab2));box-shadow:0 2px 0 var(--tab3);margin-top:-18px}
 h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid var(--rule);font-variant:small-caps}
 .sub{color:var(--muted);font-size:.85rem}
+.character-portrait{display:flex;align-items:center;gap:12px;margin:10px 0 12px;padding:8px;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.05)}
+.portrait-preview{width:62px;height:76px;flex:0 0 62px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--gold);border-radius:4px;background:var(--field);color:var(--muted2);font-size:.68rem;text-align:center}
+.portrait-preview img{display:block;width:100%;height:100%;object-fit:cover}
+.portrait-controls{display:flex;flex-wrap:wrap;align-items:center;gap:7px}
+.portrait-upload,.portrait-remove{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:5px 10px;border:1px solid var(--gold);border-radius:4px;background:var(--k4);color:var(--btnt);font:inherit;font-size:.8rem;cursor:pointer}
+.portrait-upload input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.portrait-remove{border-color:rgba(253,186,116,.5);background:transparent;color:var(--warn2)}
+.portrait-controls small{flex-basis:100%;color:var(--muted);font-size:.72rem}
 .in{width:54px;text-align:center;border:1px solid var(--line);background:var(--field);color:var(--field-ink);padding:2px 4px;font:inherit;font-size:.85rem;border-radius:3px}
 .in:focus{outline:2px solid var(--head);background:var(--k3)}
 .nm{font-size:1.12rem;font-weight:bold;width:62%;color:var(--head);background:transparent;border:none;border-bottom:1px solid var(--line);border-radius:0;text-align:left}
@@ -138,6 +146,9 @@ body.mobile #desk h2 .in.nm{font-size:18px!important}
 body.mobile #desk .stats{gap:6px}
 body.mobile #desk .stats .in{width:100%;max-width:64px}
 body.mobile #desk .sk{grid-template-columns:1fr}
+body.mobile #desk .character-portrait{align-items:flex-start}
+body.mobile #desk .portrait-controls{gap:6px}
+body.mobile #desk .portrait-upload,body.mobile #desk .portrait-remove{min-height:40px}
 body.mobile #desk .sk>span{padding:3px 0}
 body.mobile #desk .der{gap:8px 10px}
 body.mobile #desk button.rmb{padding:4px 10px;font-size:.85rem}
@@ -174,7 +185,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 </style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><script src="equipment.js"></script></head><body>
 <button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <div class="top">
-<h1>Gerador de Investigadores</h1>
+<h1>Criador de Investigadores</h1>
 <p class="tag">Chamado de Cthulhu 7ª ed. · Década de 1920</p>
 <p class="quote">“O mais misericordioso no mundo é a incapacidade da mente humana de correlacionar todos os seus conteúdos.” — H. P. Lovecraft</p>
 <div class="bar" id="panel">
@@ -573,6 +584,7 @@ function body(p,i){
  return`<div class="badge"><span class="ed" ${p.edit?'':'hidden'}>✎ Ficha editada</span></div>
   <div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub"><input class="in nm" style="width:48%;font-size:.85rem;font-weight:normal" data-i="${i}" data-k="n:occ" placeholder="Ocupação" value="${esc(p.occ)}"> · <input class="in" data-i="${i}" data-k="n:idade" placeholder="idade" value="${esc(p.idade)}"> anos${p.sec?` · <small>+ ${esc(p.sec)}</small>`:''}</div>
+  <div class="character-portrait"><div class="portrait-preview">${p.portrait?`<img src="${esc(p.portrait)}" alt="Aparência de ${esc(p.nome||'investigador')}">`:'Sem imagem'}</div><div class="portrait-controls"><label class="portrait-upload">${p.portrait?'Trocar imagem':'Adicionar aparência'}<input type="file" accept="image/*" data-portrait-file data-i="${i}" aria-label="Escolher imagem do personagem"></label>${p.portrait?`<button type="button" class="portrait-remove" data-remove-portrait data-i="${i}">Remover imagem</button>`:''}<small>A imagem também será enviada ao cemitério e incluída no PDF.</small></div></div>
   <div class="stats">${st}</div><div class="der">${d}</div>
    <h3 class="st">Histórico</h3><div class="hist">${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}</div>`).join('')}${crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b> <small>${esc(crRangeTxt(p))}</small></div>`:''}<textarea class="in bk" rows="3" data-i="${i}" data-k="n:back" placeholder="Backstory: quem é, de onde vem, o que já viu…">${esc(p.back||'')}</textarea></div>
   <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}${mobileActions}`;
@@ -658,6 +670,7 @@ async function approveEquipment(p,item){
  return askConfirm({title:'Confira este equipamento',html,ok:'Adicionar mesmo assim',danger:false});
 }
 desk.addEventListener('click',e=>{
+ const removePortrait=e.target.closest('[data-remove-portrait]');if(removePortrait){const p=cur[+removePortrait.dataset.i];if(p){delete p.portrait;p.edit=true;draw();persist()}return}
  const i=e.target.closest('[data-i]');
  const idx=i?+i.dataset.i:NaN;
  const tab=e.target.closest('[data-sheet-tab]');if(tab){const k=+tab.closest('.win').dataset.i;cur[k].ui.tab=tab.dataset.sheetTab==='equipment'?'equipment':'sheet';draw();return}
@@ -704,6 +717,17 @@ desk.addEventListener('click',e=>{
  if(e.target.closest('.colb')){const p=cur[idx];p.ui.collapsed=!p.ui.collapsed;draw();return}
  if(e.target.closest('.pinb')){const p=cur[idx];p.pinned=!p.pinned;draw();return}
  if(e.target.closest('.dupb')){const p=JSON.parse(JSON.stringify(cur[idx]));p.pinned=false;p.ui={...p.ui,x:(p.ui.x||0)+28,y:(p.ui.y||0)+28,z:++zTop,collapsed:false};p.nome=p.nome.replace(/ \(cópia\)$/,'')+' (cópia)';if(!cur[idx].nome)p.nome='';cur.push(p);draw();return}
+});
+async function shrinkPortrait(file){
+ const image=await createImageBitmap(file),scale=Math.min(1,640/Math.max(image.width,image.height)),canvas=document.createElement('canvas');
+ canvas.width=Math.max(1,Math.round(image.width*scale));canvas.height=Math.max(1,Math.round(image.height*scale));canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
+ return canvas.toDataURL('image/jpeg',.86);
+}
+desk.addEventListener('change',async e=>{
+ const input=e.target.closest('[data-portrait-file]');if(!input)return;
+ const p=cur[+input.dataset.i],file=input.files&&input.files[0];input.value='';if(!p||!file)return;
+ if(!file.type.startsWith('image/')){alert('Escolha um arquivo de imagem.');return}
+ try{p.portrait=await shrinkPortrait(file);p.edit=true;draw();persist()}catch(_){alert('Não foi possível abrir essa imagem.')}
 });
 desk.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset.add==='n'){const b=e.target.parentElement.querySelector('.addb');(b.dataset.m?addMain:addSkill)(+b.dataset.i,e.target.parentElement)}});
 desk.addEventListener('change',e=>{
@@ -779,7 +803,7 @@ function placeNew(p,i,anchors){
  p.ui={x,y,w:520,z:++zTop,collapsed:false};
 }
 /* cemitério: arraste a ficha até o botão do cemitério no painel; ela só sai da mesa depois de confirmar */
-function buryFicha(i){const p=cur[i];if(!p||!window.Cemiterio)return;Cemiterio.add({nome:p.nome,idade:p.idade},()=>{const k=cur.indexOf(p);if(k>=0){cur.splice(k,1);draw()}})}
+function buryFicha(i){const p=cur[i];if(!p||!window.Cemiterio)return;Cemiterio.add({nome:p.nome,idade:p.idade,foto:p.portrait||''},()=>{const k=cur.indexOf(p);if(k>=0){cur.splice(k,1);draw()}})}
 function go(){
  const q=Math.max(1,Math.min(8,+document.getElementById('qty').value||1));
  const kept=cur.filter(p=>p.pinned);
@@ -849,12 +873,24 @@ function pdfSkillColumns(doc,p,items,title,y,C){
  });
  return startY+Math.max(...heights)+5;
 }
-function pdfInvestigator(doc,p,C){
- pdfFrame(doc,C);const W=doc.internal.pageSize.getWidth(),right=W-36;
- let y=55;pdfText(doc,p.nome||'Investigador',39,y,20,C.head,'bold');
- doc.setDrawColor(...C.line);doc.setLineWidth(.7);doc.line(39,y+8,right,y+8);y+=25;
+async function pdfInvestigator(doc,p,C){
+ pdfFrame(doc,C);const W=doc.internal.pageSize.getWidth(),right=W-36,portrait=await pdfImageData(p.portrait);
+ const textRight=portrait?right-72:right;let y;
+ if(portrait){
+  const box={x:right-58,y:39,w:48,h:62};doc.setFillColor(...C.panel);doc.setDrawColor(...C.gold);doc.setLineWidth(.55);doc.roundedRect(box.x,box.y,box.w,box.h,3,3,'FD');
+  const scale=Math.min((box.w-4)/portrait.width,(box.h-4)/portrait.height),w=portrait.width*scale,h=portrait.height*scale;
+  doc.addImage(portrait.data,'PNG',box.x+(box.w-w)/2,box.y+(box.h-h)/2,w,h,undefined,'FAST');
+  pdfCentered(doc,'Aparência',box.x+box.w/2,box.y+box.h+10,6.5,C.muted,'normal');
+ }
  const meta=[p.occ,p.idade!==''?`${p.idade} anos`:'',p.sec?`+ ${p.sec}`:'',p.edit?'ficha editada':''].filter(Boolean).join(' · ');
- y=pdfWrapped(doc,meta,39,y,right-39,9,11,C.muted)+7;
+ if(portrait){
+  y=pdfWrapped(doc,p.nome||'Investigador',39,55,textRight-39,20,22,C.head,'bold')+1;
+  y=pdfWrapped(doc,meta,39,y,textRight-39,9,11,C.muted)+7;y=Math.max(y,116);
+  doc.setDrawColor(...C.line);doc.setLineWidth(.7);doc.line(39,y-3,right,y-3);
+ }else{
+  y=55;pdfText(doc,p.nome||'Investigador',39,y,20,C.head,'bold');doc.setDrawColor(...C.line);doc.setLineWidth(.7);doc.line(39,y+8,right,y+8);y+=25;
+  y=pdfWrapped(doc,meta,39,y,right-39,9,11,C.muted)+7;
+ }
  const attrs=Object.entries(p.c||{}),gap=4,boxW=(right-39-gap*(attrs.length-1))/attrs.length,boxH=55;
  attrs.forEach(([key,value],i)=>{
   const x=39+i*(boxW+gap);doc.setFillColor(...C.panel);doc.setDrawColor(...C.gold);doc.setLineWidth(.55);doc.roundedRect(x,y,boxW,boxH,4,4,'FD');
@@ -942,7 +978,7 @@ async function savePdf(list,b){
   const {jsPDF}=window.jspdf,C=pdfColors(),pdf=new jsPDF({unit:'pt',format:'a4',orientation:'portrait',compress:true});
   for(const [i,p] of list.entries()){
    if(i)pdf.addPage('a4','portrait');
-   const loreStart=pdfInvestigator(pdf,p,C);
+   const loreStart=await pdfInvestigator(pdf,p,C);
    if(String(p.back||'').trim())pdfLore(pdf,p,C,loreStart);
    await pdfEquipment(pdf,p,C);
   }
