@@ -19,9 +19,9 @@
   {id:'binoculars',cat:'Geral',name:'Binóculos',q:'Binoculars',eraFrom:1854,imgPaths:assetPaths('Binoculos.png'),imgTransparent:true,imgRev:5},
   {id:'telescope',cat:'Geral',name:'Telescópio portátil',q:'Refracting telescope',imgPaths:assetPaths('telescopio portatil.png'),imgTransparent:true,imgRev:5},
   {id:'watch',cat:'Geral',name:'Relógio de bolso',q:'Pocket watch',imgPaths:assetPaths('relogio de bolso.png'),imgTransparent:true,imgRev:5},
-  {id:'camera',cat:'Geral',name:'Câmera fotográfica',q:'Kodak Brownie',eraFrom:1888,imgPaths:assetPaths('camera.png'),imgTransparent:true,imgRev:5},
-  {id:'typewriter',cat:'Geral',name:'Máquina de escrever Remington',q:'Typewriter',eraFrom:1870,eraTo:2011,creditMin:25,creditVintage:15,imgPaths:assetPaths('maquina de escrever.png'),imgTransparent:true,imgRev:5},
-  {id:'dictaphone',cat:'Geral',name:'Ditafone',q:'Dictaphone',eraFrom:1907,imgPaths:assetPaths('ditafone.png'),imgTransparent:true,imgRev:5},
+  {id:'camera',cat:'Geral',name:'Câmera fotográfica',q:'Kodak Brownie',eraFrom:1900,imgPaths:assetPaths('camera.png'),imgTransparent:true,imgRev:5},
+  {id:'typewriter',cat:'Geral',name:'Máquina de escrever Remington',q:'Typewriter',eraFrom:1874,eraTo:2011,creditMin:25,creditVintage:15,imgPaths:assetPaths('maquina de escrever.png'),imgTransparent:true,imgRev:5},
+  {id:'dictaphone',cat:'Geral',name:'Ditafone de cilindro de cera',q:'Dictaphone',eraFrom:1907,eraTo:1947,creditMin:25,creditVintage:10,imgPaths:assetPaths('ditafone.png'),imgTransparent:true,imgRev:5},
   {id:'handcuffs',cat:'Geral',name:'Algemas',q:'Handcuff',imgPaths:assetPaths('algemas.png'),imgTransparent:true,imgRev:5},
   {id:'rope',cat:'Geral',name:'Corda (50 pés)',q:'Rope',imgPaths:assetPaths('cordas.png'),imgTransparent:true,imgRev:5},
   {id:'crowbar',cat:'Geral',name:'Pé de cabra',q:'Crowbar',imgPaths:assetPaths('pé de cabra.png'),imgTransparent:true,imgRev:5},
@@ -50,15 +50,15 @@
   {id:'crutches',cat:'Cura',name:'Muletas',q:'Crutch',imgPaths:['equip-images/crutches.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/crutches.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/crutches.png?v=20261010','crutches.png?v=20261010'],imgRev:4},
   {id:'pistol22',cat:'Arma de fogo',name:'Pistola automática .22 Short',q:'Semi-automatic pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'10 jardas',rate:'1 (até 3)',capacity:6,ammo:'.22 Short',mal:100,eraFrom:1900},
   {id:'derringer25',cat:'Arma de fogo',name:'Derringer .25 (cano único)',q:'Derringer',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'3 jardas',rate:'1',capacity:1,ammo:'.25',mal:100,eraFrom:1900,creditMin:15,creditVintage:10},
-  {id:'revolver32',cat:'Arma de fogo',name:'Revólver .32 / 7,65 mm',q:'Colt Police Positive',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.32',mal:100,eraFrom:1900,creditMin:20,creditVintage:10},
-  {id:'auto32',cat:'Arma de fogo',name:'Pistola automática .32 / 7,65 mm',q:'Colt Model 1903 Pocket Hammerless',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:8,ammo:'.32',mal:99,eraFrom:1903,creditMin:30,creditVintage:10},
+  {id:'revolver32',cat:'Arma de fogo',name:'Revólver .32 / 7,65 mm',q:'Colt Police Positive',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.32',mal:100,eraFrom:1905,eraTo:1947,creditMin:20,creditVintage:10},
+  {id:'auto32',cat:'Arma de fogo',name:'Pistola automática .32 / 7,65 mm',q:'Colt Model 1903 Pocket Hammerless',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:8,ammo:'.32',mal:99,eraFrom:1903,eraTo:1946,creditMin:30,creditVintage:15},
   {id:'luger',cat:'Arma de fogo',name:'Pistola Luger P08',q:'Luger pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1 (até 3)',capacity:8,ammo:'9 mm',mal:99,creditMin:40,eraFrom:1908,eraTo:1942,creditVintage:20,imgRev:2},
   {id:'revolver45',cat:'Arma de fogo',name:'Revólver .45',q:'Colt New Service',skill:'Armas de Fogo (Pistolas)',damage:'1D10+2',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.45 Colt',mal:100,creditMin:30,eraFrom:1898,eraTo:1944,creditVintage:20,imgRev:2},
   {id:'auto45',cat:'Arma de fogo',name:'Pistola automática .45',q:'M1911 pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D10+2',range:'15 jardas',rate:'1 (até 3)',capacity:7,ammo:'.45',mal:100,creditMin:40,eraFrom:1911,creditVintage:10,imgRev:2},
   {id:'rifle22',cat:'Arma de fogo',name:'Rifle .22 de ferrolho',q:'Bolt action',skill:'Armas de Fogo (Rifles)',damage:'1D6+1',range:'30 jardas',rate:'1',capacity:6,ammo:'.22 Long Rifle',mal:99,eraFrom:1880},
   {id:'carbine30',cat:'Arma de fogo',name:'Carabina .30 de alavanca',q:'Winchester Model 1894',skill:'Armas de Fogo (Rifles)',damage:'2D6',range:'50 jardas',rate:'1',capacity:6,ammo:'.30',mal:98,eraFrom:1894},
   {id:'leeenfield',cat:'Arma de fogo',name:'Rifle Lee-Enfield .303',q:'Lee–Enfield',skill:'Armas de Fogo (Rifles)',damage:'2D6+4',range:'110 jardas',rate:'1',capacity:10,ammo:'.303',mal:100,eraFrom:1895,eraTo:1957,creditMin:35,creditVintage:-15},
-  {id:'rifle3006',cat:'Arma de fogo',name:'Rifle .30-06 de ferrolho',q:'M1903 Springfield',skill:'Armas de Fogo (Rifles)',damage:'2D6+4',range:'110 jardas',rate:'1',capacity:5,ammo:'.30-06',mal:100,creditMin:40,eraFrom:1903,creditVintage:10,imgRev:2},
+  {id:'rifle3006',cat:'Arma de fogo',name:'Rifle .30-06 de ferrolho',q:'M1903 Springfield',skill:'Armas de Fogo (Rifles)',damage:'2D6+4',range:'110 jardas',rate:'1',capacity:5,ammo:'.30-06',mal:100,creditMin:40,eraFrom:1903,eraTo:1944,creditVintage:15,imgRev:2},
   {id:'elephantgun',cat:'Arma de fogo',name:'Rifle para elefantes (cano duplo)',q:'Double rifle',skill:'Armas de Fogo (Rifles)',damage:'3D6+4',range:'100 jardas',rate:'1 ou 2',capacity:2,ammo:'calibre pesado',mal:100,creditMin:60,eraFrom:1850,creditVintage:15,imgRev:2},
   {id:'shotgun12',cat:'Arma de fogo',name:'Espingarda calibre 12 (cano duplo)',q:'Double-barreled shotgun',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1 ou 2',capacity:2,ammo:'calibre 12',mal:100,eraFrom:1870},
   {id:'shotgun12auto',cat:'Arma de fogo',name:'Espingarda calibre 12 semiautomática',q:'Browning Auto-5',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1 (até 2)',capacity:5,ammo:'calibre 12',mal:100,creditMin:40,eraFrom:1902,eraTo:1998,creditVintage:10,imgRev:2},
@@ -67,7 +67,7 @@
   {id:'smithwesson10',cat:'Arma de fogo',name:'Revólver Smith & Wesson Model 10 (.38)',q:'Smith & Wesson Model 10',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.38 Special',mal:100,eraFrom:1899,creditMin:25,creditVintage:10,imgPaths:assetPaths('revólver-modelo-10.svg'),imgTransparent:true,imgRev:1},
   {id:'coltsa',cat:'Arma de fogo',name:'Revólver Colt Single Action Army (.45)',q:'Colt Single Action Army',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1',capacity:6,ammo:'.45 Colt',mal:100,eraFrom:1873,eraTo:1940,creditMin:30,creditVintage:20,imgPaths:assetPaths('revolver-antigo.svg'),imgTransparent:true,imgRev:1},
   {id:'m1911model',cat:'Arma de fogo',name:'Pistola Colt M1911 (.45)',q:'Colt M1911',skill:'Armas de Fogo (Pistolas)',damage:'1D10+2',range:'15 jardas',rate:'1 (até 3)',capacity:7,ammo:'.45 ACP',mal:100,creditMin:40,eraFrom:1911,creditVintage:10,imgPaths:assetPaths('pistola-1911.svg'),imgTransparent:true,imgRev:1},
-  {id:'m1carbine',cat:'Arma de fogo',name:'Carabina M1 (.30 Carbine)',q:'M1 carbine',skill:'Armas de Fogo (Rifles)',damage:'2D6',range:'50 jardas',rate:'1 (até 2)',capacity:15,ammo:'.30 Carbine',mal:99,creditMin:50,eraFrom:1942,creditVintage:10,imgPaths:assetPaths('carabina-m1.svg'),imgTransparent:true,imgRev:1},
+  {id:'m1carbine',cat:'Arma de fogo',name:'Carabina M1 (.30 Carbine)',q:'M1 carbine',skill:'Armas de Fogo (Rifles)',damage:'2D6',range:'50 jardas',rate:'1 (até 2)',capacity:15,ammo:'.30 Carbine',mal:99,creditMin:50,eraFrom:1942,eraTo:1945,creditVintage:20,imgPaths:assetPaths('carabina-m1.svg'),imgTransparent:true,imgRev:1},
   {id:'remington870',cat:'Arma de fogo',name:'Espingarda Remington 870',q:'Remington Model 870',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1',capacity:5,ammo:'calibre 12',mal:100,creditMin:35,eraFrom:1950,imgPaths:assetPaths('espingarda-870.svg'),imgTransparent:true,imgRev:1},
   {id:'ar15',cat:'Arma de fogo',name:'Rifle AR-15 (.223)',q:'AR-15',skill:'Armas de Fogo (Rifles)',damage:'2D6+4',range:'110 jardas',rate:'1 (até 2)',capacity:20,ammo:'.223 Remington',mal:99,creditMin:55,eraFrom:1959,creditVintage:10,imgPaths:assetPaths('rifle-ar15.svg'),imgTransparent:true,imgRev:1},
   {id:'glock17',cat:'Arma de fogo',name:'Pistola Glock 17 (9 mm)',q:'Glock 17',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1 (até 3)',capacity:17,ammo:'9 mm',mal:98,creditMin:45,eraFrom:1982,imgPaths:assetPaths('pistola-moderna.svg'),imgTransparent:true,imgRev:1},
@@ -117,15 +117,32 @@
   if(to&&year>to)return{state:'retired',message:`Saiu de linha por volta de ${to}; em ${year} pode ser difícil de encontrar e custar mais.`};
   return{state:'available',message:''};
  }
+ function loadoutPressure(p,candidate){
+  const equipment=ensure(p),items=equipment.slice();
+  if(candidate&&!equipment.some(x=>x.uid&&x.uid===candidate.uid))items.push(candidate);
+  let pressure=0;
+  for(const held of items){
+   const source=CATALOG.find(x=>x.id===held.id)||{},qty=held.quantity==null?1:Math.max(0,+held.quantity||0),base=+((held.creditMin??source.creditMin)??0),period=periodState(p,held),effectiveBase=base+(period.state==='retired'?+((held.creditVintage??source.creditVintage)??10):0),kind=held.kind||kindOf(held.cat||source.cat);
+   if(!qty)continue;
+   if(kind==='firearm')pressure+=qty*(effectiveBase>=60?7:effectiveBase>=40?6:effectiveBase>=25?5:4)+(held.caution||source.caution?3:0);
+   else if(kind==='melee')pressure+=qty*(effectiveBase>=35?3:effectiveBase>=20?2:1);
+   else if(effectiveBase>=50)pressure+=Math.min(qty,3)*4;
+   else if(effectiveBase>=35)pressure+=Math.min(qty,3)*3;
+   else if(effectiveBase>=20)pressure+=Math.min(qty,3)*2;
+   else if(effectiveBase>=10)pressure+=Math.min(qty,3);
+  }
+  return Math.min(30,Math.floor(pressure/6)*5);
+ }
  function suggestedCredit(p,item){
   const source=CATALOG.find(x=>x.id===item.id)||{},base=+((item.creditMin??source.creditMin)??0),period=periodState(p,item);
-  let required=base;
-  if(period.state==='retired')required+=+((item.creditVintage??source.creditVintage)??10);
+  const periodExtra=period.state==='retired'?+((item.creditVintage??source.creditVintage)??10):0;
+  let required=base+periodExtra;
   const owned=item.id?ensure(p).filter(x=>x.id===item.id).reduce((sum,x)=>sum+Math.max(0,+x.quantity||0),0):0;
   const qty=item.id?owned+(item.uid?0:Math.max(0,+item.quantity||1)):Math.max(0,+item.quantity||1),isGun=(item.kind||kindOf(item.cat||source.cat))==='firearm';
-  const extra=qty>(isGun?1:5)?Math.min(20,Math.ceil((qty-(isGun?1:5))/(isGun?1:5))*5):0;
+  const stackExtra=qty>(isGun?1:5)?Math.min(20,Math.ceil((qty-(isGun?1:5))/(isGun?1:5))*5):0;
+  const loadoutExtra=loadoutPressure(p,item),extra=stackExtra+loadoutExtra;
   required=Math.max(0,required+extra);
-  return{required,base,extra,period};
+  return{required,base,extra,stackExtra,loadoutExtra,periodExtra,period};
  }
  function creditStatus(p,item){
   const credit=suggestedCredit(p,item),current=skillValue(p,'Nível de Crédito'),margin=current-credit.required;
@@ -134,14 +151,14 @@
  }
  function creditBadge(p,item){
   const c=creditStatus(p,item),label=c.state==='low'?'Abaixo do acesso legal sugerido':c.state==='edge'?'No limite do Crédito':'Crédito compatível';
-  return`<span class="eq-credit is-${c.state}" title="${esc(label)} · personagem ${c.current}% · referência do item ${c.required}%">Crédito ${c.required}%</span>`;
+  return`<span class="eq-credit is-${c.state}" title="${esc(label)} · personagem ${c.current}% · base ${c.base}% · época +${c.periodExtra}% · quantidade +${c.stackExtra}% · conjunto +${c.loadoutExtra}%">Crédito ${c.required}%</span>`;
  }
  function warnings(p,item){
   const out=[];
   const creditRule=suggestedCredit(p,item),period=creditRule.period;
   if(period.state!=='available')out.push(period.message);
   if(item.skill&&item.warnSkill!==false){const val=skillValue(p,item.skill);if(val<30)out.push(`Perícia ${item.skill}: ${val}%. É uma chance baixa; usar este item pode ser arriscado.`)}
-  if(creditRule.required>0){const credit=skillValue(p,'Nível de Crédito');if(credit<creditRule.required){const reason=creditRule.extra?' A quantidade também eleva a referência.':period.state==='retired'&&creditRule.required>creditRule.base?' A raridade pode elevar a referência.':'';out.push(`Nível de Crédito ${credit}% está abaixo da referência narrativa de ${creditRule.required}% para este item.${reason} Converse com o Guardião ou acrescente uma justificativa à backstory; você ainda pode escolhê-lo.`)}}
+  if(creditRule.required>0){const credit=skillValue(p,'Nível de Crédito');if(credit<creditRule.required){const reasons=[];if(creditRule.stackExtra)reasons.push('a quantidade deste item também eleva a referência');if(creditRule.loadoutExtra)reasons.push('os outros equipamentos carregados elevam a referência do conjunto');if(period.state==='retired'&&creditRule.required>creditRule.base)reasons.push('a raridade da época pode elevar a referência');const reason=reasons.length?' '+reasons.join('; ')+'.':'';out.push(`Nível de Crédito ${credit}% está abaixo da referência narrativa de ${creditRule.required}% para este item.${reason} Converse com o Guardião ou acrescente uma justificativa à backstory; você ainda pode escolhê-lo.`)}}
   if(item.caution)out.push(item.caution);
   return out;
  }
@@ -301,7 +318,7 @@
   document.body.appendChild(dlg);
   q=dlg.querySelector('#eqkQ');grid=dlg.querySelector('#eqkGrid');chips=dlg.querySelector('#eqkChips');bar=dlg.querySelector('#eqkBar');det=dlg.querySelector('#eqkDet');
   const helpBox=dlg.querySelector('#eqkHelp'),helpBtn=dlg.querySelector('#eqkHelpBtn');
-  helpBox.innerHTML=`<h5>Época do cenário</h5><p>O ano escolhido na ficha altera os avisos de disponibilidade. Um item pode ainda não existir naquela época ou estar fora de linha; ele continua selecionável, mas pode ser raro ou exigir uma explicação narrativa.</p><h5>Nível de Crédito</h5><p>Cada cartão mostra uma referência de Crédito para acesso legal e plausível. <span class="eq-credit is-ok">Verde</span> indica margem confortável; <span class="eq-credit is-edge">laranja</span> indica que está no limite; <span class="eq-credit is-low">vermelho</span> indica que o Crédito está abaixo da referência. A cor é um alerta, nunca bloqueia a escolha: converse com o Guardião ou justifique o item na backstory.</p><h5>Quantidade e itens personalizados</h5><p>Levar várias unidades ou armas iguais pode elevar a referência. Itens personalizados usam o nível definido por quem os criou; quando nenhum nível é informado, a referência fica em 0. Os valores são orientativos e devem ser ajustados à época e à campanha.</p><button type="button" class="opk-back" data-eqk-help-back>← Voltar à lista</button>`;
+  helpBox.innerHTML=`<h5>Época do cenário</h5><p>O ano escolhido na ficha altera os avisos de disponibilidade. Um item pode ainda não existir naquela época ou estar fora de linha; ele continua selecionável, mas pode ser raro ou exigir uma explicação narrativa.</p><h5>Nível de Crédito</h5><p>Cada cartão mostra uma referência de Crédito para acesso legal e plausível. <span class="eq-credit is-ok">Verde</span> indica margem confortável; <span class="eq-credit is-edge">laranja</span> indica que está no limite; <span class="eq-credit is-low">vermelho</span> indica que o Crédito está abaixo da referência. A cor é um alerta, nunca bloqueia a escolha: converse com o Guardião ou justifique o item na backstory. A referência considera o conjunto: armas e vários equipamentos valorizados podem elevar o nível sugerido para todos os itens, em vez de serem avaliados isoladamente.</p><h5>Quantidade e itens personalizados</h5><p>Levar várias unidades ou armas iguais pode elevar a referência. Itens personalizados usam o nível definido por quem os criou; quando nenhum nível é informado, a referência fica em 0. Os valores são orientativos e devem ser ajustados à época e à campanha.</p><button type="button" class="opk-back" data-eqk-help-back>← Voltar à lista</button>`;
   const setHelp=(on,returnFocus=true)=>{dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',String(on));helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.scrollTop=0;helpBox.focus()}else if(returnFocus&&dlg.open)q.focus()};
   helpBtn.addEventListener('click',()=>setHelp(!dlg.classList.contains('help')));
   helpBox.addEventListener('click',e=>{if(e.target.closest('[data-eqk-help-back]'))setHelp(false)});
@@ -427,7 +444,7 @@
  }
  const addConfirmation=(p,item)=>warnings(p,item);
  function customData(form){const val=n=>form.elements[n]?form.elements[n].value:'';return{category:val('category'),name:val('name'),quantity:val('quantity'),creditMin:val('creditMin'),notes:[val('notes'),val('description')].filter(Boolean).join(' · '),skill:val('skill'),damage:val('damage'),range:val('range'),rate:val('rate'),ammo:val('ammo'),capacity:val('capacity'),reserve:val('reserve'),mal:val('mal'),effect:val('effect'),uses:val('uses'),img:val('img')}}
- function pdfRows(p){return ensure(p).map(x=>{const source=CATALOG.find(t=>t.id===x.id)||{},era=periodState(p,x),credit=suggestedCredit(p,x);return{name:x.name||'Item',category:x.cat||'Geral',quantity:+x.quantity||0,image:x.img||localImagePaths(x)[0]||localImagePaths(source)[0]||'',detail:[x.skill&&`Perícia ${x.skill} (${skillValue(p,x.skill)}%)`,x.damage&&`dano ${x.damage}`,x.range&&`alcance ${x.range}`,x.kind==='firearm'&&`munição ${+x.loaded||0}/${+x.capacity||0} + ${+x.reserve||0} reserva`,x.kind==='firearm'&&x.ammo&&`calibre ${x.ammo}`,x.kind==='healing'&&x.effect&&`efeito ${x.effect}`,x.kind==='healing'&&`usos ${+x.uses||0}`,era.state!=='available'&&era.message,credit.required>0&&`Nível de Crédito sugerido ${credit.required}%`,x.protection&&`efeito ${x.protection}`,x.notes].filter(Boolean).join(' · ')}})}
+ function pdfRows(p){return ensure(p).map(x=>{const source=CATALOG.find(t=>t.id===x.id)||{},era=periodState(p,x);return{name:x.name||'Item',category:x.cat||'Geral',quantity:+x.quantity||0,image:x.img||localImagePaths(x)[0]||localImagePaths(source)[0]||'',detail:[x.skill&&`Perícia ${x.skill} (${skillValue(p,x.skill)}%)`,x.damage&&`dano ${x.damage}`,x.range&&`alcance ${x.range}`,x.kind==='firearm'&&`munição ${+x.loaded||0}/${+x.capacity||0} + ${+x.reserve||0} reserva`,x.kind==='firearm'&&x.ammo&&`calibre ${x.ammo}`,x.kind==='healing'&&x.effect&&`efeito ${x.effect}`,x.kind==='healing'&&`usos ${+x.uses||0}`,era.state!=='available'&&era.message,x.protection&&`efeito ${x.protection}`,x.notes].filter(Boolean).join(' · ')}})}
  function plainText(p){const rows=pdfRows(p);return rows.length?'\nEquipamentos:\n'+rows.map(x=>`- ${x.quantity}× ${x.name} [${x.category}]${x.detail?' — '+x.detail:''}`).join('\n'):''}
 
  /* ---------- ligação com a página (sem depender de alterações no index.html) ---------- */
