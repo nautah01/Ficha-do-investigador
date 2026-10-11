@@ -33,7 +33,6 @@
   {id:'lockpick',cat:'Geral',name:'Kit de chaveiro',q:'Lock picking',imgPaths:assetPaths('Kit de chaveiro.png'),imgTransparent:true,imgRev:5,notes:'Ferramentas de precisão para fechaduras.'},
   {id:'shovel',cat:'Geral',name:'Pá',q:'Shovel',imgPaths:assetPaths('Pá.png'),imgTransparent:true,imgRev:5},
   {id:'umbrella',cat:'Geral',name:'Guarda-chuva',q:'Umbrella',imgPaths:assetPaths('Guarda chuva.png'),imgTransparent:true,imgRev:5},
-  {id:'identity',cat:'Geral',name:'Crachá ou distintivo',q:'Badge',imgPaths:assetPaths('dinstintivo.png'),imgTransparent:true,imgRev:5},
   {id:'camera_flash',cat:'Geral',name:'Flash de magnésio',q:'Flash-lamp',eraFrom:1880,eraTo:1940,creditMin:20,creditVintage:10,imgPaths:assetPaths('Flash de magnesio.png'),imgTransparent:true,imgRev:5},
   {id:'map',cat:'Geral',name:'Mapa da região',q:'Map',imgPaths:assetPaths('mapa.jpg'),imgTransparent:false,imgRev:5},
   {id:'coat',cat:'Geral',name:'Casaco pesado',q:'Overcoat',imgPaths:assetPaths('casaco.png'),imgTransparent:true,imgRev:5,notes:'Proteção narrativa contra frio e chuva; sem armadura automática.'},
@@ -99,7 +98,7 @@
   brassknuckles:'Soco ingles.png',baseballbat:'Taco de beisebol.png',thermometer:'Termometro.png',thompson:'Thompson.png'
  };
  for(const item of CATALOG){const file=NEW_LOCAL_IMAGES[item.id];if(file){item.imgPaths=assetPaths(file);item.imgTransparent=true;item.imgRev=(item.imgRev||0)+1}}
- const CREDIT_REFERENCE={wallet:5,notebook:0,pen:5,flashlight:10,batteries:5,compass:10,binoculars:20,telescope:35,watch:15,camera:20,typewriter:25,dictaphone:25,handcuffs:20,rope:5,crowbar:5,tools:15,fieldbag:5,canteen:5,matches:0,lantern:10,lockpick:20,shovel:5,umbrella:5,identity:20,camera_flash:20,map:0,coat:10,gloves:10,respirator:20,medicalcase:30,bandage:5,aspirin:5,forceps:15,scalpel:20,thermometer:5,syringe:10,alcohol:5,crutches:10,pistol22:25,rifle22:25,carbine30:25,shotgun12:30,crossbow:20,club:10,baseballbat:5,brassknuckles:10,knife_small:5,knife_medium:10,knife_large:15,hatchet:10,bullwhip:15,cigarettes:0};
+ const CREDIT_REFERENCE={wallet:5,notebook:0,pen:5,flashlight:10,batteries:5,compass:10,binoculars:20,telescope:35,watch:15,camera:20,typewriter:25,dictaphone:25,handcuffs:20,rope:5,crowbar:5,tools:15,fieldbag:5,canteen:5,matches:0,lantern:10,lockpick:20,shovel:5,umbrella:5,camera_flash:20,map:0,coat:10,gloves:10,respirator:20,medicalcase:30,bandage:5,aspirin:5,forceps:15,scalpel:20,thermometer:5,syringe:10,alcohol:5,crutches:10,pistol22:25,rifle22:25,carbine30:25,shotgun12:30,crossbow:20,club:10,baseballbat:5,brassknuckles:10,knife_small:5,knife_medium:10,knife_large:15,hatchet:10,bullwhip:15,cigarettes:0};
  CATALOG.forEach(item=>{if(item.creditMin==null)item.creditMin=CREDIT_REFERENCE[item.id]??(item.cat==='Arma de fogo'?35:item.cat==='Arma corpo a corpo'?10:item.cat==='Cura'?10:5)});
  const localImagePaths=item=>Array.isArray(item&&item.imgPaths)?item.imgPaths:(item&&item.imgSrc?[item.imgSrc]:[]);
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
