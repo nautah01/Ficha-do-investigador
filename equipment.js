@@ -120,29 +120,33 @@
  function loadoutPressure(p,candidate){
   const equipment=ensure(p),items=equipment.slice();
   if(candidate&&!equipment.some(x=>x.uid&&x.uid===candidate.uid))items.push(candidate);
-  let pressure=0;
+  const groups=new Map();
   for(const held of items){
-   const source=CATALOG.find(x=>x.id===held.id)||{},qty=held.quantity==null?1:Math.max(0,+held.quantity||0),base=+((held.creditMin??source.creditMin)??0),period=periodState(p,held),effectiveBase=base+(period.state==='retired'?+((held.creditVintage??source.creditVintage)??10):0),kind=held.kind||kindOf(held.cat||source.cat);
-   if(!qty)continue;
-   if(kind==='firearm')pressure+=qty*(effectiveBase>=60?7:effectiveBase>=40?6:effectiveBase>=25?5:4)+(held.caution||source.caution?3:0);
-   else if(kind==='melee')pressure+=qty*(effectiveBase>=35?3:effectiveBase>=20?2:1);
-   else if(effectiveBase>=50)pressure+=Math.min(qty,3)*4;
-   else if(effectiveBase>=35)pressure+=Math.min(qty,3)*3;
-   else if(effectiveBase>=20)pressure+=Math.min(qty,3)*2;
-   else if(effectiveBase>=10)pressure+=Math.min(qty,3);
+   const source=CATALOG.find(x=>x.id===held.id)||{},key=held.id?`catalog:${held.id}`:`custom:${norm(`${held.cat||'Geral'}|${held.name||'Item'}`)}`,qty=held.quantity==null?1:Math.max(0,+held.quantity||0),existing=groups.get(key);
+   if(existing){existing.quantity+=qty;existing.creditMin=Math.max(existing.creditMin,+((held.creditMin??source.creditMin)??0));existing.caution=existing.caution||held.caution||source.caution;continue}
+   groups.set(key,{...held,source,quantity:qty,creditMin:+((held.creditMin??source.creditMin)??0),caution:held.caution||source.caution});
   }
-  return Math.min(30,Math.floor(pressure/6)*5);
+  let pressure=0,hasQuantity=false;
+  for(const held of groups.values()){
+   const source=held.source||{},qty=held.quantity,base=held.creditMin,period=periodState(p,held),effectiveBase=base+(period.state==='retired'?+((held.creditVintage??source.creditVintage)??10):0),kind=held.kind||kindOf(held.cat||source.cat);
+   if(!qty)continue;
+   const unitWeight=kind==='firearm'?(effectiveBase>=60?7:effectiveBase>=40?6:effectiveBase>=25?5:4):kind==='melee'?(effectiveBase>=35?4:effectiveBase>=20?3:2):effectiveBase>=50?5:effectiveBase>=35?4:effectiveBase>=20?3:effectiveBase>=10?2:1;
+   if(qty>1){pressure+=(qty-1)*unitWeight;hasQuantity=true}
+   if(kind==='firearm')pressure+=qty*unitWeight+(held.caution||source.caution?3:0);
+   else if(effectiveBase>=50)pressure+=4;
+   else if(effectiveBase>=35)pressure+=3;
+   else if(effectiveBase>=30)pressure+=2;
+   else if((held.caution||source.caution)&&kind==='melee')pressure+=2;
+  }
+  return{extra:pressure?Math.min(30,Math.ceil(pressure/6)*5):0,hasQuantity};
  }
  function suggestedCredit(p,item){
   const source=CATALOG.find(x=>x.id===item.id)||{},base=+((item.creditMin??source.creditMin)??0),period=periodState(p,item);
   const periodExtra=period.state==='retired'?+((item.creditVintage??source.creditVintage)??10):0;
   let required=base+periodExtra;
-  const owned=item.id?ensure(p).filter(x=>x.id===item.id).reduce((sum,x)=>sum+Math.max(0,+x.quantity||0),0):0;
-  const qty=item.id?owned+(item.uid?0:Math.max(0,+item.quantity||1)):Math.max(0,+item.quantity||1),isGun=(item.kind||kindOf(item.cat||source.cat))==='firearm';
-  const stackExtra=qty>(isGun?1:5)?Math.min(20,Math.ceil((qty-(isGun?1:5))/(isGun?1:5))*5):0;
-  const loadoutExtra=loadoutPressure(p,item),extra=stackExtra+loadoutExtra;
+  const loadout=loadoutPressure(p,item),loadoutExtra=loadout.extra,extra=loadoutExtra;
   required=Math.max(0,required+extra);
-  return{required,base,extra,stackExtra,loadoutExtra,periodExtra,period};
+  return{required,base,extra,loadoutExtra,quantityImpact:loadout.hasQuantity,periodExtra,period};
  }
  function creditStatus(p,item){
   const credit=suggestedCredit(p,item),current=skillValue(p,'Nível de Crédito'),margin=current-credit.required;
@@ -151,14 +155,14 @@
  }
  function creditBadge(p,item){
   const c=creditStatus(p,item),label=c.state==='low'?'Abaixo do acesso legal sugerido':c.state==='edge'?'No limite do Crédito':'Crédito compatível';
-  return`<span class="eq-credit is-${c.state}" title="${esc(label)} · personagem ${c.current}% · base ${c.base}% · época +${c.periodExtra}% · quantidade +${c.stackExtra}% · conjunto +${c.loadoutExtra}%">Crédito ${c.required}%</span>`;
+  return`<span class="eq-credit is-${c.state}" title="${esc(label)} · personagem ${c.current}% · base ${c.base}% · época +${c.periodExtra}% · conjunto e quantidade +${c.loadoutExtra}%">Crédito ${c.required}%</span>`;
  }
  function warnings(p,item){
   const out=[];
   const creditRule=suggestedCredit(p,item),period=creditRule.period;
   if(period.state!=='available')out.push(period.message);
   if(item.skill&&item.warnSkill!==false){const val=skillValue(p,item.skill);if(val<30)out.push(`Perícia ${item.skill}: ${val}%. É uma chance baixa; usar este item pode ser arriscado.`)}
-  if(creditRule.required>0){const credit=skillValue(p,'Nível de Crédito');if(credit<creditRule.required){const reasons=[];if(creditRule.stackExtra)reasons.push('a quantidade deste item também eleva a referência');if(creditRule.loadoutExtra)reasons.push('os outros equipamentos carregados elevam a referência do conjunto');if(period.state==='retired'&&creditRule.required>creditRule.base)reasons.push('a raridade da época pode elevar a referência');const reason=reasons.length?' '+reasons.join('; ')+'.':'';out.push(`Nível de Crédito ${credit}% está abaixo da referência narrativa de ${creditRule.required}% para este item.${reason} Converse com o Guardião ou acrescente uma justificativa à backstory; você ainda pode escolhê-lo.`)}}
+  if(creditRule.required>0){const credit=skillValue(p,'Nível de Crédito');if(credit<creditRule.required){const reasons=[];if(creditRule.quantityImpact)reasons.push('a quantidade de itens carregados também eleva a referência');if(creditRule.loadoutExtra)reasons.push('o porte e o valor do conjunto elevam a referência dos equipamentos');if(period.state==='retired'&&creditRule.required>creditRule.base)reasons.push('a raridade da época pode elevar a referência');const reason=reasons.length?' '+reasons.join('; ')+'.':'';out.push(`Nível de Crédito ${credit}% está abaixo da referência narrativa de ${creditRule.required}% para este item.${reason} Converse com o Guardião ou acrescente uma justificativa à backstory; você ainda pode escolhê-lo.`)}}
   if(item.caution)out.push(item.caution);
   return out;
  }
@@ -318,7 +322,7 @@
   document.body.appendChild(dlg);
   q=dlg.querySelector('#eqkQ');grid=dlg.querySelector('#eqkGrid');chips=dlg.querySelector('#eqkChips');bar=dlg.querySelector('#eqkBar');det=dlg.querySelector('#eqkDet');
   const helpBox=dlg.querySelector('#eqkHelp'),helpBtn=dlg.querySelector('#eqkHelpBtn');
-  helpBox.innerHTML=`<h5>Época do cenário</h5><p>O ano escolhido na ficha altera os avisos de disponibilidade. Um item pode ainda não existir naquela época ou estar fora de linha; ele continua selecionável, mas pode ser raro ou exigir uma explicação narrativa.</p><h5>Nível de Crédito</h5><p>Cada cartão mostra uma referência de Crédito para acesso legal e plausível. <span class="eq-credit is-ok">Verde</span> indica margem confortável; <span class="eq-credit is-edge">laranja</span> indica que está no limite; <span class="eq-credit is-low">vermelho</span> indica que o Crédito está abaixo da referência. A cor é um alerta, nunca bloqueia a escolha: converse com o Guardião ou justifique o item na backstory. A referência considera o conjunto: armas e vários equipamentos valorizados podem elevar o nível sugerido para todos os itens, em vez de serem avaliados isoladamente.</p><h5>Quantidade e itens personalizados</h5><p>Levar várias unidades ou armas iguais pode elevar a referência. Itens personalizados usam o nível definido por quem os criou; quando nenhum nível é informado, a referência fica em 0. Os valores são orientativos e devem ser ajustados à época e à campanha.</p><button type="button" class="opk-back" data-eqk-help-back>← Voltar à lista</button>`;
+  helpBox.innerHTML=`<h5>Época do cenário</h5><p>O ano escolhido na ficha altera os avisos de disponibilidade. Um item pode ainda não existir naquela época ou estar fora de linha; ele continua selecionável, mas pode ser raro ou exigir uma explicação narrativa.</p><h5>Nível de Crédito</h5><p>Cada cartão mostra uma referência de Crédito para acesso legal e plausível. <span class="eq-credit is-ok">Verde</span> indica margem confortável; <span class="eq-credit is-edge">laranja</span> indica que está no limite; <span class="eq-credit is-low">vermelho</span> indica que o Crédito está abaixo da referência. A cor é um alerta, nunca bloqueia a escolha: converse com o Guardião ou justifique o item na backstory. A referência considera o conjunto: armas e vários equipamentos valorizados podem elevar o nível sugerido para todos os itens, em vez de serem avaliados isoladamente.</p><h5>Quantidade e itens personalizados</h5><p>Todo item em quantidade maior que uma unidade acrescenta peso à referência do conjunto. Itens comuns sobem pouco por unidade extra; armas, ferramentas e equipamentos de Crédito alto sobem mais. A quantidade altera a referência de todos os cartões e avisos da ficha. Itens personalizados usam o nível definido por quem os criou; quando nenhum nível é informado, a referência fica em 0. Os valores são orientativos e devem ser ajustados à época e à campanha.</p><button type="button" class="opk-back" data-eqk-help-back>← Voltar à lista</button>`;
   const setHelp=(on,returnFocus=true)=>{dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',String(on));helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.scrollTop=0;helpBox.focus()}else if(returnFocus&&dlg.open)q.focus()};
   helpBtn.addEventListener('click',()=>setHelp(!dlg.classList.contains('help')));
   helpBox.addEventListener('click',e=>{if(e.target.closest('[data-eqk-help-back]'))setHelp(false)});
@@ -436,6 +440,7 @@
   if(!root)return;
   root.querySelectorAll('.eq-item').forEach(el=>{
    const item=find(p,el.dataset.eqItem),host=el.querySelector('.eq-main')||el,box=el.querySelector('.eq-warning');if(!item)return;
+   const badge=el.querySelector('.eq-credit');if(badge){const c=creditStatus(p,item),label=c.state==='low'?'Abaixo do acesso legal sugerido':c.state==='edge'?'No limite do Crédito':'Crédito compatível';badge.className=`eq-credit is-${c.state}`;badge.textContent=`Crédito ${c.required}%`;badge.title=`${label} · personagem ${c.current}% · base ${c.base}% · época +${c.periodExtra}% · conjunto e quantidade +${c.loadoutExtra}%`}
    const ws=warnings(p,item);
    if(box){if(ws.length)box.textContent='⚠ '+ws.join(' ');else box.remove()}
    else if(ws.length){const w=document.createElement('div');w.className='eq-warning';w.setAttribute('role','status');w.textContent='⚠ '+ws.join(' ');host.appendChild(w)}
