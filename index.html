@@ -136,6 +136,7 @@ body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-
 /* ===== atmosfera: fundo ===== */
 .atmo{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .atmo .sign{position:absolute;left:50%;top:50%;width:92vmin;height:92vmin;transform:translate(-50%,-50%);color:var(--accent);opacity:.075}
+.atmo .sign-rotor{transform-box:fill-box;transform-origin:center;animation:signTurn 100s linear infinite}
 .atmo .city{position:absolute;left:0;right:0;bottom:0;width:100%;height:24vh;opacity:.9}
 .atmo .tent{position:absolute;bottom:-6px;height:78vh;width:auto;transform-origin:bottom center;will-change:transform}
 .atmo .tent.tl{left:-1.5vw;animation:tentacleSwayLeft 11s ease-in-out infinite}
@@ -148,6 +149,7 @@ body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-
 @keyframes fogDriftLeft{0%{transform:translate3d(0,0,0)}25%{transform:translate3d(-12.5%,-16px,0)}50%{transform:translate3d(-25%,-28px,0)}75%{transform:translate3d(-37.5%,-14px,0)}100%{transform:translate3d(-50%,0,0)}}
 @keyframes fogDriftRight{0%{transform:translate3d(-50%,0,0)}25%{transform:translate3d(-37.5%,14px,0)}50%{transform:translate3d(-25%,26px,0)}75%{transform:translate3d(-12.5%,12px,0)}100%{transform:translate3d(0,0,0)}}
 @keyframes fogBreath{from{opacity:.78}to{opacity:1}}
+@keyframes signTurn{to{transform:rotate(360deg)}}
 @keyframes tentacleSwayLeft{0%,100%{transform:translateX(0) rotate(0)}50%{transform:translateX(5px) rotate(1.2deg)}}
 @keyframes tentacleSwayRight{0%,100%{transform:scaleX(-1) translateX(0) rotate(0)}50%{transform:scaleX(-1) translateX(-5px) rotate(-1.2deg)}}
 /* título: uma única falha de lamparina ao carregar */
@@ -155,7 +157,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 @keyframes lamp{0%,18%{opacity:.25}22%{opacity:.9}27%{opacity:.35}34%{opacity:1}41%{opacity:.6}48%,100%{opacity:1}}
 .quote{color:var(--quote)}
 @media(max-width:640px){.atmo .tent{height:52vh}.atmo .tent.tl{left:-8vw}.atmo .tent.tr{right:-8vw}.atmo .sign{opacity:.06}}
-@media (prefers-reduced-motion:reduce){.atmo .fog,.atmo .tent,h1{animation:none}}
+@media (prefers-reduced-motion:reduce){.atmo .fog,.atmo .tent,.atmo .sign-rotor,h1{animation:none}}
 .hist{margin:2px 0 6px}.hist .orig{font-size:.88rem;margin:0 0 3px}.hist .orig small{color:var(--muted)}
 .hist .bk{text-align:left;display:block;width:100%;min-height:64px;margin-top:4px;padding:6px 8px;resize:vertical;font:inherit;font-size:.9rem;line-height:1.4}
 </style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><script src="equipment.js"></script></head><body>
@@ -213,7 +215,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 </div></div></div>
 <footer class="note-footer"><span id="noteHint">Arraste o fundo para mover · Shift+arrastar seleciona várias peças · roda do mouse = zoom</span><span id="noteStatus" role="status" aria-live="polite">Carregando notas…</span></footer>
 </section>
-<div class="atmo" aria-hidden="true"><svg class="sign" viewBox="-100 -100 200 200" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-linecap="round">
+<div class="atmo" aria-hidden="true"><svg class="sign" viewBox="-100 -100 200 200" aria-hidden="true"><g class="sign-rotor" fill="none" stroke="currentColor" stroke-linecap="round">
 <circle r="95" stroke-width="1.2"/><circle r="90" stroke-width=".5"/>
 <path d="M0.0 -20.0L0.0 -84.0M0.0 -48.0L-10.5 -61.4M0.0 -48.0L10.5 -61.4M0.0 -66.0L-8.0 -76.2M0.0 -66.0L8.0 -76.2M19.0 -6.2L79.9 -26.0M45.7 -14.8L55.2 -28.9M45.7 -14.8L61.6 -9.0M62.8 -20.4L70.0 -31.2M62.8 -20.4L75.0 -15.9M11.8 16.2L49.4 68.0M28.2 38.8L44.6 43.5M28.2 38.8L27.6 55.8M38.8 53.4L51.3 57.0M38.8 53.4L38.3 66.4M-11.8 16.2L-49.4 68.0M-28.2 38.8L-27.6 55.8M-28.2 38.8L-44.6 43.5M-38.8 53.4L-38.3 66.4M-38.8 53.4L-51.3 57.0M-19.0 -6.2L-79.9 -26.0M-45.7 -14.8L-61.6 -9.0M-45.7 -14.8L-55.2 -28.9M-62.8 -20.4L-75.0 -15.9M-62.8 -20.4L-70.0 -31.2" stroke-width="2.4"/>
 <path d="M0 -17C9 -8 10 3 0 14C-10 3 -9 -8 0 -17Z" stroke-width="1.6"/><circle r="3.2" fill="currentColor" stroke="none"/></g></svg><svg class="city" viewBox="0 0 1200 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><path style="fill:var(--k0)" d="M0 220V176L48 168L66 112L82 108L98 170L168 178L182 70L205 62L224 182L292 188L312 128L352 112L372 190L452 196L476 46L498 38L520 200L610 206L628 138L664 120L690 206L760 200L786 92L806 88L830 196L902 190L918 142L958 130L978 188L1052 180L1070 100L1090 96L1110 176L1160 172L1200 164V220Z"/></svg><div class="fog f1"></div><svg class="tent tl" viewBox="0 0 400 640" preserveAspectRatio="xMinYMax meet" aria-hidden="true">
@@ -221,11 +223,15 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <path fill="url(#tg)" style="stroke:rgba(var(--glow),.22)" stroke-width="1.2" d="M-20 640C10 500 95 450 86 340C80 265 22 245 44 178C54 148 84 140 98 156C76 156 68 172 78 194C98 240 150 268 144 346C138 450 92 520 170 640Z"/>
 <path fill="url(#tg)" style="stroke:rgba(var(--glow),.18)" stroke-width="1" d="M110 640C150 560 235 520 232 440C229 380 186 366 198 322C204 300 226 296 236 308C220 308 216 320 222 334C234 366 280 386 276 446C272 530 230 590 290 640Z"/>
 <path fill="url(#tg)" style="stroke:rgba(var(--glow),.14)" stroke-width="1" d="M250 640C275 600 330 590 338 548C344 516 322 506 332 484C338 472 352 472 358 480C348 480 346 488 350 496C358 514 384 524 380 552C376 590 346 616 372 640Z"/>
+<g fill="none" stroke="rgba(var(--glow),.22)" stroke-linecap="round"><path stroke-width="2" d="M61 202C55 247 112 275 119 337C128 410 102 472 91 506"/><path stroke-width="1.7" d="M207 337C199 378 255 399 250 451C247 495 230 532 222 552"/><path stroke-width="1.3" d="M340 493C334 520 365 536 355 567C350 585 341 601 337 610"/></g>
+<g fill="none" stroke="rgba(var(--glow),.28)" stroke-width="1.5"><ellipse cx="83" cy="258" rx="5" ry="2.7" transform="rotate(34 83 258)"/><ellipse cx="104" cy="287" rx="5" ry="2.7" transform="rotate(20 104 287)"/><ellipse cx="115" cy="319" rx="5" ry="2.7" transform="rotate(8 115 319)"/><ellipse cx="116" cy="353" rx="5" ry="2.7" transform="rotate(-2 116 353)"/><ellipse cx="108" cy="389" rx="5" ry="2.7" transform="rotate(-10 108 389)"/><ellipse cx="96" cy="423" rx="5" ry="2.7" transform="rotate(-14 96 423)"/><ellipse cx="219" cy="386" rx="4" ry="2.2" transform="rotate(22 219 386)"/><ellipse cx="243" cy="414" rx="4" ry="2.2" transform="rotate(4 243 414)"/><ellipse cx="246" cy="445" rx="4" ry="2.2" transform="rotate(-8 246 445)"/><ellipse cx="238" cy="477" rx="4" ry="2.2" transform="rotate(-14 238 477)"/></g>
 </svg><svg class="tent tr" viewBox="0 0 400 640" preserveAspectRatio="xMinYMax meet" aria-hidden="true">
 <defs><linearGradient id="tg2" x1="0" y1="1" x2="0" y2="0"><stop offset="0" style="stop-color:var(--k0)"/><stop offset=".7" style="stop-color:var(--k2)"/><stop offset="1" style="stop-color:var(--k6)"/></linearGradient></defs>
 <path fill="url(#tg2)" style="stroke:rgba(var(--glow),.22)" stroke-width="1.2" d="M-20 640C10 500 95 450 86 340C80 265 22 245 44 178C54 148 84 140 98 156C76 156 68 172 78 194C98 240 150 268 144 346C138 450 92 520 170 640Z"/>
 <path fill="url(#tg2)" style="stroke:rgba(var(--glow),.18)" stroke-width="1" d="M110 640C150 560 235 520 232 440C229 380 186 366 198 322C204 300 226 296 236 308C220 308 216 320 222 334C234 366 280 386 276 446C272 530 230 590 290 640Z"/>
 <path fill="url(#tg2)" style="stroke:rgba(var(--glow),.14)" stroke-width="1" d="M250 640C275 600 330 590 338 548C344 516 322 506 332 484C338 472 352 472 358 480C348 480 346 488 350 496C358 514 384 524 380 552C376 590 346 616 372 640Z"/>
+<g fill="none" stroke="rgba(var(--glow),.22)" stroke-linecap="round"><path stroke-width="2" d="M61 202C55 247 112 275 119 337C128 410 102 472 91 506"/><path stroke-width="1.7" d="M207 337C199 378 255 399 250 451C247 495 230 532 222 552"/><path stroke-width="1.3" d="M340 493C334 520 365 536 355 567C350 585 341 601 337 610"/></g>
+<g fill="none" stroke="rgba(var(--glow),.28)" stroke-width="1.5"><ellipse cx="83" cy="258" rx="5" ry="2.7" transform="rotate(34 83 258)"/><ellipse cx="104" cy="287" rx="5" ry="2.7" transform="rotate(20 104 287)"/><ellipse cx="115" cy="319" rx="5" ry="2.7" transform="rotate(8 115 319)"/><ellipse cx="116" cy="353" rx="5" ry="2.7" transform="rotate(-2 116 353)"/><ellipse cx="108" cy="389" rx="5" ry="2.7" transform="rotate(-10 108 389)"/><ellipse cx="96" cy="423" rx="5" ry="2.7" transform="rotate(-14 96 423)"/><ellipse cx="219" cy="386" rx="4" ry="2.2" transform="rotate(22 219 386)"/><ellipse cx="243" cy="414" rx="4" ry="2.2" transform="rotate(4 243 414)"/><ellipse cx="246" cy="445" rx="4" ry="2.2" transform="rotate(-8 246 445)"/><ellipse cx="238" cy="477" rx="4" ry="2.2" transform="rotate(-14 238 477)"/></g>
 </svg><div class="fog f2"></div></div>
 <script>
 const d6=()=>1+Math.floor(Math.random()*6),r=n=>Math.floor(Math.random()*n),pick=a=>a[r(a.length)];
