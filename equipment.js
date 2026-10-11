@@ -6,6 +6,7 @@
  const SKILLS=['Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Armas de Fogo (Arco)','Armas de Fogo (Metralhadoras)','Lutar (Brigar)','Lutar (Machado)','Lutar (Chicote)','Arremessar','Primeiros Socorros','Medicina','Psicologia','Dirigir Auto','Outro (escrever)'];
  const CATS=['Geral','Cura','Arma de fogo','Arma corpo a corpo'];
  const ICON={'Geral':'🎒','Cura':'🩹','Arma de fogo':'🔫','Arma corpo a corpo':'🗡️'};
+ const CREDIT_JUSTIFICATIONS={inherited:'Item herdado',mission:'Comprado com dinheiro recebido em uma missão',gift:'Presente ou recebido de alguém',guardian:'Autorizado pelo Guardião'};
  const EQUIPMENT_YEARS=[1850,1900,1920,1950,1980,2000,2020,2026];
  /* q = termo de busca (título de artigo da Wikipédia em inglês) usado para achar a imagem de referência */
  const assetPaths=file=>{const enc=s=>s.split('/').map(encodeURIComponent).join('/'),v='20261011',staged=enc('Novas alterações');return[`equip-images/${enc(file)}?v=${v}`,`${staged}/equip-images/${enc(file)}?v=${v}`,`${staged}/${enc(file)}?v=${v}`,`${enc(file)}?v=${v}`]};
@@ -156,15 +157,20 @@
   return{...credit,current,state};
  }
  function creditBadge(p,item){
-  const c=creditStatus(p,item),label=c.state==='low'?'Abaixo do acesso legal sugerido':c.state==='edge'?'No limite do Crédito':'Crédito compatível';
-  return`<span class="eq-credit is-${c.state}" title="${esc(label)} · personagem ${c.current}% · base ${c.base}% · época +${c.periodExtra}% · conjunto e quantidade +${c.loadoutExtra}%">Crédito ${c.required}%</span>`;
+  const c=creditStatus(p,item),justification=CREDIT_JUSTIFICATIONS[item.creditJustification],state=justification?'ok':c.state,label=justification?`Aviso dispensado: ${justification}`:c.state==='low'?'Abaixo do acesso legal sugerido':c.state==='edge'?'No limite do Crédito':'Crédito compatível';
+  return`<span class="eq-credit is-${state}" title="${esc(label)} · personagem ${c.current}% · base ${c.base}% · época +${c.periodExtra}% · conjunto e quantidade +${c.loadoutExtra}%">${justification?'Crédito justificado':`Crédito ${c.required}%`}</span>`;
+ }
+ function creditJustificationHtml(p,item){
+  const selected=CREDIT_JUSTIFICATIONS[item.creditJustification]?item.creditJustification:'',needed=creditStatus(p,item).state==='low';if(!needed&&!selected)return'';
+  const options=Object.entries(CREDIT_JUSTIFICATIONS).map(([value,label])=>`<option value="${value}"${value===selected?' selected':''}>${esc(label)}</option>`).join('');
+  return`<div class="eq-credit-justification"><label>Remover aviso de Crédito com justificativa<select data-eq-credit-justification data-eq-id="${esc(item.uid)}"><option value=""${selected?'':' selected'}>Manter aviso</option>${options}</select></label>${selected?`<small>Justificativa salva: ${esc(CREDIT_JUSTIFICATIONS[selected])}. Selecione “Manter aviso” para restaurá-lo.</small>`:''}</div>`;
  }
  function warnings(p,item){
   const out=[];
   const creditRule=suggestedCredit(p,item),period=creditRule.period;
   if(period.state!=='available')out.push(period.message);
   if(item.skill&&item.warnSkill!==false){const val=skillValue(p,item.skill);if(val<30)out.push(`Perícia ${item.skill}: ${val}%. É uma chance baixa; usar este item pode ser arriscado.`)}
-  if(creditRule.required>0){const credit=skillValue(p,'Nível de Crédito');if(credit<creditRule.required){const reasons=[];if(creditRule.loadoutExtra)reasons.push('o conjunto e as quantidades carregadas elevam a referência');if(period.state==='retired'&&creditRule.required>creditRule.base+creditRule.loadoutExtra)reasons.push('a raridade da época também eleva a referência');const reason=reasons.length?' '+reasons.join('; ')+'.':'';out.push(`Nível de Crédito ${credit}% está abaixo da referência narrativa de ${creditRule.required}% para este item.${reason} Converse com o Guardião ou acrescente uma justificativa à backstory; você ainda pode escolhê-lo.`)}}
+  if(creditRule.required>0&&!CREDIT_JUSTIFICATIONS[item.creditJustification]){const credit=skillValue(p,'Nível de Crédito');if(credit<creditRule.required){const reasons=[];if(creditRule.loadoutExtra)reasons.push('o conjunto e as quantidades carregadas elevam a referência');if(period.state==='retired'&&creditRule.required>creditRule.base+creditRule.loadoutExtra)reasons.push('a raridade da época também eleva a referência');const reason=reasons.length?' '+reasons.join('; ')+'.':'';out.push(`Nível de Crédito ${credit}% está abaixo da referência narrativa de ${creditRule.required}% para este item.${reason} Converse com o Guardião ou acrescente uma justificativa à backstory; você ainda pode escolhê-lo.`)}}
   if(item.caution)out.push(item.caution);
   return out;
  }
@@ -429,8 +435,8 @@
   const extra=item.kind==='healing'&&item.effect?`<span><b>Efeito</b> ${esc(item.effect)}</span>`:'';
   const uses=item.kind==='healing'?`<div class="eq-uses"><label>Usos <input type="number" min="0" max="9999" value="${+item.uses||0}" data-eq-field="uses" data-eq-id="${esc(item.uid)}"></label><button type="button" data-eq-action="use" data-eq-id="${esc(item.uid)}">−1 uso</button></div>`:'';
   const note=item.notes?`<p class="eq-note">${esc(item.notes)}</p>`:'';
-  const warning=warn.length?`<div class="eq-warning" role="status">⚠ ${warn.map(esc).join(' ')}</div>`:'';
-  return`<article class="eq-item${eraClass}" data-eq-item="${esc(item.uid)}">${thumbHtml(item)}<div class="eq-main"><div class="eq-item-head"><div><strong>${esc(item.name||'Item')}</strong><span class="eq-kind">${esc(item.cat||'Geral')}</span>${creditBadge(p,item)}${era.state!=='available'?`<span class="eq-era-label">${era.state==='retired'?'Fora de linha':'Fora de época'}</span>`:''}</div><button type="button" class="eq-remove danger" data-eq-action="remove" data-eq-id="${esc(item.uid)}" title="Remover item" aria-label="Remover ${esc(item.name)}">×</button></div><div class="eq-meta"><label>Qtd. <input type="number" min="0" max="9999" value="${+item.quantity||0}" data-eq-field="quantity" data-eq-id="${esc(item.uid)}"></label>${skill}${weaponDetails}${item.protection?`<span><b>Efeito</b> ${esc(item.protection)}</span>`:''}</div>${ammo}${uses}${extra?`<div class="eq-meta">${extra}</div>`:''}${note}${warning}</div></article>`;
+  const warning=warn.length?`<div class="eq-warning" role="status">⚠ ${warn.map(esc).join(' ')}</div>`:'',creditJustification=creditJustificationHtml(p,item);
+  return`<article class="eq-item${eraClass}" data-eq-item="${esc(item.uid)}">${thumbHtml(item)}<div class="eq-main"><div class="eq-item-head"><div><strong>${esc(item.name||'Item')}</strong><span class="eq-kind">${esc(item.cat||'Geral')}</span>${creditBadge(p,item)}${era.state!=='available'?`<span class="eq-era-label">${era.state==='retired'?'Fora de linha':'Fora de época'}</span>`:''}</div><button type="button" class="eq-remove danger" data-eq-action="remove" data-eq-id="${esc(item.uid)}" title="Remover item" aria-label="Remover ${esc(item.name)}">×</button></div><div class="eq-meta"><label>Qtd. <input type="number" min="0" max="9999" value="${+item.quantity||0}" data-eq-field="quantity" data-eq-id="${esc(item.uid)}"></label>${skill}${weaponDetails}${item.protection?`<span><b>Efeito</b> ${esc(item.protection)}</span>`:''}</div>${ammo}${uses}${extra?`<div class="eq-meta">${extra}</div>`:''}${note}${warning}${creditJustification}</div></article>`;
  }
  function render(p,i){
   const list=ensure(p),catOpts=CATS.map(c=>`<option>${c}</option>`).join(''),year=yearOf(p);
@@ -446,6 +452,9 @@
    const ws=warnings(p,item);
    if(box){if(ws.length)box.textContent='⚠ '+ws.join(' ');else box.remove()}
    else if(ws.length){const w=document.createElement('div');w.className='eq-warning';w.setAttribute('role','status');w.textContent='⚠ '+ws.join(' ');host.appendChild(w)}
+   const oldJustification=el.querySelector('.eq-credit-justification'),nextJustification=creditJustificationHtml(p,item);
+   if(oldJustification){if(nextJustification)oldJustification.outerHTML=nextJustification;else oldJustification.remove()}
+   else if(nextJustification)host.insertAdjacentHTML('beforeend',nextJustification);
    const reload=el.querySelector('[data-eq-action="reload"]');if(reload)reload.disabled=(+item.reserve||0)<1||(+item.loaded||0)>=(+item.capacity||0);
   });
  }
@@ -455,6 +464,13 @@
  function plainText(p){const rows=pdfRows(p);return rows.length?'\nEquipamentos:\n'+rows.map(x=>`- ${x.quantity}× ${x.name} [${x.category}]${x.detail?' — '+x.detail:''}`).join('\n'):''}
 
  /* ---------- ligação com a página (sem depender de alterações no index.html) ---------- */
+ document.addEventListener('change',e=>{
+  const select=e.target.closest('[data-eq-credit-justification]');if(!select)return;
+  const win=select.closest('.win');if(!win||typeof cur==='undefined')return;
+  const p=cur[+win.dataset.i],item=p&&find(p,select.dataset.eqId);if(!item)return;
+  if(select.value&&CREDIT_JUSTIFICATIONS[select.value])item.creditJustification=select.value;else delete item.creditJustification;
+  p.edit=true;if(typeof draw==='function')draw();if(typeof persist==='function')persist();
+ });
  document.addEventListener('click',e=>{
   const b=e.target.closest('[data-eq-action="open-picker"],[data-eq-action="cycle-img"]');if(!b)return;
   const win=b.closest('.win');if(!win||typeof cur==='undefined')return;
