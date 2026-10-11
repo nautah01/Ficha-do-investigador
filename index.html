@@ -27,16 +27,11 @@ h1{margin:0;font-size:1.85rem;font-variant:small-caps;letter-spacing:2px;color:v
 .tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 button.chip{padding:3px 11px;font-size:.78rem;border-radius:999px;line-height:1.5}
 button.chip.sq{padding:3px 10px;font-weight:bold}
-.gen{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 70px auto;gap:10px;align-items:end}
+.gen{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 70px auto auto;gap:10px;align-items:end}
 .gen select,.gen input{width:100%;min-width:0;height:36px;background:var(--field);color:var(--field-ink);border:1px solid var(--line);color-scheme:var(--scheme)}
 .gen select:focus,.gen input:focus{outline:2px solid var(--head);outline-offset:1px}
 .gen button{height:36px;white-space:nowrap}
 #go{padding:0 22px}
-.manual-create{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:1px;padding:8px 10px;border:1px solid rgba(var(--gr2),.32);border-radius:6px;background:rgba(var(--gr),.035)}
-.manual-create-copy{display:grid;gap:2px}
-.manual-create-copy b{color:var(--head);font-size:.78rem;font-variant:small-caps;letter-spacing:.7px}
-.manual-create-copy span{color:var(--muted2);font-size:.72rem;line-height:1.35}
-#blank{min-height:36px;padding:0 14px;white-space:nowrap}
 #panelBtn{position:fixed;top:10px;left:10px;z-index:6000;padding:6px 14px;border-radius:999px;font-size:.85rem;background:linear-gradient(var(--k5),var(--k2));color:var(--head);border:1px solid var(--gold);box-shadow:0 6px 18px rgba(0,0,0,.5)}
 #panelBtn:hover{background:linear-gradient(var(--k6),var(--k5))}
 #panelBtn[hidden]{display:none}
@@ -44,8 +39,6 @@ body.pmin h1{padding-left:112px}
 label{display:flex;flex-direction:column;font-size:.8rem;gap:3px;color:var(--ink2);min-width:0}
 @media(max-width:640px){
  .gen{grid-template-columns:1fr 1fr}.gen .qtl{grid-column:1/-1}
- .manual-create{align-items:stretch;flex-direction:column;gap:7px}
- .manual-create button{width:100%;min-height:40px}
  .bar-head{flex-direction:column;align-items:stretch}
  h1{padding-left:0}
 }
@@ -77,14 +70,6 @@ button.alt:hover{background:rgba(var(--gr),.12)}
 .clip{width:18px;height:28px;border:2px solid var(--gold);border-bottom:none;border-radius:4px 4px 0 0;background:linear-gradient(var(--tab1),var(--tab2));box-shadow:0 2px 0 var(--tab3);margin-top:-18px}
 h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid var(--rule);font-variant:small-caps}
 .sub{color:var(--muted);font-size:.85rem}
-.character-portrait{display:flex;align-items:center;gap:12px;margin:10px 0 12px;padding:8px;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.05)}
-.portrait-preview{width:62px;height:76px;flex:0 0 62px;display:grid;place-items:center;overflow:hidden;border:1px solid var(--gold);border-radius:4px;background:var(--field);color:var(--muted2);font-size:.68rem;text-align:center}
-.portrait-preview img{display:block;width:100%;height:100%;object-fit:cover}
-.portrait-controls{display:flex;flex-wrap:wrap;align-items:center;gap:7px}
-.portrait-upload,.portrait-remove{position:relative;display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:5px 10px;border:1px solid var(--gold);border-radius:4px;background:var(--k4);color:var(--btnt);font:inherit;font-size:.8rem;cursor:pointer}
-.portrait-upload input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
-.portrait-remove{border-color:rgba(253,186,116,.5);background:transparent;color:var(--warn2)}
-.portrait-controls small{flex-basis:100%;color:var(--muted);font-size:.72rem}
 .in{width:54px;text-align:center;border:1px solid var(--line);background:var(--field);color:var(--field-ink);padding:2px 4px;font:inherit;font-size:.85rem;border-radius:3px}
 .in:focus{outline:2px solid var(--head);background:var(--k3)}
 .nm{font-size:1.12rem;font-weight:bold;width:62%;color:var(--head);background:transparent;border:none;border-bottom:1px solid var(--line);border-radius:0;text-align:left}
@@ -129,8 +114,6 @@ body.mobile h1{font-size:1.5rem;letter-spacing:1px}
 body.mobile .tag{font-size:.9rem}
 body.mobile .gen{grid-template-columns:1fr 1fr}
 body.mobile .gen .qtl{grid-column:1/-1}
-body.mobile .manual-create{align-items:stretch;flex-direction:column;gap:6px}
-body.mobile #blank{width:100%;min-height:44px;font-size:.88rem}
 body.mobile .bar-head{flex-direction:column;align-items:stretch}
 body.mobile .gen select,body.mobile .gen input,body.mobile .gen button{height:44px;font-size:16px}
 body.mobile button.chip{min-height:38px;font-size:.85rem}
@@ -146,9 +129,6 @@ body.mobile #desk h2 .in.nm{font-size:18px!important}
 body.mobile #desk .stats{gap:6px}
 body.mobile #desk .stats .in{width:100%;max-width:64px}
 body.mobile #desk .sk{grid-template-columns:1fr}
-body.mobile #desk .character-portrait{align-items:flex-start}
-body.mobile #desk .portrait-controls{gap:6px}
-body.mobile #desk .portrait-upload,body.mobile #desk .portrait-remove{min-height:40px}
 body.mobile #desk .sk>span{padding:3px 0}
 body.mobile #desk .der{gap:8px 10px}
 body.mobile #desk button.rmb{padding:4px 10px;font-size:.85rem}
@@ -182,6 +162,20 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 @media (prefers-reduced-motion:reduce){.atmo .fog,.atmo .tent,.atmo .sign-rotor,h1{animation:none}.atmo .eye-pupil{transition:none}}
 .hist{margin:2px 0 6px}.hist .orig{font-size:.88rem;margin:0 0 3px}.hist .orig small{color:var(--muted)}
 .hist .bk{text-align:left;display:block;width:100%;min-height:64px;margin-top:4px;padding:6px 8px;resize:vertical;font:inherit;font-size:.9rem;line-height:1.4}
+.backstory-layout{display:grid;grid-template-columns:minmax(145px,180px) minmax(0,1fr);gap:14px;align-items:start}
+.backstory-photo{padding:9px;border:1px solid var(--line);border-radius:7px;background:rgba(var(--gr),.04)}
+.backstory-photo h3{margin:0 0 7px;color:var(--head);font-size:.9rem;font-variant:small-caps}
+.portrait-canvas{display:block;width:156px;height:192px;max-width:100%;margin:0 auto 8px;border:1px solid var(--gold);border-radius:5px;background:#0b1715;touch-action:none;cursor:grab}
+.portrait-canvas:active{cursor:grabbing}
+.portrait-controls{display:grid;gap:6px}
+.portrait-controls label,.portrait-controls .portrait-file{font-size:.75rem;color:var(--muted2)}
+.portrait-controls input[type=range]{width:100%;padding:0;accent-color:var(--gold)}
+.portrait-file input{width:100%;font-size:.72rem}
+.portrait-controls button{min-height:32px;padding:4px 7px;font-size:.75rem}
+.portrait-tip{display:block;color:var(--muted);font-size:.68rem;line-height:1.35}
+.backstory-text h3{margin-top:0}
+.backstory-text .bk{min-height:170px}
+@media(max-width:640px){.backstory-layout{grid-template-columns:1fr}.backstory-photo{display:grid;grid-template-columns:minmax(115px,156px) minmax(0,1fr);gap:8px;align-items:start}.backstory-photo h3{grid-column:1/-1}.portrait-canvas{grid-row:span 2;width:100%;height:auto;aspect-ratio:156/192}.portrait-controls{min-width:0}}
 </style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><script src="equipment.js"></script></head><body>
 <button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <div class="top">
@@ -203,8 +197,8 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <label>Ocupação secundária<select id="occ2"></select></label>
 <label class="qtl">Qtd.<input id="qty" type="number" min="1" max="8" value="1"></label>
 <button id="go">🎲 Gerar</button>
+<button class="alt" id="blank" title="Gerar ficha em branco">📝 Ficha em branco</button>
 </div>
-<div class="manual-create"><div class="manual-create-copy"><b>Preenchimento manual</b><span>Crie uma ficha vazia para preencher os dados do zero.</span></div><button class="alt" id="blank" title="Criar uma ficha em branco para preencher do zero">📝 Criar ficha em branco</button></div>
 </div>
 </div>
 <button id="panelBtn" hidden title="Abrir painel de geração">☰ Painel</button>
@@ -584,14 +578,17 @@ function body(p,i){
  return`<div class="badge"><span class="ed" ${p.edit?'':'hidden'}>✎ Ficha editada</span></div>
   <div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub"><input class="in nm" style="width:48%;font-size:.85rem;font-weight:normal" data-i="${i}" data-k="n:occ" placeholder="Ocupação" value="${esc(p.occ)}"> · <input class="in" data-i="${i}" data-k="n:idade" placeholder="idade" value="${esc(p.idade)}"> anos${p.sec?` · <small>+ ${esc(p.sec)}</small>`:''}</div>
-  <div class="character-portrait"><div class="portrait-preview">${p.portrait?`<img src="${esc(p.portrait)}" alt="Aparência de ${esc(p.nome||'investigador')}">`:'Sem imagem'}</div><div class="portrait-controls"><label class="portrait-upload">${p.portrait?'Trocar imagem':'Adicionar aparência'}<input type="file" accept="image/*" data-portrait-file data-i="${i}" aria-label="Escolher imagem do personagem"></label>${p.portrait?`<button type="button" class="portrait-remove" data-remove-portrait data-i="${i}">Remover imagem</button>`:''}<small>A imagem também será enviada ao cemitério e incluída no PDF.</small></div></div>
   <div class="stats">${st}</div><div class="der">${d}</div>
-   <h3 class="st">Histórico</h3><div class="hist">${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}</div>`).join('')}${crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b> <small>${esc(crRangeTxt(p))}</small></div>`:''}<textarea class="in bk" rows="3" data-i="${i}" data-k="n:back" placeholder="Backstory: quem é, de onde vem, o que já viu…">${esc(p.back||'')}</textarea></div>
   <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}${mobileActions}`;
+}
+function backstory(p,i){
+ const photo=p.portrait||{},hasPhoto=!!photo.src,zoom=Math.max(1,Math.min(3,+photo.zoom||1));
+ const origins=(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}</div>`).join(''),credit=crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b> <small>${esc(crRangeTxt(p))}</small></div>`:'';
+ return`<div class="backstory-layout"><section class="backstory-photo"><h3>Aparência do personagem</h3><canvas class="portrait-canvas" width="156" height="192" data-portrait-canvas data-i="${i}" aria-label="Enquadramento do retrato do personagem" tabindex="0"></canvas><div class="portrait-controls"><label class="portrait-file">${hasPhoto?'Trocar imagem':'Adicionar imagem'}<input type="file" accept="image/*" data-portrait-file data-i="${i}"></label><label data-portrait-zoom-label ${hasPhoto?'':'hidden'}>Zoom<input type="range" min="1" max="3" step="0.02" value="${zoom}" data-portrait-zoom data-i="${i}"></label><button type="button" class="alt" data-portrait-remove data-i="${i}" ${hasPhoto?'':'hidden'}>Remover imagem</button><small class="portrait-tip" ${hasPhoto?'':'hidden'}>Arraste a imagem para ajustar o recorte.</small></div></section><section class="backstory-text"><h3 class="st">Origem</h3><div class="hist">${origins||'<div class="orig"><small>Esta ficha não tem origem ocupacional definida.</small></div>'}${credit}</div><h3 class="st">Backstory</h3><textarea class="in bk" rows="8" data-i="${i}" data-k="n:back" placeholder="Quem é o personagem? De onde veio? O que já viveu ou descobriu?">${esc(p.back||'')}</textarea></section></div>`;
 }
 function card(p,i){
  const u=uiOf(p,i);
- const isEq=u.tab==='equipment';
+ const isEq=u.tab==='equipment',isBack=u.tab==='backstory';
  return`<section class="win${p.pinned?' pinned':''}${u.collapsed?' collapsed':''}" data-i="${i}" style="left:${u.x}px;top:${u.y}px;width:${u.w}px;z-index:${u.z}">
   <header class="win-bar">
    <button class="colb" data-i="${i}" title="Recolher / expandir">${u.collapsed?'▢':'–'}</button>
@@ -602,8 +599,8 @@ function card(p,i){
    <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>
   </header>
-  <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" data-sheet-tab="sheet" role="tab" aria-selected="${!isEq}">🗂 Ficha</button><button type="button" data-sheet-tab="equipment" role="tab" aria-selected="${isEq}">🎒 Equipamentos${p.equipment&&p.equipment.length?` (${p.equipment.length})`:''}</button></div>
-  <div class="win-body"><div class="win-pane sheet-pane" role="tabpanel" ${isEq?'hidden':''}><div class="stamp">Arquivo<br>Arkham</div>${body(p,i)}</div><div class="win-pane equipment-pane" role="tabpanel" ${isEq?'':'hidden'}>${window.CthEquipment.render(p,i)}</div></div>
+  <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" data-sheet-tab="sheet" role="tab" aria-selected="${!isEq&&!isBack}">🗂 Ficha</button><button type="button" data-sheet-tab="equipment" role="tab" aria-selected="${isEq}">🎒 Equipamentos${p.equipment&&p.equipment.length?` (${p.equipment.length})`:''}</button><button type="button" data-sheet-tab="backstory" role="tab" aria-selected="${isBack}">📖 Backstory</button></div>
+  <div class="win-body"><div class="win-pane sheet-pane" role="tabpanel" ${isEq||isBack?'hidden':''}><div class="stamp">Arquivo<br>Arkham</div>${body(p,i)}</div><div class="win-pane equipment-pane" role="tabpanel" ${isEq?'':'hidden'}>${window.CthEquipment.render(p,i)}</div><div class="win-pane backstory-pane" role="tabpanel" ${isBack?'':'hidden'}>${backstory(p,i)}</div></div>
   <div class="rsz" data-i="${i}"></div>
  </section>`;
 }
@@ -640,8 +637,30 @@ function fichaDeskW(){return Math.max(340,document.documentElement.clientWidth-3
 let fichaFitT=0;addEventListener('resize',()=>{clearTimeout(fichaFitT);fichaFitT=setTimeout(()=>{if(!document.body.classList.contains('mobile')){fitDesk();persist()}},120)});
 const draw=()=>{
  desk.innerHTML=cur.length?cur.map(card).join(''):'<p class="empty">Nenhuma ficha. Clique em Gerar — e depois fixe as que quiser guardar.</p>';
+ hydratePortraits();
  fitDesk();persist();
 };
+function portraitGeometry(img,w,h,p){
+ const z=Math.max(1,Math.min(3,+p.zoom||1)),scale=Math.max(w/img.width,h/img.height)*z,iw=img.width*scale,ih=img.height*scale;
+ const maxX=Math.max(0,(iw-w)/2/w),maxY=Math.max(0,(ih-h)/2/h),x=Math.max(-maxX,Math.min(maxX,+p.x||0)),y=Math.max(-maxY,Math.min(maxY,+p.y||0));
+ p.x=x;p.y=y;return{iw,ih,x:w/2+x*w-iw/2,y:h/2+y*h-ih/2};
+}
+function hydratePortraits(){
+ desk.querySelectorAll('[data-portrait-canvas]').forEach(canvas=>{
+  const p=cur[+canvas.dataset.i],photo=p&&p.portrait;if(!p)return;
+  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,156,192);ctx.fillStyle='#0b1715';ctx.fillRect(0,0,156,192);
+  if(!photo||!photo.src)return;
+  const img=new Image();img.onload=()=>{if(!canvas.isConnected)return;const g=portraitGeometry(img,156,192,photo);ctx.clearRect(0,0,156,192);ctx.drawImage(img,g.x,g.y,g.iw,g.ih)};img.src=photo.src;
+ });
+}
+function paintPortrait(canvas,p){
+ const photo=p.portrait;if(!photo||!photo.src)return;
+ const img=new Image();img.onload=()=>{if(!canvas.isConnected)return;const ctx=canvas.getContext('2d'),g=portraitGeometry(img,156,192,photo);ctx.clearRect(0,0,156,192);ctx.drawImage(img,g.x,g.y,g.iw,g.ih)};img.src=photo.src;
+}
+async function shrinkPortrait(file){
+ const bitmap=await createImageBitmap(file),scale=Math.min(1,640/Math.max(bitmap.width,bitmap.height)),canvas=document.createElement('canvas');
+ canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close&&bitmap.close();return canvas.toDataURL('image/jpeg',.85);
+}
 function winEl(i){return desk.querySelector('.win[data-i="'+i+'"]')}
 function bring(i){const p=cur[i];if(!p)return;p.ui.z=++zTop;const el=winEl(i);if(el)el.style.zIndex=p.ui.z;persist()}
 function refresh(i){
@@ -670,10 +689,10 @@ async function approveEquipment(p,item){
  return askConfirm({title:'Confira este equipamento',html,ok:'Adicionar mesmo assim',danger:false});
 }
 desk.addEventListener('click',e=>{
- const removePortrait=e.target.closest('[data-remove-portrait]');if(removePortrait){const p=cur[+removePortrait.dataset.i];if(p){delete p.portrait;p.edit=true;draw();persist()}return}
  const i=e.target.closest('[data-i]');
  const idx=i?+i.dataset.i:NaN;
- const tab=e.target.closest('[data-sheet-tab]');if(tab){const k=+tab.closest('.win').dataset.i;cur[k].ui.tab=tab.dataset.sheetTab==='equipment'?'equipment':'sheet';draw();return}
+ const removePortrait=e.target.closest('[data-portrait-remove]');if(removePortrait){const k=+removePortrait.dataset.i,p=cur[k];if(p){delete p.portrait;p.edit=true;draw()}return}
+ const tab=e.target.closest('[data-sheet-tab]');if(tab){const k=+tab.closest('.win').dataset.i,chosen=tab.dataset.sheetTab;cur[k].ui.tab=['equipment','backstory'].includes(chosen)?chosen:'sheet';draw();return}
  const eqAction=e.target.closest('[data-eq-action]');if(eqAction){
   const win=eqAction.closest('.win'),k=win?+win.dataset.i:NaN,p=cur[k],panel=eqAction.closest('[data-eq-panel]'),action=eqAction.dataset.eqAction;
   if(!p||!panel)return;
@@ -718,19 +737,9 @@ desk.addEventListener('click',e=>{
  if(e.target.closest('.pinb')){const p=cur[idx];p.pinned=!p.pinned;draw();return}
  if(e.target.closest('.dupb')){const p=JSON.parse(JSON.stringify(cur[idx]));p.pinned=false;p.ui={...p.ui,x:(p.ui.x||0)+28,y:(p.ui.y||0)+28,z:++zTop,collapsed:false};p.nome=p.nome.replace(/ \(cópia\)$/,'')+' (cópia)';if(!cur[idx].nome)p.nome='';cur.push(p);draw();return}
 });
-async function shrinkPortrait(file){
- const image=await createImageBitmap(file),scale=Math.min(1,640/Math.max(image.width,image.height)),canvas=document.createElement('canvas');
- canvas.width=Math.max(1,Math.round(image.width*scale));canvas.height=Math.max(1,Math.round(image.height*scale));canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);
- return canvas.toDataURL('image/jpeg',.86);
-}
-desk.addEventListener('change',async e=>{
- const input=e.target.closest('[data-portrait-file]');if(!input)return;
- const p=cur[+input.dataset.i],file=input.files&&input.files[0];input.value='';if(!p||!file)return;
- if(!file.type.startsWith('image/')){alert('Escolha um arquivo de imagem.');return}
- try{p.portrait=await shrinkPortrait(file);p.edit=true;draw();persist()}catch(_){alert('Não foi possível abrir essa imagem.')}
-});
 desk.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset.add==='n'){const b=e.target.parentElement.querySelector('.addb');(b.dataset.m?addMain:addSkill)(+b.dataset.i,e.target.parentElement)}});
 desk.addEventListener('change',e=>{
+ const portraitFile=e.target.closest('[data-portrait-file]');if(portraitFile){const i=+portraitFile.dataset.i,p=cur[i],file=portraitFile.files&&portraitFile.files[0];portraitFile.value='';if(!p||!file)return;shrinkPortrait(file).then(src=>{p.portrait={src,zoom:1,x:0,y:0};p.edit=true;draw()}).catch(()=>alert('Não foi possível abrir essa imagem.'));return}
  const panel=e.target.closest('[data-eq-panel]');if(!panel)return;
  const yearSelect=e.target.closest('[data-eq-year]'),yearCustom=e.target.closest('[data-eq-year-custom]');
  if(yearSelect||yearCustom){
@@ -773,6 +782,7 @@ desk.addEventListener('pointerdown',e=>{
  document.addEventListener('pointerup',onDragEnd);
 });
 desk.addEventListener('input',e=>{
+ const zoom=e.target.closest('[data-portrait-zoom]');if(zoom){const i=+zoom.dataset.i,p=cur[i];if(!p)return;p.portrait=p.portrait||{src:'',x:0,y:0};p.portrait.zoom=+zoom.value;const win=zoom.closest('.win'),canvas=win&&win.querySelector('[data-portrait-canvas]');if(canvas)paintPortrait(canvas,p);p.edit=true;persist();return}
  const eq=e.target.closest('[data-eq-field]');if(eq){
   const win=eq.closest('.win'),k=win?+win.dataset.i:NaN,p=cur[k],item=p&&window.CthEquipment.find(p,eq.dataset.eqId);if(!item)return;
   let value=Math.max(0,Math.floor(+eq.value||0));if(eq.dataset.eqField==='loaded')value=Math.min(+item.capacity||0,value);item[eq.dataset.eqField]=value;p.edit=true;
@@ -792,6 +802,16 @@ desk.addEventListener('input',e=>{
  }
  p.edit=true;refresh(i);window.CthEquipment.refreshWarnings(p,winEl(i)&&winEl(i).querySelector('[data-eq-panel]'));
 });
+desk.addEventListener('pointerdown',e=>{
+ const canvas=e.target.closest('[data-portrait-canvas]');if(!canvas)return;const i=+canvas.dataset.i,p=cur[i];if(!p||!p.portrait)return;
+ canvas.setPointerCapture(e.pointerId);canvas._portraitDrag={x:e.clientX,y:e.clientY,ox:+p.portrait.x||0,oy:+p.portrait.y||0};e.stopPropagation();e.preventDefault();
+});
+desk.addEventListener('pointermove',e=>{
+ const canvas=e.target.closest('[data-portrait-canvas]');if(!canvas||!canvas._portraitDrag)return;const p=cur[+canvas.dataset.i];if(!p||!p.portrait)return;
+ const rect=canvas.getBoundingClientRect(),drag=canvas._portraitDrag;p.portrait.x=drag.ox+(e.clientX-drag.x)/rect.width;p.portrait.y=drag.oy+(e.clientY-drag.y)/rect.height;paintPortrait(canvas,p);p.edit=true;persist();
+});
+const endPortraitDrag=e=>{const canvas=e.target.closest&&e.target.closest('[data-portrait-canvas]');if(canvas&&canvas._portraitDrag){canvas._portraitDrag=null;persist()}};
+desk.addEventListener('pointerup',endPortraitDrag);desk.addEventListener('pointercancel',endPortraitDrag);
 function placeNew(p,i,anchors){
  let x=28+(i%5)*40,y=16+(i%5)*32;
  if(anchors&&anchors.length){
@@ -803,7 +823,7 @@ function placeNew(p,i,anchors){
  p.ui={x,y,w:520,z:++zTop,collapsed:false};
 }
 /* cemitério: arraste a ficha até o botão do cemitério no painel; ela só sai da mesa depois de confirmar */
-function buryFicha(i){const p=cur[i];if(!p||!window.Cemiterio)return;Cemiterio.add({nome:p.nome,idade:p.idade,foto:p.portrait||''},()=>{const k=cur.indexOf(p);if(k>=0){cur.splice(k,1);draw()}})}
+function buryFicha(i){const p=cur[i];if(!p||!window.Cemiterio)return;Cemiterio.add({nome:p.nome,idade:p.idade,portrait:p.portrait},()=>{const k=cur.indexOf(p);if(k>=0){cur.splice(k,1);draw()}})}
 function go(){
  const q=Math.max(1,Math.min(8,+document.getElementById('qty').value||1));
  const kept=cur.filter(p=>p.pinned);
@@ -873,24 +893,19 @@ function pdfSkillColumns(doc,p,items,title,y,C){
  });
  return startY+Math.max(...heights)+5;
 }
+async function pdfPortrait(p){
+ const photo=p.portrait;if(!photo||!photo.src)return null;
+ try{const img=new Image();await new Promise((ok,no)=>{img.onload=ok;img.onerror=no;img.src=photo.src});const canvas=document.createElement('canvas');canvas.width=234;canvas.height=288;const ctx=canvas.getContext('2d'),g=portraitGeometry(img,234,288,photo);ctx.drawImage(img,g.x,g.y,g.iw,g.ih);return canvas.toDataURL('image/jpeg',.88)}catch(_){return null}
+}
 async function pdfInvestigator(doc,p,C){
- pdfFrame(doc,C);const W=doc.internal.pageSize.getWidth(),right=W-36,portrait=await pdfImageData(p.portrait);
- const textRight=portrait?right-72:right;let y;
- if(portrait){
-  const box={x:right-58,y:39,w:48,h:62};doc.setFillColor(...C.panel);doc.setDrawColor(...C.gold);doc.setLineWidth(.55);doc.roundedRect(box.x,box.y,box.w,box.h,3,3,'FD');
-  const scale=Math.min((box.w-4)/portrait.width,(box.h-4)/portrait.height),w=portrait.width*scale,h=portrait.height*scale;
-  doc.addImage(portrait.data,'PNG',box.x+(box.w-w)/2,box.y+(box.h-h)/2,w,h,undefined,'FAST');
-  pdfCentered(doc,'Aparência',box.x+box.w/2,box.y+box.h+10,6.5,C.muted,'normal');
- }
+ pdfFrame(doc,C);const W=doc.internal.pageSize.getWidth(),right=W-36;
+ const portrait=await pdfPortrait(p),photoW=46,photoH=57,photoX=right-photoW,photoY=35,titleRight=portrait?photoX-10:right-39;
+ let y=55;y=pdfWrapped(doc,p.nome||'Investigador',39,y,titleRight-39,20,22,C.head,'bold');
+ if(portrait){doc.setDrawColor(...C.gold);doc.setLineWidth(.6);doc.roundedRect(photoX-2,photoY-2,photoW+4,photoH+4,2,2,'S');doc.addImage(portrait,'JPEG',photoX,photoY,photoW,photoH,undefined,'FAST')}
+ doc.setDrawColor(...C.line);doc.setLineWidth(.7);doc.line(39,y+2,right,y+2);y+=19;
  const meta=[p.occ,p.idade!==''?`${p.idade} anos`:'',p.sec?`+ ${p.sec}`:'',p.edit?'ficha editada':''].filter(Boolean).join(' · ');
- if(portrait){
-  y=pdfWrapped(doc,p.nome||'Investigador',39,55,textRight-39,20,22,C.head,'bold')+1;
-  y=pdfWrapped(doc,meta,39,y,textRight-39,9,11,C.muted)+7;y=Math.max(y,116);
-  doc.setDrawColor(...C.line);doc.setLineWidth(.7);doc.line(39,y-3,right,y-3);
- }else{
-  y=55;pdfText(doc,p.nome||'Investigador',39,y,20,C.head,'bold');doc.setDrawColor(...C.line);doc.setLineWidth(.7);doc.line(39,y+8,right,y+8);y+=25;
-  y=pdfWrapped(doc,meta,39,y,right-39,9,11,C.muted)+7;
- }
+ y=pdfWrapped(doc,meta,39,y,titleRight-39,9,11,C.muted)+7;
+ if(portrait)y=Math.max(y,photoY+photoH+9);
  const attrs=Object.entries(p.c||{}),gap=4,boxW=(right-39-gap*(attrs.length-1))/attrs.length,boxH=55;
  attrs.forEach(([key,value],i)=>{
   const x=39+i*(boxW+gap);doc.setFillColor(...C.panel);doc.setDrawColor(...C.gold);doc.setLineWidth(.55);doc.roundedRect(x,y,boxW,boxH,4,4,'FD');

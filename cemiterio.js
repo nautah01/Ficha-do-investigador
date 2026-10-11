@@ -96,7 +96,7 @@ function syncButton(){if(cemBtn)cemBtn.setAttribute('aria-pressed',String(!win.h
 const cemObserver=new MutationObserver(syncButton);cemObserver.observe(win,{attributes:true,attributeFilter:['hidden']});syncButton();
 window.Cemiterio={
  open:o=>setOpen(o),
- add(p,cb){const foto=p.foto||'';openDlg({id:Math.random().toString(36).slice(2,10),nome:p.nome||'',idade:p.idade??'',causa:'',frase:'',foto,orig:foto},true,cb)},
+ add(p,cb){const photo=p.portrait||{};openDlg({id:Math.random().toString(36).slice(2,10),nome:p.nome||'',idade:p.idade??'',causa:'',frase:'',foto:'',orig:photo.src||'',fz:photo.zoom||1,fx:photo.x||0,fy:photo.y||0},true,cb)},
  over,
  hover(x,y,on){if(cemBtn)cemBtn.classList.toggle('hot',!!on&&over(x,y));const h=!!on&&over(x,y);win.classList.toggle('hot',h)}
 };
