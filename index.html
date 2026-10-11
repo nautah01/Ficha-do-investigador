@@ -175,6 +175,8 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 .portrait-tip{display:block;color:var(--muted);font-size:.68rem;line-height:1.35}
 .backstory-text h3{margin-top:0}
 .backstory-text textarea.bk{display:block;width:100%;min-width:0;min-height:220px;margin-top:4px;padding:8px;text-align:left;white-space:pre-wrap;resize:vertical;font:inherit;font-size:.9rem;line-height:1.45}
+.dynamic-info{position:fixed;z-index:2147483647;width:max-content;max-width:min(360px,calc(100vw - 24px));max-height:min(42vh,320px);overflow:auto;padding:10px 12px;border:1px solid var(--head);border-radius:7px;background:linear-gradient(var(--k6),var(--k2));color:var(--txt);box-shadow:0 10px 30px rgba(0,0,0,.75);font-size:.86rem;line-height:1.45;white-space:normal;overflow-wrap:anywhere;pointer-events:none}
+.dynamic-info[hidden]{display:none!important}
 @media(max-width:640px){.backstory-layout{grid-template-columns:1fr}.backstory-photo{display:grid;grid-template-columns:minmax(115px,156px) minmax(0,1fr);gap:8px;align-items:start}.backstory-photo h3{grid-column:1/-1}.portrait-canvas{grid-row:span 2;width:100%;height:auto;aspect-ratio:156/192}.portrait-controls{min-width:0}}
 </style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><script src="equipment.js"></script></head><body>
 <button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
@@ -1003,6 +1005,13 @@ async function savePdf(list,b){
  finally{b.textContent=label;b.disabled=false}
 }
 sel.onchange=sel2.onchange=document.getElementById('qty').onchange=persist;
+window.DynamicInfo=(()=>{
+ let box=null,host=null,frame=0;
+ function place(x,y){if(!box||box.hidden)return;cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{if(!box||box.hidden)return;const r=box.getBoundingClientRect(),pad=10,gap=14;let left=x+gap,top=y+gap;if(left+r.width>innerWidth-pad)left=x-r.width-gap;if(top+r.height>innerHeight-pad)top=y-r.height-gap;left=Math.max(pad,Math.min(innerWidth-r.width-pad,left));top=Math.max(pad,Math.min(innerHeight-r.height-pad,top));box.style.left=left+'px';box.style.top=top+'px'})}
+ function show(text,x,y,owner,anchor){if(!text)return;const target=owner&&owner.matches&&owner.matches('dialog')?owner:document.body;if(!box||host!==target){if(box)box.remove();host=target;box=document.createElement('div');box.className='dynamic-info';box.setAttribute('role','tooltip');box.hidden=true;target.appendChild(box)}box.textContent=text;box.hidden=false;if(!Number.isFinite(x)||!Number.isFinite(y)||(x===0&&y===0)){const r=anchor&&anchor.getBoundingClientRect?anchor.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};x=r.left+r.width/2;y=r.top+r.height/2}place(x,y)}
+ function hide(owner){if(box&&(!owner||owner===host)){box.hidden=true;cancelAnimationFrame(frame)}}
+ return{show,hide};
+})();
 (function responsiveMode(){
  const media=matchMedia('(max-width: 760px)');
  const apply=()=>{

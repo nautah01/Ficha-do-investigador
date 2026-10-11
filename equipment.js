@@ -338,8 +338,9 @@
   q.addEventListener('input',()=>{hideBar();renderGrid()});
   chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&pk){pk.cat=b.dataset.c;hideBar();renderChips();renderGrid()}});
   grid.addEventListener('click',e=>{const c=e.target.closest('.eqk-card');if(c)choose(c.dataset.v)});
-  const showDet=e=>{const c=e.target.closest('.eqk-card');if(c)det.textContent=c.dataset.d};
-  grid.addEventListener('mouseover',showDet);grid.addEventListener('focusin',showDet);
+  const showDet=e=>{const c=e.target.closest('.eqk-card');if(!c)return;det.textContent=c.dataset.d;const hasPointer=Number.isFinite(e.clientX)&&Number.isFinite(e.clientY)&&(e.clientX!==0||e.clientY!==0);window.DynamicInfo?.show(c.dataset.d,hasPointer?e.clientX:NaN,hasPointer?e.clientY:NaN,dlg,c)};
+  grid.addEventListener('pointerover',showDet);grid.addEventListener('pointermove',showDet);grid.addEventListener('focusin',showDet);
+  grid.addEventListener('pointerleave',()=>window.DynamicInfo?.hide(dlg));grid.addEventListener('focusout',e=>{if(!grid.contains(e.relatedTarget))window.DynamicInfo?.hide(dlg)});
   q.addEventListener('keydown',e=>{if(e.key==='Enter'){const c=grid.querySelector('.eqk-card');if(c)c.click()}});
   bar.addEventListener('click',e=>{
    const b=e.target.closest('[data-eqk]');if(!b||!pk)return;
@@ -348,7 +349,7 @@
   });
   dlg.querySelector('.opk-x').onclick=()=>dlg.close();
   dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
-  dlg.addEventListener('close',()=>{pk=null;if(io){io.disconnect();io=null}hideBar()});
+  dlg.addEventListener('close',()=>{pk=null;if(io){io.disconnect();io=null}hideBar();window.DynamicInfo?.hide(dlg)});
  }
  function hideBar(){if(bar){bar.hidden=true;bar.innerHTML=''}if(pk)pk.pending=null}
  function renderChips(){
@@ -370,6 +371,7 @@
  }
  function renderGrid(keepScroll){
   if(!pk)return;
+  window.DynamicInfo?.hide(dlg);
   const top=keepScroll?grid.scrollTop:0,list=filtered(),owned=ensure(pk.p);
   let html='',last='',i=0;
   const sections=!pk.cat&&new Set(list.map(x=>x.cat)).size>1;

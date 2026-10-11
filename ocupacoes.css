@@ -31,7 +31,7 @@
 .opk-card .ot{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 .opk-card .ot i{font-style:normal;font-size:.7rem;padding:1px 7px;border-radius:999px;background:rgba(var(--sh),.35);border:1px solid var(--line)}
 .opk-none{grid-column:1/-1;padding:30px;text-align:center;color:var(--muted)}
-.opk-det{min-height:2.6em;padding:9px 18px;font-size:.8rem;line-height:1.4;color:var(--muted);background:rgba(var(--sh),.25);border-top:1px solid var(--line)}
+.opk-det{min-height:2.6em;max-height:5.5em;overflow:auto;padding:9px 18px;font-size:.8rem;line-height:1.4;color:var(--muted);background:rgba(var(--sh),.25);border-top:1px solid var(--line);white-space:normal;overflow-wrap:anywhere}
 @media (max-width:640px){.opk{width:100vw;max-height:100vh;border-radius:0}.opk-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
 @media (prefers-reduced-motion:reduce){.opk[open],.opk-card{animation:none}.opk-card{transition:none}}
 @media print{.opk{display:none!important}}

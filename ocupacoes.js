@@ -70,6 +70,7 @@ function card(v,e,name,sub,tags,full,on,idx,nsub,bg){
 const tokTag=t=>{t=t.replace(/^!/,'');if(t==='@soc')return'Social';if(t==='@lang')return'Língua';if(t==='@any')return'';return t.split('|')[0].trim().replace(/^(Ciência|Arte\/Ofício) \((.*)\)$/,'$2')};
 const shortSk=n=>n.replace(/^(Ciência|Arte\/Ofício) \((.*)\)$/,'$2');
 function renderBG(){
+ window.DynamicInfo?.hide(dlg);
  const B=BG[bgItem.occ],e=meta(bgItem.occ)[0];let h,i=0;
  if(bgView==='form'){
   h=`<div class="opk-subhead"><button type="button" data-bgback>← Voltar</button><strong>✍️ ${esc(B.kind)}: outro</strong><span>Escreva o nome e marque até 2 perícias (+10 em cada)</span></div>
@@ -86,6 +87,7 @@ function renderBG(){
  grid.innerHTML=h;grid.scrollTop=0;det.textContent='Escolha a origem do personagem: ela dá +10 em 2 perícias e já escreve o começo do backstory (você pode editar depois).';
 }
 function render(){
+ window.DynamicInfo?.hide(dlg);
  if(bgItem){dlg.classList.add('sub');return renderBG()}
  const c=ctx,cur=c.sel.value;let i=0,h='';dlg.classList.toggle('sub',!!subItem);
  if(subItem){
@@ -128,7 +130,7 @@ function helpHtml(){
 function setHelp(on){dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',on);helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.innerHTML=helpHtml();helpBox.scrollTop=0;helpBox.focus()}else q.focus()}
 helpBtn.addEventListener('click',()=>setHelp(!dlg.classList.contains('help')));
 helpBox.addEventListener('click',e=>{if(e.target.closest('.opk-back'))setHelp(false)});
-dlg.addEventListener('close',()=>{subItem=null;bgItem=null;dlg.classList.remove('help');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda'});
+dlg.addEventListener('close',()=>{subItem=null;bgItem=null;dlg.classList.remove('help');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda';window.DynamicInfo?.hide(dlg)});
 q.addEventListener('input',()=>{subItem=null;bgItem=null;render()});
 chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b){cat=b.dataset.c;subItem=null;render()}});
 tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b){tab=b.dataset.t;subItem=null;render()}});
@@ -158,8 +160,9 @@ grid.addEventListener('click',e=>{
  if(b.dataset.sub){subItem=items(ctx.kind==='occ'?'occ':'sec').find(x=>x.v===b.dataset.v)||null;render();return}
  choose(b.dataset.v);
 });
-const showDet=e=>{const b=e.target.closest('.opk-card');if(b)det.textContent=b.dataset.d};
-grid.addEventListener('mouseover',showDet);grid.addEventListener('focusin',showDet);
+const showDet=e=>{const b=e.target.closest('.opk-card');if(!b)return;det.textContent=b.dataset.d;const hasPointer=Number.isFinite(e.clientX)&&Number.isFinite(e.clientY)&&(e.clientX!==0||e.clientY!==0);window.DynamicInfo?.show(b.dataset.d,hasPointer?e.clientX:NaN,hasPointer?e.clientY:NaN,dlg,b)};
+grid.addEventListener('pointerover',showDet);grid.addEventListener('pointermove',showDet);grid.addEventListener('focusin',showDet);
+grid.addEventListener('pointerleave',()=>window.DynamicInfo?.hide(dlg));grid.addEventListener('focusout',e=>{if(!grid.contains(e.relatedTarget))window.DynamicInfo?.hide(dlg)});
 q.addEventListener('keydown',e=>{if(e.key==='Enter'){const b=grid.querySelector('.opk-card:not([data-v="*"]):not([data-v=""])')||grid.querySelector('.opk-card');if(b)b.click()}});
 dlg.querySelector('.opk-x').onclick=()=>dlg.close();
 dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
