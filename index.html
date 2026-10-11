@@ -27,11 +27,16 @@ h1{margin:0;font-size:1.85rem;font-variant:small-caps;letter-spacing:2px;color:v
 .tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 button.chip{padding:3px 11px;font-size:.78rem;border-radius:999px;line-height:1.5}
 button.chip.sq{padding:3px 10px;font-weight:bold}
-.gen{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 70px auto auto;gap:10px;align-items:end}
+.gen{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 70px auto;gap:10px;align-items:end}
 .gen select,.gen input{width:100%;min-width:0;height:36px;background:var(--field);color:var(--field-ink);border:1px solid var(--line);color-scheme:var(--scheme)}
 .gen select:focus,.gen input:focus{outline:2px solid var(--head);outline-offset:1px}
 .gen button{height:36px;white-space:nowrap}
 #go{padding:0 22px}
+.manual-create{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:1px;padding:8px 10px;border:1px solid rgba(var(--gr2),.32);border-radius:6px;background:rgba(var(--gr),.035)}
+.manual-create-copy{display:grid;gap:2px}
+.manual-create-copy b{color:var(--head);font-size:.78rem;font-variant:small-caps;letter-spacing:.7px}
+.manual-create-copy span{color:var(--muted2);font-size:.72rem;line-height:1.35}
+#blank{min-height:36px;padding:0 14px;white-space:nowrap}
 #panelBtn{position:fixed;top:10px;left:10px;z-index:6000;padding:6px 14px;border-radius:999px;font-size:.85rem;background:linear-gradient(var(--k5),var(--k2));color:var(--head);border:1px solid var(--gold);box-shadow:0 6px 18px rgba(0,0,0,.5)}
 #panelBtn:hover{background:linear-gradient(var(--k6),var(--k5))}
 #panelBtn[hidden]{display:none}
@@ -39,6 +44,8 @@ body.pmin h1{padding-left:112px}
 label{display:flex;flex-direction:column;font-size:.8rem;gap:3px;color:var(--ink2);min-width:0}
 @media(max-width:640px){
  .gen{grid-template-columns:1fr 1fr}.gen .qtl{grid-column:1/-1}
+ .manual-create{align-items:stretch;flex-direction:column;gap:7px}
+ .manual-create button{width:100%;min-height:40px}
  .bar-head{flex-direction:column;align-items:stretch}
  h1{padding-left:0}
 }
@@ -114,6 +121,8 @@ body.mobile h1{font-size:1.5rem;letter-spacing:1px}
 body.mobile .tag{font-size:.9rem}
 body.mobile .gen{grid-template-columns:1fr 1fr}
 body.mobile .gen .qtl{grid-column:1/-1}
+body.mobile .manual-create{align-items:stretch;flex-direction:column;gap:6px}
+body.mobile #blank{width:100%;min-height:44px;font-size:.88rem}
 body.mobile .bar-head{flex-direction:column;align-items:stretch}
 body.mobile .gen select,body.mobile .gen input,body.mobile .gen button{height:44px;font-size:16px}
 body.mobile button.chip{min-height:38px;font-size:.85rem}
@@ -183,8 +192,8 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <label>Ocupação secundária<select id="occ2"></select></label>
 <label class="qtl">Qtd.<input id="qty" type="number" min="1" max="8" value="1"></label>
 <button id="go">🎲 Gerar</button>
-<button class="alt" id="blank" title="Gerar ficha em branco">📝 Ficha em branco</button>
 </div>
+<div class="manual-create"><div class="manual-create-copy"><b>Preenchimento manual</b><span>Crie uma ficha vazia para preencher os dados do zero.</span></div><button class="alt" id="blank" title="Criar uma ficha em branco para preencher do zero">📝 Criar ficha em branco</button></div>
 </div>
 </div>
 <button id="panelBtn" hidden title="Abrir painel de geração">☰ Painel</button>
