@@ -20,7 +20,7 @@
   {id:'telescope',cat:'Geral',name:'Telescópio portátil',q:'Refracting telescope',imgPaths:assetPaths('telescopio portatil.png'),imgTransparent:true,imgRev:5},
   {id:'watch',cat:'Geral',name:'Relógio de bolso',q:'Pocket watch',imgPaths:assetPaths('relogio de bolso.png'),imgTransparent:true,imgRev:5},
   {id:'camera',cat:'Geral',name:'Câmera fotográfica',q:'Kodak Brownie',eraFrom:1888,imgPaths:assetPaths('camera.png'),imgTransparent:true,imgRev:5},
-  {id:'typewriter',cat:'Geral',name:'Máquina de escrever Remington',q:'Typewriter',eraFrom:1870,imgPaths:assetPaths('maquina de escrever.png'),imgTransparent:true,imgRev:5},
+  {id:'typewriter',cat:'Geral',name:'Máquina de escrever Remington',q:'Typewriter',eraFrom:1870,eraTo:2011,creditMin:25,creditVintage:15,imgPaths:assetPaths('maquina de escrever.png'),imgTransparent:true,imgRev:5},
   {id:'dictaphone',cat:'Geral',name:'Ditafone',q:'Dictaphone',eraFrom:1907,imgPaths:assetPaths('ditafone.png'),imgTransparent:true,imgRev:5},
   {id:'handcuffs',cat:'Geral',name:'Algemas',q:'Handcuff',imgPaths:assetPaths('algemas.png'),imgTransparent:true,imgRev:5},
   {id:'rope',cat:'Geral',name:'Corda (50 pés)',q:'Rope',imgPaths:assetPaths('cordas.png'),imgTransparent:true,imgRev:5},
@@ -34,7 +34,7 @@
   {id:'shovel',cat:'Geral',name:'Pá',q:'Shovel',imgPaths:assetPaths('Pá.png'),imgTransparent:true,imgRev:5},
   {id:'umbrella',cat:'Geral',name:'Guarda-chuva',q:'Umbrella',imgPaths:assetPaths('Guarda chuva.png'),imgTransparent:true,imgRev:5},
   {id:'identity',cat:'Geral',name:'Crachá ou distintivo',q:'Badge',imgPaths:assetPaths('dinstintivo.png'),imgTransparent:true,imgRev:5},
-  {id:'camera_flash',cat:'Geral',name:'Flash de magnésio',q:'Flash-lamp',imgPaths:assetPaths('Flash de magnesio.png'),imgTransparent:true,imgRev:5},
+  {id:'camera_flash',cat:'Geral',name:'Flash de magnésio',q:'Flash-lamp',eraFrom:1880,eraTo:1940,creditMin:20,creditVintage:10,imgPaths:assetPaths('Flash de magnesio.png'),imgTransparent:true,imgRev:5},
   {id:'map',cat:'Geral',name:'Mapa da região',q:'Map',imgPaths:assetPaths('mapa.jpg'),imgTransparent:false,imgRev:5},
   {id:'coat',cat:'Geral',name:'Casaco pesado',q:'Overcoat',imgPaths:assetPaths('casaco.png'),imgTransparent:true,imgRev:5,notes:'Proteção narrativa contra frio e chuva; sem armadura automática.'},
   {id:'gloves',cat:'Geral',name:'Luvas resistentes',q:'Protective glove',imgPaths:assetPaths('Luvas resistentes.png'),imgTransparent:true,imgRev:5},
@@ -87,6 +87,8 @@
   {id:'hatchet',cat:'Arma corpo a corpo',name:'Machadinha',q:'Hand axe',imgPaths:['equip-images/hatchet.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/hatchet.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/hatchet.png?v=20261010','hatchet.png?v=20261010'],imgRev:3,skill:'Lutar (Machado)',damage:'1D6+1 + BD',range:'Toque'},
   {id:'bullwhip',cat:'Arma corpo a corpo',name:'Chicote',q:'Bullwhip',skill:'Lutar (Chicote)',damage:'1D3 + metade do BD',range:'10 pés'},
  ];
+ const CREDIT_REFERENCE={wallet:5,notebook:0,pen:5,flashlight:10,batteries:5,compass:10,binoculars:20,telescope:35,watch:15,camera:20,typewriter:25,dictaphone:25,handcuffs:20,rope:5,crowbar:5,tools:15,fieldbag:5,canteen:5,matches:0,lantern:10,lockpick:20,shovel:5,umbrella:5,identity:20,camera_flash:20,map:0,coat:10,gloves:10,respirator:20,medicalcase:30,bandage:5,aspirin:5,forceps:15,scalpel:20,thermometer:5,syringe:10,alcohol:5,crutches:10,pistol22:25,rifle22:25,carbine30:25,shotgun12:30,crossbow:20,club:10,baseballbat:5,brassknuckles:10,knife_small:5,knife_medium:10,knife_large:15,hatchet:10,bullwhip:15,cigarettes:0};
+ CATALOG.forEach(item=>{if(item.creditMin==null)item.creditMin=CREDIT_REFERENCE[item.id]??(item.cat==='Arma de fogo'?35:item.cat==='Arma corpo a corpo'?10:item.cat==='Cura'?10:5)});
  const localImagePaths=item=>Array.isArray(item&&item.imgPaths)?item.imgPaths:(item&&item.imgSrc?[item.imgSrc]:[]);
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
@@ -116,14 +118,23 @@
   return{state:'available',message:''};
  }
  function suggestedCredit(p,item){
-  const source=CATALOG.find(x=>x.id===item.id)||{},base=+((item.creditMin??source.creditMin)||0),period=periodState(p,item);
+  const source=CATALOG.find(x=>x.id===item.id)||{},base=+((item.creditMin??source.creditMin)??0),period=periodState(p,item);
   let required=base;
-  if(period.state==='retired')required+=+((item.creditVintage??source.creditVintage)||10);
+  if(period.state==='retired')required+=+((item.creditVintage??source.creditVintage)??10);
   const owned=item.id?ensure(p).filter(x=>x.id===item.id).reduce((sum,x)=>sum+Math.max(0,+x.quantity||0),0):0;
   const qty=item.id?owned+(item.uid?0:Math.max(0,+item.quantity||1)):Math.max(0,+item.quantity||1),isGun=(item.kind||kindOf(item.cat||source.cat))==='firearm';
   const extra=qty>(isGun?1:5)?Math.min(20,Math.ceil((qty-(isGun?1:5))/(isGun?1:5))*5):0;
   required=Math.max(0,required+extra);
   return{required,base,extra,period};
+ }
+ function creditStatus(p,item){
+  const credit=suggestedCredit(p,item),current=skillValue(p,'Nível de Crédito'),margin=current-credit.required;
+  const state=credit.required===0||margin>=10?'ok':margin>=0?'edge':'low';
+  return{...credit,current,state};
+ }
+ function creditBadge(p,item){
+  const c=creditStatus(p,item),label=c.state==='low'?'Abaixo do acesso legal sugerido':c.state==='edge'?'No limite do Crédito':'Crédito compatível';
+  return`<span class="eq-credit is-${c.state}" title="${esc(label)} · personagem ${c.current}% · referência do item ${c.required}%">Crédito ${c.required}%</span>`;
  }
  function warnings(p,item){
   const out=[];
@@ -280,14 +291,21 @@
  function ensureDialog(){
   if(dlg)return;
   dlg=document.createElement('dialog');dlg.className='opk eqk';dlg.setAttribute('aria-label','Adicionar equipamento');
-  dlg.innerHTML=`<header><h4 id="eqkT">Equipamentos</h4><span class="opk-hb"><button type="button" class="opk-x" aria-label="Fechar">✕</button></span></header>
+  dlg.innerHTML=`<header><h4 id="eqkT">Equipamentos</h4><span class="opk-hb"><button type="button" id="eqkHelpBtn" aria-pressed="false">❔ Ajuda</button><button type="button" class="opk-x" aria-label="Fechar">✕</button></span></header>
 <div class="opk-tools"><input id="eqkQ" type="search" placeholder="Buscar item, arma ou perícia…" aria-label="Buscar equipamento" autocomplete="off"></div>
 <div id="eqkChips" class="opk-chips"></div>
 <div id="eqkGrid" class="opk-grid eqk-grid" role="listbox" aria-label="Itens disponíveis"></div>
+<div id="eqkHelp" class="opk-help" tabindex="-1"></div>
 <div id="eqkBar" class="eqk-bar" role="alert" hidden></div>
 <footer id="eqkDet" class="opk-det"></footer>`;
   document.body.appendChild(dlg);
   q=dlg.querySelector('#eqkQ');grid=dlg.querySelector('#eqkGrid');chips=dlg.querySelector('#eqkChips');bar=dlg.querySelector('#eqkBar');det=dlg.querySelector('#eqkDet');
+  const helpBox=dlg.querySelector('#eqkHelp'),helpBtn=dlg.querySelector('#eqkHelpBtn');
+  helpBox.innerHTML=`<h5>Época do cenário</h5><p>O ano escolhido na ficha altera os avisos de disponibilidade. Um item pode ainda não existir naquela época ou estar fora de linha; ele continua selecionável, mas pode ser raro ou exigir uma explicação narrativa.</p><h5>Nível de Crédito</h5><p>Cada cartão mostra uma referência de Crédito para acesso legal e plausível. <span class="eq-credit is-ok">Verde</span> indica margem confortável; <span class="eq-credit is-edge">laranja</span> indica que está no limite; <span class="eq-credit is-low">vermelho</span> indica que o Crédito está abaixo da referência. A cor é um alerta, nunca bloqueia a escolha: converse com o Guardião ou justifique o item na backstory.</p><h5>Quantidade e itens personalizados</h5><p>Levar várias unidades ou armas iguais pode elevar a referência. Itens personalizados usam o nível definido por quem os criou; quando nenhum nível é informado, a referência fica em 0. Os valores são orientativos e devem ser ajustados à época e à campanha.</p><button type="button" class="opk-back" data-eqk-help-back>← Voltar à lista</button>`;
+  const setHelp=(on,returnFocus=true)=>{dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',String(on));helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.scrollTop=0;helpBox.focus()}else if(returnFocus&&dlg.open)q.focus()};
+  helpBtn.addEventListener('click',()=>setHelp(!dlg.classList.contains('help')));
+  helpBox.addEventListener('click',e=>{if(e.target.closest('[data-eqk-help-back]'))setHelp(false)});
+  dlg.addEventListener('close',()=>setHelp(false,false));
   q.addEventListener('input',()=>{hideBar();renderGrid()});
   chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&pk){pk.cat=b.dataset.c;hideBar();renderChips();renderGrid()}});
   grid.addEventListener('click',e=>{const c=e.target.closest('.eqk-card');if(c)choose(c.dataset.v)});
@@ -318,8 +336,8 @@
   if(t.damage)tags.push('Dano '+t.damage);
   if(t.capacity)tags.push(t.capacity+(t.capacity===1?' tiro':' tiros'));
   if(t.uses)tags.push(t.uses+' usos');
-  const era=periodState(p,t),stateClass=era.state==='available'?'':` eqk-${era.state}`;
-  return`<button type="button" class="opk-card eqk-card${stateClass}" role="option" aria-selected="false" data-v="${esc(t.id)}" data-d="${esc(describe(t)+' · '+(era.message||`Disponível em ${yearOf(p)}`))}" style="--d:${Math.min(i,24)*14}ms"><span class="eqk-img${t.imgTransparent?' transparent':''}" data-eqk-img><span class="eq-ph" aria-hidden="true">${icon(t)}</span></span><span class="eqk-body"><span class="oname">${esc(t.name)}</span><span class="os">${esc(t.cat)}</span>${era.state!=='available'?`<span class="eqk-era">${era.state==='retired'?'Saiu de linha · difícil de achar':'Ainda não existia nesta época'}</span>`:''}${tags.length?`<span class="ot">${tags.slice(0,3).map(x=>`<i>${esc(x)}</i>`).join('')}</span>`:''}</span>${have?`<span class="eqk-have" title="Já está na ficha">✔ ×${have}</span>`:''}</button>`;
+  const era=periodState(p,t),stateClass=era.state==='available'?'':` eqk-${era.state}`,credit=creditStatus(p,t);
+  return`<button type="button" class="opk-card eqk-card${stateClass}" role="option" aria-selected="false" data-v="${esc(t.id)}" data-d="${esc(describe(t)+' · '+(era.message||`Disponível em ${yearOf(p)}`)+` · Crédito ${credit.required}% sugerido; personagem ${credit.current}%`)}" style="--d:${Math.min(i,24)*14}ms"><span class="eqk-img${t.imgTransparent?' transparent':''}" data-eqk-img><span class="eq-ph" aria-hidden="true">${icon(t)}</span></span><span class="eqk-body"><span class="oname">${esc(t.name)}</span><span class="os">${esc(t.cat)}</span>${creditBadge(p,t)}${era.state!=='available'?`<span class="eqk-era">${era.state==='retired'?'Saiu de linha · difícil de achar':'Ainda não existia nesta época'}</span>`:''}${tags.length?`<span class="ot">${tags.slice(0,3).map(x=>`<i>${esc(x)}</i>`).join('')}</span>`:''}</span>${have?`<span class="eqk-have" title="Já está na ficha">✔ ×${have}</span>`:''}</button>`;
  }
  function renderGrid(keepScroll){
   if(!pk)return;
@@ -389,13 +407,13 @@
   const uses=item.kind==='healing'?`<div class="eq-uses"><label>Usos <input type="number" min="0" max="9999" value="${+item.uses||0}" data-eq-field="uses" data-eq-id="${esc(item.uid)}"></label><button type="button" data-eq-action="use" data-eq-id="${esc(item.uid)}">−1 uso</button></div>`:'';
   const note=item.notes?`<p class="eq-note">${esc(item.notes)}</p>`:'';
   const warning=warn.length?`<div class="eq-warning" role="status">⚠ ${warn.map(esc).join(' ')}</div>`:'';
-  return`<article class="eq-item${eraClass}" data-eq-item="${esc(item.uid)}">${thumbHtml(item)}<div class="eq-main"><div class="eq-item-head"><div><strong>${esc(item.name||'Item sem nome')}</strong><span class="eq-kind">${esc(item.cat||'Geral')}</span>${era.state!=='available'?`<span class="eq-era-label">${era.state==='retired'?'Fora de linha':'Fora de época'}</span>`:''}</div><button type="button" class="eq-remove danger" data-eq-action="remove" data-eq-id="${esc(item.uid)}" title="Remover item" aria-label="Remover ${esc(item.name)}">×</button></div><div class="eq-meta"><label>Qtd. <input type="number" min="0" max="9999" value="${+item.quantity||0}" data-eq-field="quantity" data-eq-id="${esc(item.uid)}"></label>${skill}${weaponDetails}${item.protection?`<span><b>Efeito</b> ${esc(item.protection)}</span>`:''}</div>${ammo}${uses}${extra?`<div class="eq-meta">${extra}</div>`:''}${note}${warning}</div></article>`;
+  return`<article class="eq-item${eraClass}" data-eq-item="${esc(item.uid)}">${thumbHtml(item)}<div class="eq-main"><div class="eq-item-head"><div><strong>${esc(item.name||'Item')}</strong><span class="eq-kind">${esc(item.cat||'Geral')}</span>${creditBadge(p,item)}${era.state!=='available'?`<span class="eq-era-label">${era.state==='retired'?'Fora de linha':'Fora de época'}</span>`:''}</div><button type="button" class="eq-remove danger" data-eq-action="remove" data-eq-id="${esc(item.uid)}" title="Remover item" aria-label="Remover ${esc(item.name)}">×</button></div><div class="eq-meta"><label>Qtd. <input type="number" min="0" max="9999" value="${+item.quantity||0}" data-eq-field="quantity" data-eq-id="${esc(item.uid)}"></label>${skill}${weaponDetails}${item.protection?`<span><b>Efeito</b> ${esc(item.protection)}</span>`:''}</div>${ammo}${uses}${extra?`<div class="eq-meta">${extra}</div>`:''}${note}${warning}</div></article>`;
  }
  function render(p,i){
   const list=ensure(p),catOpts=CATS.map(c=>`<option>${c}</option>`).join(''),year=yearOf(p);
   const items=list.length?list.map(item=>itemHtml(p,item)).join(''):'<p class="eq-empty">Ainda não há equipamentos. Use “Adicionar equipamento” para escolher no catálogo ou crie um item personalizado.</p>';
   const skillsId=`eqSkills-${i}`;
-  return`<section class="eq-panel" data-eq-panel data-i="${i}"><div class="eq-intro"><b>Equipamentos do investigador</b><span>Itens, armas e controle de munição ficam salvos nesta ficha.</span></div><div class="eq-era-control"><label for="eq-year-${i}">Época do cenário</label><select id="eq-year-${i}" data-eq-year data-i="${i}">${EQUIPMENT_YEARS.map(y=>`<option value="${y}"${y===year?' selected':''}>${y}</option>`).join('')}<option value="custom"${EQUIPMENT_YEARS.includes(year)?'':' selected'}>Outro ano…</option></select><input type="number" min="1" max="9999" value="${year}" data-eq-year-custom data-i="${i}" aria-label="Ano personalizado" ${EQUIPMENT_YEARS.includes(year)?'hidden':''}></div><div class="eq-add-row"><button type="button" data-eq-action="open-picker">＋ Adicionar equipamento</button><button type="button" class="alt" data-eq-action="open-custom">✍ Personalizado</button></div><details class="eq-help"><summary>Ajuda: época, crédito e quantidade</summary><p>O ano escolhido muda os avisos de disponibilidade: itens que ainda não existiam ou saíram de linha continuam no catálogo e podem ser adicionados, mas podem exigir justificativa ou negociação com o Guardião. Modelos raros podem elevar a referência de Crédito; uma arma aposentada pode valer menos como excedente ou mais como peça de coleção. A partir da segunda arma igual, cada arma adicional acrescenta 5 pontos à referência; itens comuns começam a receber acréscimo por grupo de cinco unidades depois das cinco primeiras. Nenhum aviso bloqueia a escolha: a mesa decide o que faz sentido para o personagem e a época.</p></details><datalist id="${skillsId}">${SKILLS.map(s=>`<option value="${esc(s)}">`).join('')}</datalist><form class="eq-custom" hidden><div class="eq-custom-head"><b>Novo equipamento</b><button type="button" class="alt" data-eq-action="cancel-custom">Cancelar</button></div><div class="eq-custom-grid"><label>Categoria<select name="category" data-eq-custom-category>${catOpts}</select></label><label class="eq-wide">Nome<input name="name" maxlength="90" required placeholder="Nome do item"></label><label>Quantidade<input type="number" name="quantity" min="0" value="1"></label><div class="eq-dynamic-fields" data-eq-custom-fields></div><label>Nível de Crédito sugerido<input type="number" name="creditMin" min="0" max="99" placeholder="Opcional"><small>Use apenas se o acesso ao item for restrito; deixe vazio para não avisar.</small></label><label class="eq-wide">Imagem (URL, opcional)<input type="url" name="img" placeholder="https://… — vazio: busca automática pelo nome"></label><label class="eq-wide">Observações<textarea name="notes" rows="2" maxlength="300" placeholder="Regras combinadas, origem ou explicação narrativa"></textarea></label></div><div class="eq-custom-actions"><button type="button" data-eq-action="save-custom">Adicionar item</button></div></form><div class="eq-list">${items}</div><p class="eq-footnote">As ilustrações locais têm fundo transparente; as imagens de referência externas podem variar.</p></section>`;
+  return`<section class="eq-panel" data-eq-panel data-i="${i}"><div class="eq-intro"><b>Equipamentos do investigador</b><span>Itens, armas e controle de munição ficam salvos nesta ficha.</span></div><div class="eq-era-control"><label for="eq-year-${i}">Época do cenário</label><select id="eq-year-${i}" data-eq-year data-i="${i}">${EQUIPMENT_YEARS.map(y=>`<option value="${y}"${y===year?' selected':''}>${y}</option>`).join('')}<option value="custom"${EQUIPMENT_YEARS.includes(year)?'':' selected'}>Outro ano…</option></select><input type="number" min="1" max="9999" value="${year}" data-eq-year-custom data-i="${i}" aria-label="Ano personalizado" ${EQUIPMENT_YEARS.includes(year)?'hidden':''}></div><div class="eq-add-row"><button type="button" data-eq-action="open-picker">＋ Adicionar equipamento</button><button type="button" class="alt" data-eq-action="open-custom">✍ Personalizado</button></div><datalist id="${skillsId}">${SKILLS.map(s=>`<option value="${esc(s)}">`).join('')}</datalist><form class="eq-custom" hidden><div class="eq-custom-head"><b>Novo equipamento</b><button type="button" class="alt" data-eq-action="cancel-custom">Cancelar</button></div><div class="eq-custom-grid"><label>Categoria<select name="category" data-eq-custom-category>${catOpts}</select></label><label class="eq-wide">Nome<input name="name" maxlength="90" required placeholder="Nome do item"></label><label>Quantidade<input type="number" name="quantity" min="0" value="1"></label><div class="eq-dynamic-fields" data-eq-custom-fields></div><label>Nível de Crédito sugerido<input type="number" name="creditMin" min="0" max="99" placeholder="Opcional"><small>Use apenas se o acesso ao item for restrito; deixe vazio para não avisar.</small></label><label class="eq-wide">Imagem (URL, opcional)<input type="url" name="img" placeholder="https://… — vazio: busca automática pelo nome"></label><label class="eq-wide">Observações<textarea name="notes" rows="2" maxlength="300" placeholder="Regras combinadas, origem ou explicação narrativa"></textarea></label></div><div class="eq-custom-actions"><button type="button" data-eq-action="save-custom">Adicionar item</button></div></form><div class="eq-list">${items}</div><p class="eq-footnote">As ilustrações locais têm fundo transparente; as imagens de referência externas podem variar.</p></section>`;
  }
  function refreshWarnings(p,root){
   if(!root)return;

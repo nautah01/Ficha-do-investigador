@@ -5,15 +5,12 @@
 .eq-panel{min-width:0}
 .eq-intro{display:flex;flex-direction:column;gap:3px;margin:0 0 10px}
 .eq-intro b{color:var(--head);font-variant:small-caps;letter-spacing:.7px}
-.eq-intro span,.eq-footnote,.eq-help{color:var(--muted);font-size:.77rem;line-height:1.4}
+.eq-intro span,.eq-footnote{color:var(--muted);font-size:.77rem;line-height:1.4}
 .eq-era-control{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:0 0 9px;padding:8px 10px;border:1px solid var(--line);border-radius:5px;background:rgba(var(--gr),.035)}
 .eq-era-control label{color:var(--head);font-size:.78rem;font-weight:bold}
 .eq-era-control select,.eq-era-control input{min-height:32px;padding:4px 8px;color:var(--field-ink);background:var(--field);border:1px solid var(--line);border-radius:4px}
 .eq-era-control input{width:105px}
 .eq-era-control input[hidden]{display:none}
-.eq-help{margin:0 0 10px;padding:7px 9px;border:1px solid rgba(var(--gr2),.38);border-radius:5px;background:rgba(var(--gr),.025)}
-.eq-help summary{color:var(--muted2);font-size:.75rem;cursor:pointer}
-.eq-help p{margin:7px 0 2px;color:var(--muted);font-size:.75rem;line-height:1.5}
 .eq-add-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;padding:9px;background:rgba(var(--gr),.045);border:1px solid var(--line);border-radius:6px}
 .eq-add-row button{flex:1 1 150px;min-width:0;min-height:36px;padding:5px 12px;font-size:.82rem;white-space:nowrap}
 .eq-custom-grid label{display:flex;flex-direction:column;gap:3px;font-size:.76rem;color:var(--muted)}
@@ -27,7 +24,6 @@
 .eq-custom-grid .eq-wide{grid-column:1/-1}
 .eq-custom-grid textarea{resize:vertical}
 .eq-dynamic-fields{display:contents}
-.eq-custom-grid .eq-help{grid-column:1/-1;align-self:center;margin:0}
 .eq-custom-actions{display:flex;justify-content:flex-end;margin-top:8px}
 .eq-custom-actions button{min-height:36px;padding:5px 12px}
 .eq-list{display:grid;gap:7px}
@@ -48,6 +44,10 @@
 .eq-item-head strong{color:var(--head);font-size:.9rem;overflow-wrap:anywhere}
 .eq-kind{color:var(--muted2);font-size:.68rem;text-transform:uppercase;letter-spacing:.5px}
 .eq-era-label{padding:2px 6px;border:1px solid rgba(195,158,94,.5);border-radius:999px;color:var(--warn);font-size:.62rem;letter-spacing:.2px}
+.eq-credit{display:inline-flex;align-items:center;padding:2px 7px;border:1px solid currentColor;border-radius:999px;font-size:.64rem;font-weight:700;line-height:1.25;white-space:nowrap}
+.eq-credit.is-ok{color:#79c98b;background:rgba(48,150,79,.13)}
+.eq-credit.is-edge{color:#e9ad55;background:rgba(207,129,39,.14)}
+.eq-credit.is-low{color:#f07979;background:rgba(190,48,48,.15)}
 .eq-item.retired .eq-thumb,.eq-item.future .eq-thumb{filter:grayscale(.82);opacity:.74}
 .eq-remove{flex:0 0 auto;width:30px;min-height:28px;padding:0;font-size:1.1rem;line-height:1}
 .eq-meta{display:flex;flex-wrap:wrap;gap:3px 12px;margin-top:5px;color:var(--muted);font-size:.75rem;line-height:1.45}
@@ -70,9 +70,12 @@
 .eqk-sec{grid-column:1/-1;margin:8px 0 0;padding-bottom:3px;font-size:.9rem;color:var(--head);font-variant:small-caps;letter-spacing:1px;border-bottom:1px solid var(--line)}
 .eqk-sec:first-child{margin-top:0}
 .eqk-card{position:relative;align-items:stretch;gap:0;padding:0;min-height:max-content}
-.eqk-card.eqk-retired,.eqk-card.eqk-future{filter:grayscale(.72);opacity:.7}
+.eqk-card.eqk-retired,.eqk-card.eqk-future{opacity:.76}
 .eqk-card.eqk-retired:hover,.eqk-card.eqk-retired:focus-visible,.eqk-card.eqk-future:hover,.eqk-card.eqk-future:focus-visible{opacity:.95}
+.eqk-card.eqk-retired .eqk-img img,.eqk-card.eqk-future .eqk-img img{filter:grayscale(.8)}
 .eqk-era{display:block;color:var(--warn);font-size:.67rem;line-height:1.25}
+.eqk-body .eq-credit{margin-top:2px}
+.eqk.help .eqk-bar{display:none}
 .eqk-img{position:relative;isolation:isolate;border-radius:7px 7px 0 0;display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;overflow:hidden;background:rgba(var(--ov),.07);border-bottom:1px solid var(--line)}
 .eqk-img .eq-ph{font-size:2.2rem}
 .eqk-img.has{background:#efe8d6}
@@ -100,7 +103,7 @@
  .eq-add-row button{min-height:40px;flex:1 1 100%;white-space:normal}
  body.mobile .eq-custom{padding:8px}
  .eq-custom-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
- .eq-custom-grid .eq-wide,.eq-custom-grid .eq-help{grid-column:1/-1}
+ .eq-custom-grid .eq-wide{grid-column:1/-1}
  body.mobile .eq-item{padding:8px}
  body.mobile .eq-ammo{gap:5px}
  body.mobile .eq-ammo button{min-height:34px}

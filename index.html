@@ -447,7 +447,7 @@ function bgFor(slot,oo){
 }
 const crFmt=n=>(n>0?'+':'')+n;
 const crRangeTxt=p=>{const c=p.creditRange;if(!c||!c.mod)return'';return`faixa ${c.base[0]}–${c.base[1]} ajustada para ${c.final[0]}–${c.final[1]} (${crFmt(c.mod)})`};
-const histTxt=p=>{const origins=(p.hist||[]).map(h=>`${h.kind}: ${h.n}${h.sk&&h.sk.length?' (+10 '+h.sk.join(', +10 ')+')':''}`).join(' | '),range=crRangeTxt(p);return[origins?'Histórico: '+origins:'',range?'Nível de Crédito: '+range:'',p.back||''].filter(Boolean).join('\n')};
+const histTxt=p=>{const origins=(p.hist||[]).map(h=>`${h.kind}: ${h.n}`).join(' | '),range=crRangeTxt(p);return[origins?'Histórico: '+origins:'',range?'Nível de Crédito: '+range:'',p.back||''].filter(Boolean).join('\n')};
 window.secondaryBlocked=(main,secondary)=>main===secondary||(main==='Soldado'&&secondary==='Oficial Militar');
 function gen(sel,sel2){
  const[selN,selSub]=String(sel).split('::'),o=sel==='*'?pick(OCC):OCC.find(x=>x.n===selN),oT=tokens(o,selSub);
@@ -554,7 +554,7 @@ function body(p,i){
   <div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub"><input class="in nm" style="width:48%;font-size:.85rem;font-weight:normal" data-i="${i}" data-k="n:occ" placeholder="Ocupação" value="${esc(p.occ)}"> · <input class="in" data-i="${i}" data-k="n:idade" placeholder="idade" value="${esc(p.idade)}"> anos${p.sec?` · <small>+ ${esc(p.sec)}</small>`:''}</div>
   <div class="stats">${st}</div><div class="der">${d}</div>
-   <h3 class="st">Histórico</h3><div class="hist">${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}${g.sk&&g.sk.length?` <small>+10 ${esc(g.sk.join(', +10 '))}</small>`:''}</div>`).join('')}${crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b> <small>${esc(crRangeTxt(p))}</small></div>`:''}<textarea class="in bk" rows="3" data-i="${i}" data-k="n:back" placeholder="Backstory: quem é, de onde vem, o que já viu…">${esc(p.back||'')}</textarea></div>
+   <h3 class="st">Histórico</h3><div class="hist">${(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}</div>`).join('')}${crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b> <small>${esc(crRangeTxt(p))}</small></div>`:''}<textarea class="in bk" rows="3" data-i="${i}" data-k="n:back" placeholder="Backstory: quem é, de onde vem, o que já viu…">${esc(p.back||'')}</textarea></div>
   <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}${mobileActions}`;
 }
 function card(p,i){
@@ -847,7 +847,7 @@ function pdfInvestigator(doc,p,C){
  for(const [label,value] of pairs){doc.setFont('times','bold');const lw=doc.getTextWidth(label);doc.setFont('times','normal');const vw=doc.getTextWidth(String(value));const width=lw+vw+10;if(rowW&&rowW+width>maxW){pairRows.push([]);rowW=0}pairRows[pairRows.length-1].push({label,value,lw,width});rowW+=width}
  const derH=pairRows.length*13+12;doc.setFillColor(...C.panel);doc.setDrawColor(...C.line);doc.setLineWidth(.5);doc.roundedRect(39,y,right-39,derH,4,4,'FD');
  pairRows.forEach((row,ri)=>{let x=47;const yy=y+14+ri*13;row.forEach(pair=>{pdfText(doc,pair.label,x,yy,7.4,C.head,'bold');x+=pair.lw+3;pdfText(doc,pair.value,x,yy,7.4,C.text);x+=doc.getTextWidth(String(pair.value))+9})});y+=derH+10;
- const hist=(p.hist||[]).map(g=>({label:`${g.kind}:`,value:`${g.n}${g.sk&&g.sk.length?` · +10 ${g.sk.join(', +10 ')}`:''}`}));
+ const hist=(p.hist||[]).map(g=>({label:`${g.kind}:`,value:g.n}));
  const cr=crRangeTxt(p);if(cr)hist.push({label:'Nível de Crédito:',value:cr});
  if(hist.length){y=pdfSection(doc,'Histórico',y,C,right);
   doc.setFont('times','bold');doc.setFontSize(8);const labelW=Math.max(...hist.map(h=>doc.getTextWidth(h.label)))+7,valX=39+labelW;
