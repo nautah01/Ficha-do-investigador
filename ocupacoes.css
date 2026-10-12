@@ -31,20 +31,19 @@
 .opk-card .ot{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
 .opk-card .ot i{font-style:normal;font-size:.7rem;padding:1px 7px;border-radius:999px;background:rgba(var(--sh),.35);border:1px solid var(--line)}
 .opk-none{grid-column:1/-1;padding:30px;text-align:center;color:var(--muted)}
-.opk-det{min-height:2.6em;max-height:5.5em;overflow:auto;padding:9px 18px;font-size:.8rem;line-height:1.4;color:var(--muted);background:rgba(var(--sh),.25);border-top:1px solid var(--line);white-space:normal;overflow-wrap:anywhere}
 @media (max-width:640px){.opk{width:100vw;max-height:100vh;border-radius:0}.opk-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}}
 @media (prefers-reduced-motion:reduce){.opk[open],.opk-card{animation:none}.opk-card{transition:none}}
 @media print{.opk{display:none!important}}
 .opk-grid{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 @media(max-width:640px){
  .opk{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;border-radius:0}
- .opk>header,.opk-tools,.opk-chips,.opk-det{flex:0 0 auto}
+ .opk>header,.opk-tools,.opk-chips{flex:0 0 auto}
  .opk-grid{min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 }
 .opk-hb{display:flex;gap:8px}
 .opk-hb button{padding:3px 12px;border-radius:4px;cursor:pointer}
 .opk-help{display:none;flex:1;min-height:0;overflow:auto;padding:6px 22px 18px;line-height:1.5;font-size:.92rem;outline:none}
-.opk.help .opk-tools,.opk.help .opk-chips,.opk.help .opk-grid,.opk.help .opk-det{display:none}
+.opk.help .opk-tools,.opk.help .opk-chips,.opk.help .opk-grid{display:none}
 .opk.help .opk-help{display:block}
 .opk-help h5{margin:16px 0 4px;font-size:1.02rem;color:var(--head)}
 .opk-help p{margin:0 0 8px;color:var(--txt)}

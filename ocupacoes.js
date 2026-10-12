@@ -17,10 +17,9 @@ const dlg=document.createElement('dialog');dlg.className='opk';dlg.setAttribute(
 dlg.innerHTML=`<header><h4 id="opkT"></h4><span class="opk-hb"><button type="button" id="opkHelpBtn" aria-pressed="false">❔ Ajuda</button><button type="button" class="opk-x" aria-label="Fechar">✕</button></span></header>
 <div class="opk-tools"><input id="opkQ" type="search" placeholder="Buscar ocupação ou perícia…" aria-label="Buscar"><div id="opkTabs" class="opk-tabs"></div></div>
 <div id="opkChips" class="opk-chips"></div><div id="opkGrid" class="opk-grid" role="listbox"></div>
-<div id="opkHelp" class="opk-help" tabindex="-1"></div>
-<footer id="opkDet" class="opk-det">Passe o mouse (ou foque) sobre uma ocupação para ver as perícias.</footer>`;
+<div id="opkHelp" class="opk-help" tabindex="-1"></div>`;
 document.body.appendChild(dlg);
-const helpBox=$('#opkHelp'),helpBtn=$('#opkHelpBtn'),q=$('#opkQ'),grid=$('#opkGrid'),chips=$('#opkChips'),tabs=$('#opkTabs'),det=$('#opkDet');
+const helpBox=$('#opkHelp'),helpBtn=$('#opkHelpBtn'),q=$('#opkQ'),grid=$('#opkGrid'),chips=$('#opkChips'),tabs=$('#opkTabs');
 let ctx=null,cat='',tab='sec',subItem=null,bgItem=null,bgView='list',bgSk=[];
 const BGKEY='cthulhu-bg';
 window.BGSEL={};try{window.BGSEL=JSON.parse(localStorage.getItem(BGKEY)||'{}')||{}}catch{}
@@ -84,7 +83,7 @@ function renderBG(){
   h+=card('bg:custom','✍️','Outro (escrever)','',['Você nomeia','até 2 perícias'],'Escreva o nome e escolha até 2 perícias da lista',false,i++);
   h+=card('bg:none','➖','Sem origem específica','',['Sem bônus'],'Não define origem nem bônus',false,i++);
  }
- grid.innerHTML=h;grid.scrollTop=0;det.textContent='Escolha a origem do personagem: ela dá +10 em 2 perícias e já escreve o começo do backstory (você pode editar depois).';
+ grid.innerHTML=h;grid.scrollTop=0;
 }
 function render(){
  window.DynamicInfo?.hide(dlg);
@@ -160,8 +159,8 @@ grid.addEventListener('click',e=>{
  if(b.dataset.sub){subItem=items(ctx.kind==='occ'?'occ':'sec').find(x=>x.v===b.dataset.v)||null;render();return}
  choose(b.dataset.v);
 });
-const showDet=e=>{const b=e.target.closest('.opk-card');if(!b)return;det.textContent=b.dataset.d;const hasPointer=Number.isFinite(e.clientX)&&Number.isFinite(e.clientY)&&(e.clientX!==0||e.clientY!==0);window.DynamicInfo?.show(b.dataset.d,hasPointer?e.clientX:NaN,hasPointer?e.clientY:NaN,dlg,b)};
-grid.addEventListener('pointerover',showDet);grid.addEventListener('pointermove',showDet);grid.addEventListener('focusin',showDet);
+const showDet=e=>{const b=e.target.closest('.opk-card');if(b)window.DynamicInfo?.show(b.dataset.d,dlg,b)};
+grid.addEventListener('pointerover',showDet);grid.addEventListener('focusin',showDet);
 grid.addEventListener('pointerleave',()=>window.DynamicInfo?.hide(dlg));grid.addEventListener('focusout',e=>{if(!grid.contains(e.relatedTarget))window.DynamicInfo?.hide(dlg)});
 q.addEventListener('keydown',e=>{if(e.key==='Enter'){const b=grid.querySelector('.opk-card:not([data-v="*"]):not([data-v=""])')||grid.querySelector('.opk-card');if(b)b.click()}});
 dlg.querySelector('.opk-x').onclick=()=>dlg.close();

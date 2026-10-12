@@ -303,7 +303,7 @@
 
  /* ---------- seletor de itens (cartões) ---------- */
  const DEFAULT_DET='Os itens fora de época continuam selecionáveis. Consulte os avisos e combine exceções com o Guardião.';
- let dlg,q,grid,chips,bar,det,io,pk=null;
+ let dlg,q,grid,chips,bar,io,pk=null;
  const shortSkill=s=>String(s||'').replace(/^Armas de Fogo \((.*)\)$/,'Fogo · $1').replace(/^Lutar \((.*)\)$/,'Lutar · $1');
  function describe(t){
   const parts=[t.name+' — '+t.cat];
@@ -325,10 +325,9 @@
 <div id="eqkChips" class="opk-chips"></div>
 <div id="eqkGrid" class="opk-grid eqk-grid" role="listbox" aria-label="Itens disponíveis"></div>
 <div id="eqkHelp" class="opk-help" tabindex="-1"></div>
-<div id="eqkBar" class="eqk-bar" role="alert" hidden></div>
-<footer id="eqkDet" class="opk-det"></footer>`;
+<div id="eqkBar" class="eqk-bar" role="alert" hidden></div>`;
   document.body.appendChild(dlg);
-  q=dlg.querySelector('#eqkQ');grid=dlg.querySelector('#eqkGrid');chips=dlg.querySelector('#eqkChips');bar=dlg.querySelector('#eqkBar');det=dlg.querySelector('#eqkDet');
+  q=dlg.querySelector('#eqkQ');grid=dlg.querySelector('#eqkGrid');chips=dlg.querySelector('#eqkChips');bar=dlg.querySelector('#eqkBar');
   const helpBox=dlg.querySelector('#eqkHelp'),helpBtn=dlg.querySelector('#eqkHelpBtn');
   helpBox.innerHTML=`<h5>Época do cenário</h5><p>O ano escolhido na ficha altera os avisos de disponibilidade. Um item pode ainda não existir naquela época ou estar fora de linha; ele continua selecionável, mas pode ser raro ou exigir uma explicação narrativa.</p><h5>Nível de Crédito</h5><p>Cada cartão mostra uma referência de Crédito para acesso legal e plausível. <span class="eq-credit is-ok">Verde</span> indica margem confortável; <span class="eq-credit is-edge">laranja</span> indica que está no limite; <span class="eq-credit is-low">vermelho</span> indica que o Crédito está abaixo da referência. A cor é um alerta, nunca bloqueia a escolha: converse com o Guardião ou justifique o item na backstory.</p><h5>Conjunto e quantidade</h5><p>Cada unidade carregada contribui para a referência de todos os equipamentos: itens simples acrescentam cerca de 2–5 pontos; itens caros ou restritos podem acrescentar 5–15, conforme o Crédito indicado e a categoria. As contribuições se somam. Por isso, levar duas armas ou várias unidades pode elevar também a referência dos itens comuns. Itens personalizados usam o nível definido por quem os criou; sem um nível informado, contam como item de Crédito 0.</p><button type="button" class="opk-back" data-eqk-help-back>← Voltar à lista</button>`;
   const setHelp=(on,returnFocus=true)=>{dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',String(on));helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.scrollTop=0;helpBox.focus()}else if(returnFocus&&dlg.open)q.focus()};
@@ -338,8 +337,8 @@
   q.addEventListener('input',()=>{hideBar();renderGrid()});
   chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b&&pk){pk.cat=b.dataset.c;hideBar();renderChips();renderGrid()}});
   grid.addEventListener('click',e=>{const c=e.target.closest('.eqk-card');if(c)choose(c.dataset.v)});
-  const showDet=e=>{const c=e.target.closest('.eqk-card');if(!c)return;det.textContent=c.dataset.d;const hasPointer=Number.isFinite(e.clientX)&&Number.isFinite(e.clientY)&&(e.clientX!==0||e.clientY!==0);window.DynamicInfo?.show(c.dataset.d,hasPointer?e.clientX:NaN,hasPointer?e.clientY:NaN,dlg,c)};
-  grid.addEventListener('pointerover',showDet);grid.addEventListener('pointermove',showDet);grid.addEventListener('focusin',showDet);
+  const showDet=e=>{const c=e.target.closest('.eqk-card');if(c)window.DynamicInfo?.show(c.dataset.d,dlg,c)};
+  grid.addEventListener('pointerover',showDet);grid.addEventListener('focusin',showDet);
   grid.addEventListener('pointerleave',()=>window.DynamicInfo?.hide(dlg));grid.addEventListener('focusout',e=>{if(!grid.contains(e.relatedTarget))window.DynamicInfo?.hide(dlg)});
   q.addEventListener('keydown',e=>{if(e.key==='Enter'){const c=grid.querySelector('.eqk-card');if(c)c.click()}});
   bar.addEventListener('click',e=>{
@@ -384,7 +383,6 @@
   if(io)io.disconnect();
   io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){io&&io.unobserve(en.target);loadCardImg(en.target)}}),{root:grid,rootMargin:'160px'});
   grid.querySelectorAll('.eqk-card').forEach(c=>io.observe(c));
-  det.textContent=pk.flash?`✔ ${pk.flash} adicionado à ficha. Escolha outro item ou feche a janela.`:`${yearOf(pk.p)} · Os itens fora de época aparecem esmaecidos, mas não ficam bloqueados.`;
  }
  async function loadCardImg(card){
   const t=CATALOG.find(x=>x.id===card.dataset.v),box=card.querySelector('[data-eqk-img]');if(!t||!box)return;

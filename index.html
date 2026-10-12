@@ -1006,10 +1006,10 @@ async function savePdf(list,b){
 }
 sel.onchange=sel2.onchange=document.getElementById('qty').onchange=persist;
 window.DynamicInfo=(()=>{
- let box=null,host=null,frame=0;
- function place(x,y){if(!box||box.hidden)return;cancelAnimationFrame(frame);frame=requestAnimationFrame(()=>{if(!box||box.hidden)return;const r=box.getBoundingClientRect(),pad=10,gap=14;let left=x+gap,top=y+gap;if(left+r.width>innerWidth-pad)left=x-r.width-gap;if(top+r.height>innerHeight-pad)top=y-r.height-gap;left=Math.max(pad,Math.min(innerWidth-r.width-pad,left));top=Math.max(pad,Math.min(innerHeight-r.height-pad,top));box.style.left=left+'px';box.style.top=top+'px'})}
- function show(text,x,y,owner,anchor){if(!text)return;const target=owner&&owner.matches&&owner.matches('dialog')?owner:document.body;if(!box||host!==target){if(box)box.remove();host=target;box=document.createElement('div');box.className='dynamic-info';box.setAttribute('role','tooltip');box.hidden=true;target.appendChild(box)}box.textContent=text;box.hidden=false;if(!Number.isFinite(x)||!Number.isFinite(y)||(x===0&&y===0)){const r=anchor&&anchor.getBoundingClientRect?anchor.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};x=r.left+r.width/2;y=r.top+r.height/2}place(x,y)}
- function hide(owner){if(box&&(!owner||owner===host)){box.hidden=true;cancelAnimationFrame(frame)}}
+ let box=null,host=null,timer=0,anchor=null,content='';
+ function place(){if(!box||!anchor)return;const r=box.getBoundingClientRect(),a=anchor.getBoundingClientRect(),pad=10,gap=10;let left=a.left+(a.width-r.width)/2,top=a.top-r.height-gap;if(top<pad)top=a.bottom+gap;if(top+r.height>innerHeight-pad)top=Math.max(pad,Math.min(innerHeight-r.height-pad,a.top+(a.height-r.height)/2));left=Math.max(pad,Math.min(innerWidth-r.width-pad,left));box.style.left=left+'px';box.style.top=top+'px'}
+ function show(text,owner,card){if(!text||!card)return;const target=owner&&owner.matches&&owner.matches('dialog')?owner:document.body;if(host===target&&anchor===card&&(box||timer))return;hide();host=target;anchor=card;content=text;timer=setTimeout(()=>{timer=0;if(!anchor||!anchor.isConnected||(host.matches('dialog')&&!host.open))return;box=document.createElement('div');box.className='dynamic-info';box.setAttribute('role','tooltip');box.textContent=content;host.appendChild(box);place()},1000)}
+ function hide(owner){if(owner&&host&&owner!==host)return;clearTimeout(timer);timer=0;if(box){box.remove();box=null}anchor=null;host=null;content=''}
  return{show,hide};
 })();
 (function responsiveMode(){
