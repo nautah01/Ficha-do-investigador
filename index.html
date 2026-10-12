@@ -94,6 +94,8 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
  .der-field:nth-child(n+5){grid-column:span 4}
  .der-field span{flex:1 1 auto;min-width:0;color:var(--muted);font-weight:bold;line-height:1.15;white-space:nowrap}
  .der-field .in{flex:0 0 52px;width:52px;min-width:0;height:27px;padding:2px 4px;font-size:.83rem}
+ .der-field:nth-child(2) span{flex:0 0 auto;font-size:.68rem;letter-spacing:-.2px}
+ .der-field:nth-child(2) .in{margin-left:8px}
 .sk{display:grid;grid-template-columns:1fr 1fr;gap:3px 14px;font-size:.85rem}
 .sk>span{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dotted var(--line);gap:6px}
 .sk .sk-name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
@@ -118,7 +120,7 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
  .blank-budgets>small{color:var(--muted);line-height:1.4}
 .blank-budgets [data-skill-pool-note].has-warning{color:var(--warn);font-weight:600}
  .sk-label{display:flex;align-items:center;gap:4px;min-width:0;flex:1 1 auto}
- @media(max-width:560px){.blank-budgets{padding:8px}.budget-balance,.budget-controls{grid-template-columns:1fr}.budget-stat{padding:7px 8px}.der{grid-template-columns:repeat(2,minmax(0,1fr))}.der-field,.der-field:nth-child(n+5){grid-column:auto}.der-field{display:grid;grid-template-columns:minmax(0,1fr) 52px}.der-field span{white-space:normal}.der-field .in{width:52px}}
+ @media(max-width:560px){.blank-budgets{padding:8px}.budget-balance,.budget-controls{grid-template-columns:1fr}.budget-stat{padding:7px 8px}.der{grid-template-columns:repeat(2,minmax(0,1fr))}.der-field,.der-field:nth-child(n+5){grid-column:auto}.der-field{display:grid;grid-template-columns:minmax(0,1fr) 52px}.der-field span{white-space:normal}.der-field .in{width:52px}.der-field:nth-child(2) .in{margin-left:0}}
 h3{color:var(--head);border-top:2px solid var(--rule);padding-top:6px;font-variant:small-caps;letter-spacing:1px}
 .win h3.st{margin:4px 0 6px;font-size:.9rem;border-top:none;padding-top:0;border-bottom:1px solid var(--line);padding-bottom:3px}
 button.rmb{padding:0 6px;margin-left:6px;font-size:.7rem;background:transparent;color:var(--warn2);border:1px solid rgba(253,186,116,.5);border-radius:4px}
