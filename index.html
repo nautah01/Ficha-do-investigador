@@ -115,6 +115,14 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
 .sk .sk-name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
 .sk i{flex:0 0 auto;margin-left:auto;font-style:normal;white-space:nowrap}
 .sk i{display:inline-flex;flex:0 0 auto;margin-left:auto;font-style:normal;white-space:nowrap}
+/* Destaque das perícias da ocupação (ficha em branco, modo "Ocupacionais") */
+.sk.hl-occ>.skill-row.occ-skill{position:relative;padding:2px 6px 2px 8px;border-radius:4px;border-bottom-color:transparent;background:linear-gradient(90deg,rgba(var(--gr),.24),rgba(var(--gr),.07));box-shadow:inset 3px 0 0 var(--head),0 0 0 1px rgba(var(--gr),.35)}
+.sk.hl-occ>.skill-row.occ-skill .sk-name{color:var(--head);font-weight:700}
+.sk.hl-occ>.skill-row.occ-skill .sk-name::before{content:"★ ";font-size:.8em}
+.blank-budgets .occ-legend{display:flex;align-items:center;gap:7px;color:var(--muted);line-height:1.4}
+.blank-budgets .occ-legend[hidden]{display:none}
+.occ-legend-mark{flex:0 0 auto;width:16px;height:12px;border-radius:3px;background:linear-gradient(90deg,rgba(var(--gr),.35),rgba(var(--gr),.1));box-shadow:inset 3px 0 0 var(--head),0 0 0 1px rgba(var(--gr),.4)}
+@media print{.sk.hl-occ>.skill-row.occ-skill{background:none;box-shadow:none}.sk.hl-occ>.skill-row.occ-skill .sk-name::before{content:none}.occ-legend{display:none!important}}
 .skill-pool{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:3px 10px;margin:8px 0 10px;padding:8px 10px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:5px;background:rgba(var(--gr),.055);font-size:.8rem}
 .skill-pool b{color:var(--head)}.skill-pool strong{color:var(--head);font-size:1.05rem}
 .skill-pool small{grid-column:1/-1;color:var(--muted);line-height:1.4}
@@ -662,6 +670,14 @@ function isOccupationalSkill(p,n){
  const rules=occupationSkillRules(p);
  return rules.any||rules.names.has(n)||(rules.social&&SOC.includes(n))||(rules.language&&/^Língua \(/.test(n));
 }
+let occHlCache={key:null,rules:null};
+function isOccupationHighlight(p,n){
+ if(!p.blank||!occupationFor(p.occ))return false;
+ if(n==='Nível de Crédito')return true;
+ if(occHlCache.key!==p.occ){occHlCache={key:p.occ,rules:occupationSkillRules(p)}}
+ const rules=occHlCache.rules;
+ return rules.names.has(n)||(rules.social&&SOC.includes(n))||(rules.language&&/^Língua \(/.test(n));
+}
 function blankBudgetState(p){
  ensureSkillBudget(p);
  const info=occupationFor(p.occ),range=creditBounds(p),creditBase=range?range.min:0;
@@ -686,7 +702,7 @@ function blankBudgetPanel(p,i){
  const b=blankBudgetState(p),credit=b.credit,mode=p.skillBudgetMode||'occupational';
   const defaultNote='Pontos ocupacionais descontam o Crédito mínimo e valem para perícias da ocupação. Pontos pessoais equivalem a INT × 2. Trocar de ocupação zera a distribuição.';
   const creditParts=credit?`Mínimo <b>${credit.min}</b> · Máximo <b>${credit.max}</b>`:'Escolha uma ocupação para ver a faixa';
-  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
+  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div><small class="occ-legend" data-occ-legend ${mode==='occupational'&&credit?'':'hidden'}><span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
 }
 const fr=(p,k)=>{const v=+get(p,k)||0;return(v>>1)+' / '+Math.floor(v/5)};
 const inp=(p,i,k,attrs='')=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${k}" ${attrs} value="${esc(get(p,k))}">`;
@@ -694,7 +710,8 @@ const falta=p=>Object.entries({...BASE,...EXTRA,...(p.custom||{})}).filter(([n])
 const EXTRA={'Arte/Ofício (outra)':5,'Ciência (outra)':1,'Língua (outra)':1,'Pilotar (outra)':1,'Mythos de Cthulhu':0};
 const row=(p,i,n,rm)=>{
  const minimum=skillFloor(p,n);
- return`<span class="skill-row"><span class="sk-label"><span class="sk-name">${esc(n)}</span></span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
+ const occ=isOccupationHighlight(p,n);
+ return`<span class="skill-row${occ?' occ-skill':''}"${occ?' title="Perícia da sua ocupação"':''}><span class="sk-label"><span class="sk-name">${esc(n)}</span></span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
 };
 function uiOf(p,i){
  p.ui=p.ui||{};
@@ -711,12 +728,12 @@ function body(p,i){
  const skillPool=p.blank?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
  const addM=`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" data-add="n"><input class="in" type="number" value="50" title="Valor" data-add="v"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
   const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k)}</label>`).join('');
- const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
+ const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk${p.blank&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
  const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
  return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
   <div class="stats">${st}</div><div class="der">${d}</div>${skillPool}
-  <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}${mobileActions}`;
+  <h3 class="st">Perícias do personagem</h3><div class="sk${p.blank&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${sk}</div>${addM}${fa}${mobileActions}`;
 }
 function occSelect(p,i){
  if(!p.blank)return`<input class="in occ-text" data-i="${i}" data-k="n:occ" aria-label="Ocupação do investigador" placeholder="Ocupação" value="${esc(p.occ||'')}">`;
@@ -820,6 +837,9 @@ function refresh(i){
    if(available)available.textContent=String(budgets[type].available);if(total)total.textContent=String(budgets[type].total);
   }
   const mode=el.querySelector('[data-budget-mode]');if(mode&&mode!==document.activeElement)mode.value=p.skillBudgetMode||'occupational';
+  const occMode=(p.skillBudgetMode||'occupational')==='occupational';
+  el.querySelectorAll('.sk').forEach(box=>box.classList.toggle('hl-occ',occMode));
+  const legend=el.querySelector('[data-occ-legend]');if(legend)legend.hidden=!(occMode&&budgets.credit);
    const range=el.querySelector('[data-credit-range] span');if(range)range.textContent=budgets.credit?`Mínimo ${budgets.credit.min} · Máximo ${budgets.credit.max}`:'Escolha uma ocupação para ver a faixa';
   const pointNote=el.querySelector('[data-skill-pool-note]');if(pointNote){pointNote.textContent=p.skillNotice||'Pontos ocupacionais já descontam o Crédito mínimo e só podem ser usados nas perícias da ocupação. Pontos pessoais = INT × 2. Trocar de ocupação zera os pontos distribuídos.';pointNote.classList.toggle('has-warning',!!p.skillNotice)}
  }else{
