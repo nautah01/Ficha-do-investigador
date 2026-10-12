@@ -41,6 +41,7 @@ button.chip.sq{padding:3px 10px;font-weight:bold}
 #panelBtn:hover{background:linear-gradient(var(--k6),var(--k5))}
 #panelBtn[hidden]{display:none}
 body.pmin h1{padding-left:112px}
+body.mobile.pmin #panelBtn{top:auto;bottom:calc(68px + env(safe-area-inset-bottom));left:10px}
 label{display:flex;flex-direction:column;font-size:.8rem;gap:3px;color:var(--ink2);min-width:0}
 @media(max-width:640px){
  .gen{grid-template-columns:1fr 1fr}.gen .qtl{grid-column:1/-1}
@@ -1217,7 +1218,7 @@ window.DynamicInfo=(()=>{
 })();
 (function panelMin(){
  const KEY='coc7-painel-v1',bar=document.getElementById('panel'),btn=document.getElementById('panelBtn'),mn=document.getElementById('panelMin');
- let min=false;try{min=localStorage.getItem(KEY)==='1'}catch(_){}
+ let min=document.body.classList.contains('mobile');try{const saved=localStorage.getItem(KEY);if(saved!==null)min=saved==='1'}catch(_){}
  const apply=()=>{bar.hidden=min;btn.hidden=!min;document.body.classList.toggle('pmin',min)};
  const set=v=>{min=v;try{localStorage.setItem(KEY,v?'1':'0')}catch(_){}apply();(v?btn:mn).focus()};
  mn.onclick=()=>set(true);btn.onclick=()=>set(false);
