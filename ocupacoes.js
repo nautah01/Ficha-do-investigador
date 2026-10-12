@@ -20,7 +20,7 @@ dlg.innerHTML=`<header><h4 id="opkT"></h4><span class="opk-hb"><button type="but
 <div id="opkHelp" class="opk-help" tabindex="-1"></div>`;
 document.body.appendChild(dlg);
 const helpBox=$('#opkHelp'),helpBtn=$('#opkHelpBtn'),q=$('#opkQ'),grid=$('#opkGrid'),chips=$('#opkChips'),tabs=$('#opkTabs');
-let ctx=null,cat='',tab='sec',subItem=null,bgItem=null,bgView='list',bgSk=[];
+let ctx=null,cat='',tab='sec',subItem=null,bgItem=null,bgView='list',bgSk=[],pageScroll={x:0,y:0};
 const BGKEY='cthulhu-bg';
 window.BGSEL={};try{window.BGSEL=JSON.parse(localStorage.getItem(BGKEY)||'{}')||{}}catch{}
 const saveBG=()=>{try{localStorage.setItem(BGKEY,JSON.stringify(window.BGSEL))}catch{}};
@@ -52,11 +52,11 @@ function mount(selId,kind,title){
  label.addEventListener('click',e=>{e.preventDefault();openPick({sel,kind,title,sync})});
 }
 function openPick(c){
-  subItem=null;bgItem=null;ctx=c;cat='';q.value='';tab=c.kind==='sec'?'occ':'sec';$('#opkT').textContent=c.title;
+  pageScroll={x:window.scrollX,y:window.scrollY};subItem=null;bgItem=null;ctx=c;cat='';q.value='';tab=c.kind==='sec'?'occ':'sec';$('#opkT').textContent=c.title;
   tabs.innerHTML='';
   tabs.hidden=true;
  chips.innerHTML='<button type="button" data-c="" aria-pressed="true">Todas</button>'+Object.entries(CAT).map(([k,v])=>`<button type="button" data-c="${k}" aria-pressed="false">${v}</button>`).join('');
- render();dlg.showModal();q.focus();
+ render();dlg.scrollLeft=dlg.scrollTop=grid.scrollLeft=0;dlg.showModal();q.focus();
 }
 function list(){
  const c=ctx,t=norm(q.value.trim());let src=items(c.kind==='occ'?'occ':'sec');
@@ -83,7 +83,7 @@ function renderBG(){
   h+=card('bg:custom','✍️','Outro (escrever)','',['Você nomeia','até 2 perícias'],'Escreva o nome e escolha até 2 perícias da lista',false,i++);
   h+=card('bg:none','➖','Sem origem específica','',['Sem bônus'],'Não define origem nem bônus',false,i++);
  }
- grid.innerHTML=h;grid.scrollTop=0;
+ grid.innerHTML=h;grid.scrollLeft=grid.scrollTop=0;
 }
 function render(){
  window.DynamicInfo?.hide(dlg);
@@ -95,13 +95,13 @@ function render(){
   h+=card(x.v,'🎲','Qualquer opção','',['Sorteia ao gerar'],'Sorteia '+lbl+' ao gerar a ficha',cur===x.v,i++);
   h+=Object.entries(S.o).map(([k,t])=>{const keys=t.filter(z=>z[0]==='!').map(tokTag).filter(Boolean),all=[...new Set(t.map(tokTag).filter(Boolean))],v=x.v+'::'+k,mod=S.crMod&&S.crMod[k]||0,tags=keys.slice(0,3);if(mod)tags.push(crFmt(mod)+' Crédito');
    return card(v,meta(x.n)[0],k,x.n,tags,x.n+' ('+k+') — perícias em destaque: '+all.join(', ')+(mod?' · faixa de Crédito '+crFmt(mod):''),cur===v,i++)}).join('');
-  grid.innerHTML=h;grid.scrollTop=0;
+  grid.innerHTML=h;grid.scrollLeft=grid.scrollTop=0;
   chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));return;
  }
  const specials=c.kind==='occ'?[['*','🎲','Aleatória','Sorteia uma ocupação']]:[['','➖','Nenhuma','Sem ocupação secundária'],['*','🎲','Aleatória','Sorteia uma secundária']];
  if(!q.value&&!cat)h+=specials.map(([v,e,n,d])=>card(v,e,n,'',[d],d,cur===v,i++)).join('');
  h+=list().map(x=>{const s=skills(x.o);return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],s.keys.slice(0,3),(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0,!!BG[x.n])}).join('');
- grid.innerHTML=h||'<p class="opk-none">Nada encontrado. Tente outra palavra ou outra categoria.</p>';
+ grid.innerHTML=h||'<p class="opk-none">Nada encontrado. Tente outra palavra ou outra categoria.</p>';grid.scrollLeft=grid.scrollTop=0;
  chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));
  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===tab));
 }
@@ -129,7 +129,7 @@ function helpHtml(){
 function setHelp(on){dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',on);helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.innerHTML=helpHtml();helpBox.scrollTop=0;helpBox.focus()}else q.focus()}
 helpBtn.addEventListener('click',()=>setHelp(!dlg.classList.contains('help')));
 helpBox.addEventListener('click',e=>{if(e.target.closest('.opk-back'))setHelp(false)});
-dlg.addEventListener('close',()=>{subItem=null;bgItem=null;dlg.classList.remove('help');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda';window.DynamicInfo?.hide(dlg)});
+dlg.addEventListener('close',()=>{subItem=null;bgItem=null;dlg.classList.remove('help','sub');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda';window.DynamicInfo?.hide(dlg);grid.scrollLeft=grid.scrollTop=dlg.scrollLeft=dlg.scrollTop=0;requestAnimationFrame(()=>window.scrollTo(pageScroll.x,pageScroll.y))});
 q.addEventListener('input',()=>{subItem=null;bgItem=null;render()});
 chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b){cat=b.dataset.c;subItem=null;render()}});
 tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b){tab=b.dataset.t;subItem=null;render()}});

@@ -36,9 +36,12 @@
 @media print{.opk{display:none!important}}
 .opk-grid{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 @media(max-width:640px){
- .opk{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;border-radius:0}
+ .opk{position:fixed;inset:0;width:auto;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;border-radius:0}
  .opk>header,.opk-tools,.opk-chips{flex:0 0 auto}
- .opk-grid{min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+ .opk-grid{width:100%;max-width:100%;min-height:0;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+ .opk-subhead{max-width:100%;overflow-wrap:anywhere}
+ .opk-subhead strong,.opk-subhead span{min-width:0;max-width:100%;overflow-wrap:anywhere}
+ .opk-card,.opk-form{min-width:0;max-width:100%}
 }
 .opk-hb{display:flex;gap:8px}
 .opk-hb button{padding:3px 12px;border-radius:4px;cursor:pointer}
