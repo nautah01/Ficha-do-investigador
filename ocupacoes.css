@@ -82,3 +82,8 @@ body.mobile .opk-subhead strong,body.mobile .opk-subhead span{min-width:0;max-wi
 .opk-pool button[aria-pressed=true]{color:var(--onhead);background:var(--head);border-color:var(--head);font-weight:bold}
 .opk-formact{display:flex;align-items:center;gap:12px}.opk-formact small{color:var(--muted)}
 .opk-formact button{padding:6px 18px;border-radius:6px;cursor:pointer}
+/* Telas internas de especialização e origem usam sempre uma lista única. */
+.opk.sub .opk-grid{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;grid-template-columns:minmax(0,1fr)!important;overflow-x:hidden!important}
+.opk.sub .opk-grid>*{box-sizing:border-box;position:relative!important;left:0!important;right:auto!important;grid-column:auto!important;flex:0 0 auto!important;width:100%!important;min-width:0!important;max-width:100%!important;margin-inline:0!important;transform:none}
+.opk.sub .opk-grid>.opk-subhead{display:flex;width:100%!important;flex-wrap:wrap;overflow-wrap:anywhere}
+.opk.sub .opk-grid>.opk-form{max-width:100%!important}
