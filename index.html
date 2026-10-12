@@ -562,17 +562,17 @@ function occupationPointTotal(o,c){
 const crRangeTxt=p=>{const c=p.creditRange;if(!c||!c.mod)return'';return`faixa ${c.base[0]}–${c.base[1]} ajustada para ${c.final[0]}–${c.final[1]} (${crFmt(c.mod)})`};
 const histTxt=p=>{const origins=(p.hist||[]).map(h=>`${h.kind}: ${h.n}`).join(' | '),range=crRangeTxt(p);return[origins?'Histórico: '+origins:'',range?'Nível de Crédito: '+range:'',p.back||''].filter(Boolean).join('\n')};
 window.secondaryBlocked=(main,secondary)=>main===secondary||(main==='Soldado'&&secondary==='Oficial Militar');
-function gen(sel,sel2){
+function gen(sel,sel2,keep){
  const[selN,selSub]=String(sel).split('::'),o=sel==='*'?pick(OCC):OCC.find(x=>x.n===selN),oT=tokens(o,selSub);
  const c={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
- const lang=pick(LANGS),sk={},bs=n=>base(n,c),cu=n=>sk[n]??bs(n);
+ const lang=keep&&keep.lang||pick(LANGS),sk={},bs=n=>base(n,c),cu=n=>sk[n]??bs(n);
  const ALL=Object.keys(BASE).filter(n=>n!=='Nível de Crédito'),used=new Set(),keys=[];
  const res=(t,keep)=>{let op=(t==='@soc'?SOC.join('|'):t==='@any'?COMMON.join('|'):t).split('|').map(x=>x==='@lang'?'Língua ('+lang+')':x);
   if(!keep)op=op.filter(x=>!used.has(x));if(!op.length)op=ALL.filter(x=>!used.has(x));const n=pick(op);used.add(n);return n};
   const isOcc2=sel2.startsWith('occ:'),s2Parts=isOcc2?sel2.slice(4).split('::'):[],s2N=s2Parts[0]||'',s2Spec=s2Parts[1]||'';
  const requestedSec=sel2==='*'?pick(OCC.filter(x=>!window.secondaryBlocked(o.n,x.n))):isOcc2?OCC.find(x=>x.n===s2N):null;
   const sec=requestedSec&&!window.secondaryBlocked(o.n,requestedSec.n)?requestedSec:null,secT=sec?tokens(sec,s2Spec):null;
-  const hist=[bgFor('p',o),isOcc2&&sec?bgFor('s',sec):null].filter(Boolean);
+  const hist=keep&&Array.isArray(keep.hist)?keep.hist:[bgFor('p',o),isOcc2&&sec?bgFor('s',sec):null].filter(Boolean);
   const rawCreditMod=(oT.crMod||0)+(secT?secT.crMod||0:0)+hist.reduce((sum,g)=>sum+(g.crMod||0),0);
   const creditMod=Math.max(-10,Math.min(20,rawCreditMod));
  const occS=oT.t.map(t=>{const k=t[0]==='!',n=res(k?t.slice(1):t);if(k)keys.push(n);return n});
@@ -736,7 +736,7 @@ function body(p,i){
  const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
  return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
-  <div class="stats-head"><span>Atributos</span><button type="button" class="rrb" data-i="${i}" title="Sortear novos valores para os 8 atributos">🎲 Rerolar atributos</button></div><div class="stats">${st}</div><div class="der">${d}</div>${skillPool}
+  <div class="stats-head"><span>Atributos</span><button type="button" class="rrb" data-i="${i}" title="Sortear novos atributos (e redistribuir as perícias)">🎲 Rerolar atributos</button></div><div class="stats">${st}</div><div class="der">${d}</div>${skillPool}
   <h3 class="st">Perícias do personagem</h3><div class="sk${p.blank&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${sk}</div>${addM}${fa}${mobileActions}`;
 }
 function occSelect(p,i){
@@ -831,8 +831,22 @@ function winEl(i){return desk.querySelector('.win[data-i="'+i+'"]')}
 function bring(i){const p=cur[i];if(!p)return;p.ui.z=++zTop;const el=winEl(i);if(el)el.style.zIndex=p.ui.z;persist()}
 /* rerolar atributos: sorteia os 8 atributos de novo e recalcula tudo que depende deles (mesma lógica da edição manual) */
 const ATTR_KEYS=['FOR','CON','POD','DES','APA','TAM','INT','EDU'];
+const rollSig=p=>JSON.stringify(p.blank?p.c:[p.c,p.sk]);
+/* ficha gerada: sorteia atributos novos e redistribui as perícias com a mesma ocupação, secundária, histórico e idioma */
+function rerollFull(p){
+ const occ=occupationFor(p.occ);if(!occ)return false;
+ const sec=p.sec?occupationFor(p.sec):null,spec=x=>x.occupation.n+(x.specialization?'::'+x.specialization:'');
+ const oldLang=Object.keys(p.sk).find(n=>/^Língua \(/.test(n));
+ const g=gen(spec(occ),sec?'occ:'+spec(sec):'',{hist:p.hist||[],lang:oldLang?oldLang.slice(8,-1):''});
+ const luck=p.der&&p.der.luck;
+ p.c=g.c;p.sk=g.sk;p.skillFloors=g.skillFloors;p.skillPoints={available:0};p.skillNotice='';p.creditRange=g.creditRange;
+ p.der={...g.der,luck:luck!==undefined?luck:g.der.luck};
+ p.rolledC=rollSig(p);p.edit=true;
+ draw();return true;
+}
 function rerollAttrs(i){
  const p=cur[i];if(!p)return;
+ if(!p.blank&&rerollFull(p))return;
  const next={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
  const derived=['Esquivar','Língua Natural'].map(n=>({n,oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');
  Object.assign(p.c,next);
@@ -845,7 +859,7 @@ function rerollAttrs(i){
   const allocations=p.skillAllocations&&p.skillAllocations['Nível de Crédito'];if(allocations){allocations.occupational=Math.max(0,value-floor);allocations.personal=0;if(!allocations.occupational)delete p.skillAllocations['Nível de Crédito']}
   p.skillNotice=value!==oldCreditValue||oldCreditFloor!==(range?range.min:floor)?`A faixa de Nível de Crédito mudou com os atributos${oldCredit?`; agora é ${floor}–${ceiling}`:''}.`:'';
  }
- p.rolledC=JSON.stringify(p.c);p.edit=true;
+ p.rolledC=rollSig(p);p.edit=true;
  refresh(i);window.CthEquipment.refreshWarnings(p,winEl(i)&&winEl(i).querySelector('[data-eq-panel]'));
 }
 function refresh(i){
@@ -931,9 +945,9 @@ desk.addEventListener('click',e=>{
  if(e.target.closest('.delb')){const k=+e.target.closest('.delb').dataset.i,p=cur[k];confirmDel(ttl(p)).then(y=>{if(y&&cur[k]===p){cur.splice(k,1);draw()}});return}
  if(e.target.closest('.rrb')){
   const k=+e.target.closest('.rrb').dataset.i,p=cur[k];if(!p)return;
-  const untouched=ATTR_KEYS.every(a=>!+p.c[a])||!p.edit||JSON.stringify(p.c)===p.rolledC;
+  const untouched=ATTR_KEYS.every(a=>!+p.c[a])||!p.edit||rollSig(p)===p.rolledC;
   if(untouched)rerollAttrs(k);
-  else askConfirm({title:'Rerolar atributos?',html:`Os atributos de <strong>${esc(ttl(p))}</strong> serão substituídos por novos valores sorteados. PV, Sanidade, PM, Mov., Bônus de Dano, Corpo, Esquivar e Língua Natural são recalculados; a Sorte não muda.`,ok:'🎲 Rerolar',danger:false}).then(y=>{if(y&&cur[k]===p)rerollAttrs(k)});
+  else askConfirm({title:'Rerolar atributos?',html:`Os atributos de <strong>${esc(ttl(p))}</strong> serão substituídos por novos valores sorteados. ${p.blank?'PV, Sanidade, PM, Mov., Bônus de Dano, Corpo, Esquivar e Língua Natural são recalculados':'As perícias também são redistribuídas com os pontos novos (mesma ocupação e histórico); perícias adicionadas ou valores digitados à mão se perdem'}. A Sorte não muda.`,ok:'🎲 Rerolar',danger:false}).then(y=>{if(y&&cur[k]===p)rerollAttrs(k)});
   return;
  }
  if(e.target.closest('.ftg')){const p=cur[+e.target.closest('.ftg').dataset.i];p.falta=!p.falta;draw();return}
