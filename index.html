@@ -4,7 +4,7 @@
 <style>
 :root{--gold:#a88b4a;--felt:#08100f;--felt2:#040a0a;
  --card:#0d1e1c;--txt:#e6dcc3;--muted:#9fb0a3;--head:#d8c58a;--rule:rgba(216,197,138,.4);--line:rgba(168,139,74,.3);
- --field:#08110f;--field-ink:#efe6cc;--spine1:#5a1414;--spine2:#8f2323;--spine3:#040a0a;--warn:#d9b36a}
+ --field:#08110f;--field-ink:#efe6cc;--spine1:#5a1414;--spine2:#8f2323;--spine3:#040a0a;--stamp:rgba(216,197,138,.42);--warn:#d9b36a}
 *{box-sizing:border-box}
 body{font-family:"Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;color:var(--txt);margin:0;min-height:100vh;background:
  radial-gradient(ellipse 55% 38% at 88% 4%,rgba(var(--glow),.16),transparent 62%),
@@ -41,6 +41,7 @@ button.chip.sq{padding:3px 10px;font-weight:bold}
 #panelBtn:hover{background:linear-gradient(var(--k6),var(--k5))}
 #panelBtn[hidden]{display:none}
 body.pmin h1{padding-left:112px}
+body.mobile.pmin #panelBtn{top:auto;bottom:calc(68px + env(safe-area-inset-bottom));left:10px}
 label{display:flex;flex-direction:column;font-size:.8rem;gap:3px;color:var(--ink2);min-width:0}
 @media(max-width:640px){
  .gen{grid-template-columns:1fr 1fr}.gen .qtl{grid-column:1/-1}
@@ -72,6 +73,8 @@ button.alt:hover{background:rgba(var(--gr),.12)}
 .win-bar button:hover{background:rgba(var(--gr),.15)}
 .win-bar .pinb.on{background:var(--head);color:var(--onhead);border-color:var(--head)}
 .win-body{padding:12px 14px 16px 22px;position:relative}
+.badge{display:flex;gap:8px;align-items:center;float:right;font-size:.72rem}
+.ed{color:var(--warn);font-weight:bold}
 .clip{width:18px;height:28px;border:2px solid var(--gold);border-bottom:none;border-radius:4px 4px 0 0;background:linear-gradient(var(--tab1),var(--tab2));box-shadow:0 2px 0 var(--tab3);margin-top:-18px}
 h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid var(--rule);font-variant:small-caps}
 .sub{display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;color:var(--muted);font-size:.85rem}
@@ -129,6 +132,8 @@ button.addb{padding:2px 10px;font-size:.8rem}
 button.ftg{display:block;width:100%;margin-top:10px;padding:4px 10px;font-size:.8rem;background:transparent;color:var(--muted);border:1px dashed var(--line)}
 button.ftg:hover{background:rgba(var(--gr),.08)}
 .rsz{position:absolute;right:2px;bottom:2px;width:14px;height:14px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 50%,var(--gold) 50%)}
+.stamp{position:absolute;right:16px;top:52px;width:64px;height:64px;border:3px solid var(--stamp);border-radius:50%;color:var(--stamp);font-size:.55rem;font-weight:bold;display:flex;align-items:center;justify-content:center;text-align:center;transform:rotate(12deg);pointer-events:none;letter-spacing:1px;text-transform:uppercase}
+.win:not(.pinned) .stamp{display:none}
 .ovl{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(2,12,8,.72);backdrop-filter:blur(3px)}
 .dlg{width:min(420px,100%);color-scheme:var(--scheme);background:var(--card) repeating-linear-gradient(0deg,transparent,transparent 27px,rgba(var(--gr),.045) 28px);border:1px solid rgba(var(--gr2),.6);border-radius:8px;box-shadow:0 24px 60px rgba(0,0,0,.7),inset 0 0 0 1px rgba(var(--gr),.08);padding:20px 22px 18px;color:var(--txt);animation:dlgin .14s ease-out}
 .dlg h4{margin:0 0 8px;font-size:1.15rem;font-variant:small-caps;letter-spacing:1px;color:var(--head)}
@@ -696,7 +701,8 @@ function body(p,i){
   const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k)}</label>`).join('');
  const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
  const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
- return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
+ return`<div class="badge"><span class="ed" ${p.edit?'':'hidden'}>✎ Ficha editada</span></div>
+  <div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
   <div class="stats">${st}</div><div class="der">${d}</div>${skillPool}
   <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}${mobileActions}`;
@@ -727,12 +733,12 @@ function card(p,i){
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>
   </header>
   <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" data-sheet-tab="sheet" role="tab" aria-selected="${!isEq&&!isBack}">🗂 Ficha</button><button type="button" data-sheet-tab="backstory" role="tab" aria-selected="${isBack}">📖 Backstory</button><button type="button" data-sheet-tab="equipment" role="tab" aria-selected="${isEq}">🎒 Equipamentos${p.equipment&&p.equipment.length?` (${p.equipment.length})`:''}</button></div>
-  <div class="win-body"><div class="win-pane sheet-pane" role="tabpanel" ${isEq||isBack?'hidden':''}>${body(p,i)}</div><div class="win-pane equipment-pane" role="tabpanel" ${isEq?'':'hidden'}>${window.CthEquipment.render(p,i)}</div><div class="win-pane backstory-pane" role="tabpanel" ${isBack?'':'hidden'}>${backstory(p,i)}</div></div>
+  <div class="win-body"><div class="win-pane sheet-pane" role="tabpanel" ${isEq||isBack?'hidden':''}><div class="stamp">Arquivo<br>Arkham</div>${body(p,i)}</div><div class="win-pane equipment-pane" role="tabpanel" ${isEq?'':'hidden'}>${window.CthEquipment.render(p,i)}</div><div class="win-pane backstory-pane" role="tabpanel" ${isBack?'':'hidden'}>${backstory(p,i)}</div></div>
   <div class="rsz" data-i="${i}"></div>
  </section>`;
 }
 function txtBase(p){
- return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nSem pontos (valor inicial): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'')+window.CthEquipment.plainText(p);
+ return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}${p.edit?' [ficha editada]':''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nSem pontos (valor inicial): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'')+window.CthEquipment.plainText(p);
 }
 function txt(p){const t=txtBase(p),x=histTxt(p);return x?t+'\n\n'+x:t}
 function persist(){
@@ -809,6 +815,7 @@ function refresh(i){
   const points=el.querySelector('[data-skill-points]');if(points)points.textContent=String(p.skillPoints&&p.skillPoints.available||0);
   const pointNote=el.querySelector('[data-skill-pool-note]');if(pointNote)pointNote.textContent=p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.';
  }
+ const ed=el.querySelector('.ed');if(ed)ed.hidden=!p.edit;
  const t=el.querySelector('.win-title');if(t)t.textContent=ttl(p);
  persist();
 }
@@ -1092,7 +1099,7 @@ async function pdfInvestigator(doc,p,C){
  let y=55;y=pdfWrapped(doc,p.nome||'Investigador',39,y,titleRight-39,20,22,C.head,'bold');
  if(portrait){doc.setDrawColor(...C.gold);doc.setLineWidth(.6);doc.roundedRect(photoX-2,photoY-2,photoW+4,photoH+4,2,2,'S');doc.addImage(portrait,'JPEG',photoX,photoY,photoW,photoH,undefined,'FAST')}
  doc.setDrawColor(...C.line);doc.setLineWidth(.7);doc.line(39,y+2,portrait?titleRight:right,y+2);y+=19;
-  const meta=[p.occ,p.idade!==''?`${p.idade} anos`:'',p.sec?`+ ${p.sec}`:''].filter(Boolean).join(' · ');
+ const meta=[p.occ,p.idade!==''?`${p.idade} anos`:'',p.sec?`+ ${p.sec}`:'',p.edit?'ficha editada':''].filter(Boolean).join(' · ');
  y=pdfWrapped(doc,meta,39,y,titleRight-39,9,11,C.muted)+7;
  if(portrait)y=Math.max(y,photoY+photoH+9);
  const attrs=Object.entries(p.c||{}),gap=4,boxW=(right-39-gap*(attrs.length-1))/attrs.length,boxH=55;
@@ -1211,7 +1218,7 @@ window.DynamicInfo=(()=>{
 })();
 (function panelMin(){
  const KEY='coc7-painel-v1',bar=document.getElementById('panel'),btn=document.getElementById('panelBtn'),mn=document.getElementById('panelMin');
- let min=false;try{min=localStorage.getItem(KEY)==='1'}catch(_){}
+ let min=document.body.classList.contains('mobile');try{const saved=localStorage.getItem(KEY);if(saved!==null)min=saved==='1'}catch(_){}
  const apply=()=>{bar.hidden=min;btn.hidden=!min;document.body.classList.toggle('pmin',min)};
  const set=v=>{min=v;try{localStorage.setItem(KEY,v?'1':'0')}catch(_){}apply();(v?btn:mn).focus()};
  mn.onclick=()=>set(true);btn.onclick=()=>set(false);
