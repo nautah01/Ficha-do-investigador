@@ -85,9 +85,10 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
 .sk>span{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dotted var(--line);gap:6px}
 .sk .sk-name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
 .sk i{flex:0 0 auto;margin-left:auto;font-style:normal;white-space:nowrap}
-.sk i{position:relative;display:inline-flex;font-style:normal;white-space:nowrap}
-.sk .skill-advice{display:none;position:absolute;z-index:30;top:calc(100% + 5px);right:0;width:min(320px,calc(100vw - 56px));padding:8px 10px;border:1px solid var(--gold);border-radius:5px;background:var(--k5);color:var(--txt);box-shadow:0 8px 22px rgba(0,0,0,.65);font-size:.74rem;line-height:1.4;white-space:normal;text-align:left}
-.sk i:focus-within .skill-advice{display:block}
+.sk i{display:inline-flex;flex:0 0 auto;margin-left:auto;font-style:normal;white-space:nowrap}
+.sk .skill-advice{display:none;flex:1 0 100%;width:100%;margin:4px 0 2px;padding:8px 10px;border:1px solid var(--gold);border-radius:5px;background:var(--k5);color:var(--txt);font-size:.74rem;line-height:1.4;white-space:normal;text-align:left;overflow-wrap:anywhere}
+.sk>span.skill-row-advised:focus-within{grid-column:1/-1;flex-wrap:wrap;align-items:center}
+.sk>span.skill-row-advised:focus-within .skill-advice{display:block}
 .credit-guide{display:grid;gap:3px;margin:8px 0 10px;padding:7px 9px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:4px;background:rgba(var(--gr),.045);font-size:.78rem;line-height:1.4}
 .credit-guide b{color:var(--head)}.credit-guide small{color:var(--muted)}
 h3{color:var(--head);border-top:2px solid var(--rule);padding-top:6px;font-variant:small-caps;letter-spacing:1px}
@@ -575,7 +576,7 @@ const row=(p,i,n,rm)=>{
  const bounds=n==='Nível de Crédito'?creditBounds(p):null;
  const advice=n==='Língua Natural'?'O valor base de Língua Natural acompanha o atributo EDU; essa parte não é bônus distribuído. A ocupação pode acrescentar pontos ao valor base.':n==='Nível de Crédito'?`A ocupação reserva parte dos pontos profissionais para Nível de Crédito. Essa perícia deve ficar na faixa permitida${bounds?` (mínimo ${bounds.min}, máximo ${bounds.max})`:''}.` :'';
  const id=`skill-advice-${i}-${n.replace(/[^a-z0-9]+/gi,'-')}`;
- return`<span>${esc(n)}<i>${inp(p,i,'s:'+n,advice?`aria-describedby="${id}"`: '')}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${advice?`<small class="skill-advice" id="${id}" role="note">${esc(advice)}</small>`:''}${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
+ return`<span class="${advice?'skill-row-advised':''}"><span class="sk-name">${esc(n)}</span><i>${inp(p,i,'s:'+n,advice?`aria-describedby="${id}"`: '')}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i>${advice?`<small class="skill-advice" id="${id}" role="note">${esc(advice)}</small>`:''}</span>`;
 };
 function uiOf(p,i){
  p.ui=p.ui||{};
