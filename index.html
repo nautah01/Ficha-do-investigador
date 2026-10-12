@@ -118,11 +118,10 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
 /* Destaque das perícias da ocupação (ficha em branco, modo "Ocupacionais") */
 .sk.hl-occ>.skill-row.occ-skill{position:relative;padding:2px 6px 2px 8px;border-radius:4px;border-bottom-color:transparent;background:linear-gradient(90deg,rgba(var(--gr),.24),rgba(var(--gr),.07));box-shadow:inset 3px 0 0 var(--head),0 0 0 1px rgba(var(--gr),.35)}
 .sk.hl-occ>.skill-row.occ-skill .sk-name{color:var(--head);font-weight:700}
-.sk.hl-occ>.skill-row.occ-skill .sk-name::before{content:"★ ";font-size:.8em}
 .blank-budgets .occ-legend{display:flex;align-items:center;gap:7px;color:var(--muted);line-height:1.4}
 .blank-budgets .occ-legend[hidden]{display:none}
 .occ-legend-mark{flex:0 0 auto;width:16px;height:12px;border-radius:3px;background:linear-gradient(90deg,rgba(var(--gr),.35),rgba(var(--gr),.1));box-shadow:inset 3px 0 0 var(--head),0 0 0 1px rgba(var(--gr),.4)}
-@media print{.sk.hl-occ>.skill-row.occ-skill{background:none;box-shadow:none}.sk.hl-occ>.skill-row.occ-skill .sk-name::before{content:none}.occ-legend{display:none!important}}
+@media print{.sk.hl-occ>.skill-row.occ-skill{background:none;box-shadow:none}.occ-legend{display:none!important}}
 .skill-pool{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:3px 10px;margin:8px 0 10px;padding:8px 10px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:5px;background:rgba(var(--gr),.055);font-size:.8rem}
 .skill-pool b{color:var(--head)}.skill-pool strong{color:var(--head);font-size:1.05rem}
 .skill-pool small{grid-column:1/-1;color:var(--muted);line-height:1.4}
