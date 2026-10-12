@@ -41,7 +41,19 @@ button.chip.sq{padding:3px 10px;font-weight:bold}
 #panelBtn:hover{background:linear-gradient(var(--k6),var(--k5))}
 #panelBtn[hidden]{display:none}
 body.pmin h1{padding-left:112px}
-body.mobile.pmin #panelBtn{top:auto;bottom:calc(68px + env(safe-area-inset-bottom));left:10px}
+body.mobile.pmin #panelBtn{top:10px;bottom:auto;left:10px}
+body.mobile.pmin .top>h1{padding-left:105px}
+body.mobile #panel .bar-head{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:6px;padding-bottom:5px}
+body.mobile #panel .bar-title{flex:0 0 auto}
+body.mobile #panel .bar-note{display:none}
+body.mobile #panel .tools{flex:1 1 auto;min-width:0;justify-content:flex-end;gap:4px}
+body.mobile #panel .tools button.chip{min-height:32px;padding:2px 7px;font-size:.7rem}
+body.mobile #panel .gen{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:5px 7px}
+body.mobile #panel .gen .qtl{grid-column:1;grid-row:2}
+body.mobile #panel #go{grid-column:2;grid-row:2;width:100%;padding:0 7px}
+body.mobile #panel .blank-sheet-option{flex-direction:row;align-items:center;gap:7px;margin-top:6px;padding:7px 8px}
+body.mobile #panel .blank-sheet-copy span{display:none}
+body.mobile #panel .blank-sheet-option button{width:auto;min-height:34px;padding:4px 7px;font-size:.72rem;white-space:normal}
 label{display:flex;flex-direction:column;font-size:.8rem;gap:3px;color:var(--ink2);min-width:0}
 @media(max-width:640px){
  .gen{grid-template-columns:1fr 1fr}.gen .qtl{grid-column:1/-1}
@@ -701,8 +713,7 @@ function body(p,i){
   const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k)}</label>`).join('');
  const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
  const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
- return`<div class="badge"><span class="ed" ${p.edit?'':'hidden'}>✎ Ficha editada</span></div>
-  <div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
+ return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
   <div class="stats">${st}</div><div class="der">${d}</div>${skillPool}
   <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}${mobileActions}`;
@@ -733,12 +744,12 @@ function card(p,i){
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>
   </header>
   <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" data-sheet-tab="sheet" role="tab" aria-selected="${!isEq&&!isBack}">🗂 Ficha</button><button type="button" data-sheet-tab="backstory" role="tab" aria-selected="${isBack}">📖 Backstory</button><button type="button" data-sheet-tab="equipment" role="tab" aria-selected="${isEq}">🎒 Equipamentos${p.equipment&&p.equipment.length?` (${p.equipment.length})`:''}</button></div>
-  <div class="win-body"><div class="win-pane sheet-pane" role="tabpanel" ${isEq||isBack?'hidden':''}><div class="stamp">Arquivo<br>Arkham</div>${body(p,i)}</div><div class="win-pane equipment-pane" role="tabpanel" ${isEq?'':'hidden'}>${window.CthEquipment.render(p,i)}</div><div class="win-pane backstory-pane" role="tabpanel" ${isBack?'':'hidden'}>${backstory(p,i)}</div></div>
+  <div class="win-body"><div class="win-pane sheet-pane" role="tabpanel" ${isEq||isBack?'hidden':''}>${body(p,i)}</div><div class="win-pane equipment-pane" role="tabpanel" ${isEq?'':'hidden'}>${window.CthEquipment.render(p,i)}</div><div class="win-pane backstory-pane" role="tabpanel" ${isBack?'':'hidden'}>${backstory(p,i)}</div></div>
   <div class="rsz" data-i="${i}"></div>
  </section>`;
 }
 function txtBase(p){
- return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}${p.edit?' [ficha editada]':''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nSem pontos (valor inicial): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'')+window.CthEquipment.plainText(p);
+ return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nSem pontos (valor inicial): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'')+window.CthEquipment.plainText(p);
 }
 function txt(p){const t=txtBase(p),x=histTxt(p);return x?t+'\n\n'+x:t}
 function persist(){
@@ -815,7 +826,6 @@ function refresh(i){
   const points=el.querySelector('[data-skill-points]');if(points)points.textContent=String(p.skillPoints&&p.skillPoints.available||0);
   const pointNote=el.querySelector('[data-skill-pool-note]');if(pointNote)pointNote.textContent=p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.';
  }
- const ed=el.querySelector('.ed');if(ed)ed.hidden=!p.edit;
  const t=el.querySelector('.win-title');if(t)t.textContent=ttl(p);
  persist();
 }
@@ -1099,7 +1109,7 @@ async function pdfInvestigator(doc,p,C){
  let y=55;y=pdfWrapped(doc,p.nome||'Investigador',39,y,titleRight-39,20,22,C.head,'bold');
  if(portrait){doc.setDrawColor(...C.gold);doc.setLineWidth(.6);doc.roundedRect(photoX-2,photoY-2,photoW+4,photoH+4,2,2,'S');doc.addImage(portrait,'JPEG',photoX,photoY,photoW,photoH,undefined,'FAST')}
  doc.setDrawColor(...C.line);doc.setLineWidth(.7);doc.line(39,y+2,portrait?titleRight:right,y+2);y+=19;
- const meta=[p.occ,p.idade!==''?`${p.idade} anos`:'',p.sec?`+ ${p.sec}`:'',p.edit?'ficha editada':''].filter(Boolean).join(' · ');
+ const meta=[p.occ,p.idade!==''?`${p.idade} anos`:'',p.sec?`+ ${p.sec}`:''].filter(Boolean).join(' · ');
  y=pdfWrapped(doc,meta,39,y,titleRight-39,9,11,C.muted)+7;
  if(portrait)y=Math.max(y,photoY+photoH+9);
  const attrs=Object.entries(p.c||{}),gap=4,boxW=(right-39-gap*(attrs.length-1))/attrs.length,boxH=55;
