@@ -88,27 +88,39 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
 .stats .in{width:48px;background:var(--field);color:var(--field-ink);border-color:var(--ok)}
 .stats small,.sk small{display:block;color:var(--muted2);font-size:.68rem}
 .sk small{display:inline;margin-left:4px;color:var(--muted)}
-.der{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:.85rem;margin-bottom:10px;background:rgba(var(--gr),.06);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
-.der b{color:var(--head);margin-right:4px}
+ .der{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,135px),1fr));gap:7px;margin-bottom:10px;background:rgba(var(--gr),.06);border:1px solid var(--line);border-radius:6px;padding:9px}
+ .der-field{display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:6px;min-width:0;padding:3px 5px;border:1px solid rgba(var(--gr2),.2);border-radius:4px;background:rgba(var(--gr),.035);font-size:.78rem}
+ .der-field span{min-width:0;color:var(--head);font-weight:bold;line-height:1.2}
+ .der-field .in{flex:0 0 56px;width:56px;min-width:0;height:30px;padding:2px;font-size:.85rem}
 .sk{display:grid;grid-template-columns:1fr 1fr;gap:3px 14px;font-size:.85rem}
 .sk>span{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dotted var(--line);gap:6px}
 .sk .sk-name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
 .sk i{flex:0 0 auto;margin-left:auto;font-style:normal;white-space:nowrap}
 .sk i{display:inline-flex;flex:0 0 auto;margin-left:auto;font-style:normal;white-space:nowrap}
-.sk .skill-advice{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+ .sk>span.skill-has-advice{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 6px}
+ .skill-has-advice .sk-label{grid-column:1;grid-row:1}
+ .skill-has-advice>i{grid-column:2;grid-row:1}
+ .sk .skill-advice{grid-column:1/-1;margin:1px 0 3px;color:var(--muted);font-size:.72rem;line-height:1.35;white-space:normal}
 .skill-pool{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:3px 10px;margin:8px 0 10px;padding:8px 10px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:5px;background:rgba(var(--gr),.055);font-size:.8rem}
 .skill-pool b{color:var(--head)}.skill-pool strong{color:var(--head);font-size:1.05rem}
 .skill-pool small{grid-column:1/-1;color:var(--muted);line-height:1.4}
 .skill-pool [data-skill-pool-note]:not(:empty){color:var(--warn);font-weight:600}
-.blank-budgets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;gap:8px 14px;margin:8px 0 10px;padding:9px 10px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:5px;background:rgba(var(--gr),.055);font-size:.8rem}
-.blank-budgets b{color:var(--head)}.blank-budgets strong{color:var(--head);font-size:1rem}.blank-budgets small{grid-column:1/-1;color:var(--muted);line-height:1.4}
-.blank-budgets select{width:100%;min-width:140px;padding:5px 8px;background:var(--field);color:var(--field-ink);border-color:var(--line)}
-.blank-budgets .budget-mode,.blank-budgets .credit-range{display:grid;gap:3px;min-width:0;color:var(--muted);font-size:.75rem}
+ .blank-budgets{display:grid;gap:9px;margin:8px 0 10px;padding:10px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:5px;background:rgba(var(--gr),.055);font-size:.8rem}
+ .budget-balance{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .budget-stat{display:grid;gap:4px;min-width:0;padding:8px 10px;border:1px solid rgba(var(--gr2),.28);border-radius:5px;background:rgba(var(--gr),.05)}
+ .budget-stat>span{color:var(--muted);font-size:.75rem}
+ .budget-stat strong{display:flex;align-items:baseline;gap:5px;flex-wrap:wrap;color:var(--head);font-size:1rem;line-height:1.25}
+ .budget-stat strong em{font-size:1.2rem;font-style:normal}
+ .budget-stat strong small{color:var(--muted);font-size:.72rem;font-weight:normal}
+ .budget-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+ .blank-budgets select{width:100%;min-width:0;padding:5px 8px;background:var(--field);color:var(--field-ink);border-color:var(--line)}
+ .blank-budgets .budget-mode,.blank-budgets .credit-range{display:grid;align-content:center;gap:4px;min-width:0;padding:5px 8px;border:1px solid rgba(var(--gr2),.2);border-radius:4px;color:var(--muted);font-size:.75rem}
+ .blank-budgets .budget-mode>span,.blank-budgets .credit-range b{color:var(--head);font-size:.76rem}
+ .blank-budgets .credit-range span{line-height:1.35}
+ .blank-budgets>small{color:var(--muted);line-height:1.4}
 .blank-budgets [data-skill-pool-note].has-warning{color:var(--warn);font-weight:600}
-.sk-label{display:flex;align-items:center;gap:4px;min-width:0;flex:1 1 auto}
-.skill-info{flex:0 0 auto;padding:0 3px;border:0;background:transparent;color:var(--head);font-size:.9rem;line-height:1;box-shadow:none}
-.skill-info:hover,.skill-info[aria-expanded="true"]{background:transparent;color:var(--warn);text-shadow:0 0 8px rgba(var(--gr),.45)}
-@media(max-width:560px){.blank-budgets{grid-template-columns:1fr 1fr}.blank-budgets select{width:100%}}
+ .sk-label{display:flex;align-items:center;gap:4px;min-width:0;flex:1 1 auto}
+ @media(max-width:560px){.blank-budgets{padding:8px}.budget-balance,.budget-controls{grid-template-columns:1fr}.budget-stat{padding:7px 8px}}
 h3{color:var(--head);border-top:2px solid var(--rule);padding-top:6px;font-variant:small-caps;letter-spacing:1px}
 .win h3.st{margin:4px 0 6px;font-size:.9rem;border-top:none;padding-top:0;border-bottom:1px solid var(--line);padding-bottom:3px}
 button.rmb{padding:0 6px;margin-left:6px;font-size:.7rem;background:transparent;color:var(--warn2);border:1px solid rgba(253,186,116,.5);border-radius:4px}
@@ -656,9 +668,9 @@ function resetBlankDistribution(p,occupation){
 }
 function blankBudgetPanel(p,i){
  const b=blankBudgetState(p),credit=b.credit,mode=p.skillBudgetMode||'occupational';
- const creditText=credit?`Nível de Crédito da ocupação: mínimo ${credit.min} · máximo ${credit.max}.`:'Escolha uma ocupação para consultar a faixa de Nível de Crédito.';
- const defaultNote='Pontos ocupacionais já descontam o Crédito mínimo e só podem ser usados nas perícias da ocupação. Pontos pessoais = INT × 2. Trocar de ocupação zera os pontos distribuídos.';
- return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-stat"><b>Ocupacionais</b><strong><span data-budget-available="occupational">${b.occupational.available}</span> / <span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><b>Pessoais</b><strong><span data-budget-available="personal">${b.personal.available}</span> / <span data-budget-total="personal">${b.personal.total}</span> pts</strong></div><label class="budget-mode">Distribuir agora<select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range>${esc(creditText)}</div><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
+  const defaultNote='Pontos ocupacionais descontam o Crédito mínimo e valem para perícias da ocupação. Pontos pessoais equivalem a INT × 2. Trocar de ocupação zera a distribuição.';
+  const creditParts=credit?`Mínimo <b>${credit.min}</b> · Máximo <b>${credit.max}</b>`:'Escolha uma ocupação para ver a faixa';
+  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
 }
 const fr=(p,k)=>{const v=+get(p,k)||0;return(v>>1)+' / '+Math.floor(v/5)};
 const inp=(p,i,k,attrs='')=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${k}" ${attrs} value="${esc(get(p,k))}">`;
@@ -667,9 +679,8 @@ const EXTRA={'Arte/Ofício (outra)':5,'Ciência (outra)':1,'Língua (outra)':1,'
 const row=(p,i,n,rm)=>{
  const minimum=skillFloor(p,n);
  const bounds=n==='Nível de Crédito'?creditBounds(p):null;
- const advice=n==='Língua Natural'?'O valor base de Língua Natural acompanha o atributo EDU; essa parte não é bônus distribuído. A ocupação pode acrescentar pontos ao valor base.':n==='Nível de Crédito'?`A ocupação reserva parte dos pontos profissionais para Nível de Crédito. Essa perícia deve ficar na faixa permitida${bounds?` (mínimo ${bounds.min}, máximo ${bounds.max})`:''}.` :'';
- const info=advice?`<button type="button" class="skill-info" data-skill-info="${esc(advice)}" aria-label="Informações sobre ${esc(n)}" aria-expanded="false">ⓘ</button>`:'';
- return`<span><span class="sk-label"><span class="sk-name">${esc(n)}</span>${info}</span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
+ const advice=n==='Língua Natural'?'O valor base acompanha o atributo EDU e não consome pontos distribuídos. A ocupação pode acrescentar pontos.':n==='Nível de Crédito'?`Parte dos pontos ocupacionais fica reservada para esta perícia. Respeite a faixa da ocupação${bounds?` (mínimo ${bounds.min} · máximo ${bounds.max})`:''}.`:'';
+ return`<span class="skill-row${advice?' skill-has-advice':''}"><span class="sk-label"><span class="sk-name">${esc(n)}</span></span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i>${advice?`<small class="skill-advice">${esc(advice)}</small>`:''}</span>`;
 };
 function uiOf(p,i){
  p.ui=p.ui||{};
@@ -685,7 +696,7 @@ function body(p,i){
  const sk=Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n])=>row(p,i,n,1)).join('');
  const skillPool=p.blank?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
  const addM=`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" data-add="n"><input class="in" type="number" value="50" title="Valor" data-add="v"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
- const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<b>${l}</b> ${inp(p,i,'d:'+k)}`).join(' ');
+  const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k)}</label>`).join('');
  const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
  const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
  return`<div class="badge"><span class="ed" ${p.edit?'':'hidden'}>✎ Ficha editada</span></div>
@@ -795,7 +806,7 @@ function refresh(i){
    if(available)available.textContent=String(budgets[type].available);if(total)total.textContent=String(budgets[type].total);
   }
   const mode=el.querySelector('[data-budget-mode]');if(mode&&mode!==document.activeElement)mode.value=p.skillBudgetMode||'occupational';
-  const range=el.querySelector('[data-credit-range]');if(range)range.textContent=budgets.credit?`Nível de Crédito da ocupação: mínimo ${budgets.credit.min} · máximo ${budgets.credit.max}.`:'Escolha uma ocupação para consultar a faixa de Nível de Crédito.';
+   const range=el.querySelector('[data-credit-range] span');if(range)range.textContent=budgets.credit?`Mínimo ${budgets.credit.min} · Máximo ${budgets.credit.max}`:'Escolha uma ocupação para ver a faixa';
   const pointNote=el.querySelector('[data-skill-pool-note]');if(pointNote){pointNote.textContent=p.skillNotice||'Pontos ocupacionais já descontam o Crédito mínimo e só podem ser usados nas perícias da ocupação. Pontos pessoais = INT × 2. Trocar de ocupação zera os pontos distribuídos.';pointNote.classList.toggle('has-warning',!!p.skillNotice)}
  }else{
   const points=el.querySelector('[data-skill-points]');if(points)points.textContent=String(p.skillPoints&&p.skillPoints.available||0);
@@ -823,14 +834,6 @@ async function approveEquipment(p,item){
  return askConfirm({title:'Confira este equipamento',html,ok:'Adicionar mesmo assim',danger:false});
 }
 desk.addEventListener('click',e=>{
- const skillInfo=e.target.closest('[data-skill-info]');
- if(skillInfo){
-  const open=skillInfo.getAttribute('aria-expanded')==='true';
-  desk.querySelectorAll('[data-skill-info]').forEach(button=>button.setAttribute('aria-expanded','false'));
-  if(open)window.DynamicInfo?.hide();else{skillInfo.setAttribute('aria-expanded','true');window.DynamicInfo?.showNow(skillInfo.dataset.skillInfo,skillInfo)}
-  return;
- }
- if(!e.target.closest('.dynamic-info')){window.DynamicInfo?.hide();desk.querySelectorAll('[data-skill-info][aria-expanded="true"]').forEach(button=>button.setAttribute('aria-expanded','false'))}
  const i=e.target.closest('[data-i]');
  const idx=i?+i.dataset.i:NaN;
  const removePortrait=e.target.closest('[data-portrait-remove]');if(removePortrait){const k=+removePortrait.dataset.i,p=cur[k];if(p){delete p.portrait;p.edit=true;draw()}return}
