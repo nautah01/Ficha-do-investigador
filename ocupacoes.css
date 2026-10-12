@@ -53,7 +53,7 @@ body.mobile .opk-subhead strong,body.mobile .opk-subhead span{min-width:0;max-wi
 .opk-hb{display:flex;gap:8px}
 .opk-hb button{padding:3px 12px;border-radius:4px;cursor:pointer}
 .opk-help{display:none;flex:1;min-height:0;overflow:auto;padding:6px 22px 18px;line-height:1.5;font-size:.92rem;outline:none}
-.opk.help .opk-tools,.opk.help .opk-chips,.opk.help .opk-grid{display:none}
+.opk.help .opk-tools,.opk.help .opk-chips,.opk.help .opk-grid{display:none!important}
 .opk.help .opk-help{display:block}
 .opk-help h5{margin:16px 0 4px;font-size:1.02rem;color:var(--head)}
 .opk-help p{margin:0 0 8px;color:var(--txt)}
@@ -67,7 +67,7 @@ body.mobile .opk-subhead strong,body.mobile .opk-subhead span{min-width:0;max-wi
 .hbar i{position:absolute;top:0;bottom:0;border-radius:5px;background:var(--head)}
 .opk-back{margin-top:12px;padding:6px 14px;border-radius:4px;cursor:pointer}
 @media (max-width:640px){.hx{grid-template-columns:1fr}}
-.opk.sub .opk-tools,.opk.sub .opk-chips{display:none}
+.opk.occ-subview .opk-tools,.opk.occ-subview .opk-chips{display:none}
 .opk-subhead{grid-column:1/-1;width:100%;min-width:0;box-sizing:border-box;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:2px 0 6px}
 .opk-subhead button{padding:4px 12px;border-radius:999px;cursor:pointer}
 .opk-subhead strong{color:var(--head);font-size:1.1rem}
@@ -84,8 +84,11 @@ body.mobile .opk-subhead strong,body.mobile .opk-subhead span{min-width:0;max-wi
 .opk-formact button{padding:6px 18px;border-radius:6px;cursor:pointer}
 /* As telas internas ficam em coluna única somente no mobile; no desktop preservam o grid original. */
 @media(max-width:760px){
- body.mobile .opk.sub .opk-grid{display:flex!important;flex:1 1 auto;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;box-sizing:border-box;width:100%!important;min-width:0;max-width:100%;overflow-x:hidden!important;overflow-y:auto!important}
- body.mobile .opk.sub .opk-grid>*{box-sizing:border-box;position:relative!important;left:auto!important;right:auto!important;grid-column:auto!important;align-self:stretch!important;flex:0 0 auto!important;width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important;transform:none}
- body.mobile .opk.sub .opk-grid>.opk-subhead{display:flex;flex-wrap:wrap;overflow-wrap:anywhere}
- body.mobile .opk.sub .opk-grid>.opk-form{max-width:100%!important}
+ body.mobile .opk.occ-subview .opk-grid{display:grid!important;flex:1 1 auto;grid-template-columns:minmax(0,1fr)!important;grid-auto-flow:row;align-content:start;align-items:stretch;justify-items:stretch;box-sizing:border-box;width:100%!important;min-width:0;max-width:100%;overflow-x:hidden!important;overflow-y:auto!important}
+ body.mobile .opk.occ-subview .opk-grid>*{box-sizing:border-box;position:static!important;grid-column:1/-1!important;width:100%!important;min-width:0!important;max-width:100%!important;margin:0!important;transform:none}
+ body.mobile .opk.occ-subview .opk-grid>.opk-subhead{display:flex;flex-wrap:wrap;overflow-wrap:anywhere}
+ body.mobile .opk.occ-subview .opk-grid>.opk-form{max-width:100%!important}
+ body.mobile .opk.occ-subview .opk-grid>.opk-card>*{box-sizing:border-box;min-width:0;max-width:100%;overflow-wrap:anywhere}
+ body.mobile .opk.occ-subview .opk-grid>.opk-card .ot{width:100%}
+ body.mobile .opk.help.occ-subview .opk-grid{display:none!important}
 }

@@ -21,9 +21,7 @@ dlg.innerHTML=`<header><h4 id="opkT"></h4><span class="opk-hb"><button type="but
 document.body.appendChild(dlg);
 const helpBox=$('#opkHelp'),helpBtn=$('#opkHelpBtn'),q=$('#opkQ'),grid=$('#opkGrid'),chips=$('#opkChips'),tabs=$('#opkTabs');
 let ctx=null,cat='',tab='sec',subItem=null,bgItem=null,bgView='list',bgSk=[],pageScroll={x:0,y:0};
-const resetPickerScroll=()=>{const reset=()=>{dlg.scrollLeft=dlg.scrollTop=grid.scrollLeft=grid.scrollTop=0;document.documentElement.scrollLeft=document.body.scrollLeft=0};reset();requestAnimationFrame(()=>{reset();requestAnimationFrame(reset)})};
-dlg.tabIndex=-1;
-const focusPickerDialog=()=>{if(dlg.contains(document.activeElement))document.activeElement.blur();dlg.focus({preventScroll:true});resetPickerScroll()};
+const resetPickerScroll=()=>{const reset=()=>{dlg.scrollLeft=dlg.scrollTop=grid.scrollLeft=grid.scrollTop=0;document.documentElement.scrollLeft=document.body.scrollLeft=0};reset();requestAnimationFrame(reset)};
 const BGKEY='cthulhu-bg';
 window.BGSEL={};try{window.BGSEL=JSON.parse(localStorage.getItem(BGKEY)||'{}')||{}}catch{}
 const saveBG=()=>{try{localStorage.setItem(BGKEY,JSON.stringify(window.BGSEL))}catch{}};
@@ -72,7 +70,7 @@ function card(v,e,name,sub,tags,full,on,idx,nsub,bg){
 const tokTag=t=>{t=t.replace(/^!/,'');if(t==='@soc')return'Social';if(t==='@lang')return'Língua';if(t==='@any')return'';return t.split('|')[0].trim().replace(/^(Ciência|Arte\/Ofício) \((.*)\)$/,'$2')};
 const shortSk=n=>n.replace(/^(Ciência|Arte\/Ofício) \((.*)\)$/,'$2');
 function renderBG(){
- dlg.classList.add('sub');focusPickerDialog();
+ dlg.classList.add('occ-subview');
  window.DynamicInfo?.hide(dlg);
  const B=BG[bgItem.occ],e=meta(bgItem.occ)[0];let h,i=0;
  if(bgView==='form'){
@@ -91,10 +89,9 @@ function renderBG(){
 }
 function render(){
  window.DynamicInfo?.hide(dlg);
- if(bgItem){dlg.classList.add('sub');return renderBG()}
- const c=ctx,cur=c.sel.value;let i=0,h='';dlg.classList.toggle('sub',!!subItem);
+ if(bgItem){dlg.classList.add('occ-subview');return renderBG()}
+ const c=ctx,cur=c.sel.value;let i=0,h='';dlg.classList.toggle('occ-subview',!!subItem);
  if(subItem){
-  focusPickerDialog();
   const x=subItem,S=SUB[x.n],lbl=S.lbl.toLowerCase();
   h+=`<div class="opk-subhead"><button type="button" data-back>← Todas as ocupações</button><strong>${meta(x.n)[0]} ${esc(x.n)}</strong><span>Escolha: ${esc(lbl)}</span></div>`;
   h+=card(x.v,'🎲','Qualquer opção','',['Sorteia ao gerar'],'Sorteia '+lbl+' ao gerar a ficha',cur===x.v,i++);
@@ -134,7 +131,7 @@ function helpHtml(){
 function setHelp(on){dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',on);helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.innerHTML=helpHtml();helpBox.scrollTop=0;helpBox.focus()}else q.focus()}
 helpBtn.addEventListener('click',()=>setHelp(!dlg.classList.contains('help')));
 helpBox.addEventListener('click',e=>{if(e.target.closest('.opk-back'))setHelp(false)});
-dlg.addEventListener('close',()=>{subItem=null;bgItem=null;dlg.classList.remove('help','sub');document.documentElement.classList.remove('occ-picker-open');document.body.classList.remove('occ-picker-open');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda';window.DynamicInfo?.hide(dlg);resetPickerScroll();requestAnimationFrame(()=>window.scrollTo(pageScroll.x,pageScroll.y))});
+dlg.addEventListener('close',()=>{subItem=null;bgItem=null;dlg.classList.remove('help','occ-subview');document.documentElement.classList.remove('occ-picker-open');document.body.classList.remove('occ-picker-open');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda';window.DynamicInfo?.hide(dlg);resetPickerScroll();requestAnimationFrame(()=>window.scrollTo(pageScroll.x,pageScroll.y))});
 q.addEventListener('input',()=>{subItem=null;bgItem=null;render()});
 chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b){cat=b.dataset.c;subItem=null;render()}});
 tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b){tab=b.dataset.t;subItem=null;render()}});
