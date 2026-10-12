@@ -43,6 +43,13 @@
  .opk-subhead strong,.opk-subhead span{min-width:0;max-width:100%;overflow-wrap:anywhere}
  .opk-card,.opk-form{min-width:0;max-width:100%}
 }
+/* O seletor acompanha o modo mobile da aplicação, mesmo quando a viewport visual do navegador usa outra escala. */
+body.mobile.occ-picker-open{overflow:hidden!important;overscroll-behavior:none}
+body.mobile .opk[open]{position:fixed!important;inset:0!important;width:100%!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:0;z-index:2147483647!important}
+body.mobile .opk-grid{align-self:stretch;width:100%;min-width:0;max-width:100%;grid-template-columns:minmax(0,1fr)!important;overflow-x:hidden}
+body.mobile .opk-grid>.opk-subhead,body.mobile .opk-grid>.opk-card,body.mobile .opk-grid>.opk-form{grid-column:1;width:100%;min-width:0;max-width:100%}
+body.mobile .opk-subhead{gap:7px}
+body.mobile .opk-subhead strong,body.mobile .opk-subhead span{min-width:0;max-width:100%;overflow-wrap:anywhere}
 .opk-hb{display:flex;gap:8px}
 .opk-hb button{padding:3px 12px;border-radius:4px;cursor:pointer}
 .opk-help{display:none;flex:1;min-height:0;overflow:auto;padding:6px 22px 18px;line-height:1.5;font-size:.92rem;outline:none}

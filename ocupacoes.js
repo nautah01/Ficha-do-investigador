@@ -56,7 +56,7 @@ function openPick(c){
   tabs.innerHTML='';
   tabs.hidden=true;
  chips.innerHTML='<button type="button" data-c="" aria-pressed="true">Todas</button>'+Object.entries(CAT).map(([k,v])=>`<button type="button" data-c="${k}" aria-pressed="false">${v}</button>`).join('');
- render();dlg.scrollLeft=dlg.scrollTop=grid.scrollLeft=0;dlg.showModal();q.focus();
+ render();dlg.scrollLeft=dlg.scrollTop=grid.scrollLeft=0;document.body.classList.add('occ-picker-open');dlg.showModal();q.focus();
 }
 function list(){
  const c=ctx,t=norm(q.value.trim());let src=items(c.kind==='occ'?'occ':'sec');
@@ -129,7 +129,7 @@ function helpHtml(){
 function setHelp(on){dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',on);helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.innerHTML=helpHtml();helpBox.scrollTop=0;helpBox.focus()}else q.focus()}
 helpBtn.addEventListener('click',()=>setHelp(!dlg.classList.contains('help')));
 helpBox.addEventListener('click',e=>{if(e.target.closest('.opk-back'))setHelp(false)});
-dlg.addEventListener('close',()=>{subItem=null;bgItem=null;dlg.classList.remove('help','sub');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda';window.DynamicInfo?.hide(dlg);grid.scrollLeft=grid.scrollTop=dlg.scrollLeft=dlg.scrollTop=0;requestAnimationFrame(()=>window.scrollTo(pageScroll.x,pageScroll.y))});
+dlg.addEventListener('close',()=>{subItem=null;bgItem=null;dlg.classList.remove('help','sub');document.body.classList.remove('occ-picker-open');helpBtn.setAttribute('aria-pressed',false);helpBtn.textContent='❔ Ajuda';window.DynamicInfo?.hide(dlg);grid.scrollLeft=grid.scrollTop=dlg.scrollLeft=dlg.scrollTop=0;requestAnimationFrame(()=>window.scrollTo(pageScroll.x,pageScroll.y))});
 q.addEventListener('input',()=>{subItem=null;bgItem=null;render()});
 chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b){cat=b.dataset.c;subItem=null;render()}});
 tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b){tab=b.dataset.t;subItem=null;render()}});
