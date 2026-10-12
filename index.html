@@ -99,6 +99,11 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0}
 .stats div{background:linear-gradient(var(--k5),var(--k4));border:1px solid var(--gold);border-radius:6px;text-align:center;padding:6px 4px;color:var(--btnt);box-shadow:inset 0 0 0 1px rgba(var(--gr),.15)}
 .stats b{display:block;font-size:.72rem;color:var(--head);letter-spacing:1px}
+.stats-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0 -4px}
+.stats-head span{color:var(--head);font-size:.8rem;font-variant:small-caps;letter-spacing:1px}
+button.rrb{padding:3px 10px;font-size:.78rem;background:transparent;color:var(--ink2);border:1px solid rgba(var(--gr),.45);border-radius:4px;cursor:pointer;white-space:nowrap}
+button.rrb:hover{background:rgba(var(--gr),.15)}
+body.mobile #desk button.rrb{min-height:36px;padding:4px 10px}
 .stats .in{width:48px;background:var(--field);color:var(--field-ink);border-color:var(--ok)}
 .stats small,.sk small{display:block;color:var(--muted2);font-size:.68rem}
 .sk small{display:inline;margin-left:4px;color:var(--muted)}
@@ -731,7 +736,7 @@ function body(p,i){
  const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
  return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
-  <div class="stats">${st}</div><div class="der">${d}</div>${skillPool}
+  <div class="stats-head"><span>Atributos</span><button type="button" class="rrb" data-i="${i}" title="Sortear novos valores para os 8 atributos">🎲 Rerolar atributos</button></div><div class="stats">${st}</div><div class="der">${d}</div>${skillPool}
   <h3 class="st">Perícias do personagem</h3><div class="sk${p.blank&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${sk}</div>${addM}${fa}${mobileActions}`;
 }
 function occSelect(p,i){
@@ -824,6 +829,25 @@ async function shrinkPortrait(file){
 }
 function winEl(i){return desk.querySelector('.win[data-i="'+i+'"]')}
 function bring(i){const p=cur[i];if(!p)return;p.ui.z=++zTop;const el=winEl(i);if(el)el.style.zIndex=p.ui.z;persist()}
+/* rerolar atributos: sorteia os 8 atributos de novo e recalcula tudo que depende deles (mesma lógica da edição manual) */
+const ATTR_KEYS=['FOR','CON','POD','DES','APA','TAM','INT','EDU'];
+function rerollAttrs(i){
+ const p=cur[i];if(!p)return;
+ const next={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
+ const derived=['Esquivar','Língua Natural'].map(n=>({n,oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');
+ Object.assign(p.c,next);
+ const luck=p.der&&p.der.luck;
+ p.der={...p.der,...calc(p.c)};if(luck!==undefined)p.der.luck=luck; /* a Sorte é outra rolagem: não muda */
+ for(const d of derived)if(d.value!==undefined){const newBase=Math.max(0,+base(d.n,p.c)||0),bonus=Math.max(0,(+d.value||0)-d.oldFloor);p.sk[d.n]=newBase+bonus;p.skillFloors[d.n]=newBase}
+ if(p.blank&&p.sk['Nível de Crédito']!==undefined){
+  const range=creditBounds(p),floor=range?range.min:Math.max(0,+base('Nível de Crédito',p.c)||0),ceiling=range?range.max:999;
+  const value=Math.max(floor,Math.min(ceiling,oldCreditValue));p.skillFloors['Nível de Crédito']=floor;p.sk['Nível de Crédito']=value;
+  const allocations=p.skillAllocations&&p.skillAllocations['Nível de Crédito'];if(allocations){allocations.occupational=Math.max(0,value-floor);allocations.personal=0;if(!allocations.occupational)delete p.skillAllocations['Nível de Crédito']}
+  p.skillNotice=value!==oldCreditValue||oldCreditFloor!==(range?range.min:floor)?`A faixa de Nível de Crédito mudou com os atributos${oldCredit?`; agora é ${floor}–${ceiling}`:''}.`:'';
+ }
+ p.rolledC=JSON.stringify(p.c);p.edit=true;
+ refresh(i);window.CthEquipment.refreshWarnings(p,winEl(i)&&winEl(i).querySelector('[data-eq-panel]'));
+}
 function refresh(i){
  const el=winEl(i),p=cur[i];if(!el)return;
  el.querySelectorAll('[data-k]').forEach(x=>{if(x!==document.activeElement)x.value=get(p,x.dataset.k)});
@@ -905,6 +929,13 @@ desk.addEventListener('click',e=>{
   })();return}
  if(e.target.closest('.burb')){const k=+e.target.closest('.burb').dataset.i,p=cur[k];askConfirm({title:'Levar ao cemitério?',html:`<strong>${esc(ttl(p))}</strong> será enterrado no cemitério. Em seguida você informa a causa da morte.`,ok:'🪦 Levar ao cemitério',danger:false}).then(y=>{if(y&&cur[k]===p)buryFicha(k)});return}
  if(e.target.closest('.delb')){const k=+e.target.closest('.delb').dataset.i,p=cur[k];confirmDel(ttl(p)).then(y=>{if(y&&cur[k]===p){cur.splice(k,1);draw()}});return}
+ if(e.target.closest('.rrb')){
+  const k=+e.target.closest('.rrb').dataset.i,p=cur[k];if(!p)return;
+  const untouched=ATTR_KEYS.every(a=>!+p.c[a])||!p.edit||JSON.stringify(p.c)===p.rolledC;
+  if(untouched)rerollAttrs(k);
+  else askConfirm({title:'Rerolar atributos?',html:`Os atributos de <strong>${esc(ttl(p))}</strong> serão substituídos por novos valores sorteados. PV, Sanidade, PM, Mov., Bônus de Dano, Corpo, Esquivar e Língua Natural são recalculados; a Sorte não muda.`,ok:'🎲 Rerolar',danger:false}).then(y=>{if(y&&cur[k]===p)rerollAttrs(k)});
+  return;
+ }
  if(e.target.closest('.ftg')){const p=cur[+e.target.closest('.ftg').dataset.i];p.falta=!p.falta;draw();return}
  if(e.target.closest('.rmb')){const x=e.target.closest('.rmb'),p=cur[+x.dataset.i],n=x.dataset.n;
   if(p.sk[n]!==undefined){ensureSkillBudget(p);if(!p.blank)p.skillPoints.available+=Math.max(0,(+p.sk[n]||0)-skillFloor(p,n));delete p.sk[n];delete p.skillFloors[n];if(n in BASE||n in EXTRA)(p.removed=p.removed||{})[n]=1}
