@@ -114,9 +114,21 @@
  body.mobile .eq-ammo{gap:5px}
  body.mobile .eq-ammo button{min-height:34px}
 }
+/* Catálogo: mais itens visíveis por tela em celulares sem alterar o desktop. */
+@media(max-width:640px){
+ body.mobile .opk.eqk .eqk-grid{display:grid!important;flex-direction:initial;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-flow:row;gap:7px;padding:6px 10px 12px}
+ body.mobile .opk.eqk .eqk-grid>.eqk-card{flex:initial;width:auto!important;min-width:0;max-width:100%;margin:0!important;transform:none}
+ body.mobile .opk.eqk .eqk-grid>.eqk-sec{grid-column:1/-1!important;width:auto!important;margin:8px 0 0}
+ .eqk-body{min-width:0;padding:6px 7px 8px;gap:2px}
+ .eqk-card .oname{font-size:.82rem;overflow-wrap:anywhere}
+ .eqk-card .os{font-size:.66rem}
+ .eqk-card .ot{gap:3px;margin-top:2px}
+ .eqk-card .ot i{padding:1px 5px;font-size:.62rem}
+ .eqk-img .eq-ph{font-size:1.8rem}
+}
 @media(max-width:420px){
  .eq-custom-grid{grid-template-columns:minmax(0,1fr)}
  .eq-item{grid-template-columns:52px minmax(0,1fr);gap:8px}
  .eq-thumb{width:52px;height:52px}
- .eqk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
+@media(max-width:359px){body.mobile .opk.eqk .eqk-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
