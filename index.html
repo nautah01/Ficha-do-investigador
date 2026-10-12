@@ -96,12 +96,19 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
 .sk i{flex:0 0 auto;margin-left:auto;font-style:normal;white-space:nowrap}
 .sk i{display:inline-flex;flex:0 0 auto;margin-left:auto;font-style:normal;white-space:nowrap}
 .sk .skill-advice{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.credit-guide{display:grid;gap:3px;margin:8px 0 10px;padding:7px 9px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:4px;background:rgba(var(--gr),.045);font-size:.78rem;line-height:1.4}
-.credit-guide b{color:var(--head)}.credit-guide small{color:var(--muted)}
 .skill-pool{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:3px 10px;margin:8px 0 10px;padding:8px 10px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:5px;background:rgba(var(--gr),.055);font-size:.8rem}
 .skill-pool b{color:var(--head)}.skill-pool strong{color:var(--head);font-size:1.05rem}
 .skill-pool small{grid-column:1/-1;color:var(--muted);line-height:1.4}
 .skill-pool [data-skill-pool-note]:not(:empty){color:var(--warn);font-weight:600}
+.blank-budgets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:center;gap:8px 14px;margin:8px 0 10px;padding:9px 10px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:5px;background:rgba(var(--gr),.055);font-size:.8rem}
+.blank-budgets b{color:var(--head)}.blank-budgets strong{color:var(--head);font-size:1rem}.blank-budgets small{grid-column:1/-1;color:var(--muted);line-height:1.4}
+.blank-budgets select{width:100%;min-width:140px;padding:5px 8px;background:var(--field);color:var(--field-ink);border-color:var(--line)}
+.blank-budgets .budget-mode,.blank-budgets .credit-range{display:grid;gap:3px;min-width:0;color:var(--muted);font-size:.75rem}
+.blank-budgets [data-skill-pool-note].has-warning{color:var(--warn);font-weight:600}
+.sk-label{display:flex;align-items:center;gap:4px;min-width:0;flex:1 1 auto}
+.skill-info{flex:0 0 auto;padding:0 3px;border:0;background:transparent;color:var(--head);font-size:.9rem;line-height:1;box-shadow:none}
+.skill-info:hover,.skill-info[aria-expanded="true"]{background:transparent;color:var(--warn);text-shadow:0 0 8px rgba(var(--gr),.45)}
+@media(max-width:560px){.blank-budgets{grid-template-columns:1fr 1fr}.blank-budgets select{width:100%}}
 h3{color:var(--head);border-top:2px solid var(--rule);padding-top:6px;font-variant:small-caps;letter-spacing:1px}
 .win h3.st{margin:4px 0 6px;font-size:.9rem;border-top:none;padding-top:0;border-bottom:1px solid var(--line);padding-bottom:3px}
 button.rmb{padding:0 6px;margin-left:6px;font-size:.7rem;background:transparent;color:var(--warn2);border:1px solid rgba(253,186,116,.5);border-radius:4px}
@@ -493,11 +500,24 @@ function bgFor(slot,oo){
 }
 const crFmt=n=>(n>0?'+':'')+n;
 function creditBounds(p){
- if(p.blank)return null;
+ if(p.blank){
+  const occupationInfo=occupationFor(p.occ);
+  if(!occupationInfo)return null;
+  const total=occupationPointTotal(occupationInfo.occupation,p.c),mod=occupationInfo.specialization&&SUB[occupationInfo.occupation.n]?.crMod?.[occupationInfo.specialization]||0;
+  const max=Math.max(0,Math.min(MAXS,total,occupationInfo.occupation.c[1]+mod));
+  return{min:Math.max(0,Math.min(max,occupationInfo.occupation.c[0]+mod)),max};
+ }
  const range=p.creditRange;
  if(range&&Array.isArray(range.final)&&range.final.length>=2)return{min:+range.final[0]||0,max:+range.final[1]||0};
  const occ=OCC.find(o=>p.occ===o.n||String(p.occ||'').startsWith(o.n+' ('));
  return occ?{min:occ.c[0],max:occ.c[1]}:null;
+}
+function occupationFor(value){
+ const name=String(value||''),specialized=name.match(/^(.*) \((.*)\)$/),baseName=specialized?specialized[1]:name;
+ const occupation=OCC.find(o=>o.n===baseName);return occupation?{occupation,specialization:specialized&&SUB[baseName]?.o[specialized[2]]?specialized[2]:''}:null;
+}
+function occupationPointTotal(o,c){
+ return Math.max(...o.p.split('|').map(f=>f.split('+').reduce((sum,term)=>{const[k,m]=term.split('*');return sum+(+c[k]||0)*(+m||0)},0)));
 }
 const crRangeTxt=p=>{const c=p.creditRange;if(!c||!c.mod)return'';return`faixa ${c.base[0]}–${c.base[1]} ajustada para ${c.final[0]}–${c.final[1]} (${crFmt(c.mod)})`};
 const histTxt=p=>{const origins=(p.hist||[]).map(h=>`${h.kind}: ${h.n}`).join(' | '),range=crRangeTxt(p);return[origins?'Histórico: '+origins:'',range?'Nível de Crédito: '+range:'',p.back||''].filter(Boolean).join('\n')};
@@ -589,16 +609,57 @@ function ensureSkillBudget(p){
  p.skillPoints=p.skillPoints&&typeof p.skillPoints==='object'?p.skillPoints:{available:0};
  p.skillPoints.available=Math.max(0,Math.floor(+p.skillPoints.available||0));
  for(const n of Object.keys(p.sk||{}))if(!Object.prototype.hasOwnProperty.call(p.skillFloors,n)){
-  const cr=n==='Nível de Crédito'&&!p.blank?creditBounds(p):null;
+  const cr=n==='Nível de Crédito'?creditBounds(p):null;
   p.skillFloors[n]=cr?cr.min:Math.max(0,+base(n,p.c)||0);
  }
+ for(const n of Object.keys(p.custom||{}))if(!Object.prototype.hasOwnProperty.call(p.skillFloors,n))p.skillFloors[n]=Math.max(0,+base(n,p.c)||0,+p.custom[n]||0);
 }
 const skillFloor=(p,n)=>{
  ensureSkillBudget(p);
  if(Object.prototype.hasOwnProperty.call(p.skillFloors,n))return Math.max(0,+p.skillFloors[n]||0);
- const cr=n==='Nível de Crédito'&&!p.blank?creditBounds(p):null;
+ const cr=n==='Nível de Crédito'?creditBounds(p):null;
  return cr?cr.min:Math.max(0,+base(n,p.c)||0);
 };
+function occupationSkillRules(p){
+ const info=occupationFor(p.occ);if(!info)return{any:false,social:false,language:false,names:new Set()};
+ const variants=SUB[info.occupation.n];
+ const lists=variants?(info.specialization?[tokens(info.occupation,info.specialization).t]:Object.keys(variants.o).map(k=>tokens(info.occupation,k).t)):[info.occupation.s];
+ const rules={any:false,social:false,language:false,names:new Set()};
+ lists.flat().forEach(raw=>String(raw).replace(/^!/,'').split('|').forEach(name=>{
+  if(name==='@any')rules.any=true;else if(name==='@soc')rules.social=true;else if(name==='@lang')rules.language=true;else rules.names.add(name.trim());
+ }));
+ return rules;
+}
+function isOccupationalSkill(p,n){
+ const rules=occupationSkillRules(p);
+ return rules.any||rules.names.has(n)||(rules.social&&SOC.includes(n))||(rules.language&&/^Língua \(/.test(n));
+}
+function blankBudgetState(p){
+ ensureSkillBudget(p);
+ const info=occupationFor(p.occ),range=creditBounds(p),creditBase=range?range.min:0;
+ const allocations=p.skillAllocations||{};
+ const usedOcc=Object.values(allocations).reduce((sum,a)=>sum+(+a.occupational||0),0);
+ const usedPersonal=Object.values(allocations).reduce((sum,a)=>sum+(+a.personal||0),0);
+ const occupationalTotal=info?Math.max(0,occupationPointTotal(info.occupation,p.c)-creditBase):0;
+ const personalTotal=Math.max(0,(+p.c.INT||0)*2);
+ return{occupational:{total:occupationalTotal,used:usedOcc,available:Math.max(0,occupationalTotal-usedOcc)},personal:{total:personalTotal,used:usedPersonal,available:Math.max(0,personalTotal-usedPersonal)},credit:range};
+}
+function resetBlankDistribution(p,occupation){
+ p.occ=occupation;p.skillAllocations={};p.skillPoints={available:0};p.skillNotice='';
+ ensureSkillBudget(p);
+ const range=creditBounds(p);
+ for(const n of Object.keys(p.custom||{})){p.custom[n]=Math.max(0,+base(n,p.c)||0);p.skillFloors[n]=p.custom[n]}
+ for(const n of Object.keys(p.sk||{})){
+  const minimum=n==='Nível de Crédito'&&range?range.min:Math.max(0,+base(n,p.c)||0);
+  p.skillFloors[n]=minimum;p.sk[n]=minimum;
+ }
+}
+function blankBudgetPanel(p,i){
+ const b=blankBudgetState(p),credit=b.credit,mode=p.skillBudgetMode||'occupational';
+ const creditText=credit?`Nível de Crédito da ocupação: mínimo ${credit.min} · máximo ${credit.max}.`:'Escolha uma ocupação para consultar a faixa de Nível de Crédito.';
+ const defaultNote='Pontos ocupacionais já descontam o Crédito mínimo e só podem ser usados nas perícias da ocupação. Pontos pessoais = INT × 2. Trocar de ocupação zera os pontos distribuídos.';
+ return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-stat"><b>Ocupacionais</b><strong><span data-budget-available="occupational">${b.occupational.available}</span> / <span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><b>Pessoais</b><strong><span data-budget-available="personal">${b.personal.available}</span> / <span data-budget-total="personal">${b.personal.total}</span> pts</strong></div><label class="budget-mode">Distribuir agora<select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range>${esc(creditText)}</div><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
+}
 const fr=(p,k)=>{const v=+get(p,k)||0;return(v>>1)+' / '+Math.floor(v/5)};
 const inp=(p,i,k,attrs='')=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${k}" ${attrs} value="${esc(get(p,k))}">`;
 const falta=p=>Object.entries({...BASE,...EXTRA,...(p.custom||{})}).filter(([n])=>p.sk[n]===undefined&&!(p.removed&&p.removed[n])).sort((a,b)=>a[0].localeCompare(b[0],'pt'));
@@ -607,8 +668,8 @@ const row=(p,i,n,rm)=>{
  const minimum=skillFloor(p,n);
  const bounds=n==='Nível de Crédito'?creditBounds(p):null;
  const advice=n==='Língua Natural'?'O valor base de Língua Natural acompanha o atributo EDU; essa parte não é bônus distribuído. A ocupação pode acrescentar pontos ao valor base.':n==='Nível de Crédito'?`A ocupação reserva parte dos pontos profissionais para Nível de Crédito. Essa perícia deve ficar na faixa permitida${bounds?` (mínimo ${bounds.min}, máximo ${bounds.max})`:''}.` :'';
- const id=`skill-advice-${i}-${n.replace(/[^a-z0-9]+/gi,'-')}`;
- return`<span><span class="sk-name">${esc(n)}</span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input${advice?` data-skill-advice="${esc(advice)}" aria-describedby="${id}"`:''}`)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i>${advice?`<small class="skill-advice" id="${id}" role="note">${esc(advice)}</small>`:''}</span>`;
+ const info=advice?`<button type="button" class="skill-info" data-skill-info="${esc(advice)}" aria-label="Informações sobre ${esc(n)}" aria-expanded="false">ⓘ</button>`:'';
+ return`<span><span class="sk-label"><span class="sk-name">${esc(n)}</span>${info}</span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
 };
 function uiOf(p,i){
  p.ui=p.ui||{};
@@ -622,8 +683,7 @@ function body(p,i){
  ensureSkillBudget(p);
  const st=Object.keys(p.c).map(k=>`<div><b>${k}</b>${inp(p,i,'c:'+k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`).join('');
  const sk=Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n])=>row(p,i,n,1)).join('');
- const bounds=creditBounds(p),creditGuide=bounds?`<aside class="credit-guide"><b>Faixa de Nível de Crédito da ocupação</b><span>Mínimo: ${bounds.min} · Máximo: ${bounds.max}</span><small>O valor de Crédito usa pontos do total profissional e deve respeitar os limites da ocupação.</small></aside>`:'';
- const skillPool=`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||(p.blank?'Ficha em branco: os valores podem ser preenchidos livremente.':'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.'))}</small></aside>`;
+ const skillPool=p.blank?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
  const addM=`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" data-add="n"><input class="in" type="number" value="50" title="Valor" data-add="v"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
  const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<b>${l}</b> ${inp(p,i,'d:'+k)}`).join(' ');
  const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
@@ -631,15 +691,14 @@ function body(p,i){
  return`<div class="badge"><span class="ed" ${p.edit?'':'hidden'}>✎ Ficha editada</span></div>
   <div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
-  <div class="stats">${st}</div><div class="der">${d}</div>${creditGuide}${skillPool}
+  <div class="stats">${st}</div><div class="der">${d}</div>${skillPool}
   <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}${mobileActions}`;
 }
 function occSelect(p,i){
- const values=[...OCC].sort(srt).map(o=>o.n);
- for(const[n,s]of Object.entries(SUB))for(const spec of Object.keys(s.o))values.push(`${n} (${spec})`);
- const current=String(p.occ||''),legacy=current&&!values.includes(current)?`<option value="${esc(current)}" selected>${esc(current)}</option>`:'';
- const options=values.map(n=>`<option value="${esc(n)}" ${n===current?'selected':''}>${esc(n)}</option>`).join('');
- return`<select class="in occ-select" data-i="${i}" data-k="n:occ" aria-label="Ocupação do investigador"><option value="" ${current?'':'selected'}>Escolha a ocupação</option>${legacy}${options}</select>`;
+ const current=String(p.occ||''),info=occupationFor(current),currentBase=info?info.occupation.n:(OCC.some(o=>o.n===current)?current:''),legacy=current&&!currentBase?`<option value="${esc(current)}" selected>${esc(current)}</option>`:'';
+ const options=[...OCC].sort(srt).map(o=>`<option value="${esc(o.n)}" ${o.n===currentBase?'selected':''}>${esc(o.n)}</option>`).join('');
+ const specs=SUB[currentBase],specialization=specs?`<select class="in occ-select occ-specialization" data-occ-spec data-i="${i}" data-base="${esc(currentBase)}" aria-label="Especialização da ocupação"><option value="" ${info&&info.specialization?'':'selected'}>Sem especialização</option>${Object.keys(specs.o).map(name=>`<option value="${esc(name)}" ${info&&info.specialization===name?'selected':''}>${esc(name)}</option>`).join('')}</select>`:'';
+ return`<select class="in occ-select" data-occ-main data-i="${i}" aria-label="Ocupação do investigador"><option value="" ${currentBase?'':'selected'}>Escolha a ocupação</option>${legacy}${options}</select>${specialization}`;
 }
 function backstory(p,i){
  const photo=p.portrait||{},hasPhoto=!!photo.src,zoom=Math.max(1,Math.min(3,+photo.zoom||1));
@@ -696,6 +755,7 @@ const FICHA_MAXY=1000;
 function fichaDeskW(){return Math.max(340,document.documentElement.clientWidth-32)}
 let fichaFitT=0;addEventListener('resize',()=>{clearTimeout(fichaFitT);fichaFitT=setTimeout(()=>{if(!document.body.classList.contains('mobile')){fitDesk();persist()}},120)});
 const draw=()=>{
+ window.DynamicInfo?.hide();
  desk.innerHTML=cur.length?cur.map(card).join(''):'<p class="empty">Nenhuma ficha. Clique em Gerar — e depois fixe as que quiser guardar.</p>';
  hydratePortraits();
  fitDesk();persist();
@@ -727,8 +787,20 @@ function refresh(i){
  const el=winEl(i),p=cur[i];if(!el)return;
  el.querySelectorAll('[data-k]').forEach(x=>{if(x!==document.activeElement)x.value=get(p,x.dataset.k)});
  el.querySelectorAll('[data-f]').forEach(x=>x.textContent=fr(p,x.dataset.f));
- const points=el.querySelector('[data-skill-points]');if(points)points.textContent=String(p.skillPoints&&p.skillPoints.available||0);
- const pointNote=el.querySelector('[data-skill-pool-note]');if(pointNote)pointNote.textContent=p.skillNotice||(p.blank?'Ficha em branco: os valores podem ser preenchidos livremente.':'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.');
+ el.querySelectorAll('[data-skill-input]').forEach(input=>{const n=input.dataset.k.slice(2),range=n==='Nível de Crédito'&&p.blank?creditBounds(p):null;input.min=String(skillFloor(p,n));if(range)input.max=String(range.max);else input.removeAttribute('max')});
+ if(p.blank){
+  const budgets=blankBudgetState(p);
+  for(const type of ['occupational','personal']){
+   const available=el.querySelector(`[data-budget-available="${type}"]`),total=el.querySelector(`[data-budget-total="${type}"]`);
+   if(available)available.textContent=String(budgets[type].available);if(total)total.textContent=String(budgets[type].total);
+  }
+  const mode=el.querySelector('[data-budget-mode]');if(mode&&mode!==document.activeElement)mode.value=p.skillBudgetMode||'occupational';
+  const range=el.querySelector('[data-credit-range]');if(range)range.textContent=budgets.credit?`Nível de Crédito da ocupação: mínimo ${budgets.credit.min} · máximo ${budgets.credit.max}.`:'Escolha uma ocupação para consultar a faixa de Nível de Crédito.';
+  const pointNote=el.querySelector('[data-skill-pool-note]');if(pointNote){pointNote.textContent=p.skillNotice||'Pontos ocupacionais já descontam o Crédito mínimo e só podem ser usados nas perícias da ocupação. Pontos pessoais = INT × 2. Trocar de ocupação zera os pontos distribuídos.';pointNote.classList.toggle('has-warning',!!p.skillNotice)}
+ }else{
+  const points=el.querySelector('[data-skill-points]');if(points)points.textContent=String(p.skillPoints&&p.skillPoints.available||0);
+  const pointNote=el.querySelector('[data-skill-pool-note]');if(pointNote)pointNote.textContent=p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.';
+ }
  const ed=el.querySelector('.ed');if(ed)ed.hidden=!p.edit;
  const t=el.querySelector('.win-title');if(t)t.textContent=ttl(p);
  persist();
@@ -751,6 +823,14 @@ async function approveEquipment(p,item){
  return askConfirm({title:'Confira este equipamento',html,ok:'Adicionar mesmo assim',danger:false});
 }
 desk.addEventListener('click',e=>{
+ const skillInfo=e.target.closest('[data-skill-info]');
+ if(skillInfo){
+  const open=skillInfo.getAttribute('aria-expanded')==='true';
+  desk.querySelectorAll('[data-skill-info]').forEach(button=>button.setAttribute('aria-expanded','false'));
+  if(open)window.DynamicInfo?.hide();else{skillInfo.setAttribute('aria-expanded','true');window.DynamicInfo?.showNow(skillInfo.dataset.skillInfo,skillInfo)}
+  return;
+ }
+ if(!e.target.closest('.dynamic-info')){window.DynamicInfo?.hide();desk.querySelectorAll('[data-skill-info][aria-expanded="true"]').forEach(button=>button.setAttribute('aria-expanded','false'))}
  const i=e.target.closest('[data-i]');
  const idx=i?+i.dataset.i:NaN;
  const removePortrait=e.target.closest('[data-portrait-remove]');if(removePortrait){const k=+removePortrait.dataset.i,p=cur[k];if(p){delete p.portrait;p.edit=true;draw()}return}
@@ -805,21 +885,44 @@ desk.addEventListener('change',e=>{
  const skillInput=e.target.closest('[data-skill-input]');if(skillInput){
   const i=+skillInput.dataset.i,p=cur[i],n=skillInput.dataset.k.slice(2);if(!p)return;
   ensureSkillBudget(p);
-  const old=Math.max(0,+p.sk[n]||0),minimum=skillFloor(p,n);
+  const wasMain=Object.prototype.hasOwnProperty.call(p.sk,n),old=Math.max(0,+get(p,'s:'+n)||0),minimum=skillFloor(p,n);
   let next=Math.max(0,Math.min(999,Math.floor(Number(skillInput.value)||0))),notice='';
+  const creditRange=p.blank&&n==='Nível de Crédito'?creditBounds(p):null;
   if(next<minimum){notice=`Não é possível reduzir ${n} para menos de ${minimum}%. O mínimo é ${minimum}%; a perícia foi ajustada para esse limite.`;next=minimum}
+  else if(creditRange&&next>creditRange.max){notice=`O máximo de Nível de Crédito para esta ocupação é ${creditRange.max}%. O valor foi ajustado para esse limite.`;next=creditRange.max}
   else if(next===minimum)notice=`${n} chegou ao mínimo de ${minimum}%. Não é possível retirar mais pontos desta perícia.`;
-  if(!p.blank&&next>old){
+  if(p.blank&&next>old){
+   const mode=p.skillBudgetMode||'occupational',budgets=blankBudgetState(p);
+   if(mode==='personal'&&n==='Nível de Crédito'){next=old;notice='Nível de Crédito usa pontos ocupacionais, não pontos pessoais.'}
+   else if(mode==='occupational'&&n!=='Nível de Crédito'&&!isOccupationalSkill(p,n)){next=old;notice=`${n} não faz parte das perícias desta ocupação. Use pontos pessoais para esta perícia.`}
+   else{
+    const available=budgets[mode].available,requested=next-old;
+    if(requested>available){next=old+available;notice=`Há ${available} ponto(s) ${mode==='personal'?'pessoal(is)':'ocupacional(is)'} disponível(is) para ${n}; o valor foi limitado a ${next}%.`}
+    const allocation=p.skillAllocations=p.skillAllocations||{},entry=allocation[n]=allocation[n]||{occupational:0,personal:0};entry[mode]+=next-old;
+   }
+  }else if(p.blank&&next<old){
+   const allocation=p.skillAllocations=p.skillAllocations||{},entry=allocation[n]||{occupational:0,personal:0};let refund=old-next;
+   const first=p.skillBudgetMode||'occupational',second=first==='occupational'?'personal':'occupational';
+   for(const type of [first,second]){const amount=Math.min(refund,+entry[type]||0);entry[type]=Math.max(0,(+entry[type]||0)-amount);refund-=amount;if(!refund)break}
+   if(refund>0)entry[first]+=refund;
+   allocation[n]=entry;
+   if(!entry.occupational&&!entry.personal)delete allocation[n];
+  }else if(!p.blank&&next>old){
    const available=p.skillPoints.available,requested=next-old;
    if(requested>available){next=old+available;notice=`Você tem ${available} ponto(s) disponível(is). ${n} pode chegar, no máximo, a ${next}%.`}
    p.skillPoints.available-=next-old;
   }else if(!p.blank&&next<old)p.skillPoints.available+=old-next;
-  p.sk[n]=next;p.skillNotice=notice;p.edit=true;skillInput.value=String(next);refresh(i);persist();return;
+  p.sk[n]=next;p.skillNotice=notice;p.edit=true;skillInput.value=String(next);if(wasMain)refresh(i);else draw();persist();return;
  }
- const occupation=e.target.closest('select[data-k="n:occ"]');if(occupation){
-  const i=+occupation.dataset.i,p=cur[i];if(!p)return;
-  if(!p.creditRange&&!p.blank){const range=creditBounds(p);if(range)p.creditRange={base:[range.min,range.max],final:[range.min,range.max],mod:0}}
-  ensureSkillBudget(p);p.occ=occupation.value;p.edit=true;p.skillNotice='';refresh(i);persist();return;
+ const budgetMode=e.target.closest('[data-budget-mode]');if(budgetMode){const i=+budgetMode.dataset.i,p=cur[i];if(!p)return;p.skillBudgetMode=budgetMode.value;p.skillNotice='';refresh(i);persist();return}
+ const occupationMain=e.target.closest('[data-occ-main]'),occupationSpec=e.target.closest('[data-occ-spec]');if(occupationMain||occupationSpec){
+  const control=occupationMain||occupationSpec,i=+control.dataset.i,p=cur[i];if(!p)return;
+  let next;
+  if(occupationMain)next=control.value;
+  else{const info=occupationFor(p.occ),baseName=control.dataset.base||info?.occupation.n||'';next=baseName&&control.value?`${baseName} (${control.value})`:baseName}
+  if(!p.blank&&!p.creditRange){const range=creditBounds(p);if(range)p.creditRange={base:[range.min,range.max],final:[range.min,range.max],mod:0}}
+  if(p.blank){if(p.occ!==next)resetBlankDistribution(p,next)}else{ensureSkillBudget(p);p.occ=next;p.skillNotice=''}
+  p.edit=true;draw();return;
  }
  const panel=e.target.closest('[data-eq-panel]');if(!panel)return;
  const yearSelect=e.target.closest('[data-eq-year]'),yearCustom=e.target.closest('[data-eq-year-custom]');
@@ -876,18 +979,19 @@ desk.addEventListener('input',e=>{
  else{
   const v=x==='db'?t.value:Math.max(0,Math.min(999,+t.value||0));
   if(a==='c'){
-   const oe=base('Esquivar',p.c),ol=base('Língua Natural',p.c);p.c[x]=v;
+   const derived=['Esquivar','Língua Natural'].map(n=>({n,oldBase:base(n,p.c),oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');p.c[x]=v;
    p.der={...p.der,...calc(p.c)};
-   if(p.sk['Esquivar']===oe){p.sk['Esquivar']=base('Esquivar',p.c);if(p.skillFloors)p.skillFloors['Esquivar']=base('Esquivar',p.c)}
-   if(p.sk['Língua Natural']===ol){p.sk['Língua Natural']=base('Língua Natural',p.c);if(p.skillFloors)p.skillFloors['Língua Natural']=base('Língua Natural',p.c)}
+   for(const d of derived)if(d.value!==undefined){const newBase=Math.max(0,+base(d.n,p.c)||0),bonus=Math.max(0,(+d.value||0)-d.oldFloor);p.sk[d.n]=newBase+bonus;p.skillFloors[d.n]=newBase}
+   if(p.blank&&p.sk['Nível de Crédito']!==undefined){
+    const range=creditBounds(p),floor=range?range.min:Math.max(0,+base('Nível de Crédito',p.c)||0),ceiling=range?range.max:999;
+    const value=Math.max(floor,Math.min(ceiling,oldCreditValue));p.skillFloors['Nível de Crédito']=floor;p.sk['Nível de Crédito']=value;
+    const allocations=p.skillAllocations&&p.skillAllocations['Nível de Crédito'];if(allocations){allocations.occupational=Math.max(0,value-floor);allocations.personal=0;if(!allocations.occupational)delete p.skillAllocations['Nível de Crédito']}
+    p.skillNotice=value!==oldCreditValue||oldCreditFloor!==(range?range.min:floor)?`A faixa de Nível de Crédito mudou com os atributos${oldCredit?`; agora é ${floor}–${ceiling}`:''}.`:'';
+   }
   }else if(a==='d')p.der[x]=v;else p.sk[x]=v;
  }
  p.edit=true;refresh(i);window.CthEquipment.refreshWarnings(p,winEl(i)&&winEl(i).querySelector('[data-eq-panel]'));
 });
-const showSkillAdvice=e=>{const input=e.target.closest('[data-skill-advice]');if(input)window.DynamicInfo?.show(input.dataset.skillAdvice,null,input)};
-desk.addEventListener('pointerover',showSkillAdvice);desk.addEventListener('focusin',showSkillAdvice);
-desk.addEventListener('pointerout',e=>{const input=e.target.closest('[data-skill-advice]');if(input&&!input.contains(e.relatedTarget))window.DynamicInfo?.hide()});
-desk.addEventListener('focusout',e=>{if(e.target.matches&&e.target.matches('[data-skill-advice]'))window.DynamicInfo?.hide()});
 desk.addEventListener('pointerdown',e=>{
  const canvas=e.target.closest('[data-portrait-canvas]');if(!canvas)return;const i=+canvas.dataset.i,p=cur[i];if(!p||!p.portrait)return;
  canvas.setPointerCapture(e.pointerId);canvas._portraitDrag={x:e.clientX,y:e.clientY,ox:+p.portrait.x||0,oy:+p.portrait.y||0};e.stopPropagation();e.preventDefault();
@@ -1092,9 +1196,9 @@ sel.onchange=sel2.onchange=document.getElementById('qty').onchange=persist;
 window.DynamicInfo=(()=>{
  let box=null,host=null,timer=0,anchor=null,content='';
  function place(){if(!box||!anchor)return;const r=box.getBoundingClientRect(),a=anchor.getBoundingClientRect(),pad=10,gap=10;let left=a.left+(a.width-r.width)/2,top=a.top-r.height-gap;if(top<pad)top=a.bottom+gap;if(top+r.height>innerHeight-pad)top=Math.max(pad,Math.min(innerHeight-r.height-pad,a.top+(a.height-r.height)/2));left=Math.max(pad,Math.min(innerWidth-r.width-pad,left));box.style.left=left+'px';box.style.top=top+'px'}
- function show(text,owner,card){if(!text||!card)return;const target=owner&&owner.matches&&owner.matches('dialog')?owner:document.body;if(host===target&&anchor===card&&(box||timer))return;hide();host=target;anchor=card;content=text;timer=setTimeout(()=>{timer=0;if(!anchor||!anchor.isConnected||(host.matches('dialog')&&!host.open))return;box=document.createElement('div');box.className='dynamic-info';box.setAttribute('role','tooltip');box.textContent=content;host.appendChild(box);place()},500)}
+ function show(text,owner,card,delay=500){if(!text||!card)return;const target=owner&&owner.matches&&owner.matches('dialog')?owner:document.body;if(host===target&&anchor===card&&(box||timer))return;hide();host=target;anchor=card;content=text;timer=setTimeout(()=>{timer=0;if(!anchor||!anchor.isConnected||(host.matches('dialog')&&!host.open))return;box=document.createElement('div');box.className='dynamic-info';box.setAttribute('role','tooltip');box.textContent=content;host.appendChild(box);place()},delay)}
  function hide(owner){if(owner&&host&&owner!==host)return;clearTimeout(timer);timer=0;if(box){box.remove();box=null}anchor=null;host=null;content=''}
- return{show,hide};
+ return{show,showNow:(text,card)=>show(text,null,card,0),hide};
 })();
 (function responsiveMode(){
  const media=matchMedia('(max-width: 760px)');
