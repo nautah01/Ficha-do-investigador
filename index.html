@@ -88,11 +88,11 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
 .stats .in{width:48px;background:var(--field);color:var(--field-ink);border-color:var(--ok)}
 .stats small,.sk small{display:block;color:var(--muted2);font-size:.68rem}
 .sk small{display:inline;margin-left:4px;color:var(--muted)}
- .der{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:7px;margin-bottom:10px;background:rgba(var(--gr),.045);border:1px solid var(--line);border-radius:6px;padding:9px}
- .der-field{display:grid;grid-column:span 3;align-content:center;gap:5px;min-width:0;padding:7px 8px;border:1px solid rgba(var(--gr2),.24);border-radius:5px;background:linear-gradient(145deg,rgba(var(--gr),.09),rgba(var(--gr),.025));font-size:.76rem}
+ .der{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:5px;margin-bottom:8px;background:rgba(var(--gr),.035);border:1px solid var(--line);border-radius:6px;padding:6px}
+ .der-field{display:flex;flex-direction:row;grid-column:span 3;align-items:center;justify-content:space-between;gap:5px;min-width:0;padding:4px 6px;border:1px solid rgba(var(--gr2),.2);border-radius:4px;background:rgba(var(--gr),.035);font-size:.73rem}
  .der-field:nth-child(n+5){grid-column:span 4}
- .der-field span{color:var(--muted);font-weight:bold;line-height:1.2;text-align:center}
- .der-field .in{width:100%;min-width:0;height:31px;padding:3px 5px;font-size:.9rem}
+ .der-field span{min-width:0;color:var(--muted);font-weight:bold;line-height:1.15}
+ .der-field .in{flex:0 0 52px;width:52px;min-width:0;height:27px;padding:2px 4px;font-size:.83rem}
 .sk{display:grid;grid-template-columns:1fr 1fr;gap:3px 14px;font-size:.85rem}
 .sk>span{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dotted var(--line);gap:6px}
 .sk .sk-name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
@@ -162,7 +162,7 @@ body.mobile #desk .stats{gap:6px}
 body.mobile #desk .stats .in{width:100%;max-width:64px}
 body.mobile #desk .sk{grid-template-columns:1fr}
 body.mobile #desk .sk>span{padding:3px 0}
-body.mobile #desk .der{gap:8px 10px}
+ body.mobile #desk .der{gap:5px}
 body.mobile #desk button.rmb{padding:4px 10px;font-size:.85rem}
 body.mobile #desk button.addb,body.mobile #desk button.ftg{min-height:40px;font-size:.95rem}
 /* ===== atmosfera: fundo ===== */
