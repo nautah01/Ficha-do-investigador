@@ -37,11 +37,11 @@ button.chip.sq{padding:3px 10px;font-weight:bold}
 .blank-sheet-copy strong{color:var(--head);font-size:.9rem;letter-spacing:.4px}
 .blank-sheet-copy span{color:var(--muted);font-size:.8rem;line-height:1.4}
 .blank-sheet-option button{flex:0 0 auto;min-height:38px;white-space:nowrap}
-#panelBtn{position:fixed;top:10px;left:10px;z-index:6000;padding:6px 14px;border-radius:999px;font-size:.85rem;background:linear-gradient(var(--k5),var(--k2));color:var(--head);border:1px solid var(--gold);box-shadow:0 6px 18px rgba(0,0,0,.5)}
+#panelBtn{position:fixed!important;inset:10px auto auto 10px!important;z-index:6000;padding:6px 14px;border-radius:999px;font-size:.85rem;background:linear-gradient(var(--k5),var(--k2));color:var(--head);border:1px solid var(--gold);box-shadow:0 6px 18px rgba(0,0,0,.5);transform:translateZ(0)}
 #panelBtn:hover{background:linear-gradient(var(--k6),var(--k5))}
 #panelBtn[hidden]{display:none}
 body.pmin h1{padding-left:112px}
-body.mobile.pmin #panelBtn{top:10px;bottom:auto;left:10px}
+body.mobile.pmin #panelBtn{position:fixed!important;inset:10px auto auto 10px!important}
 body.mobile.pmin .top>h1{padding-left:105px}
 body.mobile #panel .bar-head{flex-direction:row;align-items:center;flex-wrap:nowrap;gap:6px;padding-bottom:5px}
 body.mobile #panel .bar-title{flex:0 0 auto}
