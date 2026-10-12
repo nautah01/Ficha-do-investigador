@@ -11,7 +11,7 @@ const meta=n=>I[n]||['💼','Of'];
 const clean=t=>{t=t.replace(/^!/,'');if(t==='@soc')return'Perícia social';if(t==='@lang')return'Língua';if(t==='@any')return'';t=t.split('|')[0].trim();return t.replace(/\s*\(.*\)$/,'')};
 const skills=o=>{const all=o.s.map(t=>({k:t[0]==='!',n:clean(t)})).filter(x=>x.n);const keys=all.filter(x=>x.k).map(x=>x.n);return{keys:[...new Set(keys.length?keys:all.slice(0,3).map(x=>x.n))],all:[...new Set(all.map(x=>x.n))]}};
 const items=(kind)=>kind==='occ'?OCC.map(o=>({v:o.n,n:o.n,o,cred:o.c,sub:SUB[o.n]})):
- OCC.map(o=>({v:'occ:'+o.n,n:o.n,o,cred:o.c,dup:1}));
+  OCC.map(o=>({v:'occ:'+o.n,n:o.n,o,cred:o.c,sub:SUB[o.n],dup:1}));
 
 const dlg=document.createElement('dialog');dlg.className='opk';dlg.setAttribute('aria-label','Escolher ocupação');
 dlg.innerHTML=`<header><h4 id="opkT"></h4><span class="opk-hb"><button type="button" id="opkHelpBtn" aria-pressed="false">❔ Ajuda</button><button type="button" class="opk-x" aria-label="Fechar">✕</button></span></header>

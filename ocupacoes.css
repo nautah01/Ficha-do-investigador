@@ -7,7 +7,7 @@
 .pickbtn .pt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pickbtn .pc{opacity:.6;font-size:.8rem}
 .opk{width:min(940px,96vw);max-height:90vh;padding:0;overflow:hidden;color:var(--txt);background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:0 24px 70px rgba(0,0,0,.75)}
-.opk[open]{display:flex;flex-direction:column;animation:opkIn .22s ease-out}
+.opk[open]{display:flex;flex-direction:column;align-items:stretch;animation:opkIn .22s ease-out}
 .opk::backdrop{background:rgba(3,7,7,.72);backdrop-filter:blur(2px)}
 @keyframes opkIn{from{opacity:0;transform:translateY(14px) scale(.98)}}
 .opk header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px}
@@ -20,7 +20,7 @@
 .opk-tabs button,.opk-chips button{padding:4px 12px;font-size:.8rem;border-radius:999px;cursor:pointer;color:var(--txt);background:transparent;border:1px solid var(--line)}
 .opk-tabs button:hover,.opk-chips button:hover{border-color:var(--head)}
 .opk-tabs button[aria-pressed=true],.opk-chips button[aria-pressed=true]{color:var(--onhead);background:var(--head);border-color:var(--head);font-weight:bold}
-.opk-grid{flex:1;min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;align-content:start;padding:6px 18px 14px}
+.opk-grid{flex:1 1 auto;align-self:stretch;width:100%;min-width:0;min-height:0;box-sizing:border-box;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;align-content:start;padding:6px 18px 14px}
 .opk-card{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:12px;text-align:left;color:var(--txt);background:rgba(var(--ov),.04);border:1px solid var(--line);border-radius:8px;cursor:pointer;animation:opkCard .3s ease-out backwards;animation-delay:var(--d,0ms);transition:transform .15s,border-color .15s,background .15s,box-shadow .15s}
 @keyframes opkCard{from{opacity:0;transform:translateY(8px)}}
 .opk-card:hover,.opk-card:focus-visible{transform:translateY(-3px);border-color:var(--head);background:rgba(var(--gr),.1);box-shadow:0 8px 18px rgba(0,0,0,.4);outline:none}
@@ -58,7 +58,7 @@
 .opk-back{margin-top:12px;padding:6px 14px;border-radius:4px;cursor:pointer}
 @media (max-width:640px){.hx{grid-template-columns:1fr}}
 .opk.sub .opk-tools,.opk.sub .opk-chips{display:none}
-.opk-subhead{grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:2px 0 6px}
+.opk-subhead{grid-column:1/-1;width:100%;min-width:0;box-sizing:border-box;display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding:2px 0 6px}
 .opk-subhead button{padding:4px 12px;border-radius:999px;cursor:pointer}
 .opk-subhead strong{color:var(--head);font-size:1.1rem}
 .opk-subhead span{color:var(--muted);font-size:.85rem}

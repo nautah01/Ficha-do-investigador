@@ -78,6 +78,7 @@ button.alt:hover{background:rgba(var(--gr),.12)}
 h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid var(--rule);font-variant:small-caps}
 .sub{display:flex;align-items:center;flex-wrap:wrap;gap:5px 8px;color:var(--muted);font-size:.85rem}
 .sub .occ-select{width:min(240px,100%);min-width:150px;max-width:100%;padding:3px 7px;border-color:var(--line);background:var(--field);color:var(--field-ink);font-size:.85rem}
+ .sub .occ-text{width:min(240px,100%);min-width:150px;max-width:100%;padding:3px 7px;text-align:left;border-color:var(--line);background:var(--field);color:var(--field-ink);font-size:.85rem}
 .sub .age-input{width:64px}
 .in{width:54px;text-align:center;border:1px solid var(--line);background:var(--field);color:var(--field-ink);padding:2px 4px;font:inherit;font-size:.85rem;border-radius:3px}
 .in:focus{outline:2px solid var(--head);background:var(--k3)}
@@ -91,7 +92,7 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
  .der{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:5px;margin-bottom:8px;background:rgba(var(--gr),.035);border:1px solid var(--line);border-radius:6px;padding:6px}
  .der-field{display:flex;flex-direction:row;grid-column:span 3;align-items:center;justify-content:space-between;gap:5px;min-width:0;padding:4px 6px;border:1px solid rgba(var(--gr2),.2);border-radius:4px;background:rgba(var(--gr),.035);font-size:.73rem}
  .der-field:nth-child(n+5){grid-column:span 4}
- .der-field span{min-width:0;color:var(--muted);font-weight:bold;line-height:1.15}
+ .der-field span{flex:1 1 auto;min-width:0;color:var(--muted);font-weight:bold;line-height:1.15;white-space:nowrap}
  .der-field .in{flex:0 0 52px;width:52px;min-width:0;height:27px;padding:2px 4px;font-size:.83rem}
 .sk{display:grid;grid-template-columns:1fr 1fr;gap:3px 14px;font-size:.85rem}
 .sk>span{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dotted var(--line);gap:6px}
@@ -117,7 +118,7 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
  .blank-budgets>small{color:var(--muted);line-height:1.4}
 .blank-budgets [data-skill-pool-note].has-warning{color:var(--warn);font-weight:600}
  .sk-label{display:flex;align-items:center;gap:4px;min-width:0;flex:1 1 auto}
- @media(max-width:560px){.blank-budgets{padding:8px}.budget-balance,.budget-controls{grid-template-columns:1fr}.budget-stat{padding:7px 8px}.der{grid-template-columns:repeat(6,minmax(0,1fr))}.der-field{grid-column:span 3}.der-field:nth-child(n+5){grid-column:span 2}}
+ @media(max-width:560px){.blank-budgets{padding:8px}.budget-balance,.budget-controls{grid-template-columns:1fr}.budget-stat{padding:7px 8px}.der{grid-template-columns:repeat(2,minmax(0,1fr))}.der-field,.der-field:nth-child(n+5){grid-column:auto}.der-field{display:grid;grid-template-columns:minmax(0,1fr) 52px}.der-field span{white-space:normal}.der-field .in{width:52px}}
 h3{color:var(--head);border-top:2px solid var(--rule);padding-top:6px;font-variant:small-caps;letter-spacing:1px}
 .win h3.st{margin:4px 0 6px;font-size:.9rem;border-top:none;padding-top:0;border-bottom:1px solid var(--line);padding-bottom:3px}
 button.rmb{padding:0 6px;margin-left:6px;font-size:.7rem;background:transparent;color:var(--warn2);border:1px solid rgba(253,186,116,.5);border-radius:4px}
@@ -522,8 +523,10 @@ function creditBounds(p){
  return occ?{min:occ.c[0],max:occ.c[1]}:null;
 }
 function occupationFor(value){
- const name=String(value||''),specialized=name.match(/^(.*) \((.*)\)$/),baseName=specialized?specialized[1]:name;
- const occupation=OCC.find(o=>o.n===baseName);return occupation?{occupation,specialization:specialized&&SUB[baseName]?.o[specialized[2]]?specialized[2]:''}:null;
+ const name=String(value||''),exact=OCC.find(o=>o.n===name);
+ if(exact)return{occupation:exact,specialization:''};
+ const specialized=name.match(/^(.*) \((.*)\)$/),baseName=specialized?specialized[1]:name,occupation=OCC.find(o=>o.n===baseName);
+ return occupation?{occupation,specialization:specialized&&SUB[baseName]?.o[specialized[2]]?specialized[2]:''}:null;
 }
 function occupationPointTotal(o,c){
  return Math.max(...o.p.split('|').map(f=>f.split('+').reduce((sum,term)=>{const[k,m]=term.split('*');return sum+(+c[k]||0)*(+m||0)},0)));
@@ -607,7 +610,7 @@ const STORE='coc7-investigadores-v2';
 const sel=document.getElementById('occ'),desk=document.getElementById('desk');
 sel.innerHTML='<option value="*">🎲 Aleatória</option>'+[...OCC].sort(srt).map(o=>`<option>${o.n}</option>`).join('');
 const sel2=document.getElementById('occ2');
-const subOpts=()=>Object.entries(SUB).forEach(([n,s])=>Object.keys(s.o).forEach(k=>{sel.insertAdjacentHTML('beforeend',`<option value="${n}::${k}" hidden>${n} (${k})</option>`)}));
+const subOpts=()=>Object.entries(SUB).forEach(([n,s])=>Object.keys(s.o).forEach(k=>{sel.insertAdjacentHTML('beforeend',`<option value="${n}::${k}" hidden>${n} (${k})</option>`);sel2.insertAdjacentHTML('beforeend',`<option value="occ:${n}::${k}" hidden>${n} (${k}) — como secundária</option>`)}));
 sel2.innerHTML='<option value="">Nenhuma</option><option value="*">🎲 Aleatória</option><optgroup label="Ocupações">'+[...OCC].sort(srt).map(o=>`<option value="occ:${o.n}">${o.n}</option>`).join('')+'</optgroup>';
 subOpts();
 let cur=[],zTop=10,drag=null,rsz=null,saveT=0;
@@ -701,6 +704,7 @@ function body(p,i){
   <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}${mobileActions}`;
 }
 function occSelect(p,i){
+ if(!p.blank)return`<input class="in occ-text" data-i="${i}" data-k="n:occ" aria-label="Ocupação do investigador" placeholder="Ocupação" value="${esc(p.occ||'')}">`;
  const current=String(p.occ||''),info=occupationFor(current),currentBase=info?info.occupation.n:(OCC.some(o=>o.n===current)?current:''),legacy=current&&!currentBase?`<option value="${esc(current)}" selected>${esc(current)}</option>`:'';
  const options=[...OCC].sort(srt).map(o=>`<option value="${esc(o.n)}" ${o.n===currentBase?'selected':''}>${esc(o.n)}</option>`).join('');
  const specs=SUB[currentBase],specialization=specs?`<select class="in occ-select occ-specialization" data-occ-spec data-i="${i}" data-base="${esc(currentBase)}" aria-label="Especialização da ocupação"><option value="" ${info&&info.specialization?'':'selected'}>Sem especialização</option>${Object.keys(specs.o).map(name=>`<option value="${esc(name)}" ${info&&info.specialization===name?'selected':''}>${esc(name)}</option>`).join('')}</select>`:'';
@@ -972,7 +976,7 @@ desk.addEventListener('input',e=>{
  }
  const t=e.target,k=t.dataset.k;if(!k)return;
  const i=+t.dataset.i,p=cur[i],[a,x]=k.split(/:(.+)/);
- if(a==='s'||(a==='n'&&x==='occ'))return;
+  if(a==='s')return;
  if(a==='n'){p[x]=t.value;if(x==='back'){persist();return}}
  else{
   const v=x==='db'?t.value:Math.max(0,Math.min(999,+t.value||0));
