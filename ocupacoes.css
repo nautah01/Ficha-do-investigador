@@ -44,10 +44,10 @@
  .opk-card,.opk-form{min-width:0;max-width:100%}
 }
 /* O seletor acompanha o modo mobile da aplicação, mesmo quando a viewport visual do navegador usa outra escala. */
-body.mobile.occ-picker-open{overflow:hidden!important;overscroll-behavior:none}
+html.occ-picker-open,html.occ-picker-open body{overflow:hidden!important;overscroll-behavior:none}
 body.mobile .opk[open]{position:fixed!important;inset:0!important;width:100%!important;height:100vh!important;height:100dvh!important;max-width:none!important;max-height:none!important;margin:0!important;border-radius:0;z-index:2147483647!important}
-body.mobile .opk-grid{align-self:stretch;width:100%;min-width:0;max-width:100%;grid-template-columns:minmax(0,1fr)!important;overflow-x:hidden}
-body.mobile .opk-grid>.opk-subhead,body.mobile .opk-grid>.opk-card,body.mobile .opk-grid>.opk-form{grid-column:1;width:100%;min-width:0;max-width:100%}
+body.mobile .opk-grid{display:flex!important;flex:1 1 auto;flex-direction:column;align-self:stretch;align-items:stretch;justify-content:flex-start;gap:8px;width:100%;min-width:0;max-width:100%;overflow-x:hidden!important;overflow-y:auto!important;padding:8px 12px 16px}
+body.mobile .opk-grid>*{position:relative!important;left:0!important;right:auto!important;grid-column:auto!important;flex:0 0 auto;width:100%;min-width:0;max-width:100%;margin-left:0!important;transform:none}
 body.mobile .opk-subhead{gap:7px}
 body.mobile .opk-subhead strong,body.mobile .opk-subhead span{min-width:0;max-width:100%;overflow-wrap:anywhere}
 .opk-hb{display:flex;gap:8px}
