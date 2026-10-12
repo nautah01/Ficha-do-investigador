@@ -39,6 +39,10 @@
   {id:'coat',cat:'Geral',name:'Casaco pesado',q:'Overcoat',imgPaths:assetPaths('casaco.png'),imgTransparent:true,imgRev:5,notes:'Proteção narrativa contra frio e chuva; sem armadura automática.'},
   {id:'gloves',cat:'Geral',name:'Luvas resistentes',q:'Protective glove',imgPaths:assetPaths('Luvas resistentes.png'),imgTransparent:true,imgRev:5},
   {id:'respirator',cat:'Geral',name:'Máscara de proteção',q:'Respirator',imgPaths:assetPaths('Mascara.png'),imgTransparent:true,imgRev:5},
+  {id:'saw',cat:'Geral',name:'Serrote',q:'Hand saw',imgPaths:assetPaths('Serrote.png'),imgTransparent:true,imgRev:1,notes:'Ferramenta manual para cortar madeira.'},
+  {id:'hammer',cat:'Geral',name:'Martelo',q:'Claw hammer',imgPaths:assetPaths('Martelo.png'),imgTransparent:true,imgRev:1},
+  {id:'flaregun',cat:'Geral',name:'Pistola sinalizadora',q:'Flare gun',ammoTracked:true,capacity:1,ammo:'sinalizadores',imgPaths:assetPaths('Pistola sinalizadora.png'),imgTransparent:true,imgRev:1,notes:'Dispara sinalizadores; contabiliza a munição como um item geral.'},
+  {id:'license',cat:'Geral',name:'Carteira de habilitação',q:'Driver license',imgPaths:assetPaths('Carteira de Habilitação.png'),imgTransparent:true,imgRev:1},
   {id:'medicalcase',cat:'Cura',name:'Maleta médica',q:'Doctor\'s bag',notes:'Equipamento de atendimento; não concede cura automática.'},
   {id:'bandage',cat:'Cura',name:'Gaze e bandagens',q:'Bandage',notes:'Primeiros Socorros pode recuperar 1 PV se aplicada em até uma hora da lesão.'},
   {id:'aspirin',cat:'Cura',name:'Aspirina (12 comprimidos)',q:'Aspirin',uses:12,notes:'Alívio de sintomas; não recupera PV por si só.'},
@@ -47,6 +51,7 @@
   {id:'thermometer',cat:'Cura',name:'Termômetro clínico',q:'Medical thermometer'},
   {id:'syringe',cat:'Cura',name:'Seringas hipodérmicas',q:'Hypodermic needle'},
   {id:'alcohol',cat:'Cura',name:'Álcool medicinal',q:'Rubbing alcohol'},
+  {id:'laxative',cat:'Cura',name:'Laxante',q:'Laxative',uses:1,imgPaths:assetPaths('Laxante.png'),imgTransparent:true,imgRev:1,notes:'Consumível; a dose e os efeitos dependem do cenário.'},
   {id:'crutches',cat:'Cura',name:'Muletas',q:'Crutch',imgPaths:['equip-images/crutches.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/crutches.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/crutches.png?v=20261010','crutches.png?v=20261010'],imgRev:4},
   {id:'pistol22',cat:'Arma de fogo',name:'Pistola automática .22 Short',q:'Semi-automatic pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'10 jardas',rate:'1 (até 3)',capacity:6,ammo:'.22 Short',mal:100,eraFrom:1900},
   {id:'derringer25',cat:'Arma de fogo',name:'Derringer .25 (cano único)',q:'Derringer',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'3 jardas',rate:'1',capacity:1,ammo:'.25',mal:100,eraFrom:1900,creditMin:15,creditVintage:10},
@@ -107,6 +112,7 @@
  const uid=()=>`eq-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
  const kindOf=cat=>cat==='Arma de fogo'?'firearm':cat==='Arma corpo a corpo'?'melee':cat==='Cura'?'healing':'general';
  const icon=item=>ICON[item.cat]||ICON.Geral;
+ const tracksAmmo=item=>item.kind==='firearm'||item.ammoTracked===true;
 
  /* Fichas antigas: munição virou texto narrativo e Proteção foi unida a Geral. Nada é apagado. */
  function migrateItem(it){
@@ -178,7 +184,7 @@
   const item={...template,uid:uid(),quantity:template.quantity||1};
   item.imgPaths=localImagePaths(item);
   if(item.imgPaths.length){item.img=item.imgPaths[0];item.imgFixed=true}
-  if(item.kind==='firearm'){item.loaded=item.capacity||0;item.reserve=0}
+  if(tracksAmmo(item)){item.loaded=item.capacity||0;item.reserve=0}
   if(item.kind==='healing'&&item.uses==null)item.uses=item.quantity;
   return item;
  }
@@ -311,7 +317,7 @@
   if(t.damage)parts.push('Dano '+t.damage);
   if(t.range)parts.push('Alcance '+t.range);
   if(t.rate)parts.push('Ataques '+t.rate+'/rodada');
-  if(t.capacity)parts.push('Carregador '+t.capacity+(t.ammo?' ('+t.ammo+')':''));
+  if(t.capacity)parts.push((tracksAmmo(t)?'Capacidade ':'Carregador ')+t.capacity+(t.ammo?' ('+t.ammo+')':''));
   if(t.uses)parts.push(t.uses+' usos');
   if(t.notes)parts.push(t.notes);
   if(t.caution)parts.push('⚠ '+t.caution);
@@ -428,10 +434,10 @@
   return`<label>Descrição<input name="description" placeholder="O que é e para que serve"></label>`;
  }
  function itemHtml(p,item){
-  const warn=warnings(p,item),isGun=item.kind==='firearm',era=periodState(p,item),eraClass=era.state==='available'?'':` ${era.state}`;
+  const warn=warnings(p,item),isGun=tracksAmmo(item),era=periodState(p,item),eraClass=era.state==='available'?'':` ${era.state}`;
   const skill=item.skill?`<span><b>Perícia</b> ${esc(item.skill)} (${skillValue(p,item.skill)}%)</span>`:'';
   const weaponDetails=(item.damage?`<span><b>Dano</b> ${esc(item.damage)}</span>`:'')+(item.range?`<span><b>Alcance</b> ${esc(item.range)}</span>`:'')+(item.rate?`<span><b>Ataques</b> ${esc(item.rate)}/rodada</span>`:'')+(item.mal!=null?`<span><b>Falha</b> ${esc(item.mal)}</span>`:'');
-  const ammo=isGun?`<div class="eq-ammo"><span>Munição ${esc(item.ammo||'')}</span><label>Na arma <input type="number" min="0" max="9999" value="${+item.loaded||0}" data-eq-field="loaded" data-eq-id="${esc(item.uid)}"> / ${+item.capacity||0}</label><button type="button" data-eq-action="shot" data-eq-id="${esc(item.uid)}" title="Gastar uma bala">−1</button><label>Reserva <input type="number" min="0" max="9999" value="${+item.reserve||0}" data-eq-field="reserve" data-eq-id="${esc(item.uid)}"></label><button type="button" data-eq-action="reload" data-eq-id="${esc(item.uid)}" ${(+item.reserve||0)<1||(+item.loaded||0)>=(+item.capacity||0)?'disabled':''}>Recarregar</button><button type="button" data-eq-action="reserve" data-eq-id="${esc(item.uid)}" title="Adicionar 10 cartuchos à reserva">+10 reserva</button></div>`:'';
+  const ammo=isGun?`<div class="eq-ammo"><span>Munição: ${esc(item.ammo||'')}</span><label>No item <input type="number" min="0" max="9999" value="${+item.loaded||0}" data-eq-field="loaded" data-eq-id="${esc(item.uid)}"> / ${+item.capacity||0}</label><button type="button" data-eq-action="shot" data-eq-id="${esc(item.uid)}" title="Gastar uma munição">−1</button><label>Reserva <input type="number" min="0" max="9999" value="${+item.reserve||0}" data-eq-field="reserve" data-eq-id="${esc(item.uid)}"></label><button type="button" data-eq-action="reload" data-eq-id="${esc(item.uid)}" ${(+item.reserve||0)<1||(+item.loaded||0)>=(+item.capacity||0)?'disabled':''}>Recarregar</button><button type="button" data-eq-action="reserve" data-eq-id="${esc(item.uid)}" title="Adicionar 10 munições à reserva">+10 reserva</button></div>`:'';
   const extra=item.kind==='healing'&&item.effect?`<span><b>Efeito</b> ${esc(item.effect)}</span>`:'';
   const uses=item.kind==='healing'?`<div class="eq-uses"><label>Usos <input type="number" min="0" max="9999" value="${+item.uses||0}" data-eq-field="uses" data-eq-id="${esc(item.uid)}"></label><button type="button" data-eq-action="use" data-eq-id="${esc(item.uid)}">−1 uso</button></div>`:'';
   const note=item.notes?`<p class="eq-note">${esc(item.notes)}</p>`:'';
@@ -460,7 +466,7 @@
  }
  const addConfirmation=(p,item)=>warnings(p,item);
  function customData(form){const val=n=>form.elements[n]?form.elements[n].value:'';return{category:val('category'),name:val('name'),quantity:val('quantity'),creditMin:val('creditMin'),notes:[val('notes'),val('description')].filter(Boolean).join(' · '),skill:val('skill'),damage:val('damage'),range:val('range'),rate:val('rate'),ammo:val('ammo'),capacity:val('capacity'),reserve:val('reserve'),mal:val('mal'),effect:val('effect'),uses:val('uses'),img:val('img')}}
- function pdfRows(p){return ensure(p).map(x=>{const source=CATALOG.find(t=>t.id===x.id)||{},era=periodState(p,x);return{name:x.name||'Item',category:x.cat||'Geral',quantity:+x.quantity||0,image:x.img||localImagePaths(x)[0]||localImagePaths(source)[0]||'',detail:[x.skill&&`Perícia ${x.skill} (${skillValue(p,x.skill)}%)`,x.damage&&`dano ${x.damage}`,x.range&&`alcance ${x.range}`,x.kind==='firearm'&&`munição ${+x.loaded||0}/${+x.capacity||0} + ${+x.reserve||0} reserva`,x.kind==='firearm'&&x.ammo&&`calibre ${x.ammo}`,x.kind==='healing'&&x.effect&&`efeito ${x.effect}`,x.kind==='healing'&&`usos ${+x.uses||0}`,era.state!=='available'&&era.message,x.protection&&`efeito ${x.protection}`,x.notes].filter(Boolean).join(' · ')}})}
+ function pdfRows(p){return ensure(p).map(x=>{const source=CATALOG.find(t=>t.id===x.id)||{},era=periodState(p,x);return{name:x.name||'Item',category:x.cat||'Geral',quantity:+x.quantity||0,image:x.img||localImagePaths(x)[0]||localImagePaths(source)[0]||'',detail:[x.skill&&`Perícia ${x.skill} (${skillValue(p,x.skill)}%)`,x.damage&&`dano ${x.damage}`,x.range&&`alcance ${x.range}`,tracksAmmo(x)&&`munição ${+x.loaded||0}/${+x.capacity||0} + ${+x.reserve||0} reserva`,tracksAmmo(x)&&x.ammo&&`munição: ${x.ammo}`,x.kind==='healing'&&x.effect&&`efeito ${x.effect}`,x.kind==='healing'&&`usos ${+x.uses||0}`,era.state!=='available'&&era.message,x.protection&&`efeito ${x.protection}`,x.notes].filter(Boolean).join(' · ')}})}
  function plainText(p){const rows=pdfRows(p);return rows.length?'\nEquipamentos:\n'+rows.map(x=>`- ${x.quantity}× ${x.name} [${x.category}]${x.detail?' — '+x.detail:''}`).join('\n'):''}
 
  /* ---------- ligação com a página (sem depender de alterações no index.html) ---------- */
