@@ -85,7 +85,11 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
 .sk>span{display:flex;justify-content:space-between;align-items:center;border-bottom:1px dotted var(--line);gap:6px}
 .sk .sk-name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
 .sk i{flex:0 0 auto;margin-left:auto;font-style:normal;white-space:nowrap}
-.sk i{font-style:normal;white-space:nowrap}
+.sk i{position:relative;display:inline-flex;font-style:normal;white-space:nowrap}
+.sk .skill-advice{display:none;position:absolute;z-index:30;top:calc(100% + 5px);right:0;width:min(320px,calc(100vw - 56px));padding:8px 10px;border:1px solid var(--gold);border-radius:5px;background:var(--k5);color:var(--txt);box-shadow:0 8px 22px rgba(0,0,0,.65);font-size:.74rem;line-height:1.4;white-space:normal;text-align:left}
+.sk i:focus-within .skill-advice{display:block}
+.credit-guide{display:grid;gap:3px;margin:8px 0 10px;padding:7px 9px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:4px;background:rgba(var(--gr),.045);font-size:.78rem;line-height:1.4}
+.credit-guide b{color:var(--head)}.credit-guide small{color:var(--muted)}
 h3{color:var(--head);border-top:2px solid var(--rule);padding-top:6px;font-variant:small-caps;letter-spacing:1px}
 .win h3.st{margin:4px 0 6px;font-size:.9rem;border-top:none;padding-top:0;border-bottom:1px solid var(--line);padding-bottom:3px}
 button.rmb{padding:0 6px;margin-left:6px;font-size:.7rem;background:transparent;color:var(--warn2);border:1px solid rgba(253,186,116,.5);border-radius:4px}
@@ -473,6 +477,12 @@ function bgFor(slot,oo){
  const op=(ch&&B.o.find(x=>x.id===ch.id))||pick(B.o);return{kind:B.kind,n:op.n,sk:op.sk,t:op.t,crMod:op.crMod||0};
 }
 const crFmt=n=>(n>0?'+':'')+n;
+function creditBounds(p){
+ const range=p.creditRange;
+ if(range&&Array.isArray(range.final)&&range.final.length>=2)return{min:+range.final[0]||0,max:+range.final[1]||0};
+ const occ=OCC.find(o=>p.occ===o.n||String(p.occ||'').startsWith(o.n+' ('));
+ return occ?{min:occ.c[0],max:occ.c[1]}:null;
+}
 const crRangeTxt=p=>{const c=p.creditRange;if(!c||!c.mod)return'';return`faixa ${c.base[0]}–${c.base[1]} ajustada para ${c.final[0]}–${c.final[1]} (${crFmt(c.mod)})`};
 const histTxt=p=>{const origins=(p.hist||[]).map(h=>`${h.kind}: ${h.n}`).join(' | '),range=crRangeTxt(p);return[origins?'Histórico: '+origins:'',range?'Nível de Crédito: '+range:'',p.back||''].filter(Boolean).join('\n')};
 window.secondaryBlocked=(main,secondary)=>main===secondary||(main==='Soldado'&&secondary==='Oficial Militar');
@@ -558,10 +568,15 @@ let cur=[],zTop=10,drag=null,rsz=null,saveT=0;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const get=(p,k)=>{const[a,x]=k.split(/:(.+)/);return a==='c'?p.c[x]:a==='d'?p.der[x]:a==='n'?p[x]:p.sk[x]??(p.custom&&x in p.custom?p.custom[x]:base(x,p.c))};
 const fr=(p,k)=>{const v=+get(p,k)||0;return(v>>1)+' / '+Math.floor(v/5)};
-const inp=(p,i,k)=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${k}" value="${esc(get(p,k))}">`;
+const inp=(p,i,k,attrs='')=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${k}" ${attrs} value="${esc(get(p,k))}">`;
 const falta=p=>Object.entries({...BASE,...EXTRA,...(p.custom||{})}).filter(([n])=>p.sk[n]===undefined&&!(p.removed&&p.removed[n])).sort((a,b)=>a[0].localeCompare(b[0],'pt'));
 const EXTRA={'Arte/Ofício (outra)':5,'Ciência (outra)':1,'Língua (outra)':1,'Pilotar (outra)':1,'Mythos de Cthulhu':0};
-const row=(p,i,n,rm)=>`<span>${esc(n)}<i>${inp(p,i,'s:'+n)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
+const row=(p,i,n,rm)=>{
+ const bounds=n==='Nível de Crédito'?creditBounds(p):null;
+ const advice=n==='Língua Natural'?'O valor base de Língua Natural acompanha o atributo EDU; essa parte não é bônus distribuído. A ocupação pode acrescentar pontos ao valor base.':n==='Nível de Crédito'?`A ocupação reserva parte dos pontos profissionais para Nível de Crédito. Essa perícia deve ficar na faixa permitida${bounds?` (mínimo ${bounds.min}, máximo ${bounds.max})`:''}.` :'';
+ const id=`skill-advice-${i}-${n.replace(/[^a-z0-9]+/gi,'-')}`;
+ return`<span>${esc(n)}<i>${inp(p,i,'s:'+n,advice?`aria-describedby="${id}"`: '')}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${advice?`<small class="skill-advice" id="${id}" role="note">${esc(advice)}</small>`:''}${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
+};
 function uiOf(p,i){
  p.ui=p.ui||{};
  if(p.ui.x==null)p.ui.x=18+(i%6)*36;
@@ -573,6 +588,7 @@ function uiOf(p,i){
 function body(p,i){
  const st=Object.keys(p.c).map(k=>`<div><b>${k}</b>${inp(p,i,'c:'+k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`).join('');
  const sk=Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n])=>row(p,i,n,1)).join('');
+ const bounds=creditBounds(p),creditGuide=bounds?`<aside class="credit-guide"><b>Faixa de Nível de Crédito da ocupação</b><span>Mínimo: ${bounds.min} · Máximo: ${bounds.max}</span><small>O valor de Crédito usa pontos do total profissional e deve respeitar os limites da ocupação.</small></aside>`:'';
  const addM=`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" data-add="n"><input class="in" type="number" value="50" title="Valor" data-add="v"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
  const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<b>${l}</b> ${inp(p,i,'d:'+k)}`).join(' ');
  const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
@@ -580,7 +596,7 @@ function body(p,i){
  return`<div class="badge"><span class="ed" ${p.edit?'':'hidden'}>✎ Ficha editada</span></div>
   <div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub"><input class="in nm" style="width:48%;font-size:.85rem;font-weight:normal" data-i="${i}" data-k="n:occ" placeholder="Ocupação" value="${esc(p.occ)}"> · <input class="in" data-i="${i}" data-k="n:idade" placeholder="idade" value="${esc(p.idade)}"> anos${p.sec?` · <small>+ ${esc(p.sec)}</small>`:''}</div>
-  <div class="stats">${st}</div><div class="der">${d}</div>
+  <div class="stats">${st}</div><div class="der">${d}</div>${creditGuide}
   <h3 class="st">Perícias do personagem</h3><div class="sk">${sk}</div>${addM}${fa}${mobileActions}`;
 }
 function backstory(p,i){
@@ -1008,7 +1024,7 @@ sel.onchange=sel2.onchange=document.getElementById('qty').onchange=persist;
 window.DynamicInfo=(()=>{
  let box=null,host=null,timer=0,anchor=null,content='';
  function place(){if(!box||!anchor)return;const r=box.getBoundingClientRect(),a=anchor.getBoundingClientRect(),pad=10,gap=10;let left=a.left+(a.width-r.width)/2,top=a.top-r.height-gap;if(top<pad)top=a.bottom+gap;if(top+r.height>innerHeight-pad)top=Math.max(pad,Math.min(innerHeight-r.height-pad,a.top+(a.height-r.height)/2));left=Math.max(pad,Math.min(innerWidth-r.width-pad,left));box.style.left=left+'px';box.style.top=top+'px'}
- function show(text,owner,card){if(!text||!card)return;const target=owner&&owner.matches&&owner.matches('dialog')?owner:document.body;if(host===target&&anchor===card&&(box||timer))return;hide();host=target;anchor=card;content=text;timer=setTimeout(()=>{timer=0;if(!anchor||!anchor.isConnected||(host.matches('dialog')&&!host.open))return;box=document.createElement('div');box.className='dynamic-info';box.setAttribute('role','tooltip');box.textContent=content;host.appendChild(box);place()},1000)}
+ function show(text,owner,card){if(!text||!card)return;const target=owner&&owner.matches&&owner.matches('dialog')?owner:document.body;if(host===target&&anchor===card&&(box||timer))return;hide();host=target;anchor=card;content=text;timer=setTimeout(()=>{timer=0;if(!anchor||!anchor.isConnected||(host.matches('dialog')&&!host.open))return;box=document.createElement('div');box.className='dynamic-info';box.setAttribute('role','tooltip');box.textContent=content;host.appendChild(box);place()},500)}
  function hide(owner){if(owner&&host&&owner!==host)return;clearTimeout(timer);timer=0;if(box){box.remove();box=null}anchor=null;host=null;content=''}
  return{show,hide};
 })();
