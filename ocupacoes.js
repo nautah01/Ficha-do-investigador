@@ -108,7 +108,7 @@ function render(){
  }
  const specials=c.kind==='occ'||c.kind==='blank'?[['*','🎲','Aleatória','Sorteia uma ocupação']]:[['','➖','Nenhuma','Sem ocupação secundária'],['*','🎲','Aleatória','Sorteia uma secundária']];
  if(!q.value&&!cat)h+=specials.map(([v,e,n,d])=>card(v,e,n,'',[d],d,cur===v,i++)).join('');
- h+=list().map(x=>{const s=skills(x.o),blank=c.kind==='blank';return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],blank?[]:s.all,(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0,!blank&&!!BG[x.n],blank?s.all:null)}).join('');
+ h+=list().map(x=>{const s=skills(x.o),blank=c.kind==='blank';return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],[],(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0,!blank&&!!BG[x.n],s.all)}).join('');
  grid.innerHTML=h||'<p class="opk-none">Nada encontrado. Tente outra palavra ou outra categoria.</p>';resetPickerScroll();
  chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));
  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===tab));
