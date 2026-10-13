@@ -8,8 +8,8 @@ const I={ /* nome: [emoji, categoria] */
 const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const meta=n=>I[n]||['💼','Of'];
-const clean=t=>{t=t.replace(/^!/,'');if(t==='@soc')return'Perícia social';if(t==='@lang')return'Língua';if(t==='@any')return'';t=t.split('|')[0].trim();return t.replace(/\s*\(.*\)$/,'')};
-const skills=o=>{const all=o.s.map(t=>({k:t[0]==='!',n:clean(t)})).filter(x=>x.n);const keys=all.filter(x=>x.k).map(x=>x.n);return{keys:[...new Set(keys.length?keys:all.slice(0,3).map(x=>x.n))],all:[...new Set(all.map(x=>x.n))]}};
+const skillLabel=t=>{t=t.replace(/^!/,'').trim();if(t==='@soc')return'Perícia social (à escolha)';if(t==='@lang')return'Língua (à escolha)';if(t==='@any')return'Qualquer perícia';return t.split('|').map(x=>shortSk(x.trim())).join(' / ')};
+const skills=o=>{const all=[],keys=[],generic=new Map();o.s.forEach(t=>{const label=skillLabel(t);if(label==='Qualquer perícia'||label==='Perícia social (à escolha)'||label==='Língua (à escolha)'){generic.set(label,(generic.get(label)||0)+1);return}all.push(label);if(t[0]==='!')keys.push(label)});for(const[label,count]of generic)all.push(count>1?`${label} (×${count})`:label);return{keys:[...new Set(keys.length?keys:all.slice(0,3))],all:[...new Set(all)]}};
 const items=(kind)=>kind==='occ'?OCC.map(o=>({v:o.n,n:o.n,o,cred:o.c,sub:SUB[o.n]})):
   OCC.map(o=>({v:'occ:'+o.n,n:o.n,o,cred:o.c,sub:SUB[o.n],dup:1}));
 
@@ -59,15 +59,20 @@ function openPick(c){
  chips.innerHTML='<button type="button" data-c="" aria-pressed="true">Todas</button>'+Object.entries(CAT).map(([k,v])=>`<button type="button" data-c="${k}" aria-pressed="false">${v}</button>`).join('');
  render();resetPickerScroll();document.documentElement.classList.add('occ-picker-open');document.body.classList.add('occ-picker-open');dlg.showModal();q.focus();resetPickerScroll();
 }
+window.openBlankOccupationPicker=(current,onChoose)=>{
+ const match=String(current||'').match(/^(.*) \((.*)\)$/),base=match&&SUB[match[1]]?.o[match[2]]?match[1]:String(current||''),value=match&&base!==String(current||'')?`${base}::${match[2]}`:base;
+ pageScroll={x:window.scrollX,y:window.scrollY};subItem=null;bgItem=null;ctx={kind:'blank',sel:{value},onBlankChoose:onChoose};cat='';q.value='';tab='sec';$('#opkT').textContent='Ocupação da ficha em branco';tabs.innerHTML='';tabs.hidden=true;
+ chips.innerHTML='<button type="button" data-c="" aria-pressed="true">Todas</button>'+Object.entries(CAT).map(([k,v])=>`<button type="button" data-c="${k}" aria-pressed="false">${v}</button>`).join('');render();resetPickerScroll();document.documentElement.classList.add('occ-picker-open');document.body.classList.add('occ-picker-open');dlg.showModal();q.focus();resetPickerScroll();
+};
 function list(){
- const c=ctx,t=norm(q.value.trim());let src=items(c.kind==='occ'?'occ':'sec');
+ const c=ctx,t=norm(q.value.trim());let src=items(c.kind==='sec'?'sec':'occ');
   if(c.kind==='sec'){const primary=occName(document.getElementById('occ').value);src=src.filter(i=>!window.secondaryBlocked(primary,i.n))}
  return src.filter(i=>(!cat||meta(i.n)[1]===cat)&&(!t||norm(i.n).includes(t)||skills(i.o).all.some(s=>norm(s).includes(t)))).sort((a,b)=>a.n.localeCompare(b.n,'pt'));
 }
 function card(v,e,name,sub,tags,full,on,idx,nsub,bg){
  return`<button type="button" class="opk-card${on?' on':''}${nsub?' has-sub':''}" role="option" aria-selected="${on}" data-v="${esc(v)}" data-d="${esc(full)}"${nsub?' data-sub="1"':''} style="--d:${Math.min(idx,24)*18}ms"><span class="oe">${e}</span><span class="oname">${esc(name)}</span>${sub?`<span class="os">${esc(sub)}</span>`:''}<span class="ot">${tags.map(x=>`<i>${esc(x)}</i>`).join('')}</span>${nsub?`<span class="osub">▸ ${nsub} opções</span>`:''}${bg?'<span class="osub">✦ origem</span>':''}</button>`;
 }
-const tokTag=t=>{t=t.replace(/^!/,'');if(t==='@soc')return'Social';if(t==='@lang')return'Língua';if(t==='@any')return'';return t.split('|')[0].trim().replace(/^(Ciência|Arte\/Ofício) \((.*)\)$/,'$2')};
+const tokTag=t=>skillLabel(t);
 const shortSk=n=>n.replace(/^(Ciência|Arte\/Ofício) \((.*)\)$/,'$2');
 function renderBG(){
  dlg.classList.add('occ-subview');
@@ -95,14 +100,14 @@ function render(){
   const x=subItem,S=SUB[x.n],lbl=S.lbl.toLowerCase();
   h+=`<div class="opk-subhead"><button type="button" data-back>← Todas as ocupações</button><strong>${meta(x.n)[0]} ${esc(x.n)}</strong><span>Escolha: ${esc(lbl)}</span></div>`;
   h+=card(x.v,'🎲','Qualquer opção','',['Sorteia ao gerar'],'Sorteia '+lbl+' ao gerar a ficha',cur===x.v,i++);
-  h+=Object.entries(S.o).map(([k,t])=>{const keys=t.filter(z=>z[0]==='!').map(tokTag).filter(Boolean),all=[...new Set(t.map(tokTag).filter(Boolean))],v=x.v+'::'+k,mod=S.crMod&&S.crMod[k]||0,tags=keys.slice(0,3);if(mod)tags.push(crFmt(mod)+' Crédito');
+  h+=Object.entries(S.o).map(([k,t])=>{const all=[...new Set(t.map(tokTag).filter(Boolean))],v=x.v+'::'+k,mod=S.crMod&&S.crMod[k]||0,tags=all.slice();if(mod)tags.push(crFmt(mod)+' Crédito');
    return card(v,meta(x.n)[0],k,x.n,tags,x.n+' ('+k+') — perícias em destaque: '+all.join(', ')+(mod?' · faixa de Crédito '+crFmt(mod):''),cur===v,i++)}).join('');
   grid.innerHTML=h;resetPickerScroll();
   chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));return;
  }
- const specials=c.kind==='occ'?[['*','🎲','Aleatória','Sorteia uma ocupação']]:[['','➖','Nenhuma','Sem ocupação secundária'],['*','🎲','Aleatória','Sorteia uma secundária']];
+ const specials=c.kind==='occ'||c.kind==='blank'?[['*','🎲','Aleatória','Sorteia uma ocupação']]:[['','➖','Nenhuma','Sem ocupação secundária'],['*','🎲','Aleatória','Sorteia uma secundária']];
  if(!q.value&&!cat)h+=specials.map(([v,e,n,d])=>card(v,e,n,'',[d],d,cur===v,i++)).join('');
- h+=list().map(x=>{const s=skills(x.o);return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],s.keys.slice(0,3),(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0,!!BG[x.n])}).join('');
+ h+=list().map(x=>{const s=skills(x.o);return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],s.all,(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0,!!BG[x.n])}).join('');
  grid.innerHTML=h||'<p class="opk-none">Nada encontrado. Tente outra palavra ou outra categoria.</p>';resetPickerScroll();
  chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));
  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===tab));
@@ -137,6 +142,10 @@ chips.addEventListener('click',e=>{const b=e.target.closest('button');if(b){cat=
 tabs.addEventListener('click',e=>{const b=e.target.closest('button');if(b){tab=b.dataset.t;subItem=null;render()}});
 function setBG(slot,v){if(v)window.BGSEL[slot]=v;else delete window.BGSEL[slot];saveBG()}
 function choose(v){ /* aplica a escolha e, se a ocupação tem origem, pergunta */
+ if(ctx.kind==='blank'){
+  const value=v==='*'?pick(OCC).n:v.includes('::')?`${v.split('::')[0]} (${v.split('::').slice(1).join('::')})`:v;
+  ctx.onBlankChoose?.(value);dlg.close();return;
+ }
  ctx.sel.value=v;ctx.sel.dispatchEvent(new Event('change',{bubbles:true}));
  const slot=ctx.kind==='occ'?'p':'s',n=occName(v),has=n&&BG[n]&&(ctx.kind==='occ'||v.startsWith('occ:'));
  setBG(slot,null);
@@ -158,7 +167,7 @@ grid.addEventListener('click',e=>{
  }
  if(e.target.closest('[data-back]')){subItem=null;render();return}
  const b=e.target.closest('.opk-card');if(!b)return;
- if(b.dataset.sub){subItem=items(ctx.kind==='occ'?'occ':'sec').find(x=>x.v===b.dataset.v)||null;render();return}
+ if(b.dataset.sub){subItem=items(ctx.kind==='sec'?'sec':'occ').find(x=>x.v===b.dataset.v)||null;render();return}
  choose(b.dataset.v);
 });
 const showDet=e=>{const b=e.target.closest('.opk-card');if(b)window.DynamicInfo?.show(b.dataset.d,dlg,b)};

@@ -747,10 +747,8 @@ function body(p,i){
 }
 function occSelect(p,i){
  if(!p.blank)return`<input class="in occ-text" data-i="${i}" data-k="n:occ" aria-label="Ocupação do investigador" placeholder="Ocupação" value="${esc(p.occ||'')}">`;
- const current=String(p.occ||''),info=occupationFor(current),currentBase=info?info.occupation.n:(OCC.some(o=>o.n===current)?current:''),legacy=current&&!currentBase?`<option value="${esc(current)}" selected>${esc(current)}</option>`:'';
- const options=[...OCC].sort(srt).map(o=>`<option value="${esc(o.n)}" ${o.n===currentBase?'selected':''}>${esc(o.n)}</option>`).join('');
- const specs=SUB[currentBase],specialization=specs?`<select class="in occ-select occ-specialization" data-occ-spec data-i="${i}" data-base="${esc(currentBase)}" aria-label="Especialização da ocupação"><option value="" ${info&&info.specialization?'':'selected'}>Sem especialização</option>${Object.keys(specs.o).map(name=>`<option value="${esc(name)}" ${info&&info.specialization===name?'selected':''}>${esc(name)}</option>`).join('')}</select>`:'';
- return`<select class="in occ-select" data-occ-main data-i="${i}" aria-label="Ocupação do investigador"><option value="" ${currentBase?'':'selected'}>Escolha a ocupação</option>${legacy}${options}</select>${specialization}`;
+ const current=String(p.occ||'');
+ return`<button type="button" class="pickbtn blank-occ-picker" data-blank-occ data-i="${i}" aria-haspopup="dialog" aria-label="Escolher ocupação do investigador"><span class="pe">🧭</span><span class="pt">${esc(current||'Escolher ocupação')}</span><span class="pc">▾</span></button>`;
 }
 function backstory(p,i){
  const photo=p.portrait||{},hasPhoto=!!photo.src,zoom=Math.max(1,Math.min(3,+photo.zoom||1));
@@ -912,6 +910,7 @@ async function approveEquipment(p,item){
 desk.addEventListener('click',e=>{
  const i=e.target.closest('[data-i]');
  const idx=i?+i.dataset.i:NaN;
+ const blankOcc=e.target.closest('[data-blank-occ]');if(blankOcc){const k=+blankOcc.dataset.i,p=cur[k];if(p&&p.blank&&window.openBlankOccupationPicker)window.openBlankOccupationPicker(p.occ,next=>{const live=cur[k];if(!live||!live.blank||live.occ===next)return;resetBlankDistribution(live,next);live.edit=true;draw();persist()});return}
  const removePortrait=e.target.closest('[data-portrait-remove]');if(removePortrait){const k=+removePortrait.dataset.i,p=cur[k];if(p){delete p.portrait;p.edit=true;draw()}return}
  const tab=e.target.closest('[data-sheet-tab]');if(tab){const k=+tab.closest('.win').dataset.i,chosen=tab.dataset.sheetTab;cur[k].ui.tab=['equipment','backstory'].includes(chosen)?chosen:'sheet';draw();return}
  const eqAction=e.target.closest('[data-eq-action]');if(eqAction){
