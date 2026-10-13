@@ -320,23 +320,23 @@ const d6=()=>1+Math.floor(Math.random()*6),r=n=>Math.floor(Math.random()*n),pick
 const MAXA=90,MAXS=75; /* limites dos valores aleatórios: atributo e perícia */
 const A=()=>Math.min(MAXA,(d6()+d6()+d6())*5),B=()=>Math.min(MAXA,(d6()+d6()+6)*5);
 /* perícias comuns usadas em "qualquer outra" e nos interesses pessoais, para evitar sorteios sem sentido */
-const COMMON=['Encontrar','Escutar','Psicologia','Furtividade','Primeiros Socorros','Dirigir Auto','Usar Biblioteca','Lutar (Brigar)','Esquivar','Persuasão','Lábia','Charme','Intimidação','História','Ocultismo','Armas de Fogo (Pistolas)','Natação','Escalar','Consertos Mecânicos','Mundo Natural','Avaliação','Saltar','Arremessar','Navegação','Chaveiro','Cavalgar'];
+const COMMON=['Encontrar','Escutar','Psicologia','Furtividade','Primeiros Socorros','Dirigir Auto','Usar Computadores','Eletrônica','Usar Biblioteca','Lutar (Brigar)','Esquivar','Persuasão','Lábia','Charme','Intimidação','História','Ocultismo','Armas de Fogo (Pistolas)','Natação','Escalar','Consertos Mecânicos','Mundo Natural','Avaliação','Saltar','Arremessar','Navegação','Chaveiro','Cavalgar'];
 const LANGS=['Latim','Francês','Alemão','Italiano','Árabe','Grego'];
 const SOC=['Charme','Lábia','Persuasão','Intimidação'];
 const NF=['Edith','Dorothy','Mabel','Harriet','Clara','Eleanor','Agnes','Beatrice','Florence','Louise'];
 const NM=['Arthur','Walter','Harold','Edmund','Henry','Frank','Albert','Raymond','Theodore','Victor'];
 const SN=['Whitlock','Crane','Ashford','Bellamy','Hartwell','Kendrick','Dunmore','Sinclair','Prescott','Blackwood'];
-const BASE={'Ciência (Química)':1,'Ciência (Geologia)':1,'Ciência (Botânica)':1,'Ciência (Zoologia)':1,'Ciência (Matemática)':1,'Ciência (Meteorologia)':1,'Ciência (Ciência Forense)':1,'Arte/Ofício (Escultura)':5,'Arte/Ofício (Desenho)':5,'Arte/Ofício (Piano)':5,'Arte/Ofício (Violino)':5,'Arte/Ofício (Canto)':5,'Arte/Ofício (Violão)':5,'Arte/Ofício (Saxofone)':5,'Antropologia':1,'Armas de Fogo (Pistolas)':20,'Armas de Fogo (Rifles)':25,'Arqueologia':1,'Arremessar':20,'Arte/Ofício (Pintura)':5,'Arte/Ofício (Fotografia)':5,'Avaliação':5,'Cavalgar':5,'Charme':15,'Chaveiro':1,'Ciência (Biologia)':1,'Ciência (Farmácia)':1,'Ciência (Astronomia)':1,'Consertos Elétricos':10,'Consertos Mecânicos':5,'Contabilidade':5,'Direito':5,'Dirigir Auto':20,'Disfarce':5,'Encontrar':25,'Escutar':20,'Escalar':20,'Esquivar':0,'Lábia':5,'Intimidação':15,'História':5,'Furtividade':20,'Lutar (Brigar)':25,'Medicina':1,'Mundo Natural':10,'Natação':20,'Navegação':10,'Ocultismo':5,'Operar Maquinário':1,'Persuasão':10,'Pilotar (Barcos)':1,'Prestidigitação':10,'Primeiros Socorros':30,'Psicanálise':1,'Psicologia':10,'Saltar':20,'Rastrear':10,'Sobrevivência':10,'Usar Biblioteca':20,'Arte/Ofício (Literatura)':5,'Arte/Ofício (Instrumento)':5,'Arte/Ofício (Atuar)':5,'Arte/Ofício (Desenho Técnico)':5,'Arte/Ofício (Trabalhos de Fazenda)':5,'Ciência (Engenharia)':1,'Ciência (Física)':1,'Operar Maquinário Pesado':1,'Pilotar (Aeronaves)':1,'Nível de Crédito':0};
+const BASE={'Ciência (Química)':1,'Ciência (Geologia)':1,'Ciência (Botânica)':1,'Ciência (Zoologia)':1,'Ciência (Matemática)':1,'Ciência (Meteorologia)':1,'Ciência (Ciência Forense)':1,'Arte/Ofício (Escultura)':5,'Arte/Ofício (Desenho)':5,'Arte/Ofício (Piano)':5,'Arte/Ofício (Violino)':5,'Arte/Ofício (Canto)':5,'Arte/Ofício (Violão)':5,'Arte/Ofício (Saxofone)':5,'Antropologia':1,'Armas de Fogo (Pistolas)':20,'Armas de Fogo (Rifles)':25,'Arqueologia':1,'Arremessar':20,'Arte/Ofício (Pintura)':5,'Arte/Ofício (Fotografia)':5,'Avaliação':5,'Cavalgar':5,'Charme':15,'Chaveiro':1,'Ciência (Biologia)':1,'Ciência (Farmácia)':1,'Ciência (Astronomia)':1,'Consertos Elétricos':10,'Consertos Mecânicos':5,'Contabilidade':5,'Direito':5,'Dirigir Auto':20,'Disfarce':5,'Encontrar':25,'Usar Computadores':5,'Escutar':20,'Escalar':20,'Esquivar':0,'Eletrônica':1,'Lábia':5,'Intimidação':15,'História':5,'Furtividade':20,'Lutar (Brigar)':25,'Medicina':1,'Mundo Natural':10,'Natação':20,'Navegação':10,'Ocultismo':5,'Operar Maquinário':1,'Persuasão':10,'Pilotar (Barcos)':1,'Prestidigitação':10,'Primeiros Socorros':30,'Psicanálise':1,'Psicologia':10,'Saltar':20,'Rastrear':10,'Sobrevivência':10,'Usar Biblioteca':20,'Arte/Ofício (Literatura)':5,'Arte/Ofício (Instrumento)':5,'Arte/Ofício (Atuar)':5,'Arte/Ofício (Desenho Técnico)':5,'Arte/Ofício (Trabalhos de Fazenda)':5,'Ciência (Engenharia)':1,'Ciência (Física)':1,'Operar Maquinário Pesado':1,'Pilotar (Aeronaves)':1,'Nível de Crédito':0};
 const base=(n,c)=>n==='Esquivar'?c.DES>>1:n==='Língua Natural'?Math.min(MAXS,c.EDU):n.startsWith('Língua (')?1:BASE[n];
 const E4='EDU*4',ED='EDU*2+DES*2|EDU*2+FOR*2',ART='Arte/Ofício (Pintura)|Arte/Ofício (Fotografia)|Arte/Ofício (Literatura)|Arte/Ofício (Instrumento)|Arte/Ofício (Atuar)',PF='Armas de Fogo (Pistolas)|Armas de Fogo (Rifles)',CR='Armas de Fogo (Pistolas)|Avaliação|Chaveiro|Consertos Mecânicos|Disfarce|Lutar (Brigar)|Prestidigitação';
 /* n=nome, p=pontos (use | para alternativas, vale a maior), c=faixa de Crédito, s=perícias. Em s: A|B = sorteia uma; @soc = perícia social; @lang = língua; @any = qualquer outra (das COMMON); prefixo ! = perícia principal, recebe mais pontos */
 const OCC=[
 {n:'Advogado',p:E4,c:[30,80],s:['Contabilidade','!Direito','@soc','@soc','!Psicologia','Usar Biblioteca','@any','@any']},
-{n:'Andarilho',p:'EDU*2+APA*2|EDU*2+DES*2|EDU*2+FOR*2',c:[0,5],s:['Escalar','!Escutar','!Furtividade','@soc','Navegação','Saltar','@any','@any']},
+{n:'Andarilho',p:'EDU*2+APA*2+DES*2|EDU*2+APA*2+FOR*2',c:[0,5],s:['Escalar','!Escutar','!Furtividade','@soc','Navegação','Saltar','@any','@any']},
 {n:'Antiquário',p:E4,c:[30,70],s:[ART,'!Avaliação','Encontrar','!História','@soc','@lang','Usar Biblioteca','@any']},
 {n:'Arqueólogo',p:E4,c:[10,40],s:['!Arqueologia','Avaliação','!História','@lang','Usar Biblioteca','Encontrar','Navegação','Consertos Mecânicos']},
 {n:'Artista',p:'EDU*2+POD*2|EDU*2+DES*2',c:[9,50],s:['!'+ART,'Encontrar','História|Mundo Natural','@soc','@lang','Psicologia','@any','@any']},
-{n:'Atleta',p:ED,c:[9,70],s:['Arremessar','Cavalgar','!Escalar','@soc','Lutar (Brigar)','!Natação','!Saltar','@any']},
+{n:'Atleta',p:'EDU*2+APA*2+DES*2|EDU*2+APA*2+FOR*2',c:[9,70],s:['Arremessar','Cavalgar','!Escalar','@soc','Lutar (Brigar)','!Natação','!Saltar','@any']},
 {n:'Autor',p:E4,c:[9,30],s:['!Arte/Ofício (Literatura)','História','!Língua Natural','Mundo Natural|Ocultismo','@lang','Psicologia','Usar Biblioteca','@any']},
 {n:'Bibliotecário',p:E4,c:[9,35],s:['Contabilidade','Língua Natural','@lang','!Usar Biblioteca','@any','@any','@any','@any']},
 {n:'Clero, Membro do',p:E4,c:[9,60],s:['Contabilidade','Escutar','História','!@soc','@lang','!Psicologia','Usar Biblioteca','@any']},
@@ -347,15 +347,18 @@ const OCC=[
 {n:'Fanático',p:'EDU*2+APA*2|EDU*2+POD*2',c:[0,30],s:['Furtividade','História','!@soc','@soc','!Psicologia','@any','@any','@any']},
 {n:'Fazendeiro',p:ED,c:[9,30],s:['!Arte/Ofício (Trabalhos de Fazenda)','Consertos Mecânicos','Dirigir Auto','@soc','!Mundo Natural','Operar Maquinário Pesado','Rastrear','@any']},
 {n:'Investigador de Polícia',p:ED,c:[20,50],s:['Arte/Ofício (Atuar)|Disfarce','!Armas de Fogo (Pistolas)','Direito','Escutar','@soc','!Psicologia','!Encontrar','@any']},
+{n:'Jornalista [Lovecraftiana]',p:E4,c:[9,30],s:[PF,'Arte/Ofício (Atuar)|Disfarce','Direito','Encontrar','Escutar','@soc','Psicologia','@any']},
 {n:'Jornalista',p:E4,c:[9,30],s:['Arte/Ofício (Fotografia)','História','!Usar Biblioteca','Língua Natural','@soc','!Psicologia','Encontrar|Escutar','@any']},
 {n:'Médico',p:E4,c:[30,80],s:['Ciência (Biologia)','Ciência (Farmácia)','!Medicina','Língua (Latim)','!Primeiros Socorros','Psicologia','@any','@any']},
 {n:'Membro de Tribo',p:ED,c:[0,15],s:['Arremessar|Lutar (Brigar)','Encontrar','Escalar','Escutar','!Mundo Natural','Natação','Ocultismo','!Sobrevivência']},
+{n:'Hacker [Moderna]',p:E4,c:[10,70],s:['!Consertos Elétricos','!Eletrônica','!Encontrar','@soc','!Usar Computadores','Usar Biblioteca','@any','@any']},
 {n:'Missionário',p:E4,c:[0,30],s:[ART,'Consertos Mecânicos','!@soc','Medicina','Mundo Natural','!Primeiros Socorros','@any','@any']},
 {n:'Músico',p:'EDU*2+DES*2|EDU*2+POD*2',c:[9,30],s:['!Arte/Ofício (Instrumento)','!Escutar','@soc','Psicologia','@any','@any','@any','@any']},
 {n:'Oficial de Polícia',p:ED,c:[9,30],s:['!Armas de Fogo (Pistolas)','Direito','!Encontrar','@soc','!Lutar (Brigar)','Primeiros Socorros','Psicologia','Dirigir Auto|Cavalgar']},
 {n:'Oficial Militar',p:ED,c:[20,70],s:['!Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)|Lutar (Brigar)','Navegação','!@soc','@soc','Psicologia','Sobrevivência','Contabilidade|Esquivar']},
 {n:'Ocultista',p:E4,c:[9,65],s:['!Antropologia','História','Usar Biblioteca','!Ocultismo','@lang','Ciência (Astronomia)','Persuasão','@any']},
 {n:'Parapsicólogo',p:E4,c:[9,30],s:['Antropologia','Arte/Ofício (Fotografia)','História','!Usar Biblioteca','!Ocultismo','@lang','Psicologia','@any']},
+{n:'Piloto [Lovecraftiana]',p:'EDU*2+DES*2',c:[20,70],s:['Antropologia','Arte/Ofício (Fotografia)','História','Ocultismo','@lang','Psicologia','Usar Biblioteca','@any']},
 {n:'Piloto',p:'EDU*2+DES*2',c:[20,70],s:['Consertos Elétricos','Consertos Mecânicos','!Navegação','Operar Maquinário Pesado','!Pilotar (Aeronaves)','Ciência (Astronomia)','@any','@any']},
 {n:'Professor',p:E4,c:[20,70],s:['Língua Natural','!@lang','Psicologia','!Usar Biblioteca','@any','@any','@any','@any']},
 {n:'Profissional de Entretenimento',p:'EDU*2+APA*2',c:[9,70],s:['!Arte/Ofício (Atuar)','Disfarce','Escutar','!@soc','@soc','Psicologia','@any','@any']},
@@ -542,7 +545,7 @@ function creditBounds(p){
   const occupationInfo=occupationFor(p.occ);
   if(!occupationInfo)return null;
   const total=occupationPointTotal(occupationInfo.occupation,p.c),mod=occupationInfo.specialization&&SUB[occupationInfo.occupation.n]?.crMod?.[occupationInfo.specialization]||0;
-  const max=Math.max(0,Math.min(MAXS,total,occupationInfo.occupation.c[1]+mod));
+  const max=Math.max(0,Math.min(99,total,occupationInfo.occupation.c[1]+mod));
   return{min:Math.max(0,Math.min(max,occupationInfo.occupation.c[0]+mod)),max};
  }
  const range=p.creditRange;
@@ -579,7 +582,7 @@ function gen(sel,sel2,keep){
  const s2=[],keys2=[];
  if(sec){const hasK=secT.t.some(t=>t[0]==='!');secT.t.forEach((t,i)=>{if(t==='@any')return;const n=res(t.replace(/^!/,''),true);if(!s2.includes(n))s2.push(n);if((t[0]==='!'||(!hasK&&i===0))&&!keys2.includes(n))keys2.push(n)})}
  let occP=Math.max(...o.p.split('|').map(f=>f.split('+').reduce((a,t)=>{const[k,m]=t.split('*');return a+c[k]*m},0)));
-  const crMax=Math.max(0,Math.min(MAXS,occP,o.c[1]+creditMod)),crMin=Math.max(0,Math.min(crMax,o.c[0]+creditMod));
+  const crMax=Math.max(0,Math.min(99,occP,o.c[1]+creditMod)),crMin=Math.max(0,Math.min(crMax,o.c[0]+creditMod));
   const cr=Math.max(crMin,Math.min(crMax,Math.round((crMin+r(crMax-crMin+1))/5)*5));
  sk['Nível de Crédito']=cr;occP-=cr;
  /* distribui pontos em múltiplos de 5, proporcional ao peso de cada perícia (com um pouco de variação) e respeitando um teto; o que sobra vai de 5 em 5 */
@@ -627,7 +630,7 @@ function askConfirm(o){return new Promise(ok=>{
 const confirmDel=name=>askConfirm({title:'Excluir ficha?',html:`<strong>${esc(name)}</strong> será apagada e isso não dá para desfazer.`,ok:'🗑 Excluir'});
 const ttl=p=>[p.nome,p.occ].filter(Boolean).join(' — ')||'Ficha em branco';
 /* ficha em branco: atributos zerados, sem nome/ocupação, perícias mais usadas com o valor inicial */
-const BLANK_SK=['Esquivar','Encontrar','Escutar','Psicologia','Usar Biblioteca','Furtividade','Lutar (Brigar)','Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Primeiros Socorros','Persuasão','Lábia','Charme','Intimidação','Ocultismo','História','Dirigir Auto','Escalar','Mundo Natural','Consertos Mecânicos','Língua Natural','Nível de Crédito'];
+const BLANK_SK=['Esquivar','Encontrar','Escutar','Psicologia','Usar Biblioteca','Furtividade','Lutar (Brigar)','Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Primeiros Socorros','Persuasão','Lábia','Charme','Intimidação','Ocultismo','História','Dirigir Auto','Escalar','Mundo Natural','Consertos Mecânicos','Eletrônica','Usar Computadores','Língua Natural','Nível de Crédito'];
 function genBlank(){
  const c={FOR:0,CON:0,POD:0,DES:0,APA:0,TAM:0,INT:0,EDU:0},sk={};
  BLANK_SK.forEach(n=>sk[n]=base(n,c));
