@@ -9,7 +9,7 @@ const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&
 const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const meta=n=>I[n]||['💼','Of'];
 const skillLabels=t=>t.replace(/^!/,'').split('|').map(x=>{x=x.trim();if(x==='@soc')return'Perícia social (à escolha)';if(x==='@lang')return'Língua (à escolha)';if(x==='@any')return'Qualquer perícia';return shortSk(x)});
-const skills=o=>{const all=[],keys=[],generic=new Map();o.s.forEach(t=>skillLabels(t).forEach(label=>{if(label==='Qualquer perícia'||label==='Perícia social (à escolha)'||label==='Língua (à escolha)'){generic.set(label,(generic.get(label)||0)+1);if(t[0]==='!')keys.push(label);return}all.push(label);if(t[0]==='!')keys.push(label)}));for(const[label,count]of generic)all.push(count>1?`${label} (×${count})`:label);return{keys:[...new Set(keys.length?keys:all.slice(0,3))],all:[...new Set(all)]}};
+const skills=o=>{const names=[],keys=[],generic={any:0,social:0,language:0};o.s.forEach(t=>skillLabels(t).forEach(label=>{if(label==='Qualquer perícia'){generic.any++;if(t[0]==='!')keys.push(label);return}if(label==='Perícia social (à escolha)'){generic.social++;if(t[0]==='!')keys.push(label);return}if(label==='Língua (à escolha)'){generic.language++;if(t[0]==='!')keys.push(label);return}names.push(label);if(t[0]==='!')keys.push(label)}));const summary=[generic.any?`${generic.any}× ${generic.any===1?'perícia aleatória':'perícias aleatórias'}`:'',generic.social?`${generic.social}× ${generic.social===1?'perícia social':'perícias sociais'}`:'',generic.language?`${generic.language}× ${generic.language===1?'língua à escolha':'línguas à escolha'}`:''].filter(Boolean).join(', ');const all=[...new Set([...names,...(summary?[summary]:[])])];return{keys:[...new Set(keys.length?keys:all.slice(0,3))],names:[...new Set(names)],summary,all}};
 const items=(kind)=>kind==='occ'?OCC.map(o=>({v:o.n,n:o.n,o,cred:o.c,sub:SUB[o.n]})):
   OCC.map(o=>({v:'occ:'+o.n,n:o.n,o,cred:o.c,sub:SUB[o.n],dup:1}));
 
@@ -69,8 +69,8 @@ function list(){
   if(c.kind==='sec'){const primary=occName(document.getElementById('occ').value);src=src.filter(i=>!window.secondaryBlocked(primary,i.n))}
  return src.filter(i=>(!cat||meta(i.n)[1]===cat)&&(!t||norm(i.n).includes(t)||skills(i.o).all.some(s=>norm(s).includes(t)))).sort((a,b)=>a.n.localeCompare(b.n,'pt'));
 }
-function card(v,e,name,sub,tags,full,on,idx,nsub,bg,skillList){
- const skills=skillList?`<span class="opk-sk-title">Perícias</span><span class="opk-sk-list">${skillList.map(x=>`<span>${esc(x)}</span>`).join('')}</span>`:`<span class="ot">${tags.map(x=>`<i>${esc(x)}</i>`).join('')}</span>`;
+function card(v,e,name,sub,tags,full,on,idx,nsub,bg,skillList,skillSummary){
+ const skills=skillList?`<span class="opk-sk-title">Perícias</span><span class="opk-sk-list">${skillList.map(x=>`<span>${esc(x)}</span>`).join('')}</span>${skillSummary?`<span class="opk-sk-summary">${esc(skillSummary)}</span>`:''}`:`<span class="ot">${tags.map(x=>`<i>${esc(x)}</i>`).join('')}</span>`;
  return`<button type="button" class="opk-card${on?' on':''}${nsub?' has-sub':''}${skillList?' has-skill-list':''}" role="option" aria-selected="${on}" data-v="${esc(v)}" data-d="${esc(full)}"${nsub?' data-sub="1"':''} style="--d:${Math.min(idx,24)*18}ms"><span class="oe">${e}</span><span class="oname">${esc(name)}</span>${sub?`<span class="os">${esc(sub)}</span>`:''}${skills}${nsub?`<span class="osub">▸ ${nsub} opções</span>`:''}${bg?'<span class="osub">✦ origem</span>':''}</button>`;
 }
 const tokTags=t=>skillLabels(t);
@@ -108,7 +108,7 @@ function render(){
  }
  const specials=c.kind==='occ'||c.kind==='blank'?[['*','🎲','Aleatória','Sorteia uma ocupação']]:[['','➖','Nenhuma','Sem ocupação secundária'],['*','🎲','Aleatória','Sorteia uma secundária']];
  if(!q.value&&!cat)h+=specials.map(([v,e,n,d])=>card(v,e,n,'',[d],d,cur===v,i++)).join('');
- h+=list().map(x=>{const s=skills(x.o),blank=c.kind==='blank';return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],[],(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0,!blank&&!!BG[x.n],s.all)}).join('');
+ h+=list().map(x=>{const s=skills(x.o),blank=c.kind==='blank';return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],[],(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0,!blank&&!!BG[x.n],s.names,s.summary)}).join('');
  grid.innerHTML=h||'<p class="opk-none">Nada encontrado. Tente outra palavra ou outra categoria.</p>';resetPickerScroll();
  chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));
  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===tab));
