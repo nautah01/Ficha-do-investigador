@@ -665,15 +665,20 @@ function occupationSkillRules(p){
  const info=occupationFor(p.occ);if(!info)return{any:false,social:false,language:false,names:new Set()};
  const variants=SUB[info.occupation.n];
  const lists=variants?(info.specialization?[tokens(info.occupation,info.specialization).t]:Object.keys(variants.o).map(k=>tokens(info.occupation,k).t)):[info.occupation.s];
- const rules={any:false,social:false,language:false,names:new Set()};
+ const rules={any:0,social:false,language:false,names:new Set()};
  lists.flat().forEach(raw=>String(raw).replace(/^!/,'').split('|').forEach(name=>{
-  if(name==='@any')rules.any=true;else if(name==='@soc')rules.social=true;else if(name==='@lang')rules.language=true;else rules.names.add(name.trim());
+  if(name==='@any')rules.any++;else if(name==='@soc')rules.social=true;else if(name==='@lang')rules.language=true;else rules.names.add(name.trim());
  }));
  return rules;
 }
+function hasExplicitOccupationalSkill(rules,n){return rules.names.has(n)||(rules.social&&SOC.includes(n))||(rules.language&&/^Língua \(/.test(n))}
 function isOccupationalSkill(p,n){
  const rules=occupationSkillRules(p);
- return rules.any||rules.names.has(n)||(rules.social&&SOC.includes(n))||(rules.language&&/^Língua \(/.test(n));
+ if(hasExplicitOccupationalSkill(rules,n))return true;
+ if(!rules.any)return false;
+ const allocations=p.skillAllocations||{},allocatedAny=Object.entries(allocations).filter(([name,a])=>+a?.occupational>0&&!hasExplicitOccupationalSkill(rules,name)).map(([name])=>name);
+ if(allocatedAny.includes(n))return allocatedAny.indexOf(n)<rules.any;
+ return allocatedAny.length<rules.any;
 }
 let occHlCache={key:null,rules:null};
 function isOccupationHighlight(p,n){
