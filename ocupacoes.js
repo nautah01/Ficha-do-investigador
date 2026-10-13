@@ -8,8 +8,8 @@ const I={ /* nome: [emoji, categoria] */
 const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 const meta=n=>I[n]||['💼','Of'];
-const skillLabel=t=>{t=t.replace(/^!/,'').trim();if(t==='@soc')return'Perícia social (à escolha)';if(t==='@lang')return'Língua (à escolha)';if(t==='@any')return'Qualquer perícia';return t.split('|').map(x=>shortSk(x.trim())).join(' / ')};
-const skills=o=>{const all=[],keys=[],generic=new Map();o.s.forEach(t=>{const label=skillLabel(t);if(label==='Qualquer perícia'||label==='Perícia social (à escolha)'||label==='Língua (à escolha)'){generic.set(label,(generic.get(label)||0)+1);return}all.push(label);if(t[0]==='!')keys.push(label)});for(const[label,count]of generic)all.push(count>1?`${label} (×${count})`:label);return{keys:[...new Set(keys.length?keys:all.slice(0,3))],all:[...new Set(all)]}};
+const skillLabels=t=>t.replace(/^!/,'').split('|').map(x=>{x=x.trim();if(x==='@soc')return'Perícia social (à escolha)';if(x==='@lang')return'Língua (à escolha)';if(x==='@any')return'Qualquer perícia';return shortSk(x)});
+const skills=o=>{const all=[],keys=[],generic=new Map();o.s.forEach(t=>skillLabels(t).forEach(label=>{if(label==='Qualquer perícia'||label==='Perícia social (à escolha)'||label==='Língua (à escolha)'){generic.set(label,(generic.get(label)||0)+1);if(t[0]==='!')keys.push(label);return}all.push(label);if(t[0]==='!')keys.push(label)}));for(const[label,count]of generic)all.push(count>1?`${label} (×${count})`:label);return{keys:[...new Set(keys.length?keys:all.slice(0,3))],all:[...new Set(all)]}};
 const items=(kind)=>kind==='occ'?OCC.map(o=>({v:o.n,n:o.n,o,cred:o.c,sub:SUB[o.n]})):
   OCC.map(o=>({v:'occ:'+o.n,n:o.n,o,cred:o.c,sub:SUB[o.n],dup:1}));
 
@@ -73,7 +73,7 @@ function card(v,e,name,sub,tags,full,on,idx,nsub,bg,skillList){
  const skills=skillList?`<span class="opk-sk-title">Perícias</span><span class="opk-sk-list">${skillList.map(x=>`<span>${esc(x)}</span>`).join('')}</span>`:`<span class="ot">${tags.map(x=>`<i>${esc(x)}</i>`).join('')}</span>`;
  return`<button type="button" class="opk-card${on?' on':''}${nsub?' has-sub':''}${skillList?' has-skill-list':''}" role="option" aria-selected="${on}" data-v="${esc(v)}" data-d="${esc(full)}"${nsub?' data-sub="1"':''} style="--d:${Math.min(idx,24)*18}ms"><span class="oe">${e}</span><span class="oname">${esc(name)}</span>${sub?`<span class="os">${esc(sub)}</span>`:''}${skills}${nsub?`<span class="osub">▸ ${nsub} opções</span>`:''}${bg?'<span class="osub">✦ origem</span>':''}</button>`;
 }
-const tokTag=t=>skillLabel(t);
+const tokTags=t=>skillLabels(t);
 const shortSk=n=>n.replace(/^(Ciência|Arte\/Ofício) \((.*)\)$/,'$2');
 function renderBG(){
  dlg.classList.add('occ-subview');
@@ -101,7 +101,7 @@ function render(){
   const x=subItem,S=SUB[x.n],lbl=S.lbl.toLowerCase();
   h+=`<div class="opk-subhead"><button type="button" data-back>← Todas as ocupações</button><strong>${meta(x.n)[0]} ${esc(x.n)}</strong><span>Escolha: ${esc(lbl)}</span></div>`;
   h+=card(x.v,'🎲','Qualquer opção','',['Sorteia ao gerar'],'Sorteia '+lbl+' ao gerar a ficha',cur===x.v,i++);
-  h+=Object.entries(S.o).map(([k,t])=>{const all=[...new Set(t.map(tokTag).filter(Boolean))],v=x.v+'::'+k,mod=S.crMod&&S.crMod[k]||0,blank=c.kind==='blank',tags=blank?(mod?[crFmt(mod)+' Crédito']:[]):all.slice();if(mod&&!blank)tags.push(crFmt(mod)+' Crédito');
+  h+=Object.entries(S.o).map(([k,t])=>{const all=[...new Set(t.flatMap(tokTags).filter(Boolean))],v=x.v+'::'+k,mod=S.crMod&&S.crMod[k]||0,blank=c.kind==='blank',tags=blank?(mod?[crFmt(mod)+' Crédito']:[]):all.slice();if(mod&&!blank)tags.push(crFmt(mod)+' Crédito');
    return card(v,meta(x.n)[0],k,x.n,tags,x.n+' ('+k+') — perícias em destaque: '+all.join(', ')+(mod?' · faixa de Crédito '+crFmt(mod):''),cur===v,i++,0,false,blank?all:null)}).join('');
   grid.innerHTML=h;resetPickerScroll();
   chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));return;
