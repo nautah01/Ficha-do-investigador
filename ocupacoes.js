@@ -69,8 +69,9 @@ function list(){
   if(c.kind==='sec'){const primary=occName(document.getElementById('occ').value);src=src.filter(i=>!window.secondaryBlocked(primary,i.n))}
  return src.filter(i=>(!cat||meta(i.n)[1]===cat)&&(!t||norm(i.n).includes(t)||skills(i.o).all.some(s=>norm(s).includes(t)))).sort((a,b)=>a.n.localeCompare(b.n,'pt'));
 }
-function card(v,e,name,sub,tags,full,on,idx,nsub,bg){
- return`<button type="button" class="opk-card${on?' on':''}${nsub?' has-sub':''}" role="option" aria-selected="${on}" data-v="${esc(v)}" data-d="${esc(full)}"${nsub?' data-sub="1"':''} style="--d:${Math.min(idx,24)*18}ms"><span class="oe">${e}</span><span class="oname">${esc(name)}</span>${sub?`<span class="os">${esc(sub)}</span>`:''}<span class="ot">${tags.map(x=>`<i>${esc(x)}</i>`).join('')}</span>${nsub?`<span class="osub">▸ ${nsub} opções</span>`:''}${bg?'<span class="osub">✦ origem</span>':''}</button>`;
+function card(v,e,name,sub,tags,full,on,idx,nsub,bg,skillList){
+ const skills=skillList?`<span class="opk-sk-title">Perícias</span><span class="opk-sk-list">${skillList.map(x=>`<span>${esc(x)}</span>`).join('')}</span>`:`<span class="ot">${tags.map(x=>`<i>${esc(x)}</i>`).join('')}</span>`;
+ return`<button type="button" class="opk-card${on?' on':''}${nsub?' has-sub':''}${skillList?' has-skill-list':''}" role="option" aria-selected="${on}" data-v="${esc(v)}" data-d="${esc(full)}"${nsub?' data-sub="1"':''} style="--d:${Math.min(idx,24)*18}ms"><span class="oe">${e}</span><span class="oname">${esc(name)}</span>${sub?`<span class="os">${esc(sub)}</span>`:''}${skills}${nsub?`<span class="osub">▸ ${nsub} opções</span>`:''}${bg?'<span class="osub">✦ origem</span>':''}</button>`;
 }
 const tokTag=t=>skillLabel(t);
 const shortSk=n=>n.replace(/^(Ciência|Arte\/Ofício) \((.*)\)$/,'$2');
@@ -100,14 +101,14 @@ function render(){
   const x=subItem,S=SUB[x.n],lbl=S.lbl.toLowerCase();
   h+=`<div class="opk-subhead"><button type="button" data-back>← Todas as ocupações</button><strong>${meta(x.n)[0]} ${esc(x.n)}</strong><span>Escolha: ${esc(lbl)}</span></div>`;
   h+=card(x.v,'🎲','Qualquer opção','',['Sorteia ao gerar'],'Sorteia '+lbl+' ao gerar a ficha',cur===x.v,i++);
-  h+=Object.entries(S.o).map(([k,t])=>{const all=[...new Set(t.map(tokTag).filter(Boolean))],v=x.v+'::'+k,mod=S.crMod&&S.crMod[k]||0,tags=all.slice();if(mod)tags.push(crFmt(mod)+' Crédito');
-   return card(v,meta(x.n)[0],k,x.n,tags,x.n+' ('+k+') — perícias em destaque: '+all.join(', ')+(mod?' · faixa de Crédito '+crFmt(mod):''),cur===v,i++)}).join('');
+  h+=Object.entries(S.o).map(([k,t])=>{const all=[...new Set(t.map(tokTag).filter(Boolean))],v=x.v+'::'+k,mod=S.crMod&&S.crMod[k]||0,blank=c.kind==='blank',tags=blank?(mod?[crFmt(mod)+' Crédito']:[]):all.slice();if(mod&&!blank)tags.push(crFmt(mod)+' Crédito');
+   return card(v,meta(x.n)[0],k,x.n,tags,x.n+' ('+k+') — perícias em destaque: '+all.join(', ')+(mod?' · faixa de Crédito '+crFmt(mod):''),cur===v,i++,0,false,blank?all:null)}).join('');
   grid.innerHTML=h;resetPickerScroll();
   chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));return;
  }
  const specials=c.kind==='occ'||c.kind==='blank'?[['*','🎲','Aleatória','Sorteia uma ocupação']]:[['','➖','Nenhuma','Sem ocupação secundária'],['*','🎲','Aleatória','Sorteia uma secundária']];
  if(!q.value&&!cat)h+=specials.map(([v,e,n,d])=>card(v,e,n,'',[d],d,cur===v,i++)).join('');
- h+=list().map(x=>{const s=skills(x.o);return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],s.all,(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0,!!BG[x.n])}).join('');
+ h+=list().map(x=>{const s=skills(x.o),blank=c.kind==='blank';return card(x.v,meta(x.n)[0],x.n,x.cred?`Crédito ${x.cred[0]}–${x.cred[1]}`:CAT[meta(x.n)[1]],blank?[]:s.all,(x.cred?'Perícias: ':'Perícias de interesse: ')+s.all.join(', ')+(x.cred?` · Crédito ${x.cred[0]}–${x.cred[1]}`:''),cur===x.v||cur.startsWith(x.v+'::'),i++,x.sub?Object.keys(x.sub.o).length:0,!blank&&!!BG[x.n],blank?s.all:null)}).join('');
  grid.innerHTML=h||'<p class="opk-none">Nada encontrado. Tente outra palavra ou outra categoria.</p>';resetPickerScroll();
  chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.c===cat));
  tabs.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.t===tab));
