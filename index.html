@@ -972,10 +972,23 @@ function rerollFull(p){
  p.rolledC=rollSig(p);p.edit=true;
  draw();return true;
 }
+/* ficha em branco: há pontos de criação já distribuídos (ocupacionais/pessoais) ou fragmentos de Amnésia? */
+const hasBlankPoints=p=>!!p&&p.blank&&!p.unlimited&&(Object.values(p.skillAllocations||{}).some(a=>(+a.occupational||0)+(+a.personal||0)>0)||!!(p.amnesia&&Array.isArray(p.amnesia.frag)&&p.amnesia.frag.length));
 function rerollAttrs(i){
  const p=cur[i];if(!p)return;
  if(!p.blank&&rerollFull(p))return;
  const next={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
+ if(p.blank&&!p.unlimited){
+  /* Os totais de pontos dependem dos atributos (ocupação e INT×2). Com atributos novos, a distribuição antiga deixa de valer:
+     zera alocações e perícias para o mínimo (mesmo reset de trocar de ocupação), mantendo ocupação, Sorte e perícias adicionadas. */
+  const luck=p.der&&p.der.luck,had=hasBlankPoints(p);
+  Object.assign(p.c,next);
+  p.der={...p.der,...calc(p.c)};if(luck!==undefined)p.der.luck=luck;
+  resetBlankDistribution(p,p.occ);
+  p.skillNotice=had?'Os atributos foram rerolados, então os pontos distribuídos foram zerados. Distribua os pontos novamente.':'';
+  p.rolledC=rollSig(p);p.edit=true;
+  draw();window.CthEquipment.refreshWarnings(p,winEl(i)&&winEl(i).querySelector('[data-eq-panel]'));persist();return;
+ }
  const derived=['Esquivar','Língua Natural'].map(n=>({n,oldBase:base(n,p.c),oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');
  Object.assign(p.c,next);
  const luck=p.der&&p.der.luck;
@@ -1076,9 +1089,9 @@ desk.addEventListener('click',e=>{
  if(e.target.closest('.delb')){const k=+e.target.closest('.delb').dataset.i,p=cur[k];confirmDel(ttl(p)).then(y=>{if(y&&cur[k]===p){cur.splice(k,1);draw()}});return}
  if(e.target.closest('.rrb')){
   const k=+e.target.closest('.rrb').dataset.i,p=cur[k];if(!p)return;
-  const untouched=ATTR_KEYS.every(a=>!+p.c[a])||!p.edit||rollSig(p)===p.rolledC;
+  const untouched=!hasBlankPoints(p)&&(ATTR_KEYS.every(a=>!+p.c[a])||!p.edit||rollSig(p)===p.rolledC);
   if(untouched)rerollAttrs(k);
-  else askConfirm({title:'Rerolar atributos?',html:`Os atributos de <strong>${esc(ttl(p))}</strong> serão substituídos por novos valores sorteados. ${p.blank?'PV, Sanidade, PM, Mov., Bônus de Dano, Corpo, Esquivar e Língua Natural são recalculados':'As perícias também são redistribuídas com os pontos novos (mesma ocupação e histórico); perícias adicionadas ou valores digitados à mão se perdem'}. A Sorte não muda.`,ok:'🎲 Rerolar',danger:false}).then(y=>{if(y&&cur[k]===p)rerollAttrs(k)});
+  else askConfirm({title:'Rerolar atributos?',html:`Os atributos de <strong>${esc(ttl(p))}</strong> serão substituídos por novos valores sorteados. ${p.blank?(p.unlimited?'PV, Sanidade, PM, Mov., Bônus de Dano, Corpo, Esquivar e Língua Natural são recalculados':'PV, Sanidade, PM, Mov., Bônus de Dano, Corpo, Esquivar e Língua Natural são recalculados, e <strong>os pontos de perícia já distribuídos são zerados</strong> (os totais de pontos mudam com os atributos novos; a ocupação continua a mesma)'):'As perícias também são redistribuídas com os pontos novos (mesma ocupação e histórico); perícias adicionadas ou valores digitados à mão se perdem'}. A Sorte não muda.`,ok:'🎲 Rerolar',danger:false}).then(y=>{if(y&&cur[k]===p)rerollAttrs(k)});
   return;
  }
  if(e.target.closest('.ftg')){const p=cur[+e.target.closest('.ftg').dataset.i];p.falta=!p.falta;draw();return}
