@@ -178,6 +178,27 @@ button.danger:hover{background:#dc2626}
 .sheet-opt strong{color:var(--head);font-size:1rem;letter-spacing:.3px}
 .sheet-opt .so-desc{font-size:.8rem;line-height:1.45;color:var(--muted)}
 .skill-pool.unlimited-note{grid-template-columns:1fr}
+.amnesia-panel{margin:10px 0;padding:10px 12px;border:1px solid var(--line);border-left:3px solid var(--head);border-radius:6px;background:rgba(var(--gr),.055);font-size:.82rem}
+.win .amnesia-panel h3.st{margin-top:0}
+.am-intro{margin:2px 0 8px;color:var(--quote);font-style:italic;line-height:1.4}
+.am-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:8px}
+.am-stats div{display:flex;flex-direction:column;padding:5px 7px;border:1px solid rgba(var(--gr2),.28);border-radius:5px;color:var(--muted);font-size:.72rem}
+.am-stats strong{color:var(--head);font-size:1.05rem}
+.am-actions{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.amnesia-panel button{padding:4px 10px;font-size:.78rem}
+.amnesia-panel button:disabled{opacity:.5;cursor:default}
+.am-sub{margin:10px 0 4px;font-size:.84rem;color:var(--head)}
+.am-frags{display:grid;gap:5px;margin:4px 0;padding:0;list-style:none}
+.am-frags li{padding:6px 8px;border-left:2px solid var(--gold);border-radius:0 4px 4px 0;background:rgba(var(--gr),.06);line-height:1.4}
+.am-frags li b{color:var(--head);white-space:nowrap}
+.am-frags .am-none{color:var(--muted);font-style:italic}
+.am-sealed-box{display:flex;flex-direction:column;gap:4px;margin-top:10px;color:var(--head)}
+.am-sealed-box small{color:var(--muted)}
+textarea.am-sealed{width:100%;min-height:64px;padding:6px 8px;text-align:left;resize:vertical;font:inherit;font-size:.88rem;line-height:1.4;filter:blur(6px);transition:filter .2s}
+textarea.am-sealed.open{filter:none}
+.am-rules{display:block;margin-top:8px;color:var(--muted);line-height:1.4}
+@media(max-width:420px){.am-stats{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){textarea.am-sealed{transition:none}}
 @media(max-width:520px){.sheet-opts{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.dlg .sheet-opt{transition:none}.dlg .sheet-opt:hover,.dlg .sheet-opt:focus-visible{transform:none}}
 button.alt.on{background:rgba(var(--gr),.18);border-color:#efe0ae}
@@ -552,9 +573,9 @@ const crFmt=n=>(n>0?'+':'')+n;
 function creditBounds(p){
  if(p.unlimited)return null;
  if(p.blank){
-  const occupationInfo=occupationFor(p.occ);
+  const occupationInfo=occInfoOf(p);
   if(!occupationInfo)return null;
-  const total=occupationPointTotal(occupationInfo.occupation,p.c),mod=occupationInfo.specialization&&SUB[occupationInfo.occupation.n]?.crMod?.[occupationInfo.specialization]||0;
+  const total=isAmnesia(p)?amnesiaState(p).usable:occupationPointTotal(occupationInfo.occupation,p.c),mod=occupationInfo.specialization&&SUB[occupationInfo.occupation.n]?.crMod?.[occupationInfo.specialization]||0;
   const max=Math.max(0,Math.min(99,total,occupationInfo.occupation.c[1]+mod));
   return{min:Math.max(0,Math.min(max,occupationInfo.occupation.c[0]+mod)),max};
  }
@@ -571,6 +592,79 @@ function occupationFor(value){
 }
 function occupationPointTotal(o,c){
  return Math.max(...o.p.split('|').map(f=>f.split('+').reduce((sum,term)=>{const[k,m]=term.split('*');return sum+(+c[k]||0)*(+m||0)},0)));
+}
+/* Amnésia: ocupação exclusiva da ficha em branco normal. Não entra em OCC, então não aparece no gerador. */
+const AMNESIA_OCC={n:'Amnésia',p:'EDU*4',c:[0,99],s:['@any']};
+const isAmnesia=p=>!!p&&p.blank&&!p.unlimited&&p.occ==='Amnésia';
+const occInfoOf=p=>isAmnesia(p)?{occupation:AMNESIA_OCC,specialization:''}:occupationFor(p.occ);
+function amn(p){const a=p.amnesia&&typeof p.amnesia==='object'?p.amnesia:(p.amnesia={});if(!Array.isArray(a.frag))a.frag=[];a.released=Math.max(0,Math.floor(+a.released||0));if(typeof a.sealed!=='string')a.sealed='';return a}
+function amnesiaState(p){const a=amn(p),full=occupationPointTotal(AMNESIA_OCC,p.c),awake=Math.floor(full/2/5)*5,released=Math.min(Math.max(0,full-awake),a.released);return{full,awake,released,usable:awake+released,sleeping:Math.max(0,full-awake-released)}}
+const FRAG_TAG='Fragmento de memória:';
+const stripFragments=p=>{p.back=String(p.back||'').split('\n').filter(l=>!l.startsWith(FRAG_TAG)).join('\n').replace(/\n+$/,'')};
+const AMNESIA_FRAGS=[
+ {id:'piano',sk:'Arte/Ofício (Piano)',t:'Seus dedos tocam sozinhos uma melodia que você jura nunca ter ouvido.'},
+ {id:'pistol',sk:'Armas de Fogo (Pistolas)',t:'Você acordou com a mão fechada sobre o cabo de uma arma, sem saber de quem era.'},
+ {id:'scar',sk:'Medicina',t:'Uma cicatriz de cirurgia cuidadosa corta suas costelas, e ninguém se lembra de ter operado você.'},
+ {id:'aid',sk:'Primeiros Socorros',t:'Você estanca ferimentos de estranhos sem hesitar, como se já tivesse feito isso mil vezes.'},
+ {id:'latin',sk:'Língua (Latim)',t:'Palavras em latim escapam de você enquanto dorme.'},
+ {id:'lock',sk:'Chaveiro',t:'Seus dedos abrem qualquer fechadura antes de você pensar nela.'},
+ {id:'pharma',sk:'Ciência (Farmácia)',t:'O cheiro de uma farmácia faz o nome de cada remédio vir à sua língua.'},
+ {id:'draw',sk:'Arte/Ofício (Desenho)',t:'Há tinta antiga sob suas unhas e um rosto que você desenha sem parar.'},
+ {id:'swim',sk:'Natação',t:'Diante de água funda, o corpo já está pulando antes da mente.'},
+ {id:'nav',sk:'Navegação',t:'Você aponta o norte sem bússola, e o mapa na sua cabeça não é desta cidade.'},
+ {id:'drive',sk:'Dirigir Auto',t:'Seu pé procura uma embreagem que não existe.'},
+ {id:'climb',sk:'Escalar',t:'Muros altos parecem convites, e seus braços conhecem a escalada.'},
+ {id:'lie',sk:'Lábia',t:'Mentiras saem prontas dos seus lábios, e você teme de quem as aprendeu.'},
+ {id:'psych',sk:'Psicologia',t:'Você sabe quando alguém mente e não consegue explicar por quê.'},
+ {id:'listen',sk:'Escutar',t:'Passos que ninguém mais ouve fazem você se virar, sempre cedo demais.'},
+ {id:'knot',sk:'Pilotar (Barcos)',t:'Você ata nós de marinheiro sem olhar, e o cheiro de maresia dói.'},
+ {id:'occult',sk:'Ocultismo',t:'Certos símbolos gelam sua nuca. Você sabe o que significam, mas não de onde.'},
+ {id:'arch',sk:'Arqueologia',t:'A poeira de ruínas antigas lhe parece estranhamente familiar.'},
+ {id:'acct',sk:'Contabilidade',t:'Você soma colunas de números de cabeça, de um escritório que não consegue ver.'},
+ {id:'photo',sk:'Arte/Ofício (Fotografia)',t:'Você enquadra tudo com as mãos, como se segurasse uma câmera.'},
+ {id:'dodge',sk:'Esquivar',t:'Você se esquiva de golpes antes de eles existirem.'},
+ {id:'fight',sk:'Lutar (Brigar)',t:'Seus punhos têm hábitos violentos que você preferia não ter.'},
+ {id:'stealth',sk:'Furtividade',t:'Você pisa sem fazer barulho, como quem foge há muito tempo.'},
+ {id:'mech',sk:'Consertos Mecânicos',t:'Máquinas quebradas parecem pedir conserto, e você sabe onde mexer.'},
+ {id:'horse',sk:'Cavalgar',t:'Cavalos se acalmam ao seu toque, ainda que você não saiba por quê.'},
+ {id:'law',sk:'Direito',t:'Artigos de lei surgem na sua cabeça nos momentos mais estranhos.'},
+ {id:'hist',sk:'História',t:'Datas de batalhas esquecidas aparecem na sua mente, nítidas demais.'},
+ {id:'survive',sk:'Sobrevivência',t:'Você acende fogo na chuva e dorme com um olho aberto.'},
+ {id:'disguise',sk:'Disfarce',t:'Você muda de postura e de voz sem perceber, e se pergunta qual delas é a sua.'},
+ {id:'intimid',sk:'Intimidação',t:'As pessoas recuam quando você as encara, e isso assusta você mais do que a elas.'},
+ {id:'persuade',sk:'Persuasão',t:'Estranhos confiam em você rápido demais.'}];
+function amnesiaAction(p,action,btn){
+ const a=amn(p);
+ if(action==='recall'){const st=amnesiaState(p);if(!st.sleeping)return;const give=Math.min(10,st.sleeping);a.released+=give;p.skillNotice=`Memória recuperada: +${give} pontos ocupacionais. O Guardião pode pedir um teste de Sanidade.`;p.edit=true;draw();return}
+ if(action==='roll'){
+  const usedSk=new Set(a.frag.map(f=>f.sk)),pool=AMNESIA_FRAGS.filter(f=>!usedSk.has(f.sk)&&!a.frag.some(x=>x.id===f.id));
+  if(a.frag.length>=3||!pool.length)return;
+  const f=pick(pool);ensureSkillBudget(p);if(p.removed)delete p.removed[f.sk];
+  const now=p.sk[f.sk]!==undefined?+p.sk[f.sk]:Math.max(0,+base(f.sk,p.c)||0),floor=Object.prototype.hasOwnProperty.call(p.skillFloors,f.sk)?+p.skillFloors[f.sk]||0:Math.max(0,+base(f.sk,p.c)||0);
+  p.sk[f.sk]=now+10;p.skillFloors[f.sk]=floor+10;a.frag.push({id:f.id,t:f.t,sk:f.sk});
+  p.back=(p.back?String(p.back).replace(/\s+$/,'')+'\n':'')+`${FRAG_TAG} ${f.t} (+10 ${f.sk})`;p.skillNotice='';p.edit=true;draw();return}
+ if(action==='reset'){
+  for(const f of a.frag){if(p.sk[f.sk]!==undefined)p.sk[f.sk]=Math.max(0,p.sk[f.sk]-10);if(p.skillFloors[f.sk]!==undefined)p.skillFloors[f.sk]=Math.max(0,p.skillFloors[f.sk]-10)}
+  a.frag=[];stripFragments(p);p.edit=true;draw();return}
+ if(action==='seal'){const box=btn.closest('.amnesia-panel').querySelector('.am-sealed');box.classList.toggle('open');return}
+}
+function amnesiaRecallLabel(st){return st.full===0?'🧠 Defina a EDU primeiro':st.sleeping?`🧠 Recordar (+${Math.min(10,st.sleeping)} pts)`:'🧠 Memória completa'}
+function amnesiaRefresh(p,el){
+ const st=amnesiaState(p),set=(k,v)=>{const x=el.querySelector(`[data-am-${k}]`);if(x)x.textContent=String(v)};
+ set('awake',st.awake);set('released',st.released);set('sleeping',st.sleeping);
+ const b=el.querySelector('[data-am="recall"]');if(b){b.textContent=amnesiaRecallLabel(st);b.disabled=!st.sleeping}
+}
+function amnesiaPanel(p,i){
+ const a=amn(p),st=amnesiaState(p),n=a.frag.length;
+ const frags=n?a.frag.map(f=>`<li>${esc(f.t)} <b>+10 ${esc(f.sk)}</b></li>`).join(''):'<li class="am-none">Nenhum fragmento ainda. Sorteie até 3: cada um dá +10 numa perícia, sem gastar pontos.</li>';
+ return`<section class="amnesia-panel" aria-label="Regras da Amnésia"><h3 class="st">🌫️ Amnésia</h3><p class="am-intro">Você acordou sem saber quem é. A mente esqueceu, mas o corpo ainda lembra.</p>
+<div class="am-stats"><div><span>Pontos despertos</span><strong data-am-awake>${st.awake}</strong></div><div><span>Recuperados</span><strong data-am-released>${st.released}</strong></div><div><span>Adormecidos</span><strong data-am-sleeping>${st.sleeping}</strong></div></div>
+<div class="am-actions"><button type="button" class="alt" data-am="recall" data-i="${i}" ${st.sleeping?'':'disabled'}>${amnesiaRecallLabel(st)}</button></div>
+<h4 class="am-sub">Fragmentos de memória (${n}/3)</h4><ul class="am-frags">${frags}</ul>
+<div class="am-actions"><button type="button" class="alt" data-am="roll" data-i="${i}" ${n>=3?'disabled':''}>🎲 Sortear fragmento</button><button type="button" class="alt" data-am="reset" data-i="${i}" ${n?'':'disabled'}>↺ Refazer fragmentos</button></div>
+<label class="am-sealed-box"><span>Passado verdadeiro <small>· escrito pelo Guardião; fica borrado até clicar em Revelar</small></span><textarea class="in am-sealed" rows="3" data-am-sealed data-i="${i}" placeholder="Quem este investigador realmente era…">${esc(a.sealed)}</textarea></label>
+<div class="am-actions"><button type="button" class="alt" data-am="seal" data-i="${i}">👁 Revelar / ocultar</button></div>
+<small class="am-rules">Regras: só metade dos pontos ocupacionais (EDU × 4) está desperta; o resto volta quando o Guardião liberar “Recordar”, e cada lembrança pode pedir um teste de Sanidade. Os pontos ocupacionais valem para qualquer perícia, até 60%. Os fragmentos entram na Backstory.</small></section>`;
 }
 const crRangeTxt=p=>{const c=p.creditRange;if(!c||!c.mod)return'';return`faixa ${c.base[0]}–${c.base[1]} ajustada para ${c.final[0]}–${c.final[1]} (${crFmt(c.mod)})`};
 const histTxt=p=>{const origins=(p.hist||[]).map(h=>`${h.kind}: ${h.n}`).join(' | '),range=crRangeTxt(p);return[origins?'Histórico: '+origins:'',range?'Nível de Crédito: '+range:'',p.back||''].filter(Boolean).join('\n')};
@@ -699,6 +793,7 @@ function occupationSkillRules(p){
 }
 function hasExplicitOccupationalSkill(rules,n){return rules.names.has(n)||(rules.social&&SOC.includes(n))||(rules.language&&/^Língua \(/.test(n))}
 function isOccupationalSkill(p,n){
+ if(isAmnesia(p))return true;
  const rules=occupationSkillRules(p);
  if(hasExplicitOccupationalSkill(rules,n))return true;
  if(!rules.any)return false;
@@ -708,6 +803,7 @@ function isOccupationalSkill(p,n){
 }
 let occHlCache={key:null,rules:null};
 function isOccupationHighlight(p,n){
+ if(isAmnesia(p))return n==='Nível de Crédito';
  if(!p.blank||p.unlimited||!occupationFor(p.occ))return false;
  if(n==='Nível de Crédito')return true;
  if(occHlCache.key!==p.occ){occHlCache={key:p.occ,rules:occupationSkillRules(p)}}
@@ -716,15 +812,16 @@ function isOccupationHighlight(p,n){
 }
 function blankBudgetState(p){
  ensureSkillBudget(p);
- const info=occupationFor(p.occ),range=creditBounds(p),creditBase=range?range.min:0;
+ const info=occInfoOf(p),range=creditBounds(p),creditBase=range?range.min:0;
  const allocations=p.skillAllocations||{};
  const usedOcc=Object.values(allocations).reduce((sum,a)=>sum+(+a.occupational||0),0);
  const usedPersonal=Object.values(allocations).reduce((sum,a)=>sum+(+a.personal||0),0);
- const occupationalTotal=info?Math.max(0,occupationPointTotal(info.occupation,p.c)-creditBase):0;
+ const occupationalTotal=info?Math.max(0,(isAmnesia(p)?amnesiaState(p).usable:occupationPointTotal(info.occupation,p.c))-creditBase):0;
  const personalTotal=Math.max(0,(+p.c.INT||0)*2);
  return{occupational:{total:occupationalTotal,used:usedOcc,available:Math.max(0,occupationalTotal-usedOcc)},personal:{total:personalTotal,used:usedPersonal,available:Math.max(0,personalTotal-usedPersonal)},credit:range};
 }
 function resetBlankDistribution(p,occupation){
+ stripFragments(p);delete p.amnesia;
  p.occ=occupation;p.skillAllocations={};p.skillPoints={available:0};p.skillNotice='';
  ensureSkillBudget(p);
  const range=creditBounds(p);
@@ -739,7 +836,7 @@ function blankBudgetPanel(p,i){
  const b=blankBudgetState(p),credit=b.credit,mode=p.skillBudgetMode||'occupational';
   const defaultNote='Pontos ocupacionais descontam o Crédito mínimo e valem para perícias da ocupação. Pontos pessoais equivalem a INT × 2. Trocar de ocupação zera a distribuição.';
   const creditParts=credit?`Mínimo <b>${credit.min}</b> · Máximo <b>${credit.max}</b>`:'Escolha uma ocupação para ver a faixa';
-  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div><small class="occ-legend" data-occ-legend ${mode==='occupational'&&credit?'':'hidden'}><span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
+  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div><small class="occ-legend" data-occ-legend ${mode==='occupational'&&credit?'':'hidden'}>${isAmnesia(p)?'🌫️ Instinto: qualquer perícia aceita pontos ocupacionais, mas só até 60%. Metade dos pontos está adormecida (veja Amnésia abaixo).':'<span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.'}</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
 }
 const fr=(p,k)=>{const v=+get(p,k)||0;return(v>>1)+' / '+Math.floor(v/5)};
 const inp=(p,i,k,attrs='')=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${k}" ${attrs} value="${esc(get(p,k))}">`;
@@ -769,7 +866,7 @@ function body(p,i){
  const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
  return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
-  <div class="stats-head"><span>Atributos</span><button type="button" class="rrb" data-i="${i}" title="Sortear novos atributos (e redistribuir as perícias)">🎲 Rerolar atributos</button></div><div class="stats">${st}</div><div class="der">${d}</div>${skillPool}
+  <div class="stats-head"><span>Atributos</span><button type="button" class="rrb" data-i="${i}" title="Sortear novos atributos (e redistribuir as perícias)">🎲 Rerolar atributos</button></div><div class="stats">${st}</div><div class="der">${d}</div>${skillPool}${isAmnesia(p)?amnesiaPanel(p,i):''}
   <h3 class="st">Perícias do personagem</h3><div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${sk}</div>${addM}${fa}${mobileActions}`;
 }
 function occSelect(p,i){
@@ -914,6 +1011,7 @@ function refresh(i){
   const points=el.querySelector('[data-skill-points]');if(points)points.textContent=String(p.skillPoints&&p.skillPoints.available||0);
   const pointNote=el.querySelector('[data-skill-pool-note]');if(pointNote)pointNote.textContent=p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.';
  }
+ if(isAmnesia(p))amnesiaRefresh(p,el);
  const t=el.querySelector('.win-title');if(t)t.textContent=ttl(p);
  persist();
 }
@@ -938,6 +1036,7 @@ desk.addEventListener('click',e=>{
  const i=e.target.closest('[data-i]');
  const idx=i?+i.dataset.i:NaN;
  const blankOcc=e.target.closest('[data-blank-occ]');if(blankOcc){const k=+blankOcc.dataset.i,p=cur[k];if(p&&p.blank&&window.openBlankOccupationPicker)window.openBlankOccupationPicker(p.occ,next=>{const live=cur[k];if(!live||!live.blank||live.occ===next)return;resetBlankDistribution(live,next);live.edit=true;draw();persist()});return}
+ const amBtn=e.target.closest('[data-am]');if(amBtn){const k=+amBtn.dataset.i,p=cur[k];if(p&&isAmnesia(p))amnesiaAction(p,amBtn.dataset.am,amBtn);return}
  const removePortrait=e.target.closest('[data-portrait-remove]');if(removePortrait){const k=+removePortrait.dataset.i,p=cur[k];if(p){delete p.portrait;p.edit=true;draw()}return}
  const tab=e.target.closest('[data-sheet-tab]');if(tab){const k=+tab.closest('.win').dataset.i,chosen=tab.dataset.sheetTab;cur[k].ui.tab=['equipment','backstory'].includes(chosen)?chosen:'sheet';draw();return}
  const eqAction=e.target.closest('[data-eq-action]');if(eqAction){
@@ -1009,6 +1108,7 @@ desk.addEventListener('change',e=>{
    if(mode==='personal'&&n==='Nível de Crédito'){next=old;notice='Nível de Crédito usa pontos ocupacionais, não pontos pessoais.'}
    else if(mode==='occupational'&&n!=='Nível de Crédito'&&!isOccupationalSkill(p,n)){next=old;notice=`${n} não faz parte das perícias desta ocupação. Use pontos pessoais para esta perícia.`}
    else{
+    if(isAmnesia(p)&&mode==='occupational'&&n!=='Nível de Crédito'&&next>60){next=Math.max(old,60);notice='Instinto: com pontos ocupacionais, a Amnésia só chega a 60% numa perícia. Pontos pessoais podem passar disso.'}
     const available=budgets[mode].available,requested=next-old;
     if(requested>available){next=old+available;notice=`Há ${available} ponto(s) ${mode==='personal'?'pessoal(is)':'ocupacional(is)'} disponível(is) para ${n}; o valor foi limitado a ${next}%.`}
     const allocation=p.skillAllocations=p.skillAllocations||{},entry=allocation[n]=allocation[n]||{occupational:0,personal:0};entry[mode]+=next-old;
@@ -1079,6 +1179,7 @@ desk.addEventListener('pointerdown',e=>{
  document.addEventListener('pointerup',onDragEnd);
 });
 desk.addEventListener('input',e=>{
+ const sealed=e.target.closest('[data-am-sealed]');if(sealed){const p=cur[+sealed.dataset.i];if(p){amn(p).sealed=sealed.value;p.edit=true;persist()}return}
  const zoom=e.target.closest('[data-portrait-zoom]');if(zoom){const i=+zoom.dataset.i,p=cur[i];if(!p)return;p.portrait=p.portrait||{src:'',x:0,y:0};p.portrait.zoom=+zoom.value;const win=zoom.closest('.win'),canvas=win&&win.querySelector('[data-portrait-canvas]');if(canvas)paintPortrait(canvas,p);p.edit=true;persist();return}
  const eq=e.target.closest('[data-eq-field]');if(eq){
   const win=eq.closest('.win'),k=win?+win.dataset.i:NaN,p=cur[k],item=p&&window.CthEquipment.find(p,eq.dataset.eqId);if(!item)return;
@@ -1344,4 +1445,4 @@ window.DynamicInfo=(()=>{
  }catch(_){}
  draw();
 })();
-</script><script src="notebook.js" defer></script><script src="cemiterio.js" defer></script><script src="backup.js" defer></script><script src="ocupacoes.js" defer></script><script src="lua.js" defer></script><script src="mobile.js" defer></script><script src="destaque-ocupacao.js" defer></script></body></html>
+</script><script src="notebook.js" defer></script><script src="cemiterio.js" defer></script><script src="backup.js" defer></script><script src="ocupacoes.js" defer></script><script src="lua.js" defer></script><script src="mobile.js" defer></script></body></html>
