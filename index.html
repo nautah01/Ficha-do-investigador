@@ -169,6 +169,17 @@ button.danger{background:#b91c1c;color:#fff;border-color:#f87171}
 button.danger:hover{background:#dc2626}
 @keyframes dlgin{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.dlg{animation:none}}
+.dlg.sheet-type{width:min(560px,100%)}
+.dlg.sheet-type h4{margin-bottom:12px}
+.sheet-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 14px}
+.dlg .sheet-opt{display:flex;flex-direction:column;align-items:flex-start;gap:6px;height:100%;padding:12px;text-align:left;font-weight:normal;color:var(--txt);background:rgba(var(--gr),.06);border:1px solid var(--line);border-radius:8px;box-shadow:none;text-shadow:none;transition:border-color .15s,background .15s,transform .15s}
+.dlg .sheet-opt:hover,.dlg .sheet-opt:focus-visible{background:rgba(var(--gr),.14);border-color:var(--head);transform:translateY(-2px)}
+.sheet-opt .so-ico{font-size:1.7rem;line-height:1}
+.sheet-opt strong{color:var(--head);font-size:1rem;letter-spacing:.3px}
+.sheet-opt .so-desc{font-size:.8rem;line-height:1.45;color:var(--muted)}
+.skill-pool.unlimited-note{grid-template-columns:1fr}
+@media(max-width:520px){.sheet-opts{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.dlg .sheet-opt{transition:none}.dlg .sheet-opt:hover,.dlg .sheet-opt:focus-visible{transform:none}}
 button.alt.on{background:rgba(var(--gr),.18);border-color:#efe0ae}
 body.mobile{padding:12px 10px 90px}
 body.mobile h1{font-size:1.5rem;letter-spacing:1px}
@@ -262,7 +273,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <button id="go">🎲 Gerar</button>
 </div>
 <div class="blank-sheet-option">
-<div class="blank-sheet-copy"><strong>Começar uma ficha do zero</strong><span>Cria uma ficha em branco para você preencher e editar manualmente depois.</span></div>
+<div class="blank-sheet-copy"><strong>Começar uma ficha do zero</strong><span>Cria uma ficha em branco para preencher à mão. Você escolhe entre a ficha normal (com as regras de criação) e a ficha sem limites.</span></div>
 <button class="alt" id="blank" title="Criar uma ficha em branco para preencher manualmente">📝 Criar ficha em branco</button>
 </div>
 </div>
@@ -539,6 +550,7 @@ function bgFor(slot,oo){
 }
 const crFmt=n=>(n>0?'+':'')+n;
 function creditBounds(p){
+ if(p.unlimited)return null;
  if(p.blank){
   const occupationInfo=occupationFor(p.occ);
   if(!occupationInfo)return null;
@@ -613,6 +625,19 @@ function gen(sel,sel2,keep){
  return{hist,back:hist.map(g=>g.t).join('\n'),nome:pick([...NF,...NM])+' '+pick(SN),idade:20+r(20),occ:o.n+(oT.spec?` (${oT.spec})`:''),sec:sec?sec.n+(secT.spec?` (${secT.spec})`:''):'',c,sk,skillFloors,skillPoints:{available:0},skillNotice:'',creditRange:{base:[o.c[0],o.c[1]],final:[crMin,crMax],mod:creditMod},edit:false,der:{...calc(c),luck:A()}};
 }
 /* confirmação dinâmica reutilizada por todo o site: askConfirm({title,html,ok,danger}) → Promise<boolean> */
+/* escolha do tipo de ficha em branco: askSheetType() → 'normal' | 'unlimited' | null */
+function askSheetType(){return new Promise(ok=>{
+ const ov=document.createElement('div'),prev=document.activeElement;ov.className='ovl';
+ ov.innerHTML=`<div class="dlg sheet-type" role="dialog" aria-modal="true" aria-labelledby="stT"><h4 id="stT">Que tipo de ficha em branco?</h4><div class="sheet-opts"><button type="button" class="sheet-opt" data-t="normal"><span class="so-ico" aria-hidden="true">📜</span><strong>Ficha normal</strong><span class="so-desc">Segue as regras de criação de Chamado de Cthulhu. Você escolhe uma ocupação da lista, a faixa de Nível de Crédito dela é respeitada e os pontos ocupacionais e pessoais (INT × 2) são distribuídos com limites.</span></button><button type="button" class="sheet-opt" data-t="unlimited"><span class="so-ico" aria-hidden="true">♾️</span><strong>Ficha sem limites</strong><span class="so-desc">Tudo é livre. Você escreve a ocupação que quiser e edita qualquer atributo ou perícia sem mínimo nem máximo. Não há pontos a distribuir nem faixa de Nível de Crédito.</span></button></div><div class="row"><button type="button" class="alt" data-t="">Cancelar</button></div></div>`;
+ const key=e=>{
+  if(e.key==='Escape'){e.preventDefault();done(null)}
+  else if(e.key==='Tab'){const bs=[...ov.querySelectorAll('button')],k=bs.indexOf(document.activeElement);e.preventDefault();bs[(k+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()}
+ };
+ const done=v=>{document.removeEventListener('keydown',key,true);ov.remove();if(prev&&prev.focus)prev.focus();ok(v)};
+ ov.addEventListener('click',e=>{const b=e.target.closest('button');if(b)done(b.dataset.t||null);else if(e.target===ov)done(null)});
+ document.addEventListener('keydown',key,true);
+ document.body.appendChild(ov);ov.querySelector('[data-t="normal"]').focus();
+})}
 function askConfirm(o){return new Promise(ok=>{
  const ov=document.createElement('div'),prev=document.activeElement;ov.className='ovl';
  ov.innerHTML=`<div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlgT"><h4 id="dlgT">${o.title}</h4><p>${o.html}</p><div class="row"><button class="alt" data-r="0">Cancelar</button><button class="${o.danger===false?'':'danger'}" data-r="1">${o.ok||'Confirmar'}</button></div></div>`;
@@ -626,13 +651,13 @@ function askConfirm(o){return new Promise(ok=>{
  document.body.appendChild(ov);ov.querySelector('[data-r="0"]').focus();
 })}
 const confirmDel=name=>askConfirm({title:'Excluir ficha?',html:`<strong>${esc(name)}</strong> será apagada e isso não dá para desfazer.`,ok:'🗑 Excluir'});
-const ttl=p=>[p.nome,p.occ].filter(Boolean).join(' — ')||'Ficha em branco';
+const ttl=p=>[p.nome,p.occ].filter(Boolean).join(' — ')||(p.unlimited?'Ficha sem limites':'Ficha em branco');
 /* ficha em branco: atributos zerados, sem nome/ocupação, perícias mais usadas com o valor inicial */
 const BLANK_SK=['Esquivar','Encontrar','Escutar','Psicologia','Usar Biblioteca','Furtividade','Lutar (Brigar)','Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Primeiros Socorros','Persuasão','Lábia','Charme','Intimidação','Ocultismo','História','Dirigir Auto','Escalar','Mundo Natural','Consertos Mecânicos','Eletrônica','Usar Computadores','Língua Natural','Nível de Crédito'];
-function genBlank(){
+function genBlank(unlimited){
  const c={FOR:0,CON:0,POD:0,DES:0,APA:0,TAM:0,INT:0,EDU:0},sk={};
  BLANK_SK.forEach(n=>sk[n]=base(n,c));
- return{nome:'',idade:'',occ:'',sec:'',c,sk,edit:false,pinned:true,blank:true,der:{hp:0,san:0,luck:0,pm:0,mov:0,db:'0',corpo:0}};
+ return{nome:'',idade:'',occ:'',sec:'',c,sk,edit:false,pinned:true,blank:true,...(unlimited?{unlimited:true}:{}),der:{hp:0,san:0,luck:0,pm:0,mov:0,db:'0',corpo:0}};
 }
 const srt=(a,b)=>a.n.localeCompare(b.n,'pt');
 const STORE='coc7-investigadores-v2';
@@ -651,12 +676,13 @@ function ensureSkillBudget(p){
  p.skillPoints.available=Math.max(0,Math.floor(+p.skillPoints.available||0));
  for(const n of Object.keys(p.sk||{}))if(!Object.prototype.hasOwnProperty.call(p.skillFloors,n)){
   const cr=n==='Nível de Crédito'?creditBounds(p):null;
-  p.skillFloors[n]=cr?cr.min:Math.max(0,+base(n,p.c)||0);
+  p.skillFloors[n]=p.unlimited?0:cr?cr.min:Math.max(0,+base(n,p.c)||0);
  }
- for(const n of Object.keys(p.custom||{}))if(!Object.prototype.hasOwnProperty.call(p.skillFloors,n))p.skillFloors[n]=Math.max(0,+base(n,p.c)||0,+p.custom[n]||0);
+ for(const n of Object.keys(p.custom||{}))if(!Object.prototype.hasOwnProperty.call(p.skillFloors,n))p.skillFloors[n]=p.unlimited?0:Math.max(0,+base(n,p.c)||0,+p.custom[n]||0);
 }
 const skillFloor=(p,n)=>{
  ensureSkillBudget(p);
+ if(p.unlimited)return 0;
  if(Object.prototype.hasOwnProperty.call(p.skillFloors,n))return Math.max(0,+p.skillFloors[n]||0);
  const cr=n==='Nível de Crédito'?creditBounds(p):null;
  return cr?cr.min:Math.max(0,+base(n,p.c)||0);
@@ -682,7 +708,7 @@ function isOccupationalSkill(p,n){
 }
 let occHlCache={key:null,rules:null};
 function isOccupationHighlight(p,n){
- if(!p.blank||!occupationFor(p.occ))return false;
+ if(!p.blank||p.unlimited||!occupationFor(p.occ))return false;
  if(n==='Nível de Crédito')return true;
  if(occHlCache.key!==p.occ){occHlCache={key:p.occ,rules:occupationSkillRules(p)}}
  const rules=occHlCache.rules;
@@ -708,6 +734,7 @@ function resetBlankDistribution(p,occupation){
   p.skillFloors[n]=minimum;p.sk[n]=minimum;
  }
 }
+const unlimitedPanel=()=>`<aside class="skill-pool unlimited-note" role="note"><b>Ficha sem limites</b><small>Não há pontos para distribuir nem mínimos ou máximos. Edite livremente atributos, perícias, ocupação e Nível de Crédito.</small></aside>`;
 function blankBudgetPanel(p,i){
  const b=blankBudgetState(p),credit=b.credit,mode=p.skillBudgetMode||'occupational';
   const defaultNote='Pontos ocupacionais descontam o Crédito mínimo e valem para perícias da ocupação. Pontos pessoais equivalem a INT × 2. Trocar de ocupação zera a distribuição.';
@@ -735,18 +762,18 @@ function body(p,i){
  ensureSkillBudget(p);
  const st=Object.keys(p.c).map(k=>`<div><b>${k}</b>${inp(p,i,'c:'+k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`).join('');
  const sk=Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n])=>row(p,i,n,1)).join('');
- const skillPool=p.blank?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
+ const skillPool=p.unlimited?unlimitedPanel():p.blank?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
  const addM=`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" data-add="n"><input class="in" type="number" value="50" title="Valor" data-add="v"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
   const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k)}</label>`).join('');
- const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk${p.blank&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
+ const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
  const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
  return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
   <div class="stats-head"><span>Atributos</span><button type="button" class="rrb" data-i="${i}" title="Sortear novos atributos (e redistribuir as perícias)">🎲 Rerolar atributos</button></div><div class="stats">${st}</div><div class="der">${d}</div>${skillPool}
-  <h3 class="st">Perícias do personagem</h3><div class="sk${p.blank&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${sk}</div>${addM}${fa}${mobileActions}`;
+  <h3 class="st">Perícias do personagem</h3><div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${sk}</div>${addM}${fa}${mobileActions}`;
 }
 function occSelect(p,i){
- if(!p.blank)return`<input class="in occ-text" data-i="${i}" data-k="n:occ" aria-label="Ocupação do investigador" placeholder="Ocupação" value="${esc(p.occ||'')}">`;
+ if(!p.blank||p.unlimited)return`<input class="in occ-text" data-i="${i}" data-k="n:occ" aria-label="Ocupação do investigador" placeholder="${p.unlimited?'Ocupação (escreva livremente)':'Ocupação'}" value="${esc(p.occ||'')}">`;
  const current=String(p.occ||'');
  return`<button type="button" class="pickbtn blank-occ-picker" data-blank-occ data-i="${i}" aria-haspopup="dialog" aria-label="Escolher ocupação do investigador"><span class="pe">🧭</span><span class="pt">${esc(current||'Escolher ocupação')}</span><span class="pc">▾</span></button>`;
 }
@@ -852,12 +879,12 @@ function rerollAttrs(i){
  const p=cur[i];if(!p)return;
  if(!p.blank&&rerollFull(p))return;
  const next={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
- const derived=['Esquivar','Língua Natural'].map(n=>({n,oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');
+ const derived=['Esquivar','Língua Natural'].map(n=>({n,oldBase:base(n,p.c),oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');
  Object.assign(p.c,next);
  const luck=p.der&&p.der.luck;
  p.der={...p.der,...calc(p.c)};if(luck!==undefined)p.der.luck=luck; /* a Sorte é outra rolagem: não muda */
- for(const d of derived)if(d.value!==undefined){const newBase=Math.max(0,+base(d.n,p.c)||0),bonus=Math.max(0,(+d.value||0)-d.oldFloor);p.sk[d.n]=newBase+bonus;p.skillFloors[d.n]=newBase}
- if(p.blank&&p.sk['Nível de Crédito']!==undefined){
+ for(const d of derived)if(d.value!==undefined){const newBase=Math.max(0,+base(d.n,p.c)||0);if(p.unlimited){if((+d.value||0)===d.oldBase)p.sk[d.n]=newBase;p.skillFloors[d.n]=0}else{const bonus=Math.max(0,(+d.value||0)-d.oldFloor);p.sk[d.n]=newBase+bonus;p.skillFloors[d.n]=newBase}}
+ if(p.blank&&!p.unlimited&&p.sk['Nível de Crédito']!==undefined){
   const range=creditBounds(p),floor=range?range.min:Math.max(0,+base('Nível de Crédito',p.c)||0),ceiling=range?range.max:999;
   const value=Math.max(floor,Math.min(ceiling,oldCreditValue));p.skillFloors['Nível de Crédito']=floor;p.sk['Nível de Crédito']=value;
   const allocations=p.skillAllocations&&p.skillAllocations['Nível de Crédito'];if(allocations){allocations.occupational=Math.max(0,value-floor);allocations.personal=0;if(!allocations.occupational)delete p.skillAllocations['Nível de Crédito']}
@@ -871,7 +898,7 @@ function refresh(i){
  el.querySelectorAll('[data-k]').forEach(x=>{if(x!==document.activeElement)x.value=get(p,x.dataset.k)});
  el.querySelectorAll('[data-f]').forEach(x=>x.textContent=fr(p,x.dataset.f));
  el.querySelectorAll('[data-skill-input]').forEach(input=>{const n=input.dataset.k.slice(2),range=n==='Nível de Crédito'&&p.blank?creditBounds(p):null;input.min=String(skillFloor(p,n));if(range)input.max=String(range.max);else input.removeAttribute('max')});
- if(p.blank){
+ if(p.unlimited){/* ficha sem limites: sem pontos nem faixas */}else if(p.blank){
   const budgets=blankBudgetState(p);
   for(const type of ['occupational','personal']){
    const available=el.querySelector(`[data-budget-available="${type}"]`),total=el.querySelector(`[data-budget-total="${type}"]`);
@@ -970,6 +997,7 @@ desk.addEventListener('change',e=>{
  const skillInput=e.target.closest('[data-skill-input]');if(skillInput){
   const i=+skillInput.dataset.i,p=cur[i],n=skillInput.dataset.k.slice(2);if(!p)return;
   ensureSkillBudget(p);
+  if(p.unlimited){const inSk=Object.prototype.hasOwnProperty.call(p.sk,n),free=Math.max(0,Math.min(999,Math.floor(Number(skillInput.value)||0)));p.sk[n]=free;p.skillNotice='';p.edit=true;skillInput.value=String(free);if(inSk)refresh(i);else draw();persist();return}
   const wasMain=Object.prototype.hasOwnProperty.call(p.sk,n),old=Math.max(0,+get(p,'s:'+n)||0),minimum=skillFloor(p,n);
   let next=Math.max(0,Math.min(999,Math.floor(Number(skillInput.value)||0))),notice='';
   const creditRange=p.blank&&n==='Nível de Crédito'?creditBounds(p):null;
@@ -1066,8 +1094,8 @@ desk.addEventListener('input',e=>{
   if(a==='c'){
    const derived=['Esquivar','Língua Natural'].map(n=>({n,oldBase:base(n,p.c),oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');p.c[x]=v;
    p.der={...p.der,...calc(p.c)};
-   for(const d of derived)if(d.value!==undefined){const newBase=Math.max(0,+base(d.n,p.c)||0),bonus=Math.max(0,(+d.value||0)-d.oldFloor);p.sk[d.n]=newBase+bonus;p.skillFloors[d.n]=newBase}
-   if(p.blank&&p.sk['Nível de Crédito']!==undefined){
+   for(const d of derived)if(d.value!==undefined){const newBase=Math.max(0,+base(d.n,p.c)||0);if(p.unlimited){if((+d.value||0)===d.oldBase)p.sk[d.n]=newBase;p.skillFloors[d.n]=0}else{const bonus=Math.max(0,(+d.value||0)-d.oldFloor);p.sk[d.n]=newBase+bonus;p.skillFloors[d.n]=newBase}}
+   if(p.blank&&!p.unlimited&&p.sk['Nível de Crédito']!==undefined){
     const range=creditBounds(p),floor=range?range.min:Math.max(0,+base('Nível de Crédito',p.c)||0),ceiling=range?range.max:999;
     const value=Math.max(floor,Math.min(ceiling,oldCreditValue));p.skillFloors['Nível de Crédito']=floor;p.sk['Nível de Crédito']=value;
     const allocations=p.skillAllocations&&p.skillAllocations['Nível de Crédito'];if(allocations){allocations.occupational=Math.max(0,value-floor);allocations.personal=0;if(!allocations.occupational)delete p.skillAllocations['Nível de Crédito']}
@@ -1107,8 +1135,9 @@ function go(){
  cur=kept.concat(neu);draw();
 }
 document.getElementById('go').onclick=go;
-document.getElementById('blank').onclick=()=>{
- const p=genBlank();placeNew(p,0,cur);cur.push(p);draw();
+document.getElementById('blank').onclick=async()=>{
+ const type=await askSheetType();if(!type)return;
+ const p=genBlank(type==='unlimited');placeNew(p,0,cur);cur.push(p);draw();
  const el=winEl(cur.length-1);if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
 };
 function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
