@@ -1,6 +1,6 @@
 /* Backup: baixa tudo (fichas, bloco de notas, cemitério) num arquivo .json e carrega de volta em qualquer navegador */
 (()=>{
-const FORMAT='cthulhu-backup',LS=['coc7-investigadores-v2','cthulhu-cemiterio'],THEMES=['green','red','blue','paper'];
+const FORMAT='cthulhu-backup',STORE_KEY='coc7-investigadores-v2',LS=['cthulhu-cemiterio','cthulhu-bg'],THEMES=['green','red','blue','paper'];
 const $=id=>document.getElementById(id);
 const open=()=>new Promise((ok,no)=>{const r=indexedDB.open('cthulhu-notas',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
 const getNotes=async()=>{const d=await open();return new Promise((ok,no)=>{const q=d.transaction('kv').objectStore('kv').get('board');q.onsuccess=()=>ok(q.result??null);q.onerror=()=>no(q.error)})};
@@ -9,7 +9,9 @@ const setNotes=async v=>{const d=await open();return new Promise((ok,no)=>{const
 async function exportar(){
  try{
   if(window.Notas&&window.Notas.flush)await window.Notas.flush();
-  const ls={};LS.forEach(k=>ls[k]=localStorage.getItem(k));
+  /* fichas: vêm da memória da página (ou do banco, se a página ainda não terminou de carregar) */
+  const state=(typeof storeReady!=='undefined'&&storeReady&&typeof snapshot==='function')?snapshot():(await FichaStore.reload()).state;
+  const ls={};ls[STORE_KEY]=state?JSON.stringify(state):null;LS.forEach(k=>ls[k]=localStorage.getItem(k));
   const storedTheme=localStorage.getItem('cthulhu-tema')||document.documentElement.dataset.theme||'green';
   const tema=THEMES.includes(storedTheme)?storedTheme:'green';
   const data={format:FORMAT,version:2,exportedAt:new Date().toISOString(),ls,tema,notas:await getNotes()};
@@ -24,14 +26,19 @@ async function importar(file){
  try{data=JSON.parse(await file.text())}catch{return alert('Este arquivo não é um backup válido.')}
  if(!data||data.format!==FORMAT||!data.ls||typeof data.ls!=='object'||Array.isArray(data.ls)||![1,2].includes(data.version??1))return alert('Este arquivo não parece ser um backup deste site.');
  if(data.tema!=null&&!THEMES.includes(data.tema))return alert('O tema informado no backup não é válido.');
+ let fichas=null;
+ /* as fichas passam pela validação de formato antes de qualquer gravação: arquivo adulterado ou de outra origem não entra */
+ if(data.ls[STORE_KEY]!=null){try{fichas=sanitizeState(JSON.parse(data.ls[STORE_KEY]))}catch{return alert('O backup está corrompido (fichas).')}if(!fichas)return alert('O backup não contém fichas em um formato válido.')}
  for(const k of LS){const v=data.ls[k];if(v!=null)try{JSON.parse(v)}catch{return alert('O backup está corrompido ('+k+').')}}
  if(!await(window.askConfirm?askConfirm({title:'Carregar este backup?',html:'Isso vai <strong>substituir</strong> as fichas, o tema, os quadros de pistas, o livro de anotações e o cemitério deste navegador pelos do arquivo. Não dá para desfazer.',ok:'📂 Carregar dados'}):Promise.resolve(confirm('Carregar este backup vai substituir os dados deste navegador. Continuar?'))))return;
  try{
   if(window.Notas&&window.Notas.flush)await window.Notas.flush();
+  blockSaves=true; /* impede que esta página regrave as fichas antigas por cima das importadas */
   await setNotes(data.notas);
+  await FichaStore.importState(fichas||{cur:[],occ:'',occ2:'',qty:1,zTop:20});
   LS.forEach(k=>data.ls[k]==null?localStorage.removeItem(k):localStorage.setItem(k,data.ls[k]));
   if(data.tema!=null)localStorage.setItem('cthulhu-tema',data.tema);
- }catch{return alert('Não foi possível gravar os dados neste navegador (armazenamento cheio ou bloqueado).')}
+ }catch{blockSaves=false;return alert('Não foi possível gravar os dados neste navegador (armazenamento cheio ou bloqueado).')}
  location.reload();
 }
 

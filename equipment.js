@@ -3,13 +3,13 @@
    - Cada item prioriza imagens locais do catálogo e usa referências da Wikipédia como alternativa.
    - Munição não é mais um item: ela é controlada dentro da própria arma de fogo. */
 (()=>{
- const SKILLS=['Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Armas de Fogo (Arco)','Armas de Fogo (Metralhadoras)','Lutar (Brigar)','Lutar (Machado)','Lutar (Chicote)','Arremessar','Primeiros Socorros','Medicina','Psicologia','Dirigir Auto','Outro (escrever)'];
+ const SKILLS=['Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Armas de Fogo (Submetralhadora)','Armas de Fogo (Metralhadoras)','Armas de Fogo (Arco)','Lutar (Brigar)','Lutar (Espada)','Lutar (Lança)','Lutar (Machado)','Lutar (Chicote)','Arremessar','Primeiros Socorros','Medicina','Psicologia','Dirigir Auto','Outro (escrever)'];
  const CATS=['Geral','Cura','Arma de fogo','Arma corpo a corpo'];
  const ICON={'Geral':'🎒','Cura':'🩹','Arma de fogo':'🔫','Arma corpo a corpo':'🗡️'};
  const CREDIT_JUSTIFICATIONS={inherited:'Item herdado',mission:'Comprado com dinheiro recebido em uma missão',gift:'Presente ou recebido de alguém',guardian:'Autorizado pelo Guardião'};
  const EQUIPMENT_YEARS=[1850,1900,1920,1950,1980,2000,2020,2026];
  /* q = termo de busca (título de artigo da Wikipédia em inglês) usado para achar a imagem de referência */
- const assetPaths=file=>{const enc=s=>s.split('/').map(encodeURIComponent).join('/'),v='20261011',staged=enc('Novas alterações');return[`equip-images/${enc(file)}?v=${v}`,`${staged}/equip-images/${enc(file)}?v=${v}`,`${staged}/${enc(file)}?v=${v}`,`${enc(file)}?v=${v}`]};
+ const assetPaths=file=>{const enc=s=>s.split('/').map(encodeURIComponent).join('/'),v='20261017';return[`equip-images/${enc(file)}?v=${v}`]}; /* um único caminho: sem tentativas em pastas que não existem */
  const CATALOG=[
   {id:'wallet',cat:'Geral',name:'Carteira com identidade',q:'Wallet',imgPaths:assetPaths('download.png'),imgTransparent:true,imgRev:5,notes:'Carteira, documentos e identificação.'},
   {id:'notebook',cat:'Geral',name:'Caderno e lápis',q:'Pencil',imgPaths:assetPaths('caderno de anotações.png'),imgTransparent:true,imgRev:5},
@@ -52,7 +52,7 @@
   {id:'syringe',cat:'Cura',name:'Seringas hipodérmicas',q:'Hypodermic needle'},
   {id:'alcohol',cat:'Cura',name:'Álcool medicinal',q:'Rubbing alcohol'},
   {id:'laxative',cat:'Cura',name:'Laxante',q:'Laxative',uses:1,imgPaths:assetPaths('Laxante.png'),imgTransparent:true,imgRev:1,notes:'Consumível; a dose e os efeitos dependem do cenário.'},
-  {id:'crutches',cat:'Cura',name:'Muletas',q:'Crutch',imgPaths:['equip-images/crutches.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/crutches.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/crutches.png?v=20261010','crutches.png?v=20261010'],imgRev:4},
+  {id:'crutches',cat:'Cura',name:'Muletas',q:'Crutch',imgPaths:['equip-images/crutches.png?v=20261017'],imgRev:4},
   {id:'pistol22',cat:'Arma de fogo',name:'Pistola automática .22 Short',q:'Semi-automatic pistol',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'10 jardas',rate:'1 (até 3)',capacity:6,ammo:'.22 Short',mal:100,eraFrom:1900},
   {id:'derringer25',cat:'Arma de fogo',name:'Derringer .25 (cano único)',q:'Derringer',skill:'Armas de Fogo (Pistolas)',damage:'1D6',range:'3 jardas',rate:'1',capacity:1,ammo:'.25',mal:100,eraFrom:1900,creditMin:15,creditVintage:10},
   {id:'revolver32',cat:'Arma de fogo',name:'Revólver .32 / 7,65 mm',q:'Colt Police Positive',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.32',mal:100,eraFrom:1905,eraTo:1947,creditMin:20,creditVintage:10},
@@ -67,29 +67,29 @@
   {id:'elephantgun',cat:'Arma de fogo',name:'Rifle para elefantes (cano duplo)',q:'Double rifle',skill:'Armas de Fogo (Rifles)',damage:'3D6+4',range:'100 jardas',rate:'1 ou 2',capacity:2,ammo:'calibre pesado',mal:100,creditMin:60,eraFrom:1850,creditVintage:15,imgRev:2},
   {id:'shotgun12',cat:'Arma de fogo',name:'Espingarda calibre 12 (cano duplo)',q:'Double-barreled shotgun',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1 ou 2',capacity:2,ammo:'calibre 12',mal:100,eraFrom:1870},
   {id:'shotgun12auto',cat:'Arma de fogo',name:'Espingarda calibre 12 semiautomática',q:'Browning Auto-5',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1 (até 2)',capacity:5,ammo:'calibre 12',mal:100,creditMin:40,eraFrom:1902,eraTo:1998,creditVintage:10,imgRev:2},
-  {id:'thompson',cat:'Arma de fogo',name:'Submetralhadora Thompson',q:'Thompson submachine gun',skill:'Armas de Fogo (Metralhadoras)',damage:'1D10+2',range:'20 jardas',rate:'1 ou rajada automática',capacity:20,ammo:'.45',mal:96,creditMin:60,eraFrom:1921,eraTo:1945,creditVintage:20,imgRev:2,caution:'Arma automática rara e normalmente indisponível a civis; confirme a disponibilidade com o Guardião.',notes:'Inclui carregador de 20 cartuchos na configuração de referência.'},
+  {id:'thompson',cat:'Arma de fogo',name:'Submetralhadora Thompson',q:'Thompson submachine gun',skill:'Armas de Fogo (Submetralhadora)',damage:'1D10+2',range:'20 jardas',rate:'1 ou rajada automática',capacity:20,ammo:'.45',mal:96,creditMin:60,eraFrom:1921,eraTo:1945,creditVintage:20,imgRev:2,caution:'Arma automática rara e normalmente indisponível a civis; confirme a disponibilidade com o Guardião.',notes:'Inclui carregador de 20 cartuchos na configuração de referência.'},
   {id:'crossbow',cat:'Arma de fogo',name:'Besta',q:'Crossbow',skill:'Armas de Fogo (Arco)',damage:'1D8+2',range:'50 jardas',rate:'1 a cada 2 rodadas',capacity:1,ammo:'virote',mal:96},
-  {id:'smithwesson10',cat:'Arma de fogo',name:'Revólver Smith & Wesson Model 10 (.38)',q:'Smith & Wesson Model 10',skill:'Armas de Fogo (Pistolas)',damage:'1D8',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.38 Special',mal:100,eraFrom:1899,creditMin:25,creditVintage:10,imgPaths:assetPaths('revólver-modelo-10.svg'),imgTransparent:true,imgRev:1},
-  {id:'coltsa',cat:'Arma de fogo',name:'Revólver Colt Single Action Army (.45)',q:'Colt Single Action Army',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1',capacity:6,ammo:'.45 Colt',mal:100,eraFrom:1873,eraTo:1940,creditMin:30,creditVintage:20,imgPaths:assetPaths('revolver-antigo.svg'),imgTransparent:true,imgRev:1},
-  {id:'m1911model',cat:'Arma de fogo',name:'Pistola Colt M1911 (.45)',q:'Colt M1911',skill:'Armas de Fogo (Pistolas)',damage:'1D10+2',range:'15 jardas',rate:'1 (até 3)',capacity:7,ammo:'.45 ACP',mal:100,creditMin:40,eraFrom:1911,creditVintage:10,imgPaths:assetPaths('pistola-1911.svg'),imgTransparent:true,imgRev:1},
-  {id:'m1carbine',cat:'Arma de fogo',name:'Carabina M1 (.30 Carbine)',q:'M1 carbine',skill:'Armas de Fogo (Rifles)',damage:'2D6',range:'50 jardas',rate:'1 (até 2)',capacity:15,ammo:'.30 Carbine',mal:99,creditMin:50,eraFrom:1942,eraTo:1945,creditVintage:20,imgPaths:assetPaths('carabina-m1.svg'),imgTransparent:true,imgRev:1},
-  {id:'remington870',cat:'Arma de fogo',name:'Espingarda Remington 870',q:'Remington Model 870',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1',capacity:5,ammo:'calibre 12',mal:100,creditMin:35,eraFrom:1950,imgPaths:assetPaths('espingarda-870.svg'),imgTransparent:true,imgRev:1},
-  {id:'ar15',cat:'Arma de fogo',name:'Rifle AR-15 (.223)',q:'AR-15',skill:'Armas de Fogo (Rifles)',damage:'2D6+4',range:'110 jardas',rate:'1 (até 2)',capacity:20,ammo:'.223 Remington',mal:99,creditMin:55,eraFrom:1959,creditVintage:10,imgPaths:assetPaths('rifle-ar15.svg'),imgTransparent:true,imgRev:1},
-  {id:'glock17',cat:'Arma de fogo',name:'Pistola Glock 17 (9 mm)',q:'Glock 17',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1 (até 3)',capacity:17,ammo:'9 mm',mal:98,creditMin:45,eraFrom:1982,imgPaths:assetPaths('pistola-moderna.svg'),imgTransparent:true,imgRev:1},
-  {id:'ak47',cat:'Arma de fogo',name:'Fuzil AK-47 (7,62 mm)',q:'AK-47',skill:'Armas de Fogo (Rifles)',damage:'2D6+1',range:'100 jardas',rate:'1 ou rajada automática',capacity:30,ammo:'7,62×39 mm',mal:100,creditMin:65,eraFrom:1949,creditVintage:10,caution:'Arma militar de acesso restrito; disponibilidade e posse dependem do cenário e do Guardião.',imgPaths:assetPaths('fuzil-classico.svg'),imgTransparent:true,imgRev:1},
-  {id:'cigarettes',cat:'Geral',name:'Maço de cigarros',q:'Cigarette pack',eraFrom:1880,imgPaths:assetPaths('cigarros.svg'),imgTransparent:true,imgRev:1,notes:'Consumível narrativo; a quantidade e o hábito ficam a critério da mesa.'},
-  {id:'cigar',cat:'Geral',name:'Caixa de charutos',q:'Cigar box',eraFrom:1850,creditMin:15,creditVintage:5,imgPaths:assetPaths('charutos.svg'),imgTransparent:true,imgRev:1},
-  {id:'whiskey',cat:'Geral',name:'Garrafa de uísque',q:'Whiskey bottle',eraFrom:1850,creditMin:10,imgPaths:assetPaths('whisky.svg'),imgTransparent:true,imgRev:1},
-  {id:'flask',cat:'Geral',name:'Frasco de bolso',q:'Hip flask',eraFrom:1850,creditMin:10,creditVintage:10,imgPaths:assetPaths('frasco-bolso.svg'),imgTransparent:true,imgRev:1},
-  {id:'beer',cat:'Geral',name:'Garrafa de cerveja',q:'Beer bottle',eraFrom:1850,creditMin:5,imgPaths:assetPaths('cerveja.svg'),imgTransparent:true,imgRev:1},
-  {id:'lighter',cat:'Geral',name:'Isqueiro de bolso',q:'Zippo lighter',eraFrom:1933,creditMin:10,imgPaths:assetPaths('isqueiro.svg'),imgTransparent:true,imgRev:1},
-  {id:'club',cat:'Arma corpo a corpo',name:'Cassetete / porrete pequeno',q:'Baton (law enforcement)',imgPaths:['equip-images/small-club.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/small-club.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/small-club.png?v=20261010','small-club.png?v=20261010'],imgRev:4,skill:'Lutar (Brigar)',damage:'1D6 + BD',range:'Toque'},
+  {id:'smithwesson10',cat:'Arma de fogo',name:'Revólver Smith & Wesson Model 10 (.38)',q:'Smith & Wesson Model 10',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1 (até 3)',capacity:6,ammo:'.38 Special',mal:100,eraFrom:1899,creditMin:25,creditVintage:10,imgTransparent:true,imgRev:1},
+  {id:'coltsa',cat:'Arma de fogo',name:'Revólver Colt Single Action Army (.45)',q:'Colt Single Action Army',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1',capacity:6,ammo:'.45 Colt',mal:100,eraFrom:1873,eraTo:1940,creditMin:30,creditVintage:20,imgTransparent:true,imgRev:1},
+  {id:'m1911model',cat:'Arma de fogo',name:'Pistola Colt M1911 (.45)',q:'Colt M1911',skill:'Armas de Fogo (Pistolas)',damage:'1D10+2',range:'15 jardas',rate:'1 (até 3)',capacity:7,ammo:'.45 ACP',mal:100,creditMin:40,eraFrom:1911,creditVintage:10,imgTransparent:true,imgRev:1},
+  {id:'m1carbine',cat:'Arma de fogo',name:'Carabina M1 (.30 Carbine)',q:'M1 carbine',skill:'Armas de Fogo (Rifles)',damage:'2D6',range:'50 jardas',rate:'1 (até 2)',capacity:15,ammo:'.30 Carbine',mal:99,creditMin:50,eraFrom:1942,eraTo:1945,creditVintage:20,imgTransparent:true,imgRev:1},
+  {id:'remington870',cat:'Arma de fogo',name:'Espingarda Remington 870',q:'Remington Model 870',skill:'Armas de Fogo (Rifles)',damage:'4D6 / 2D6 / 1D6',range:'10 / 20 / 50 jardas',rate:'1',capacity:5,ammo:'calibre 12',mal:100,creditMin:35,eraFrom:1950,imgTransparent:true,imgRev:1},
+  {id:'ar15',cat:'Arma de fogo',name:'Rifle AR-15 (.223)',q:'AR-15',skill:'Armas de Fogo (Rifles)',damage:'2D6+4',range:'110 jardas',rate:'1 (até 2)',capacity:20,ammo:'.223 Remington',mal:99,creditMin:55,eraFrom:1959,creditVintage:10,imgTransparent:true,imgRev:1},
+  {id:'glock17',cat:'Arma de fogo',name:'Pistola Glock 17 (9 mm)',q:'Glock 17',skill:'Armas de Fogo (Pistolas)',damage:'1D10',range:'15 jardas',rate:'1 (até 3)',capacity:17,ammo:'9 mm',mal:98,creditMin:45,eraFrom:1982,imgTransparent:true,imgRev:1},
+  {id:'ak47',cat:'Arma de fogo',name:'Fuzil AK-47 (7,62 mm)',q:'AK-47',skill:'Armas de Fogo (Rifles)',damage:'2D6+1',range:'100 jardas',rate:'1 ou rajada automática',capacity:30,ammo:'7,62×39 mm',mal:100,creditMin:65,eraFrom:1949,creditVintage:10,caution:'Arma militar de acesso restrito; disponibilidade e posse dependem do cenário e do Guardião.',imgTransparent:true,imgRev:1},
+  {id:'cigarettes',cat:'Geral',name:'Maço de cigarros',q:'Cigarette pack',eraFrom:1880,imgTransparent:true,imgRev:1,notes:'Consumível narrativo; a quantidade e o hábito ficam a critério da mesa.'},
+  {id:'cigar',cat:'Geral',name:'Caixa de charutos',q:'Cigar box',eraFrom:1850,creditMin:15,creditVintage:5,imgTransparent:true,imgRev:1},
+  {id:'whiskey',cat:'Geral',name:'Garrafa de uísque',q:'Whiskey bottle',eraFrom:1850,creditMin:10,imgTransparent:true,imgRev:1},
+  {id:'flask',cat:'Geral',name:'Frasco de bolso',q:'Hip flask',eraFrom:1850,creditMin:10,creditVintage:10,imgTransparent:true,imgRev:1},
+  {id:'beer',cat:'Geral',name:'Garrafa de cerveja',q:'Beer bottle',eraFrom:1850,creditMin:5,imgTransparent:true,imgRev:1},
+  {id:'lighter',cat:'Geral',name:'Isqueiro de bolso',q:'Zippo lighter',eraFrom:1933,creditMin:10,imgTransparent:true,imgRev:1},
+  {id:'club',cat:'Arma corpo a corpo',name:'Cassetete / porrete pequeno',q:'Baton (law enforcement)',imgPaths:['equip-images/small-club.png?v=20261017'],imgRev:4,skill:'Lutar (Brigar)',damage:'1D6 + BD',range:'Toque'},
   {id:'baseballbat',cat:'Arma corpo a corpo',name:'Porrete grande / taco',q:'Baseball bat',skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'},
   {id:'brassknuckles',cat:'Arma corpo a corpo',name:'Soco-inglês',q:'Brass knuckles',skill:'Lutar (Brigar)',damage:'1D3+1 + BD',range:'Toque'},
   {id:'knife_small',cat:'Arma corpo a corpo',name:'Faca pequena',q:'Pocketknife',skill:'Lutar (Brigar)',damage:'1D4 + BD',range:'Toque'},
   {id:'knife_medium',cat:'Arma corpo a corpo',name:'Faca média',q:'Hunting knife',skill:'Lutar (Brigar)',damage:'1D4+2 + BD',range:'Toque'},
-  {id:'knife_large',cat:'Arma corpo a corpo',name:'Faca grande / machete',q:'Machete',imgPaths:['equip-images/machete.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/machete.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/machete.png?v=20261010','machete.png?v=20261010'],imgRev:3,skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'},
-  {id:'hatchet',cat:'Arma corpo a corpo',name:'Machadinha',q:'Hand axe',imgPaths:['equip-images/hatchet.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/equip-images/hatchet.png?v=20261010','Novas%20altera%C3%A7%C3%B5es/hatchet.png?v=20261010','hatchet.png?v=20261010'],imgRev:3,skill:'Lutar (Machado)',damage:'1D6+1 + BD',range:'Toque'},
+  {id:'knife_large',cat:'Arma corpo a corpo',name:'Faca grande / machete',q:'Machete',imgPaths:['equip-images/machete.png?v=20261017'],imgRev:3,skill:'Lutar (Brigar)',damage:'1D8 + BD',range:'Toque'},
+  {id:'hatchet',cat:'Arma corpo a corpo',name:'Machadinha',q:'Hand axe',imgPaths:['equip-images/hatchet.png?v=20261017'],imgRev:3,skill:'Lutar (Machado)',damage:'1D6+1 + BD',range:'Toque'},
   {id:'bullwhip',cat:'Arma corpo a corpo',name:'Chicote',q:'Bullwhip',skill:'Lutar (Chicote)',damage:'1D3 + metade do BD',range:'10 pés'},
  ];
  const NEW_LOCAL_IMAGES={
@@ -116,6 +116,11 @@
 
  /* Fichas antigas: munição virou texto narrativo e Proteção foi unida a Geral. Nada é apagado. */
  function migrateItem(it){
+  /* itens salvos com vários caminhos de imagem passam a ter só o primeiro (os outros eram tentativas em pastas inexistentes) */
+  if(it.imgFixed&&!it.imgManual&&Array.isArray(it.imgPaths)&&it.imgPaths.length>1)it.imgPaths=[it.imgPaths[0]];
+  /* correções de regra do catálogo em itens já salvos */
+  if(it.id==='thompson'&&it.skill==='Armas de Fogo (Metralhadoras)')it.skill='Armas de Fogo (Submetralhadora)';
+  if(it.id==='smithwesson10'&&it.damage==='1D8')it.damage='1D10';
   if(it.kind==='ammo'){it.kind='general';it.cat='Geral';if(!it.notes&&it.ammo)it.notes='Calibre '+it.ammo+'.'}
   if(it.kind==='protection'||it.cat==='Proteção'){it.kind='general';it.cat='Geral'}
   const latest=CATALOG.find(x=>x.id===it.id&&x.imgRev);
@@ -125,7 +130,7 @@
  const ensure=p=>{if(!Array.isArray(p.equipment))p.equipment=[];p.equipment.forEach(migrateItem);return p.equipment};
  const find=(p,id)=>ensure(p).find(x=>x.uid===id);
  function skillValue(p,skill){
-  const defaults={'Armas de Fogo (Pistolas)':20,'Armas de Fogo (Rifles)':25,'Armas de Fogo (Arco)':15,'Armas de Fogo (Metralhadoras)':10,'Lutar (Brigar)':25,'Lutar (Machado)':15,'Lutar (Chicote)':5,'Arremessar':20,'Primeiros Socorros':30,'Medicina':1,'Psicologia':10,'Dirigir Auto':20};
+  const defaults={'Armas de Fogo (Pistolas)':20,'Armas de Fogo (Rifles)':25,'Armas de Fogo (Arco)':15,'Armas de Fogo (Metralhadoras)':10,'Armas de Fogo (Submetralhadora)':15,'Lutar (Brigar)':25,'Lutar (Espada)':20,'Lutar (Lança)':20,'Lutar (Machado)':15,'Lutar (Chicote)':5,'Arremessar':20,'Primeiros Socorros':30,'Medicina':1,'Psicologia':10,'Dirigir Auto':20};
   return p.sk&&p.sk[skill]!=null?(+p.sk[skill]||0):(defaults[skill]||0);
  }
  function yearOf(p){const y=Number(p&&p.equipmentYear);return Number.isInteger(y)&&y>=1&&y<=9999?y:1920}
@@ -257,7 +262,7 @@
   return{urls:[],error};
  }
  async function resolveImage(item){
-  if(item.img||item.imgNone||item.imgManual||item.imgFixed||busy.has(item))return;
+  if(item.img||item.imgNone||item.imgManual||item.imgFixed||busy.has(item)||navigator.onLine===false)return;
   busy.add(item);
   try{
    const{urls,error}=await findImages(item);
@@ -285,9 +290,8 @@
    const wasFixed=item.imgFixed,paths=localImagePaths(item),pathIndex=paths.indexOf(item.img);
    if(wasFixed&&pathIndex>=0&&pathIndex+1<paths.length){item.img=paths[pathIndex+1];if(th.isConnected)paintThumb(th,item);persistSoon();return}
    item.img='';item.imgFixed=false;
-   if(item.imgManual){item.imgManual=false;item.imgNone=false}else item.imgNone=wasFixed?false:true;
+   if(item.imgManual){item.imgManual=false;item.imgNone=false}else item.imgNone=true; /* imagem local ausente: mostra o ícone, sem sair para a internet */
    if(th.isConnected)paintThumb(th,item);persistSoon();
-   if(wasFixed)resolveImage(item).then(()=>{if(item.img&&th.isConnected)paintThumb(th,item);persistSoon()});
   },{once:true});
  }
  function paintThumb(th,item){th.classList.toggle('has',!!item.img);th.classList.toggle('transparent',!!item.imgTransparent);th.innerHTML=thumbInner(item);wireThumb(th,item)}

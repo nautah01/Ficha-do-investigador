@@ -1,0 +1,7 @@
+{
+  "name": "ficha-do-investigador",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Ficha do Investigador — Chamado de Cthulhu 7e",
+  "scripts": { "test": "node --test tests/rules.test.js" }
+}

@@ -23,8 +23,8 @@ const listEl=win.querySelector('#cemList'),form=dlg.querySelector('form'),cv=dlg
 let cur=null,done=null,ed={img:null,orig:'',z:1,x:0,y:0};
 
 function render(){
- listEl.innerHTML=list.length?list.map(r=>`<article class="stone" data-id="${r.id}">
- <div class="stone-photo">${r.foto?`<img alt="Foto de ${esc(r.nome)}" src="${r.foto}">`:'<span>✝</span>'}</div>
+ listEl.innerHTML=list.length?list.map(r=>`<article class="stone" data-id="${esc(r.id)}">
+ <div class="stone-photo">${r.foto?`<img alt="Foto de ${esc(r.nome)}" src="${/^data:image\//i.test(r.foto)?esc(r.foto):''}">`:'<span>✝</span>'}</div>
  <h3>${esc(r.nome)}</h3><p class="stone-age">${r.idade!==''?esc(r.idade)+' anos':'&nbsp;'}</p>
  <p class="stone-cause">${esc(r.causa)}</p>${r.frase?`<blockquote>“${esc(r.frase)}”</blockquote>`:''}
  <div class="stone-act"><button data-a="edit">Editar</button><button data-a="del">Remover</button></div></article>`).join('')

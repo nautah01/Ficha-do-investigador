@@ -1,0 +1,142 @@
+/* Estilos dos recursos novos: aviso de gravação, compra de pontos, criação guiada, combate, recursos e Mesa do Guardião. */
+
+/* aviso de falha / conflito de gravação */
+.save-banner{position:sticky;top:0;z-index:100001;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 14px;background:#5a1313;color:#ffe9e4;border-bottom:2px solid #d9503f;font-size:.88rem;box-shadow:0 6px 20px rgba(0,0,0,.55)}
+.save-banner[hidden]{display:none}
+.save-banner strong{font-size:.95rem}
+.save-banner span{flex:1 1 260px}
+.save-banner button{min-height:34px;padding:4px 12px;font-size:.8rem}
+#saved.save-err{color:#ff9a8a;font-weight:700}
+
+/* atributos */
+.stats-tools{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.stats-head .stats-tools{color:inherit;font-variant:normal;letter-spacing:0}
+.pbb{padding:3px 10px;font-size:.78rem;background:transparent;color:var(--ink2);border:1px solid rgba(var(--gr),.45);border-radius:4px;cursor:pointer;white-space:nowrap}
+.pbb:hover{background:rgba(var(--gr),.15)}
+.der{flex-wrap:wrap}
+input[readonly].in{opacity:.8;cursor:default}
+
+/* janelas novas */
+.dlg .dlg-body{margin:0 0 18px;font-size:.92rem;line-height:1.45;color:var(--muted)}
+.dlg .dlg-body strong{color:var(--txt)}
+.choice-list{margin:8px 0 0;padding-left:20px;color:var(--txt)}
+.dlg.wz-dlg{width:min(560px,100%);max-height:92vh;overflow:auto}
+.dlg.pb-dlg{width:min(520px,100%);max-height:92vh;overflow:auto}
+.dlg.ms-dlg{width:min(900px,100%)}
+.dlg .wz-help{margin:0 0 12px}
+.dlg .row{flex-wrap:wrap}
+.wz-attrs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 16px}
+.wz-attrs>div{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.06)}
+.wz-attrs span{font-size:.72rem;color:var(--muted)}
+.wz-attrs b{font-size:1.35rem;color:var(--head)}
+.wz-attrs small{color:var(--muted);font-size:.7rem}
+.wz-empty{grid-column:1/-1;text-align:center;margin:10px 0}
+.wz-field{display:flex;flex-direction:column;gap:4px;margin:0 0 12px;font-size:.85rem;color:var(--muted)}
+.wz-field .in,.wz-field textarea{width:100%;box-sizing:border-box}
+.wz-field small{color:var(--head)}
+.pb-total{margin:0 0 10px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;font-size:.95rem;text-align:center}
+.pb-total b{font-size:1.25rem;color:var(--head)}
+.pb-total.ok{border-color:#58a96b}.pb-total.ok b{color:#7ad48d}
+.pb-total.bad{border-color:#d9503f}.pb-total.bad b{color:#ff9a8a}
+.pb-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin:0 0 16px}
+.pb-row{display:flex;flex-direction:column;gap:3px;font-size:.82rem;color:var(--muted)}
+.pb-row small{opacity:.7}
+.pb-ctl{display:flex;gap:4px;align-items:center}
+.pb-ctl .in{width:64px;text-align:center}
+.pb-ctl button{min-width:34px;min-height:34px;padding:0}
+.sh-opts{display:grid;gap:8px;margin:0 0 12px}
+.sh-msg{min-height:1.3em;margin:0 0 10px;color:var(--head);font-size:.86rem}
+
+/* barra da criação guiada */
+.guide-bar{margin:0;padding:9px 12px;border-bottom:1px solid var(--line);border-left:3px solid var(--gold);background:rgba(var(--gr),.1)}
+.gd-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.gd-head strong{color:var(--head);font-size:.92rem}
+.gd-left{margin-left:auto;font-size:.8rem;color:var(--muted)}
+.gd-left b{color:var(--head);font-size:1.1rem}
+.gd-dots{display:inline-flex;gap:4px}
+.gd-dots i{width:9px;height:9px;border-radius:50%;border:1px solid var(--head);opacity:.55}
+.gd-dots i.done{background:var(--head);opacity:.9}
+.gd-dots i.now{background:var(--gold);opacity:1;box-shadow:0 0 6px var(--gold)}
+.guide-bar p{margin:6px 0 8px;font-size:.8rem;line-height:1.4;color:var(--muted)}
+.gd-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.gd-actions button{min-height:32px;padding:3px 12px;font-size:.8rem}
+.blank-btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* combate */
+.cb-panel{padding:4px 2px;container-type:inline-size}
+.cb-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:8px;margin:8px 0 12px}
+.cb-summary>div{display:flex;flex-direction:column;align-items:center;padding:7px 4px;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.06)}
+.cb-summary span{font-size:.7rem;color:var(--muted)}
+.cb-summary b{font-size:1.25rem;color:var(--head)}
+.cb-summary small{font-size:.7rem;color:var(--muted)}
+.cb-wrap{overflow-x:auto}
+.cb-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.cb-table th,.cb-table td{padding:6px 7px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.cb-table thead th{color:var(--head);font-size:.72rem;font-variant:small-caps;letter-spacing:.5px;white-space:nowrap}
+.cb-table tbody th{font-weight:600;color:var(--txt)}
+.cb-table small{display:block;color:var(--muted);font-weight:400}
+.cb-c b{color:var(--head)}
+.cb-ammo{display:block;white-space:nowrap}
+.cb-btns{display:flex;gap:4px;margin-top:3px}
+.cb-mini{min-height:28px;padding:1px 8px;font-size:.72rem}
+.cb-empty,.cb-legend,.res-note{display:block;margin:10px 0 0;color:var(--muted);font-size:.76rem;line-height:1.45}
+
+/* recursos (crédito) */
+.res-panel{margin:10px 0;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.04)}
+.res-panel>summary{cursor:pointer;padding:8px 10px;font-size:.85rem;color:var(--head)}
+.res-panel>summary span{color:var(--muted);font-size:.78rem;margin-left:6px}
+.res-panel>div{padding:2px 10px 10px}
+.res-era{display:flex;align-items:center;gap:8px;margin:4px 0 8px;font-size:.8rem;color:var(--muted)}
+.res-table{width:100%;border-collapse:collapse;font-size:.85rem}
+.res-table th{text-align:left;font-weight:normal;color:var(--muted);padding:4px 0}
+.res-table td{text-align:right;color:var(--head);font-weight:700;padding:4px 0}
+.res-table tr+tr{border-top:1px dashed var(--line)}
+
+/* Mesa do Guardião */
+.ms-toolbar{display:flex;gap:8px;margin:0 0 10px}
+.ms-wrap{overflow-x:auto}
+.ms-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.ms-table th,.ms-table td{padding:6px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+.ms-table thead th{color:var(--head);font-size:.72rem;font-variant:small-caps}
+.ms-table th small,.ms-table td small{display:block;color:var(--muted);font-weight:400}
+.ms-num{width:62px;text-align:center}
+.ms-acts{white-space:nowrap}
+.ms-acts button{min-height:30px;padding:2px 9px;font-size:.75rem}
+.ms-sub{margin:16px 0 6px;color:var(--head);font-variant:small-caps;letter-spacing:1px}
+.ms-testbar{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin:0 0 10px}
+.ms-testbar label{display:flex;flex-direction:column;gap:3px;font-size:.78rem;color:var(--muted)}
+.ms-res{font-weight:700}
+.ms-res.crit,.ms-res.extreme{color:#7ad48d}.ms-res.hard{color:#a8d86a}.ms-res.regular{color:var(--head)}
+.ms-res.fail{color:#e0a05a}.ms-res.fumble{color:#ff7d6a}
+
+/* telas pequenas: tabelas viram cartões */
+@media(max-width:640px){
+ .wz-attrs{grid-template-columns:repeat(2,1fr)}
+ .pb-grid{grid-template-columns:1fr}
+ .ms-table thead{display:none}
+ .ms-table,.ms-table tbody,.ms-table tr,.ms-table th,.ms-table td{display:block;width:100%;box-sizing:border-box}
+ .ms-table tr{margin:0 0 10px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.05)}
+ .ms-table th,.ms-table td{border:0;padding:3px 0;display:flex;justify-content:space-between;gap:10px;text-align:right}
+ .ms-table td::before,.ms-table tbody th::before{content:attr(data-label);color:var(--muted);font-size:.72rem;text-align:left;flex:0 0 auto}
+ .ms-table tbody th{font-size:.9rem;padding-bottom:5px;border-bottom:1px dashed var(--line)}
+ .ms-table td[data-label=""]::before{display:none}
+ .dlg.ms-dlg,.dlg.wz-dlg{padding:16px 14px}
+ .save-banner{font-size:.8rem}
+}
+
+/* Combate: quando a janela da ficha é estreita (padrão 520 px ou celular), cada arma vira um cartão compacto com todos os campos visíveis */
+@container (max-width: 700px){
+ .cb-table thead{display:none}
+ .cb-table,.cb-table tbody{display:block;width:100%}
+ .cb-table tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 10px;margin:0 0 10px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.05)}
+ .cb-table th,.cb-table td{display:flex;flex-direction:column;gap:1px;border:0;padding:0;text-align:left;min-width:0}
+ .cb-table tbody th{grid-column:1/-1;flex-direction:row;align-items:baseline;gap:8px;padding-bottom:5px;border-bottom:1px dashed var(--line);font-size:.92rem}
+ .cb-table td::before{content:attr(data-label);color:var(--muted);font-size:.64rem;font-variant:small-caps;letter-spacing:.4px}
+ .cb-table td[data-label="Perícia"]{grid-column:span 2}
+ .cb-table td[data-label="Falha"]{order:1}
+ .cb-table td[data-label="Munição"]{order:2}
+ .cb-table td.cb-na{display:none}
+ .cb-table td[data-label="Munição"]{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px 10px;padding-top:4px;border-top:1px dashed var(--line)}
+ .cb-table td[data-label="Munição"]::before{flex:0 0 100%}
+ .cb-btns{margin-top:0}
+}
