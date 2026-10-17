@@ -147,7 +147,20 @@ body.mobile #desk button.rrb{min-height:36px;padding:4px 10px}
  .blank-budgets .credit-range span{line-height:1.35}
  .blank-budgets>small{color:var(--muted);line-height:1.4}
 .blank-budgets [data-skill-pool-note].has-warning{color:var(--warn);font-weight:600}
- .sk-label{display:flex;align-items:center;gap:4px;min-width:0;flex:1 1 auto}
+ .sk-label{display:flex;align-items:center;justify-content:flex-start;text-align:left;gap:4px;min-width:0;flex:1 1 auto}
+.age-rule-button:disabled{opacity:.48;cursor:not-allowed;filter:grayscale(.45)}
+.age-rule-hint{color:var(--warn);font-size:.72rem;flex-basis:100%;margin-left:auto;text-align:right}
+.age-roll-overlay,.library-overlay{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:16px;background:rgba(2,7,7,.82);backdrop-filter:blur(5px);animation:ageFade .2s ease-out}
+.age-roll-dialog{width:min(460px,100%);padding:24px;border:1px solid var(--head);border-radius:14px;background:radial-gradient(ellipse at top,rgba(var(--gr),.2),transparent 55%),linear-gradient(var(--k6),var(--k1));box-shadow:0 24px 90px #000;color:var(--txt);text-align:center}
+.age-roll-dialog h2,.library-head h2{margin:0;color:var(--head);font-variant:small-caps}.age-roll-dialog p{margin:6px 0;color:var(--muted)}
+.age-die{display:grid;place-items:center;width:132px;height:132px;margin:18px auto;border:2px solid var(--head);border-radius:24px;background:linear-gradient(145deg,rgba(var(--gr),.2),rgba(0,0,0,.5));color:var(--head);font:bold 2.5rem/1.1 Georgia,serif;text-shadow:0 0 20px rgba(var(--gr),.55);box-shadow:inset 0 0 22px rgba(var(--gr),.18),0 12px 35px #0008}.age-die small{display:block;font:small-caps .8rem Georgia,serif;letter-spacing:2px}.age-die.rolling{animation:dieTumble .22s ease-in-out infinite alternate}
+.age-result-list{display:grid;gap:7px;margin:12px 0;text-align:left}.age-result{padding:9px 11px;border:1px solid rgba(var(--gr2),.45);border-radius:7px;background:rgba(var(--gr),.07)}.age-result strong{color:var(--head)}.age-result.gain{border-color:#8aa779;background:rgba(87,132,77,.15)}.age-roll-dialog button{min-width:112px;margin-top:10px}
+@keyframes ageFade{from{opacity:0}to{opacity:1}}@keyframes dieTumble{from{transform:rotate(-6deg) scale(.94)}to{transform:rotate(6deg) scale(1.04)}}
+.library-overlay{z-index:2147482000}.library-dialog{display:flex;flex-direction:column;width:min(920px,100%);max-height:min(90vh,900px);overflow:hidden;border:1px solid var(--gold);border-radius:12px;background:linear-gradient(var(--k2),var(--k0));box-shadow:0 24px 80px #000;color:var(--txt)}
+.library-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}.library-body{overflow:auto;padding:16px}.library-controls{display:grid;grid-template-columns:minmax(160px,1fr) minmax(200px,2fr) auto;gap:8px;align-items:end}.library-controls label,.library-create label,.library-row label{display:grid;gap:4px;color:var(--muted);font-size:.78rem}.library-controls input,.library-controls select,.library-create input,.library-row input{width:100%;min-width:0}
+.library-create{display:flex;gap:8px;align-items:end;margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:8px;background:rgba(var(--gr),.05)}.library-create label{flex:1}.library-create button{min-height:36px}.library-toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}.library-list{display:grid;gap:8px}.library-row{display:grid;grid-template-columns:minmax(150px,1fr) minmax(140px,1fr) minmax(160px,1.3fr) auto;gap:8px;align-items:end;padding:11px;border:1px solid rgba(var(--gr2),.32);border-radius:8px;background:rgba(var(--gr),.045)}.library-row.archived{opacity:.72}.library-meta{display:grid;gap:3px;font-size:.76rem;color:var(--muted)}.library-actions{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end}.library-actions button{min-height:32px;padding:4px 8px;font-size:.72rem}.library-empty{padding:24px 10px;text-align:center;color:var(--muted)}.library-tags{font-size:.7rem;color:var(--head)}.library-footer{display:flex;justify-content:flex-end;padding:10px 16px;border-top:1px solid var(--line)}
+.parked-skills{margin-top:12px;padding:10px;border:1px dashed var(--line);border-radius:7px;background:rgba(var(--gr),.045)}.parked-skills h4{margin:0 0 8px;color:var(--head)}.parked-skill{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:7px 0;border-top:1px solid var(--line)}.parked-skill-actions{display:flex;gap:6px}.parked-skill-actions button{font-size:.72rem;padding:4px 8px}.occ-choice-alert{display:block;margin:8px 0;padding:9px 11px;border-left:3px solid var(--head);border-radius:0 6px 6px 0;background:rgba(var(--gr),.1);color:var(--txt);line-height:1.4}.occ-choice-alert b{color:var(--head)}
+@media(max-width:700px){.library-overlay{padding:0}.library-dialog{width:100%;height:100%;max-height:100vh;border-radius:0}.library-controls{grid-template-columns:1fr}.library-create{align-items:stretch;flex-direction:column}.library-row{grid-template-columns:1fr 1fr}.library-meta,.library-actions{grid-column:1/-1}.library-actions{justify-content:flex-start}.age-roll-dialog{padding:20px}}
  @media(max-width:560px){.blank-budgets{padding:8px}.budget-balance,.budget-controls{grid-template-columns:1fr}.budget-stat{padding:7px 8px}.der{grid-template-columns:repeat(2,minmax(0,1fr))}.der-field,.der-field:nth-child(n+5){grid-column:auto}.der-field{display:grid;grid-template-columns:minmax(0,1fr) 52px}.der-field span{white-space:normal}.der-field .in{width:52px}.der-field:nth-child(2){grid-template-columns:minmax(0,1fr) 48px}.der-field:nth-child(2) .in{width:48px}}
 h3{color:var(--head);border-top:2px solid var(--rule);padding-top:6px;font-variant:small-caps;letter-spacing:1px}
 .win h3.st{margin:4px 0 6px;font-size:.9rem;border-top:none;padding-top:0;border-bottom:1px solid var(--line);padding-bottom:3px}
@@ -283,6 +296,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <div class="bar-head">
  <div class="bar-title"><b>Painel</b><span class="bar-note">Salvamento local <small id="saved" role="status" aria-live="polite"></small><button type="button" id="retrySave" class="alt" hidden>Salvar de novo</button></span></div>
 <div class="tools">
+<button class="alt chip" id="libraryBtn" aria-haspopup="dialog" title="Buscar e organizar investigadores e campanhas">🗂 Fichas e campanhas</button>
 <button class="alt chip" id="cemPanelBtn" aria-pressed="false" title="Abrir ou fechar o cemitério">🪦 Cemitério</button>
 <button class="alt chip" id="bkpOut" title="Baixar fichas, bloco de notas e cemitério num arquivo de backup">💾 Baixar dados</button>
 <button class="alt chip" id="bkpIn" title="Carregar um arquivo de backup neste navegador">📂 Carregar dados</button>
@@ -329,7 +343,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <header><button id="diaBack" type="button" class="dia-back">← Índice</button><input id="diaTitle" class="dia-title" maxlength="70" placeholder="Título da entrada" aria-label="Título da entrada"><span class="dia-act"><button id="diaPin" type="button" aria-pressed="false" title="Marcar esta página com uma fita">🔖</button><button id="diaDel" type="button" title="Apagar entrada">🗑</button></span></header>
 <div id="diaDate" class="dia-date"></div><textarea id="diaText" class="dia-text" spellcheck="true" placeholder="Querido diário… anote aqui nomes, teorias e o que aconteceu na sessão."></textarea><footer id="diaCount"></footer></section>
 </div></div></div>
-<footer class="note-footer"><span id="noteHint">Arraste o fundo para mover · Shift+arrastar seleciona várias peças · roda do mouse = zoom</span><span id="noteStatus" role="status" aria-live="polite">Carregando notas…</span></footer>
+<footer class="note-footer"><span id="noteHint">Arraste para mover · Teclado: foque uma peça + setas move; Shift+setas redimensiona; Enter liga</span><span id="noteStatus" role="status" aria-live="polite">Carregando notas…</span></footer>
 </section>
 <div class="atmo" aria-hidden="true"><svg class="sign" viewBox="-100 -100 200 200" aria-hidden="true"><g class="sign-rotor" fill="none" stroke="currentColor" stroke-linecap="round">
 <circle r="95" stroke-width="1.2"/><circle r="90" stroke-width=".5"/><circle r="84" stroke-width=".35" stroke-dasharray=".8 5.7"/>
@@ -449,6 +463,16 @@ const sanMaxOf=p=>Math.max(0,99-(+p.sk?.['Mythos de Cthulhu']||0));
 function syncSanityLimit(p){p.der.sanMax=sanMaxOf(p);if((+p.der.san||0)>p.der.sanMax)p.der.san=p.der.sanMax}
 const copyData=v=>JSON.parse(JSON.stringify(v));
 function restoreAgeSnapshot(p){if(!p.ageSnapshot)return;const s=copyData(p.ageSnapshot);for(const key of ['c','sk','der','skillFloors','custom','skillAllocations','skillPoints','skillNotice','edit'])if(!(key in s))delete p[key];Object.assign(p,s);delete p.ageSnapshot;delete p.ageApplied}
+const waitMs=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+async function showAgeRollResults(age,profile,changes,rolls,luckRolls){
+ const overlay=document.createElement('div');overlay.className='age-roll-overlay';overlay.innerHTML=`<section class="age-roll-dialog" role="dialog" aria-modal="true" aria-labelledby="ageRollTitle" tabindex="-1"><h2 id="ageRollTitle">Regras de idade · ${age} anos</h2><p>${esc(changes)}</p><div class="age-die" aria-label="Dado de cem lados"><span data-die-face>00</span><small>D100</small></div><div class="age-result-list" aria-live="polite" aria-atomic="false" data-age-results></div><p data-age-roll-status>Preparando rolagens…</p><button type="button" class="alt" data-age-close disabled>Aguardar rolagens</button></section>`;
+ document.body.appendChild(overlay);const face=overlay.querySelector('[data-die-face]'),die=overlay.querySelector('.age-die'),list=overlay.querySelector('[data-age-results]'),status=overlay.querySelector('[data-age-roll-status]'),close=overlay.querySelector('[data-age-close]'),previous=document.activeElement;overlay.querySelector('.age-roll-dialog').focus();
+ for(let i=0;i<rolls.length;i++){const r=rolls[i];status.textContent=`Teste de melhoria de EDU ${i+1} de ${rolls.length}`;die.classList.add('rolling');const start=Date.now();while(Date.now()-start<720){face.textContent=String(1+Math.floor(Math.random()*100)).padStart(2,'0');await waitMs(65)}die.classList.remove('rolling');face.textContent=String(r.roll).padStart(2,'0');const improved=r.gain>0,row=document.createElement('div');row.className='age-result'+(improved?' gain':'');row.innerHTML=`<strong>D100: ${r.roll}</strong> · ${r.roll} ${r.roll>r.before?'>':'≤'} EDU ${r.before}: ${improved?`melhorou +${r.gain} EDU`:'sem melhoria'}`;list.appendChild(row);await waitMs(300)}
+ if(!rolls.length){die.classList.remove('rolling');face.textContent=profile.luckRolls?'SORTE':'—';status.textContent=profile.luckRolls?'Sorte adolescente: foram usadas duas rolagens, ficando a maior.':'Nenhum teste de melhoria de EDU nesta faixa etária.'}
+ if(luckRolls.length){const row=document.createElement('div');row.className='age-result';row.textContent=`Sorte: ${luckRolls.join(' e ')}; ficou ${Math.max(...luckRolls)}.`;list.appendChild(row)}
+ close.disabled=false;close.textContent='Concluir';status.textContent=rolls.length?`Rolagem${rolls.length>1?'s':''} concluída${rolls.length>1?'s':''}.`:'Efeitos aplicados.';
+ const done=()=>{overlay.remove();if(previous&&previous.isConnected)previous.focus()};close.addEventListener('click',done);overlay.addEventListener('keydown',e=>{if(e.key==='Escape'&&!close.disabled){e.preventDefault();done()}});
+}
 async function toggleAgeRules(i){
  const p=cur[i];if(!p||p.unlimited||isAmnesia(p))return;
  if(p.ageSnapshot){if(!await askConfirm({title:'Reverter as regras de idade?',html:'Os atributos e perícias voltarão ao estado anterior à aplicação.',ok:'Reverter',danger:false}))return;restoreAgeSnapshot(p);p.edit=true;draw();return}
@@ -461,12 +485,11 @@ async function toggleAgeRules(i){
  p.ageSnapshot=snapshot;p.ageApplied=age;
  profile.physicalCharacteristics.forEach((key,j)=>p.c[key]=Math.max(0,+p.c[key]-loss[j]));
  p.c.APA=Math.max(0,+p.c.APA-profile.appLoss);p.c.EDU=Math.max(0,+p.c.EDU-profile.eduLoss);
- const eduRolls=[];for(let n=0;n<profile.eduChecks;n++){const roll=1+Math.floor(Math.random()*100),before=+p.c.EDU;if(roll>before){const gain=1+Math.floor(Math.random()*10);p.c.EDU=Math.min(99,before+gain);eduRolls.push(`${roll} > ${before}: +${p.c.EDU-before} EDU`)}else eduRolls.push(`${roll} ≤ ${before}: sem aumento`)}
- if(profile.luckRolls){const rolls=Array.from({length:profile.luckRolls},()=>A());p.der.luck=Math.max(...rolls);eduRolls.push(`Sorte: ${rolls.join(' e ')}; ficou ${p.der.luck}`)}
+ const eduRolls=[];for(let n=0;n<profile.eduChecks;n++){const roll=1+Math.floor(Math.random()*100),before=+p.c.EDU;let gain=0;if(roll>before){gain=Math.min(10,99-before);p.c.EDU=Math.min(99,before+gain)}eduRolls.push({roll,before,gain})}
+ let luckRolls=[];if(profile.luckRolls){luckRolls=Array.from({length:profile.luckRolls},()=>A());p.der.luck=Math.max(...luckRolls)}
  if(p.blank)resetBlankDistribution(p,p.occ,p.occFormula||0);else for(const d of derivedSkills)if(d.value!==undefined){const nextFloor=Math.max(0,+base(d.n,p.c)||0),bonus=Math.max(0,(+d.value||0)-d.floor);p.sk[d.n]=Math.min(99,nextFloor+bonus);(p.skillFloors=p.skillFloors||{})[d.n]=nextFloor}
  const movementPenalty=profile.movementPenalty,oldSan=+p.der.san||0;p.der={...p.der,...calc(p.c,movementPenalty),san:oldSan};syncSanityLimit(p);p.edit=true;
- const details=[`Idade ${age}: perdas ${profile.physicalCharacteristics.length?profile.physicalCharacteristics.map((k,j)=>`${k} −${loss[j]}`).join(', '):'nenhuma'}${profile.appLoss?`, APA −${profile.appLoss}`:''}${profile.eduLoss?`, EDU −${profile.eduLoss}`:''}${movementPenalty?`, MOV −${movementPenalty}`:''}.`,...eduRolls].join('\n');
- alert(details);draw();
+ const details=`Perdas ${profile.physicalCharacteristics.length?profile.physicalCharacteristics.map((k,j)=>`${k} −${loss[j]}`).join(', '):'nenhuma'}${profile.appLoss?`, APA −${profile.appLoss}`:''}${profile.eduLoss?`, EDU −${profile.eduLoss}`:''}${movementPenalty?`, MOV −${movementPenalty}`:''}.`;draw();await showAgeRollResults(age,profile,details,eduRolls,luckRolls);
 }
 /* Especializações: cada ocupação pode ter uma sub-lista. "at" são as posições das perícias da ocupação que são trocadas pelas da opção escolhida (! = perícia principal) */
 const SUB={
@@ -784,13 +807,13 @@ const sel2=document.getElementById('occ2');
 const subOpts=()=>Object.entries(SUB).forEach(([n,s])=>Object.keys(s.o).forEach(k=>{sel.insertAdjacentHTML('beforeend',`<option value="${n}::${k}" hidden>${n} (${k})</option>`);sel2.insertAdjacentHTML('beforeend',`<option value="occ:${n}::${k}" hidden>${n} (${k}) — como secundária</option>`)}));
 sel2.innerHTML='<option value="">Nenhuma</option><option value="*">🎲 Aleatória</option><optgroup label="Ocupações">'+[...OCC].sort(srt).map(o=>`<option value="occ:${o.n}">${o.n}</option>`).join('')+'</optgroup>';
 subOpts();
-let cur=[],zTop=10,drag=null,rsz=null,saveT=0,fichaReady=Promise.resolve();
+let cur=[],campaigns=[],activeCampaignId='all',showArchived=false,librarySearch='',zTop=10,drag=null,rsz=null,saveT=0,fichaReady=Promise.resolve();
 const fichaDb=new Promise((resolve,reject)=>{try{const r=indexedDB.open('cthulhu-notas',1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('kv'))r.result.createObjectStore('kv')};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)}catch(e){reject(e)}});
 const fichaDbGet=key=>fichaDb.then(d=>new Promise((resolve,reject)=>{const q=d.transaction('kv').objectStore('kv').get(key);q.onsuccess=()=>resolve(q.result??null);q.onerror=()=>reject(q.error)}));
 function fichaPayload(state){const cur=JSON.parse(JSON.stringify(state.cur||[])),photos={};for(const p of cur){if(!p.storageId)p.storageId=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now());if(p.portrait?.src){photos[p.storageId]=p.portrait.src;p.portrait.src=''}}return{state:{...state,cur},photos}}
 function writeFichaDb(state){const payload=fichaPayload(state);return fichaDb.then(d=>new Promise((resolve,reject)=>{const t=d.transaction('kv','readwrite'),s=t.objectStore('kv');s.put(payload.state,'investigators');s.put(payload.photos,'investigator-portraits');t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error);t.onabort=()=>reject(t.error||new Error('Transação cancelada'))}))}
 function readFichaDb(){return fichaDb.then(d=>new Promise((resolve,reject)=>{const t=d.transaction('kv'),s=t.objectStore('kv'),q=s.get('investigators'),r=s.get('investigator-portraits');let state,photos;q.onsuccess=()=>state=q.result??null;r.onsuccess=()=>photos=r.result||{};t.oncomplete=()=>{if(state)state.cur=(state.cur||[]).map(p=>{if(p.portrait&&p.storageId)p.portrait.src=photos[p.storageId]||'';return p});resolve(state)};t.onerror=()=>reject(t.error)}))}
-function fichaSnapshot(){for(const p of cur)if(!p.storageId)p.storageId=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now());return JSON.parse(JSON.stringify({cur,occ:sel.value,occ2:sel2.value,qty:document.getElementById('qty').value,zTop}))}
+function fichaSnapshot(){for(const p of cur)if(!p.storageId)p.storageId=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now());return JSON.parse(JSON.stringify({cur,campaigns,activeCampaignId,showArchived,librarySearch,occ:sel.value,occ2:sel2.value,qty:document.getElementById('qty').value,zTop}))}
 window.getFichaBackupState=()=>fichaSnapshot();
 window.importFichaState=async state=>{const value=state||{cur:[],occ:'',occ2:'',qty:'1',zTop:10};try{await writeFichaDb(value);try{localStorage.removeItem(STORE)}catch{}}catch(error){let available=true;try{await fichaDb}catch{available=false}if(available)throw error;localStorage.setItem(STORE,JSON.stringify(value))}};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -839,7 +862,8 @@ function isOccupationHighlight(p,n){
  if(n==='Nível de Crédito')return true;
  if(occHlCache.key!==p.occ){occHlCache={key:p.occ,rules:occupationSkillRules(p)}}
  const rules=occHlCache.rules;
- return rules.names.has(n)||(rules.social&&SOC.includes(n))||(rules.language&&/^Língua \(/.test(n));
+ const allocatedChoices=Object.entries(p.skillAllocations||{}).filter(([name,a])=>+a?.occupational>0&&!hasExplicitOccupationalSkill(rules,name)).map(([name])=>name);
+ return rules.names.has(n)||(rules.social&&SOC.includes(n))||(rules.language&&/^Língua \(/.test(n))||allocatedChoices.slice(0,rules.any).includes(n);
 }
 function blankBudgetState(p){
  ensureSkillBudget(p);
@@ -869,7 +893,8 @@ function blankBudgetPanel(p,i){
   const creditParts=credit?`Mínimo <b>${credit.min}</b> · Máximo <b>${credit.max}</b>`:'Escolha uma ocupação para ver a faixa';
   const info=occInfoOf(p),formulas=info&&!isAmnesia(p)?info.occupation.p.split('|'):[];
   const formulaPicker=formulas.length>1?`<label class="budget-mode"><span>Fórmula ocupacional</span><select data-occ-formula data-i="${i}" aria-label="Fórmula de pontos da ocupação">${formulas.map((formula,index)=>`<option value="${index}" ${index===(+p.occFormula||0)?'selected':''}>${esc(formula.replace(/\*/g,' × ').replace(/\+/g,' + '))}</option>`).join('')}</select></label>`:'';
-  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label>${formulaPicker}<div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div><small class="occ-legend" data-occ-legend ${mode==='occupational'&&credit?'':'hidden'}>${isAmnesia(p)?'🌫️ Instinto: qualquer perícia aceita pontos ocupacionais, mas só até 60%. Metade dos pontos está adormecida (veja Amnésia abaixo).':'<span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.'}</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
+  const choiceRules=occupationSkillRules(p),choiceNotice=choiceRules.any||choiceRules.language?`<aside class="occ-choice-alert" role="note">🎯 <b>Atenção:</b> esta ocupação permite escolher ${choiceRules.any?`${choiceRules.any} perícia(s) à sua escolha`:''}${choiceRules.any&&choiceRules.language?' e ':''}${choiceRules.language?'uma Língua à sua escolha':''}. Distribua pontos ocupacionais nessas perícias; elas serão destacadas em dourado.`:'';
+  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label>${formulaPicker}<div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div>${choiceNotice}<small class="occ-legend" data-occ-legend ${mode==='occupational'&&credit?'':'hidden'}>${isAmnesia(p)?'🌫️ Instinto: qualquer perícia aceita pontos ocupacionais, mas só até 60%. Metade dos pontos está adormecida (veja Amnésia abaixo).':'<span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.'}</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
 }
 const fr=(p,k)=>{const v=+get(p,k)||0;return(v>>1)+' / '+Math.floor(v/5)};
 const fieldLabel=(p,k)=>{const[a,x]=k.split(/:(.+)/),labels={hp:'Pontos de Vida atuais',san:'Sanidade atual',luck:'Sorte',pm:'Pontos de Magia atuais',mov:'Movimento',db:'Bônus de Dano',corpo:'Corpo'};return a==='c'?`${x} de ${ttl(p)}`:a==='s'?`Perícia ${x} de ${ttl(p)}`:a==='d'?`${labels[x]||x} de ${ttl(p)}`:x};
@@ -880,8 +905,12 @@ const EXTRA={'Arte/Ofício (outra)':5,'Ciência (outra)':1,'Língua (outra)':1,'
 const row=(p,i,n,rm)=>{
  const minimum=skillFloor(p,n);
  const occ=isOccupationHighlight(p,n);
- return`<span class="skill-row${occ?' occ-skill':''}"${occ?' title="Perícia da sua ocupação"':''}><label class="sk-label" for="${fieldId(i,'s:'+n)}"><span class="sk-name">${esc(n)}</span></label><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
+ return`<span class="skill-row${occ?' occ-skill':''}"${occ?' title="Perícia da sua ocupação"':''}><label class="sk-label" for="${fieldId(i,'s:'+n)}"><span class="sk-name">${esc(n)}</span></label><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" aria-label="Mover ${esc(n)} para perícias removidas" title="Mover para perícias removidas" data-i="${i}" data-n="${esc(n)}">↓</button>`:''}</i></span>`;
 };
+function parkedSkillsPanel(p,i){
+ const entries=Object.entries(p.parkedSkills||{});if(!entries.length)return'';
+ return`<section class="parked-skills" aria-label="Perícias removidas"><h4>Perícias removidas · ${entries.length}</h4><small>Estas perícias foram apenas ocultadas da ficha. Restaure-as ou exclua definitivamente.</small>${entries.map(([n,item])=>`<div class="parked-skill"><span>${esc(n)} · ${+item.value||0}%</span><span class="parked-skill-actions"><button type="button" class="alt" data-parked-action="restore" data-i="${i}" data-n="${esc(n)}">Restaurar</button><button type="button" class="alt" data-parked-action="delete" data-i="${i}" data-n="${esc(n)}">Excluir definitivamente</button></span></div>`).join('')}</section>`;
+}
 function uiOf(p,i){
  p.ui=p.ui||{};
  if(p.ui.x==null)p.ui.x=18+(i%6)*36;
@@ -905,14 +934,14 @@ function body(p,i){
  const st=Object.keys(p.c).map(k=>`<div><label for="${fieldId(i,'c:'+k)}">${k}</label>${inp(p,i,'c:'+k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`).join('');
  const sk=Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n])=>row(p,i,n,1)).join('');
  const skillPool=p.unlimited?unlimitedPanel():p.blank?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
- const addM=`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" data-add="n"><input class="in" type="number" value="50" title="Valor" data-add="v"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
-  const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k)}${k==='san'?`<small data-san-max>máx. ${p.der.sanMax??99}</small>`:''}</label>`).join('');
- const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
+ const addM=`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" aria-label="Nome da nova perícia do personagem" data-add="n"><input class="in" type="number" value="50" title="Valor" aria-label="Valor inicial da nova perícia" data-add="v"><button class="addb" data-i="${i}" data-m="1">+ Adicionar perícia</button></div>`;
+  const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k)}</label>`).join('');
+ const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" aria-label="Nome da perícia personalizada" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" aria-label="Valor inicial da perícia personalizada" data-add="v"><button class="addb" data-i="${i}">+ Adicionar perícia</button></div>`:'');
  const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
  return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
-   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${!p.unlimited&&!isAmnesia(p)?`<button type="button" class="alt age-rule-button" data-age-rules data-i="${i}" title="${p.ageSnapshot?`Reverter os efeitos aplicados para ${p.ageApplied} anos`:''}">${p.ageSnapshot?`Reverter idade (${p.ageApplied})`:'Aplicar regras de idade'}</button>`:''}${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
+   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${!p.unlimited&&!isAmnesia(p)?`<button type="button" class="alt age-rule-button" data-age-rules data-i="${i}" ${p.ageSnapshot||+p.c.EDU>0?'':'disabled'} title="${p.ageSnapshot?`Reverter os efeitos aplicados para ${p.ageApplied} anos`:''}">${p.ageSnapshot?`Reverter idade (${p.ageApplied})`:'Aplicar regras de idade'}</button>${!p.ageSnapshot&&+p.c.EDU<=0?'<small class="age-rule-hint" data-age-hint>Defina EDU antes de aplicar as regras de idade.</small>':''}`:''}${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
   <div class="stats-head"><span>Atributos</span><button type="button" class="rrb" data-i="${i}" title="Sortear novos atributos (e redistribuir as perícias)">🎲 Rerolar atributos</button></div><div class="stats">${st}</div><div class="der">${d}</div>${skillPool}${isAmnesia(p)?amnesiaPanel(p,i):''}
-  <h3 class="st">Perícias do personagem</h3><div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${sk}</div>${addM}${fa}${mobileActions}`;
+  <h3 class="st">Perícias do personagem</h3><div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${sk}</div>${parkedSkillsPanel(p,i)}${addM}${fa}${mobileActions}`;
 }
 function occSelect(p,i){
  if(!p.blank||p.unlimited)return`<input class="in occ-text" data-i="${i}" data-k="n:occ" aria-label="Ocupação do investigador" placeholder="${p.unlimited?'Ocupação (escreva livremente)':'Ocupação'}" value="${esc(p.occ||'')}">`;
@@ -964,6 +993,58 @@ function persist(){
 }
 document.getElementById('retrySave').onclick=()=>{clearTimeout(saveT);saveLocalNow()};
 window.flushFichaSave=async()=>{clearTimeout(saveT);await fichaReady;return saveLocalNow()};
+const newId=()=>crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now();
+function visibleInvestigators(){
+ const q=librarySearch.trim().toLocaleLowerCase('pt-BR');
+ return cur.map((p,i)=>({p,i})).filter(({p})=>{
+  if(p.archived&&!showArchived)return false;
+  if(activeCampaignId!=='all'&&(activeCampaignId==='none'?!!p.campaignId:p.campaignId!==activeCampaignId))return false;
+  if(!q)return true;
+  return[p.nome,p.occ,p.sec,p.backstory,...(p.tags||[])].some(v=>String(v||'').toLocaleLowerCase('pt-BR').includes(q));
+ });
+}
+const campaignName=id=>campaigns.find(c=>c.id===id)?.name||'Sem campanha';
+function libraryRows(){
+ const items=visibleInvestigators();if(!items.length)return'<p class="library-empty">Nenhum investigador corresponde a estes filtros.</p>';
+ return items.map(({p,i})=>`<article class="library-row${p.archived?' archived':''}" data-library-id="${esc(p.storageId||'')}"><div class="library-meta"><strong>${esc(p.nome||'Investigador sem nome')}</strong><span>${esc(p.occ||'Sem ocupação')} · ${esc(campaignName(p.campaignId))}</span><small>${p.archived?'Arquivado':'Ativo'}</small></div><label>Campanha<select data-char-campaign><option value="">Sem campanha</option>${campaigns.map(c=>`<option value="${esc(c.id)}" ${p.campaignId===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></label><label>Etiquetas<input data-char-tags value="${esc((p.tags||[]).join(', '))}" placeholder="ex.: Arkham, campanha 2"></label><div class="library-actions"><button type="button" class="alt" data-library-action="duplicate">Duplicar</button><button type="button" class="alt" data-library-action="export">Exportar</button><button type="button" class="alt" data-library-action="archive">${p.archived?'Restaurar':'Arquivar'}</button></div></article>`).join('');
+}
+let libraryOverlay=null,libraryPreviousFocus=null;
+function renderLibrary(){
+ if(!libraryOverlay)return;
+ const selected=campaigns.find(c=>c.id===activeCampaignId);
+ libraryOverlay.querySelector('.library-dialog').innerHTML=`<header class="library-head"><h2 id="libraryTitle">Fichas e campanhas</h2><div><button type="button" class="alt" data-library-import>Importar ficha</button> <button type="button" class="alt" data-library-close aria-label="Fechar biblioteca">✕</button></div></header><div class="library-body"><div class="library-controls"><label>Filtrar por campanha<select data-library-campaign><option value="all" ${activeCampaignId==='all'?'selected':''}>Todas as campanhas</option><option value="none" ${activeCampaignId==='none'?'selected':''}>Sem campanha</option>${campaigns.map(c=>`<option value="${esc(c.id)}" ${activeCampaignId===c.id?'selected':''}>${esc(c.name)}</option>`).join('')}</select></label><label>Buscar fichas<input type="search" data-library-search value="${esc(librarySearch)}" placeholder="Nome, ocupação ou etiqueta"></label><label><span> </span><span><input type="checkbox" data-library-archived ${showArchived?'checked':''}> Mostrar arquivadas</span></label></div><form class="library-create"><label>Nova campanha<input name="campaignName" maxlength="80" placeholder="Nome da campanha"></label><button type="submit" class="addb">+ Criar campanha</button>${selected?`<button type="button" class="alt" data-campaign-rename>Renomear selecionada</button><button type="button" class="alt" data-campaign-delete>Excluir campanha</button>`:''}</form><div class="library-toolbar"><small>${visibleInvestigators().length} ficha(s) nesta visualização</small></div><div class="library-list">${libraryRows()}</div></div><footer class="library-footer"><button type="button" class="alt" data-library-close>Concluir</button></footer>`;
+}
+function openLibrary(){
+ if(libraryOverlay)return;
+ for(const p of cur)if(!p.storageId)p.storageId=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now());libraryPreviousFocus=document.activeElement;libraryOverlay=document.createElement('div');libraryOverlay.className='library-overlay';libraryOverlay.innerHTML='<section class="library-dialog" role="dialog" aria-modal="true" aria-labelledby="libraryTitle" tabindex="-1"></section>';document.body.appendChild(libraryOverlay);renderLibrary();libraryOverlay.querySelector('[data-library-search]').focus();
+}
+function closeLibrary(){if(!libraryOverlay)return;libraryOverlay.remove();libraryOverlay=null;libraryPreviousFocus?.focus?.()}
+function downloadCharacter(p){
+ const output={format:'cthulhu-character',version:1,exportedAt:new Date().toISOString(),character:JSON.parse(JSON.stringify(p)),campaign:campaigns.find(c=>c.id===p.campaignId)||null};
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(output,null,2)],{type:'application/json'}));a.download=(p.nome||'investigador').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'-')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+function importCharacterFile(file){
+ const reader=new FileReader();reader.onload=()=>{try{const data=JSON.parse(reader.result),p=data?.format==='cthulhu-character'&&data.version===1?data.character:data?.character;if(!p||!p.c||typeof p.c!=='object'||!p.sk||typeof p.sk!=='object')throw new Error('Estrutura de ficha inválida');const clone=JSON.parse(JSON.stringify(p));clone.storageId=newId();clone.nome=(clone.nome||'Investigador importado')+' (importado)';clone.archived=false;if(activeCampaignId!=='all'&&activeCampaignId!=='none')clone.campaignId=activeCampaignId;else if(activeCampaignId==='none')delete clone.campaignId;else if(clone.campaignId&&!campaigns.some(c=>c.id===clone.campaignId)){if(data.campaign&&typeof data.campaign.name==='string'){const importedCampaign={id:newId(),name:data.campaign.name};campaigns.push(importedCampaign);clone.campaignId=importedCampaign.id}else delete clone.campaignId}cur.push(clone);normalizeCharacter(clone);draw();renderLibrary()}catch(error){window.alert('Não foi possível importar a ficha: '+error.message)}};reader.readAsText(file);
+}
+document.getElementById('libraryBtn')?.addEventListener('click',openLibrary);
+const characterImport=document.createElement('input');characterImport.type='file';characterImport.accept='.json,application/json';characterImport.hidden=true;characterImport.addEventListener('change',()=>{const f=characterImport.files?.[0];characterImport.value='';if(f)importCharacterFile(f)});document.body.appendChild(characterImport);
+document.addEventListener('click',e=>{
+ if(!libraryOverlay)return;
+ if(e.target.closest('[data-library-import]')){characterImport.click();return}
+ if(e.target===libraryOverlay||e.target.closest('[data-library-close]')){closeLibrary();return}
+ const action=e.target.closest('[data-library-action]');if(action){const row=action.closest('[data-library-id]'),p=cur.find(x=>x.storageId===row?.dataset.libraryId);if(!p)return;
+  if(action.dataset.libraryAction==='duplicate'){const copy=JSON.parse(JSON.stringify(p));copy.storageId=newId();copy.archived=false;copy.nome=(copy.nome||'')+' (cópia)';copy.ui={...(copy.ui||{}),x:(copy.ui?.x||0)+28,y:(copy.ui?.y||0)+28,z:++zTop,collapsed:false};cur.push(copy);draw();renderLibrary()}
+  if(action.dataset.libraryAction==='export')downloadCharacter(p);
+  if(action.dataset.libraryAction==='archive'){p.archived=!p.archived;draw();renderLibrary()}
+  return;
+ }
+ if(e.target.closest('[data-campaign-rename]')){const c=campaigns.find(x=>x.id===activeCampaignId),name=libraryOverlay.querySelector('[name="campaignName"]').value.trim();if(c&&name){c.name=name;draw();renderLibrary()}return}
+ if(e.target.closest('[data-campaign-delete]')){const c=campaigns.find(x=>x.id===activeCampaignId);if(c&&confirm(`Excluir a campanha “${c.name}”? As fichas serão mantidas sem campanha.`)){cur.forEach(p=>{if(p.campaignId===c.id)delete p.campaignId});campaigns=campaigns.filter(x=>x.id!==c.id);activeCampaignId='all';draw();renderLibrary()}return}
+});
+document.addEventListener('submit',e=>{if(e.target.matches('.library-create')){e.preventDefault();const name=e.target.elements.campaignName.value.trim();if(!name)return;campaigns.push({id:newId(),name});activeCampaignId=campaigns[campaigns.length-1].id;draw();renderLibrary()}});
+document.addEventListener('input',e=>{if(!libraryOverlay)return;if(e.target.matches('[data-library-search]')){librarySearch=e.target.value;renderLibrary();const input=libraryOverlay.querySelector('[data-library-search]');input.focus();input.setSelectionRange(input.value.length,input.value.length)}});
+document.addEventListener('change',e=>{if(!libraryOverlay)return;if(e.target.matches('[data-library-campaign]')){activeCampaignId=e.target.value;draw();renderLibrary()}else if(e.target.matches('[data-library-archived]')){showArchived=e.target.checked;draw();renderLibrary()}else if(e.target.matches('[data-char-campaign]')){const p=cur.find(x=>x.storageId===e.target.closest('[data-library-id]')?.dataset.libraryId);if(p){if(e.target.value)p.campaignId=e.target.value;else delete p.campaignId;draw();renderLibrary()}}else if(e.target.matches('[data-char-tags]')){const p=cur.find(x=>x.storageId===e.target.closest('[data-library-id]')?.dataset.libraryId);if(p){p.tags=[...new Set(e.target.value.split(',').map(v=>v.trim()).filter(Boolean))];draw();renderLibrary()}}});
+document.addEventListener('keydown',e=>{if(!libraryOverlay)return;if(e.key==='Escape'){closeLibrary();return}if(e.key==='Tab'){const controls=[...libraryOverlay.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),[tabindex]:not([tabindex="-1"])')],first=controls[0],last=controls[controls.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}}});
 function fitDesk(){
  let w=800,h=560;
  const mob=document.body.classList.contains('mobile'),aw=fichaDeskW();
@@ -982,7 +1063,7 @@ function fichaDeskW(){return Math.max(340,document.documentElement.clientWidth-3
 let fichaFitT=0;addEventListener('resize',()=>{clearTimeout(fichaFitT);fichaFitT=setTimeout(()=>{if(!document.body.classList.contains('mobile')){fitDesk();persist()}},120)});
 const draw=()=>{
  window.DynamicInfo?.hide();
- desk.innerHTML=cur.length?cur.map(card).join(''):'<p class="empty">Nenhuma ficha. Clique em Gerar — e depois fixe as que quiser guardar.</p>';
+ const visible=visibleInvestigators();desk.innerHTML=visible.length?visible.map(({p,i})=>card(p,i)).join(''):(cur.length?'<p class="empty">Nenhuma ficha nesta campanha ou busca.</p>':'<p class="empty">Nenhuma ficha. Clique em Gerar — e depois fixe as que quiser guardar.</p>');
  hydratePortraits();
  fitDesk();persist();
 };
@@ -1059,10 +1140,10 @@ function rerollAttrs(i){
 function refresh(i){
  const el=winEl(i),p=cur[i];if(!el)return;
  syncSanityLimit(p);
+ const ageButton=el.querySelector('[data-age-rules]'),ageHint=el.querySelector('[data-age-hint]');if(ageButton)ageButton.disabled=!p.ageSnapshot&&(+p.c.EDU||0)<=0;if(ageHint)ageHint.hidden=!!p.ageSnapshot||(+p.c.EDU||0)>0;
  el.querySelectorAll('[data-k]').forEach(x=>{if(x!==document.activeElement)x.value=get(p,x.dataset.k);if(x.dataset.k==='d:san'&&!p.unlimited)x.max=String(p.der.sanMax)});
  el.querySelectorAll('[data-f]').forEach(x=>x.textContent=fr(p,x.dataset.f));
  el.querySelectorAll('[data-skill-input]').forEach(input=>{const n=input.dataset.k.slice(2),range=n==='Nível de Crédito'&&p.blank?creditBounds(p):null;input.min=String(skillFloor(p,n));if(range)input.max=String(range.max);else if(!p.unlimited)input.max='99';else input.removeAttribute('max')});
- const sanMax=el.querySelector('[data-san-max]');if(sanMax)sanMax.textContent='máx. '+p.der.sanMax;
  if(p.unlimited){/* ficha sem limites: sem pontos nem faixas */}else if(p.blank){
   const budgets=blankBudgetState(p);
   for(const type of ['occupational','personal']){
@@ -1152,10 +1233,21 @@ desk.addEventListener('click',e=>{
   return;
  }
  if(e.target.closest('.ftg')){const p=cur[+e.target.closest('.ftg').dataset.i];p.falta=!p.falta;draw();return}
- if(e.target.closest('.rmb')){const x=e.target.closest('.rmb'),p=cur[+x.dataset.i],n=x.dataset.n;
-  if(p.sk[n]!==undefined){ensureSkillBudget(p);if(!p.blank)p.skillPoints.available+=Math.max(0,(+p.sk[n]||0)-skillFloor(p,n));delete p.sk[n];delete p.skillFloors[n];if(n in BASE||n in EXTRA)(p.removed=p.removed||{})[n]=1}
-  else if(p.custom&&n in p.custom)delete p.custom[n];else(p.removed=p.removed||{})[n]=1;
-  p.edit=true;draw();return}
+ if(e.target.closest('[data-parked-action]')){const b=e.target.closest('[data-parked-action]'),p=cur[+b.dataset.i],n=b.dataset.n,item=p?.parkedSkills?.[n];if(!item)return;
+  if(b.dataset.parkedAction==='restore'){
+   if(p.blank&&!p.unlimited){const available=blankBudgetState(p),a=item.allocation||{occupational:0,personal:0};if((+a.occupational||0)>available.occupational.available||(+a.personal||0)>available.personal.available){p.skillNotice='Não há pontos disponíveis suficientes para restaurar a distribuição anterior. Libere pontos ou exclua a perícia removida.';draw();return}p.skillAllocations=p.skillAllocations||{};if((+a.occupational||0)+(+a.personal||0))p.skillAllocations[n]={occupational:+a.occupational||0,personal:+a.personal||0}}
+   else if(!p.unlimited){ensureSkillBudget(p);const cost=Math.max(0,(+item.value||0)-(+item.floor||0));if(cost>(+p.skillPoints.available||0)){p.skillNotice=`São necessários ${cost} pontos para restaurar ${n}; há ${p.skillPoints.available} disponíveis.`;draw();return}p.skillPoints.available-=cost}
+   p.sk=p.sk||{};p.sk[n]=+item.value||0;p.skillFloors=p.skillFloors||{};if(item.floor!=null)p.skillFloors[n]=+item.floor||0;if(item.custom){p.custom=p.custom||{};p.custom[n]=+item.value||0}delete p.parkedSkills[n];if(p.removed)delete p.removed[n];p.skillNotice='';p.edit=true;draw();return
+  }
+  if(confirm(`Excluir definitivamente a perícia “${n}”?`)){delete p.parkedSkills[n];if(item.custom&&p.custom)delete p.custom[n];p.edit=true;draw()}return
+ }
+ if(e.target.closest('.rmb')){const x=e.target.closest('.rmb'),p=cur[+x.dataset.i],n=x.dataset.n;if(!p)return;
+  p.parkedSkills=p.parkedSkills||{};if(p.parkedSkills[n])return;
+  ensureSkillBudget(p);const wasMain=Object.prototype.hasOwnProperty.call(p.sk||{},n),custom=!!(p.custom&&Object.prototype.hasOwnProperty.call(p.custom,n)),value=wasMain?+p.sk[n]||0:custom?+p.custom[n]||0:+base(n,p.c)||0,floor=wasMain?skillFloor(p,n):custom?+p.skillFloors?.[n]||0:value,allocation=(p.skillAllocations||{})[n]||{occupational:0,personal:0};
+  p.parkedSkills[n]={value,floor,allocation:{occupational:+allocation.occupational||0,personal:+allocation.personal||0},custom};
+  if(wasMain&&!p.blank)p.skillPoints.available+=Math.max(0,value-floor);
+  if(p.skillAllocations)delete p.skillAllocations[n];if(p.sk)delete p.sk[n];if(p.skillFloors)delete p.skillFloors[n];if(custom)delete p.custom[n];
+  if(n in BASE||n in EXTRA)(p.removed=p.removed||{})[n]=1;p.edit=true;draw();return}
  if(e.target.closest('.colb')){const p=cur[idx];p.ui.collapsed=!p.ui.collapsed;draw();return}
  if(e.target.closest('.pinb')){const p=cur[idx];p.pinned=!p.pinned;draw();return}
  if(e.target.closest('.dupb')){const p=JSON.parse(JSON.stringify(cur[idx]));p.pinned=false;p.ui={...p.ui,x:(p.ui.x||0)+28,y:(p.ui.y||0)+28,z:++zTop,collapsed:false};p.nome=p.nome.replace(/ \(cópia\)$/,'')+' (cópia)';if(!cur[idx].nome)p.nome='';cur.push(p);draw();return}
@@ -1311,14 +1403,14 @@ function buryFicha(i){const p=cur[i];if(!p||!window.Cemiterio)return;Cemiterio.a
 function go(){
  const q=Math.max(1,Math.min(8,+document.getElementById('qty').value||1));
  const kept=cur.filter(p=>p.pinned);
- const neu=Array.from({length:q},()=>gen(sel.value,sel2.value));
+ const neu=Array.from({length:q},()=>gen(sel.value,sel2.value));neu.forEach(p=>{if(activeCampaignId!=='all'&&activeCampaignId!=='none')p.campaignId=activeCampaignId});
  neu.forEach((p,i)=>placeNew(p,i,kept));
  cur=kept.concat(neu);draw();
 }
 document.getElementById('go').onclick=go;
 document.getElementById('blank').onclick=async()=>{
  const type=await askSheetType();if(!type)return;
- const p=genBlank(type==='unlimited');placeNew(p,0,cur);cur.push(p);draw();
+ const p=genBlank(type==='unlimited');if(activeCampaignId!=='all'&&activeCampaignId!=='none')p.campaignId=activeCampaignId;placeNew(p,0,cur);cur.push(p);draw();
  const el=winEl(cur.length-1);if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
 };
 function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
@@ -1518,7 +1610,7 @@ fichaReady=(async function boot(){
  try{d=await readFichaDb()}catch{}
  if(!d)try{d=JSON.parse(localStorage.getItem(STORE)||'null');fromLegacy=!!d}catch{}
  if(d&&Array.isArray(d.cur)){
-  cur=d.cur;zTop=d.zTop||20;
+  cur=d.cur;campaigns=Array.isArray(d.campaigns)?d.campaigns.filter(c=>c&&typeof c.id==='string'&&typeof c.name==='string'):[];activeCampaignId=typeof d.activeCampaignId==='string'?d.activeCampaignId:'all';if(activeCampaignId!=='all'&&activeCampaignId!=='none'&&!campaigns.some(c=>c.id===activeCampaignId))activeCampaignId='all';showArchived=!!d.showArchived;librarySearch=typeof d.librarySearch==='string'?d.librarySearch:'';zTop=d.zTop||20;
   if(d.occ)sel.value=d.occ;if(d.occ2)sel2.value=d.occ2;
   if(d.qty)document.getElementById('qty').value=d.qty;
   cur.forEach(p=>{normalizeCharacter(p);uiOf(p)});draw();if(fromLegacy)await saveLocalNow();return;

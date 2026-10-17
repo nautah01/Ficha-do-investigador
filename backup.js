@@ -1,6 +1,6 @@
 /* Backup: baixa tudo (fichas, bloco de notas, cemitério) num arquivo .json e carrega de volta em qualquer navegador */
 (()=>{
-const FORMAT='cthulhu-backup',LS=['coc7-investigadores-v2','cthulhu-cemiterio','cthulhu-bg'],THEMES=['green','red','blue','paper'];
+const FORMAT='cthulhu-backup',BACKUP_VERSION=3,LS=['coc7-investigadores-v2','cthulhu-cemiterio','cthulhu-bg'],THEMES=['green','red','blue','paper'];
 const $=id=>document.getElementById(id);
 const open=()=>new Promise((ok,no)=>{const r=indexedDB.open('cthulhu-notas',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
 const getNotes=async()=>{const d=await open();return new Promise((ok,no)=>{const q=d.transaction('kv').objectStore('kv').get('board');q.onsuccess=()=>ok(q.result??null);q.onerror=()=>no(q.error)})};
@@ -8,7 +8,7 @@ const setNotes=async v=>{const d=await open();return new Promise((ok,no)=>{const
 function parseStored(key,value){
  if(value==null)return null;if(typeof value!=='string')throw new Error(`Formato inválido: ${key}`);
  let parsed;try{parsed=JSON.parse(value)}catch{throw new Error(`JSON inválido: ${key}`)}
- if(key==='coc7-investigadores-v2'&&(!parsed||typeof parsed!=='object'||Array.isArray(parsed)||!Array.isArray(parsed.cur)||parsed.cur.some(p=>!p||typeof p!=='object'||Array.isArray(p)||!p.c||typeof p.c!=='object'||Array.isArray(p.c)||!p.sk||typeof p.sk!=='object'||Array.isArray(p.sk)||p.der!=null&&(typeof p.der!=='object'||Array.isArray(p.der)))))throw new Error('Estrutura de fichas inválida');
+ if(key==='coc7-investigadores-v2'&&(!parsed||typeof parsed!=='object'||Array.isArray(parsed)||!Array.isArray(parsed.cur)||parsed.cur.some(p=>!p||typeof p!=='object'||Array.isArray(p)||!p.c||typeof p.c!=='object'||Array.isArray(p.c)||!p.sk||typeof p.sk!=='object'||Array.isArray(p.sk)||p.der!=null&&(typeof p.der!=='object'||Array.isArray(p.der))||p.tags!=null&&(!Array.isArray(p.tags)||p.tags.some(t=>typeof t!=='string'))||p.parkedSkills!=null&&(typeof p.parkedSkills!=='object'||Array.isArray(p.parkedSkills)))||parsed.campaigns!=null&&(!Array.isArray(parsed.campaigns)||parsed.campaigns.some(c=>!c||typeof c!=='object'||Array.isArray(c)||typeof c.id!=='string'||typeof c.name!=='string'))||parsed.activeCampaignId!=null&&typeof parsed.activeCampaignId!=='string'))throw new Error('Estrutura de fichas, etiquetas ou campanhas inválida');
  if(key==='cthulhu-cemiterio'&&(!Array.isArray(parsed)||parsed.some(p=>!p||typeof p!=='object'||Array.isArray(p)||typeof p.id!=='string'||typeof p.nome!=='string'||typeof p.causa!=='string')))throw new Error('Estrutura do cemitério inválida');
  if(key==='cthulhu-bg'&&(!parsed||typeof parsed!=='object'||Array.isArray(parsed)||Object.entries(parsed).some(([slot,pick])=>!['p','s'].includes(slot)||!pick||typeof pick!=='object'||typeof pick.occ!=='string'||!pick.pick||typeof pick.pick!=='object')))throw new Error('Estrutura das origens inválida');
  return parsed;
@@ -32,7 +32,7 @@ async function exportar(){
   if(window.getFichaBackupState)ls[LS[0]]=JSON.stringify(window.getFichaBackupState());
   const storedTheme=localStorage.getItem('cthulhu-tema')||document.documentElement.dataset.theme||'green';
   const tema=THEMES.includes(storedTheme)?storedTheme:'green';
-  const data={format:FORMAT,version:2,exportedAt:new Date().toISOString(),ls,tema,notas:await getNotes()};
+  const data={format:FORMAT,version:BACKUP_VERSION,exportedAt:new Date().toISOString(),ls,tema,notas:await getNotes()};
   const d=new Date(),pad=n=>String(n).padStart(2,'0'),nome=`cthulhu-backup-${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}.json`;
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:'application/json'}));a.download=nome;
   document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
@@ -42,8 +42,8 @@ async function exportar(){
 async function importar(file){
  let data;
  try{data=JSON.parse(await file.text())}catch{return alert('Este arquivo não é um backup válido.')}
- if(!data||data.format!==FORMAT||!data.ls||typeof data.ls!=='object'||Array.isArray(data.ls)||![1,2].includes(data.version??1))return alert('Este arquivo não parece ser um backup deste site.');
- if((data.version??1)===1){data={...data,version:2,ls:{...data.ls,'cthulhu-bg':data.ls['cthulhu-bg']??null},notas:data.notas??null}}
+ if(!data||data.format!==FORMAT||!data.ls||typeof data.ls!=='object'||Array.isArray(data.ls)||![1,2,BACKUP_VERSION].includes(data.version??1))return alert('Este arquivo não parece ser um backup deste site.');
+ if((data.version??1)<BACKUP_VERSION){data={...data,version:BACKUP_VERSION,ls:{...data.ls,'cthulhu-bg':data.ls['cthulhu-bg']??null},notas:data.notas??null}}
  if(data.tema!=null&&!THEMES.includes(data.tema))return alert('O tema informado no backup não é válido.');
  try{for(const k of LS)parseStored(k,data.ls[k]??null)}catch(error){return alert('O backup não passou na validação: '+error.message)}
  if(!validNotes(data.notas??null))return alert('A estrutura dos quadros ou anotações do backup é inválida.');
