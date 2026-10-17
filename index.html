@@ -271,7 +271,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 .dynamic-info{position:fixed;z-index:2147483647;width:max-content;max-width:min(360px,calc(100vw - 24px));max-height:min(42vh,320px);overflow:auto;padding:10px 12px;border:1px solid var(--head);border-radius:7px;background:linear-gradient(var(--k6),var(--k2));color:var(--txt);box-shadow:0 10px 30px rgba(0,0,0,.75);font-size:.86rem;line-height:1.45;white-space:normal;overflow-wrap:anywhere;pointer-events:none}
 .dynamic-info[hidden]{display:none!important}
 @media(max-width:640px){.backstory-layout{grid-template-columns:1fr}.backstory-photo{display:grid;grid-template-columns:minmax(115px,156px) minmax(0,1fr);gap:8px;align-items:start}.backstory-photo h3{grid-column:1/-1}.portrait-canvas{grid-row:span 2;width:100%;height:auto;aspect-ratio:156/192}.portrait-controls{min-width:0}}
-</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><link rel="stylesheet" href="jogo.css"><script src="equipment.js"></script><script src="jogo.js"></script></head><body>
+</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><script src="equipment.js"></script></head><body>
 <button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <div class="top">
 <h1>Criador de Investigadores</h1>
@@ -296,10 +296,6 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <div class="blank-sheet-option">
 <div class="blank-sheet-copy"><strong>Começar uma ficha do zero</strong><span>Cria uma ficha em branco para preencher à mão. Você escolhe entre a ficha normal (com as regras de criação) e a ficha sem limites.</span></div>
 <button class="alt" id="blank" title="Criar uma ficha em branco para preencher manualmente">📝 Criar ficha em branco</button>
-</div>
-<div class="blank-sheet-option">
-<div class="blank-sheet-copy"><strong>Receber uma ficha de jogador</strong><span>Importe o arquivo <b>.json</b> que o jogador baixou pelo botão ⬇ JSON da ficha dele.</span></div>
-<button class="alt" id="sheetIn" title="Importar uma ou mais fichas (.json)">📥 Importar ficha</button>
 </div>
 </div>
 </div>
@@ -445,7 +441,6 @@ const SEC=[
 {n:'Contador',s:['!Contabilidade','Direito','Usar Biblioteca','Persuasão']},
 {n:'Eletricista',s:['!Consertos Elétricos','Operar Maquinário','Escalar','Contabilidade']}
 ];
-const calcP=p=>{const d=calc(p.c);if(p.movMod)d.mov=Math.max(0,d.mov+(+p.movMod||0));return d};
 const calc=c=>{const sum=c.FOR+c.TAM,[db,corpo]=sum<65?['-2',-2]:sum<85?['-1',-1]:sum<125?['0',0]:sum<165?['+1d4',1]:['+1d6',2];
  return{hp:Math.floor((c.CON+c.TAM)/10),san:c.POD,pm:Math.floor(c.POD/5),mov:(c.FOR>c.TAM&&c.DES>c.TAM)?9:(c.FOR<c.TAM&&c.DES<c.TAM)?7:8,db,corpo}};
 /* Especializações: cada ocupação pode ter uma sub-lista. "at" são as posições das perícias da ocupação que são trocadas pelas da opção escolhida (! = perícia principal) */
@@ -677,8 +672,6 @@ window.secondaryBlocked=(main,secondary)=>main===secondary||(main==='Soldado'&&s
 function gen(sel,sel2,keep){
  const[selN,selSub]=String(sel).split('::'),o=sel==='*'?pick(OCC):OCC.find(x=>x.n===selN),oT=tokens(o,selSub);
  const c={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
- const idadeG=keep&&Number.isFinite(+keep.age)&&+keep.age>=15&&+keep.age<=89?Math.floor(+keep.age):20+r(20);
- const ageInfo=CthPlay.applyAge(c,idadeG);
  const lang=keep&&keep.lang||pick(LANGS),sk={},bs=n=>base(n,c),cu=n=>sk[n]??bs(n);
  const ALL=Object.keys(BASE).filter(n=>n!=='Nível de Crédito'),used=new Set(),keys=[];
  const res=(t,keep)=>{let op=(t==='@soc'?SOC.join('|'):t==='@any'?COMMON.join('|'):t).split('|').map(x=>x==='@lang'?'Língua ('+lang+')':x);
@@ -723,7 +716,7 @@ function gen(sel,sel2,keep){
  if(sk['Língua Natural']===undefined)sk['Língua Natural']=bs('Língua Natural');
  hist.forEach(g=>g.sk.forEach(n=>{sk[n]=Math.min((sk[n]??base(n,c))+10,85)}));
  const skillFloors=Object.fromEntries(Object.keys(sk).map(n=>[n,n==='Nível de Crédito'?crMin:Math.max(0,+base(n,c)||0)]));
- return{hist,back:hist.map(g=>g.t).join('\n'),nome:pick([...NF,...NM])+' '+pick(SN),idade:idadeG,movMod:ageInfo.mov,ageApplied:{age:idadeG,changes:ageInfo.changes,mov:ageInfo.mov,luckFrom:null,luckTo:null},ageNote:ageInfo.log.join(' · '),occ:o.n+(oT.spec?` (${oT.spec})`:''),sec:sec?sec.n+(secT.spec?` (${secT.spec})`:''):'',c,sk,skillFloors,skillPoints:{available:0},skillNotice:'',creditRange:{base:[o.c[0],o.c[1]],final:[crMin,crMax],mod:creditMod},edit:false,der:{...calc(c),mov:Math.max(0,calc(c).mov+ageInfo.mov),luck:ageInfo.luck2?Math.max(A(),A()):A()}};
+ return{hist,back:hist.map(g=>g.t).join('\n'),nome:pick([...NF,...NM])+' '+pick(SN),idade:20+r(20),occ:o.n+(oT.spec?` (${oT.spec})`:''),sec:sec?sec.n+(secT.spec?` (${secT.spec})`:''):'',c,sk,skillFloors,skillPoints:{available:0},skillNotice:'',creditRange:{base:[o.c[0],o.c[1]],final:[crMin,crMax],mod:creditMod},edit:false,der:{...calc(c),luck:A()}};
 }
 /* confirmação dinâmica reutilizada por todo o site: askConfirm({title,html,ok,danger}) → Promise<boolean> */
 /* escolha do tipo de ficha em branco: askSheetType() → 'normal' | 'unlimited' | null */
@@ -770,7 +763,7 @@ sel2.innerHTML='<option value="">Nenhuma</option><option value="*">🎲 Aleatór
 subOpts();
 let cur=[],zTop=10,drag=null,rsz=null,saveT=0;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const get=(p,k)=>{const[a,x]=k.split(/:(.+)/);return a==='c'?p.c[x]:a==='d'?p.der[x]:a==='n'?p[x]:a==='b'?((p.bio&&p.bio[x])||''):p.sk[x]??(p.custom&&x in p.custom?p.custom[x]:(base(x,p.c)??EXTRA[x]))};
+const get=(p,k)=>{const[a,x]=k.split(/:(.+)/);return a==='c'?p.c[x]:a==='d'?p.der[x]:a==='n'?p[x]:p.sk[x]??(p.custom&&x in p.custom?p.custom[x]:base(x,p.c))};
 function ensureSkillBudget(p){
  p.skillFloors=p.skillFloors&&typeof p.skillFloors==='object'?p.skillFloors:{};
  p.skillPoints=p.skillPoints&&typeof p.skillPoints==='object'?p.skillPoints:{available:0};
@@ -846,13 +839,13 @@ function blankBudgetPanel(p,i){
   return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div><small class="occ-legend" data-occ-legend ${mode==='occupational'&&credit?'':'hidden'}>${isAmnesia(p)?'🌫️ Instinto: qualquer perícia aceita pontos ocupacionais, mas só até 60%. Metade dos pontos está adormecida (veja Amnésia abaixo).':'<span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.'}</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
 }
 const fr=(p,k)=>{const v=+get(p,k)||0;return(v>>1)+' / '+Math.floor(v/5)};
-const inp=(p,i,k,attrs='')=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${esc(k)}" ${attrs} value="${esc(get(p,k))}">`;
+const inp=(p,i,k,attrs='')=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${k}" ${attrs} value="${esc(get(p,k))}">`;
 const falta=p=>Object.entries({...BASE,...EXTRA,...(p.custom||{})}).filter(([n])=>p.sk[n]===undefined&&!(p.removed&&p.removed[n])).sort((a,b)=>a[0].localeCompare(b[0],'pt'));
-const EXTRA={'Arte/Ofício (outra)':5,'Ciência (outra)':1,'Língua (outra)':1,'Pilotar (outra)':1,'Mitos de Cthulhu':0};
+const EXTRA={'Arte/Ofício (outra)':5,'Ciência (outra)':1,'Língua (outra)':1,'Pilotar (outra)':1,'Mythos de Cthulhu':0};
 const row=(p,i,n,rm)=>{
  const minimum=skillFloor(p,n);
  const occ=isOccupationHighlight(p,n);
- return`<span class="skill-row${occ?' occ-skill':''}"${occ?' title="Perícia da sua ocupação"':''}><span class="sk-label">${CthPlay.rowTools(p,n,esc)}<span class="sk-name">${esc(n)}</span></span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`)}<small data-f="s:${esc(n)}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
+ return`<span class="skill-row${occ?' occ-skill':''}"${occ?' title="Perícia da sua ocupação"':''}><span class="sk-label"><span class="sk-name">${esc(n)}</span></span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
 };
 function uiOf(p,i){
  p.ui=p.ui||{};
@@ -864,17 +857,17 @@ function uiOf(p,i){
 }
 function body(p,i){
  ensureSkillBudget(p);
- const st=Object.keys(p.c).map(k=>`<div><b>${k}<button type="button" class="rollb" data-roll="c:${k}" title="Rolar ${k}" aria-label="Rolar ${k}">🎲</button></b>${inp(p,i,'c:'+k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`).join('');
+ const st=Object.keys(p.c).map(k=>`<div><b>${k}</b>${inp(p,i,'c:'+k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`).join('');
  const sk=Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n])=>row(p,i,n,1)).join('');
  const skillPool=p.unlimited?unlimitedPanel():p.blank?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
  const addM=`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" data-add="n"><input class="in" type="number" value="50" title="Valor" data-add="v"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
-  const d=[['hp','PV máx.','Pontos de Vida máximos'],['san','SAN inic.','Sanidade inicial (= POD). A atual fica em “Estado de jogo”'],['luck','Sorte inic.','Sorte inicial. A atual fica em “Estado de jogo”'],['pm','PM máx.','Pontos de Magia máximos'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l,tt])=>`<label class="der-field"${tt?` title="${tt}"`:''}><span>${l}</span>${inp(p,i,'d:'+k)}</label>`).join('');
+  const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k)}</label>`).join('');
  const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
- const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="expb" data-i="${i}" title="Baixar esta ficha em JSON">⬇ JSON</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
+ const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
  return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
-  <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${CthPlay.ageHtml(p,i,esc)}${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
-  <div class="stats-head"><span>Atributos</span><button type="button" class="rrb" data-i="${i}" title="Sortear novos atributos (e redistribuir as perícias)">🎲 Rerolar atributos</button></div><div class="stats">${st}</div><div class="der">${d}</div>${CthPlay.liveHtml(p,i,esc)}${skillPool}${isAmnesia(p)?amnesiaPanel(p,i):''}
-  <h3 class="st">Perícias do personagem</h3>${CthPlay.rollBarHtml(p,i,esc)}<div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${sk}</div>${addM}${fa}${mobileActions}`;
+  <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
+  <div class="stats-head"><span>Atributos</span><button type="button" class="rrb" data-i="${i}" title="Sortear novos atributos (e redistribuir as perícias)">🎲 Rerolar atributos</button></div><div class="stats">${st}</div><div class="der">${d}</div>${skillPool}${isAmnesia(p)?amnesiaPanel(p,i):''}
+  <h3 class="st">Perícias do personagem</h3><div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${sk}</div>${addM}${fa}${mobileActions}`;
 }
 function occSelect(p,i){
  if(!p.blank||p.unlimited)return`<input class="in occ-text" data-i="${i}" data-k="n:occ" aria-label="Ocupação do investigador" placeholder="${p.unlimited?'Ocupação (escreva livremente)':'Ocupação'}" value="${esc(p.occ||'')}">`;
@@ -884,7 +877,7 @@ function occSelect(p,i){
 function backstory(p,i){
  const photo=p.portrait||{},hasPhoto=!!photo.src,zoom=Math.max(1,Math.min(3,+photo.zoom||1));
  const origins=(p.hist||[]).map(g=>`<div class="orig"><b>${esc(g.kind)}:</b> ${esc(g.n)}</div>`).join(''),credit=crRangeTxt(p)?`<div class="orig"><b>Nível de Crédito:</b> <small>${esc(crRangeTxt(p))}</small></div>`:'';
- return`<div class="backstory-layout"><section class="backstory-photo"><h3>Aparência do personagem</h3><canvas class="portrait-canvas" width="156" height="192" data-portrait-canvas data-i="${i}" aria-label="Enquadramento do retrato do personagem" tabindex="0"></canvas><div class="portrait-controls"><label class="portrait-file">${hasPhoto?'Trocar imagem':'Adicionar imagem'}<input type="file" accept="image/*" data-portrait-file data-i="${i}"></label><label data-portrait-zoom-label ${hasPhoto?'':'hidden'}>Zoom<input type="range" min="1" max="3" step="0.02" value="${zoom}" data-portrait-zoom data-i="${i}"></label><button type="button" class="alt" data-portrait-remove data-i="${i}" ${hasPhoto?'':'hidden'}>Remover imagem</button><small class="portrait-tip" ${hasPhoto?'':'hidden'}>Arraste a imagem para ajustar o recorte.</small></div></section><section class="backstory-text"><h3 class="st">Origem</h3><div class="hist">${origins||'<div class="orig"><small>Esta ficha não tem origem ocupacional definida.</small></div>'}${credit}</div><h3 class="st">Backstory</h3><textarea class="in bk" rows="8" data-i="${i}" data-k="n:back" placeholder="Quem é o personagem? De onde veio? O que já viveu ou descobriu?">${esc(p.back||'')}</textarea></section></div>${CthPlay.bioHtml(p,i,esc)}`;
+ return`<div class="backstory-layout"><section class="backstory-photo"><h3>Aparência do personagem</h3><canvas class="portrait-canvas" width="156" height="192" data-portrait-canvas data-i="${i}" aria-label="Enquadramento do retrato do personagem" tabindex="0"></canvas><div class="portrait-controls"><label class="portrait-file">${hasPhoto?'Trocar imagem':'Adicionar imagem'}<input type="file" accept="image/*" data-portrait-file data-i="${i}"></label><label data-portrait-zoom-label ${hasPhoto?'':'hidden'}>Zoom<input type="range" min="1" max="3" step="0.02" value="${zoom}" data-portrait-zoom data-i="${i}"></label><button type="button" class="alt" data-portrait-remove data-i="${i}" ${hasPhoto?'':'hidden'}>Remover imagem</button><small class="portrait-tip" ${hasPhoto?'':'hidden'}>Arraste a imagem para ajustar o recorte.</small></div></section><section class="backstory-text"><h3 class="st">Origem</h3><div class="hist">${origins||'<div class="orig"><small>Esta ficha não tem origem ocupacional definida.</small></div>'}${credit}</div><h3 class="st">Backstory</h3><textarea class="in bk" rows="8" data-i="${i}" data-k="n:back" placeholder="Quem é o personagem? De onde veio? O que já viveu ou descobriu?">${esc(p.back||'')}</textarea></section></div>`;
 }
 function card(p,i){
  const u=uiOf(p,i);
@@ -895,7 +888,6 @@ function card(p,i){
    <span class="win-title">${esc(ttl(p))}</span>
    <button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 <span class="bl">Copiar</span></button>
    <button class="pdfb" data-i="${i}" title="Imprimir ou salvar esta ficha como PDF">📄 <span class="bl">PDF</span></button>
-   <button class="expb" data-i="${i}" title="Baixar esta ficha em JSON (para enviar a outra pessoa)">⬇ <span class="bl">JSON</span></button>
    <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Fixar: não some ao gerar">${p.pinned?'📌 <span class="bl">Fixa</span>':'📌 <span class="bl">Fixar</span>'}</button>
    <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>
@@ -908,7 +900,7 @@ function card(p,i){
 function txtBase(p){
  return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nSem pontos (valor inicial): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'')+window.CthEquipment.plainText(p);
 }
-function txt(p){const t=txtBase(p)+CthPlay.liveText(p),x=[histTxt(p),CthPlay.bioText(p)].filter(Boolean).join('\n\n');return x?t+'\n\n'+x:t}
+function txt(p){const t=txtBase(p),x=histTxt(p);return x?t+'\n\n'+x:t}
 function persist(){
  clearTimeout(saveT);
  saveT=setTimeout(()=>{
@@ -917,7 +909,7 @@ function persist(){
    const el=document.getElementById('saved');
    const t=new Date();
    el.textContent='· salvo às '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
-  }catch(_){const el=document.getElementById('saved');if(el)el.textContent='· ⚠ não foi possível salvar (armazenamento cheio) — baixe um backup'}
+  }catch(_){}
  },180);
 }
 function fitDesk(){
@@ -973,11 +965,10 @@ function rerollFull(p){
  const occ=occupationFor(p.occ);if(!occ)return false;
  const sec=p.sec?occupationFor(p.sec):null,spec=x=>x.occupation.n+(x.specialization?'::'+x.specialization:'');
  const oldLang=Object.keys(p.sk).find(n=>/^Língua \(/.test(n));
- const g=gen(spec(occ),sec?'occ:'+spec(sec):'',{hist:p.hist||[],lang:oldLang?oldLang.slice(8,-1):'',age:p.idade});
+ const g=gen(spec(occ),sec?'occ:'+spec(sec):'',{hist:p.hist||[],lang:oldLang?oldLang.slice(8,-1):''});
  const luck=p.der&&p.der.luck;
  p.c=g.c;p.sk=g.sk;p.skillFloors=g.skillFloors;p.skillPoints={available:0};p.skillNotice='';p.creditRange=g.creditRange;
  p.der={...g.der,luck:luck!==undefined?luck:g.der.luck};
- p.movMod=g.movMod;p.ageApplied=g.ageApplied;p.ageNote=g.ageNote;
  p.rolledC=rollSig(p);p.edit=true;
  draw();return true;
 }
@@ -986,14 +977,13 @@ const hasBlankPoints=p=>!!p&&p.blank&&!p.unlimited&&(Object.values(p.skillAlloca
 function rerollAttrs(i){
  const p=cur[i];if(!p)return;
  if(!p.blank&&rerollFull(p))return;
- delete p.ageApplied;p.movMod=0;p.ageNote='';
  const next={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
  if(p.blank&&!p.unlimited){
   /* Os totais de pontos dependem dos atributos (ocupação e INT×2). Com atributos novos, a distribuição antiga deixa de valer:
      zera alocações e perícias para o mínimo (mesmo reset de trocar de ocupação), mantendo ocupação, Sorte e perícias adicionadas. */
   const luck=p.der&&p.der.luck,had=hasBlankPoints(p);
   Object.assign(p.c,next);
-  p.der={...p.der,...calcP(p)};if(luck!==undefined)p.der.luck=luck;
+  p.der={...p.der,...calc(p.c)};if(luck!==undefined)p.der.luck=luck;
   resetBlankDistribution(p,p.occ);
   p.skillNotice=had?'Os atributos foram rerolados, então os pontos distribuídos foram zerados. Distribua os pontos novamente.':'';
   p.rolledC=rollSig(p);p.edit=true;
@@ -1002,7 +992,7 @@ function rerollAttrs(i){
  const derived=['Esquivar','Língua Natural'].map(n=>({n,oldBase:base(n,p.c),oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');
  Object.assign(p.c,next);
  const luck=p.der&&p.der.luck;
- p.der={...p.der,...calcP(p)};if(luck!==undefined)p.der.luck=luck; /* a Sorte é outra rolagem: não muda */
+ p.der={...p.der,...calc(p.c)};if(luck!==undefined)p.der.luck=luck; /* a Sorte é outra rolagem: não muda */
  for(const d of derived)if(d.value!==undefined){const newBase=Math.max(0,+base(d.n,p.c)||0);if(p.unlimited){if((+d.value||0)===d.oldBase)p.sk[d.n]=newBase;p.skillFloors[d.n]=0}else{const bonus=Math.max(0,(+d.value||0)-d.oldFloor);p.sk[d.n]=newBase+bonus;p.skillFloors[d.n]=newBase}}
  if(p.blank&&!p.unlimited&&p.sk['Nível de Crédito']!==undefined){
   const range=creditBounds(p),floor=range?range.min:Math.max(0,+base('Nível de Crédito',p.c)||0),ceiling=range?range.max:999;
@@ -1015,7 +1005,6 @@ function rerollAttrs(i){
 }
 function refresh(i){
  const el=winEl(i),p=cur[i];if(!el)return;
- CthPlay.liveRefresh(p,el);
  el.querySelectorAll('[data-k]').forEach(x=>{if(x!==document.activeElement)x.value=get(p,x.dataset.k)});
  el.querySelectorAll('[data-f]').forEach(x=>x.textContent=fr(p,x.dataset.f));
  el.querySelectorAll('[data-skill-input]').forEach(input=>{const n=input.dataset.k.slice(2),range=n==='Nível de Crédito'&&p.blank?creditBounds(p):null;input.min=String(skillFloor(p,n));if(range)input.max=String(range.max);else input.removeAttribute('max')});
@@ -1121,8 +1110,6 @@ desk.addEventListener('change',e=>{
   const i=+skillInput.dataset.i,p=cur[i],n=skillInput.dataset.k.slice(2);if(!p)return;
   ensureSkillBudget(p);
   if(p.unlimited){const inSk=Object.prototype.hasOwnProperty.call(p.sk,n),free=Math.max(0,Math.min(999,Math.floor(Number(skillInput.value)||0)));p.sk[n]=free;p.skillNotice='';p.edit=true;skillInput.value=String(free);if(inSk)refresh(i);else draw();persist();return}
-  /* Mitos de Cthulhu nunca vem de pontos de criação: o Guardião concede em jogo (e reduz a SAN máxima) */
-  if(n===CthPlay.MYTHOS){const inSk=Object.prototype.hasOwnProperty.call(p.sk,n),v=Math.max(0,Math.min(99,Math.floor(Number(skillInput.value)||0)));p.sk[n]=v;p.skillNotice='';p.edit=true;skillInput.value=String(v);if(inSk)refresh(i);else draw();persist();return}
   const wasMain=Object.prototype.hasOwnProperty.call(p.sk,n),old=Math.max(0,+get(p,'s:'+n)||0),minimum=skillFloor(p,n);
   let next=Math.max(0,Math.min(999,Math.floor(Number(skillInput.value)||0))),notice='';
   const creditRange=p.blank&&n==='Nível de Crédito'?creditBounds(p):null;
@@ -1204,17 +1191,6 @@ desk.addEventListener('pointerdown',e=>{
  document.addEventListener('pointermove',onDragMove);
  document.addEventListener('pointerup',onDragEnd);
 });
-function applyAttr(p,x,v){
-   const derived=['Esquivar','Língua Natural'].map(n=>({n,oldBase:base(n,p.c),oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');p.c[x]=v;
-   p.der={...p.der,...calcP(p)};
-   for(const d of derived)if(d.value!==undefined){const newBase=Math.max(0,+base(d.n,p.c)||0);if(p.unlimited){if((+d.value||0)===d.oldBase)p.sk[d.n]=newBase;p.skillFloors[d.n]=0}else{const bonus=Math.max(0,(+d.value||0)-d.oldFloor);p.sk[d.n]=newBase+bonus;p.skillFloors[d.n]=newBase}}
-   if(p.blank&&!p.unlimited&&p.sk['Nível de Crédito']!==undefined){
-    const range=creditBounds(p),floor=range?range.min:Math.max(0,+base('Nível de Crédito',p.c)||0),ceiling=range?range.max:999;
-    const value=Math.max(floor,Math.min(ceiling,oldCreditValue));p.skillFloors['Nível de Crédito']=floor;p.sk['Nível de Crédito']=value;
-    const allocations=p.skillAllocations&&p.skillAllocations['Nível de Crédito'];if(allocations){allocations.occupational=Math.max(0,value-floor);allocations.personal=0;if(!allocations.occupational)delete p.skillAllocations['Nível de Crédito']}
-    p.skillNotice=value!==oldCreditValue||oldCreditFloor!==(range?range.min:floor)?`A faixa de Nível de Crédito mudou com os atributos${oldCredit?`; agora é ${floor}–${ceiling}`:''}.`:'';
-   }
-}
 desk.addEventListener('input',e=>{
  const sealed=e.target.closest('[data-am-sealed]');if(sealed){const p=cur[+sealed.dataset.i];if(p){amn(p).sealed=sealed.value;p.edit=true;persist()}return}
  const zoom=e.target.closest('[data-portrait-zoom]');if(zoom){const i=+zoom.dataset.i,p=cur[i];if(!p)return;p.portrait=p.portrait||{src:'',x:0,y:0};p.portrait.zoom=+zoom.value;const win=zoom.closest('.win'),canvas=win&&win.querySelector('[data-portrait-canvas]');if(canvas)paintPortrait(canvas,p);p.edit=true;persist();return}
@@ -1226,11 +1202,20 @@ desk.addEventListener('input',e=>{
  const t=e.target,k=t.dataset.k;if(!k)return;
  const i=+t.dataset.i,p=cur[i],[a,x]=k.split(/:(.+)/);
   if(a==='s')return;
- if(a==='b'){p.bio=p.bio&&typeof p.bio==='object'?p.bio:{};p.bio[x]=t.value;p.edit=true;persist();return}
  if(a==='n'){p[x]=t.value;if(x==='back'){persist();return}}
  else{
   const v=x==='db'?t.value:Math.max(0,Math.min(999,+t.value||0));
-  if(a==='c')applyAttr(p,x,v);else if(a==='d')p.der[x]=v;else p.sk[x]=v;
+  if(a==='c'){
+   const derived=['Esquivar','Língua Natural'].map(n=>({n,oldBase:base(n,p.c),oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');p.c[x]=v;
+   p.der={...p.der,...calc(p.c)};
+   for(const d of derived)if(d.value!==undefined){const newBase=Math.max(0,+base(d.n,p.c)||0);if(p.unlimited){if((+d.value||0)===d.oldBase)p.sk[d.n]=newBase;p.skillFloors[d.n]=0}else{const bonus=Math.max(0,(+d.value||0)-d.oldFloor);p.sk[d.n]=newBase+bonus;p.skillFloors[d.n]=newBase}}
+   if(p.blank&&!p.unlimited&&p.sk['Nível de Crédito']!==undefined){
+    const range=creditBounds(p),floor=range?range.min:Math.max(0,+base('Nível de Crédito',p.c)||0),ceiling=range?range.max:999;
+    const value=Math.max(floor,Math.min(ceiling,oldCreditValue));p.skillFloors['Nível de Crédito']=floor;p.sk['Nível de Crédito']=value;
+    const allocations=p.skillAllocations&&p.skillAllocations['Nível de Crédito'];if(allocations){allocations.occupational=Math.max(0,value-floor);allocations.personal=0;if(!allocations.occupational)delete p.skillAllocations['Nível de Crédito']}
+    p.skillNotice=value!==oldCreditValue||oldCreditFloor!==(range?range.min:floor)?`A faixa de Nível de Crédito mudou com os atributos${oldCredit?`; agora é ${floor}–${ceiling}`:''}.`:'';
+   }
+  }else if(a==='d')p.der[x]=v;else p.sk[x]=v;
  }
  p.edit=true;refresh(i);window.CthEquipment.refreshWarnings(p,winEl(i)&&winEl(i).querySelector('[data-eq-panel]'));
 });
@@ -1244,152 +1229,6 @@ desk.addEventListener('pointermove',e=>{
 });
 const endPortraitDrag=e=>{const canvas=e.target.closest&&e.target.closest('[data-portrait-canvas]');if(canvas&&canvas._portraitDrag){canvas._portraitDrag=null;persist()}};
 desk.addEventListener('pointerup',endPortraitDrag);desk.addEventListener('pointercancel',endPortraitDrag);
-
-/* ===================== Jogo: estado atual, dados, idade, desenvolvimento, JSON ===================== */
-function askInfo(title,html,ok){
- return new Promise(res=>{
-  const ov=document.createElement('div'),prev=document.activeElement;ov.className='ovl';
-  ov.innerHTML=`<div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="infT"><h4 id="infT">${title}</h4><div class="dlg-body">${html}</div><div class="row"><button type="button">${ok||'Fechar'}</button></div></div>`;
-  const key=e=>{if(e.key==='Escape'||e.key==='Enter'){e.preventDefault();done()}else if(e.key==='Tab')e.preventDefault()};
-  const done=()=>{document.removeEventListener('keydown',key,true);ov.remove();if(prev&&prev.focus)prev.focus();res()};
-  ov.addEventListener('click',e=>{if(e.target.closest('button')||e.target===ov)done()});
-  document.addEventListener('keydown',key,true);document.body.appendChild(ov);ov.querySelector('button').focus();
- });
-}
-const sheetOf=el=>{const win=el.closest('.win');if(!win)return null;const i=+win.dataset.i,p=cur[i];return p?{win,i,p}:null};
-
-function doRoll(ctx,spec){
- const{p,win}=ctx,[a,x]=spec.split(/:(.+)/);let label,val;
- if(a==='s'){label=x;val=+get(p,'s:'+x)||0}
- else if(a==='c'){label=x;val=+p.c[x]||0}
- else if(a==='live'){label=x==='san'?'Sanidade':'Sorte';val=CthPlay.live(p,x)}
- else return;
- const mode=Math.max(-2,Math.min(2,+(p.ui&&p.ui.dice)||0));
- const r=CthPlay.rollD100(mode),res=CthPlay.classify(r.result,val);
- let marked=false;
- if(a==='s'&&res.level>=1&&CthPlay.markable(x)&&!(p.ui&&p.ui.autoMark===false)){p.marks=p.marks||{};if(!p.marks[x]){p.marks[x]=true;marked=true}}
- const entry={label,val,r,res,marked};
- CthPlay.pushLog(p,entry);CthPlay.showRoll(entry);CthPlay.rollBarRefresh(p,win);
- if(marked)p.edit=true;
- persist();
-}
-function bumpSkill(p,n,gain){
- ensureSkillBudget(p);
- const cur0=+get(p,'s:'+n)||0,floor=skillFloor(p,n),nv=Math.min(99,cur0+gain);
- if(p.custom&&Object.prototype.hasOwnProperty.call(p.custom,n))delete p.custom[n];
- if(p.removed)delete p.removed[n];
- p.sk[n]=nv;
- if(!p.unlimited){p.skillFloors=p.skillFloors||{};p.skillFloors[n]=floor+(nv-cur0)}
- return nv;
-}
-async function devPhase(ctx){
- const{p}=ctx,names=Object.keys(p.marks||{}).filter(n=>p.marks[n]&&CthPlay.markable(n)).sort((a,b)=>a.localeCompare(b,'pt'));
- if(!names.length){await askInfo('Fase de desenvolvimento','Nenhuma perícia marcada. Marque com <strong>✓</strong> as perícias usadas com sucesso durante a sessão (ou deixe “marcar sucessos” ligado ao rolar).');return}
- const ok=await askConfirm({title:'Fase de desenvolvimento',html:`Perícias marcadas: <strong>${names.length}</strong>.<br>Para cada uma será rolado 1d100: se o resultado for maior que o valor atual (ou maior que 95), a perícia sobe <strong>1d10</strong>. Chegar a 90% ou mais rende <strong>2d6 de Sanidade</strong>. As marcas serão limpas.`,ok:'📈 Rolar',danger:false});
- if(!ok||cur.indexOf(p)<0)return;
- const out=[];
- for(const n of names){
-  const v=+get(p,'s:'+n)||0,r=1+Math.floor(Math.random()*100);
-  if(r>v||r>95){
-   const g=1+Math.floor(Math.random()*10),nv=bumpSkill(p,n,g);let extra='';
-   if(v<90&&nv>=90){const sr=2+Math.floor(Math.random()*6)+Math.floor(Math.random()*6),b=CthPlay.live(p,'san'),a=CthPlay.setLive(p,'san',b+sr);extra=` · <b>chegou a ${nv}%</b>: +${a-b} SAN`}
-   out.push(`<li><span class="ok">✔</span> ${esc(n)}: rolou ${r} (era ${v}%) → <strong>+${g}</strong> = ${nv}%${extra}</li>`);
-  }else out.push(`<li>✘ ${esc(n)}: rolou ${r} (${v}%) → sem melhora</li>`);
- }
- p.marks={};p.edit=true;persist();draw();
- await askInfo('Desenvolvimento concluído',`<ul>${out.join('')}</ul>`);
-}
-async function applyAgeRules(ctx){
- const{p}=ctx,age=Math.floor(+p.idade),R=CthPlay.ageRules(age);
- if(!R){await askInfo('Idade fora da faixa','As regras de idade do livro cobrem de <strong>15 a 89 anos</strong>. Preencha a idade nesse intervalo.');return}
- if(ATTR_KEYS.some(k=>!(+p.c[k]>0))){await askInfo('Preencha os atributos','As regras de idade alteram os atributos. Preencha (ou role) todos os atributos primeiro.');return}
- const prev=p.ageApplied;let extra='';
- if(prev&&prev.age&&Object.keys(prev.changes||{}).length+Math.abs(prev.mov||0)>0)extra+=`<br><br>As mudanças aplicadas antes (${prev.age} anos) serão desfeitas e as novas sorteadas.`;
- if(p.blank&&!p.unlimited&&hasBlankPoints(p))extra+='<br><br>⚠ Os totais de pontos mudam com os atributos; confira a distribuição depois.';
- else if(!p.blank)extra+='<br><br>Os pontos de perícia já distribuídos não mudam. O ideal é definir a idade <em>antes</em> de rolar os atributos: “🎲 Rerolar atributos” já aplica a idade automaticamente.';
- const ok=await askConfirm({title:'Aplicar regras de idade?',html:`<strong>${CthPlay.ageText(R)}</strong>${extra}`,ok:'🎂 Aplicar',danger:false});
- if(!ok||cur.indexOf(p)<0)return;
- const c2={...p.c};
- if(prev)CthPlay.revertAge(c2,prev);
- const info=CthPlay.applyAge(c2,age);
- let luck=+p.der.luck||0;
- if(prev&&prev.luckFrom!=null&&prev.luckTo===luck)luck=prev.luckFrom;
- const luckFrom=luck;
- if(info.luck2){const second=A();luck=Math.max(luck,second);info.log.push(`Sorte: segunda rolagem ${second} → fica ${luck}`)}
- p.movMod=info.mov;
- for(const k of ATTR_KEYS)if(c2[k]!==p.c[k])applyAttr(p,k,c2[k]);
- p.der={...p.der,...calcP(p)};p.der.luck=luck;
- p.ageApplied={age,changes:info.changes,mov:info.mov,luckFrom:info.luck2?luckFrom:null,luckTo:info.luck2?luck:null};
- p.ageNote=info.log.join(' · ');p.edit=true;persist();draw();
- await askInfo(`Regras de idade — ${age} anos`,`<ul>${info.log.map(l=>`<li>${esc(l)}</li>`).join('')||'<li>Nenhuma alteração.</li>'}</ul>`);
-}
-function downloadSheet(p){
- const data=CthPlay.buildExport(p),blob=new Blob([JSON.stringify(data,null,1)],{type:'application/json'});
- const name=(String(p.nome||'ficha').replace(/[^\w\u00C0-\u017F -]/g,'').trim().replace(/\s+/g,'_')||'ficha');
- const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name+'.json';document.body.appendChild(a);a.click();a.remove();
- setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-}
-function importedSheet(entry){
- const p=entry.p;
- if(!entry.hadDer){const d=calcP(p);p.der={...d,luck:p.der.luck}}
- p.pinned=true;p.edit=true;delete p.ui;
- CthPlay.migrate(p);
- return p;
-}
-desk.addEventListener('click',e=>{
- const t=e.target;
- const step=t.closest('[data-live-step]');
- if(step){const ctx=sheetOf(step);if(!ctx)return;const[k,d]=step.dataset.liveStep.split(':');CthPlay.setLive(ctx.p,k,CthPlay.live(ctx.p,k)+(+d));ctx.p.edit=true;CthPlay.liveRefresh(ctx.p,ctx.win);persist();return}
- const reset=t.closest('[data-live-reset]');
- if(reset){const ctx=sheetOf(reset);if(!ctx)return;
-  askConfirm({title:'Restaurar estado?',html:'PV, SAN, PM e Sorte voltam aos valores iniciais e as condições são limpas.',ok:'↺ Restaurar',danger:false}).then(ok=>{if(!ok||cur.indexOf(ctx.p)<0)return;ctx.p.live={};ctx.p.status={};ctx.p.edit=true;CthPlay.liveRefresh(ctx.p,ctx.win);persist()});return}
- const roll=t.closest('[data-roll]');
- if(roll){const ctx=sheetOf(roll);if(ctx)doRoll(ctx,roll.dataset.roll);return}
- const mk=t.closest('[data-mark]');
- if(mk){const ctx=sheetOf(mk);if(!ctx)return;const n=mk.dataset.mark;ctx.p.marks=ctx.p.marks||{};if(ctx.p.marks[n])delete ctx.p.marks[n];else ctx.p.marks[n]=true;ctx.p.edit=true;CthPlay.rollBarRefresh(ctx.p,ctx.win);persist();return}
- const dev=t.closest('[data-dev]');
- if(dev){const ctx=sheetOf(dev);if(ctx)devPhase(ctx);return}
- const age=t.closest('[data-age-apply]');
- if(age){const ctx=sheetOf(age);if(ctx)applyAgeRules(ctx);return}
- const ex=t.closest('.expb');
- if(ex){const p=cur[+ex.dataset.i];if(p)downloadSheet(p);return}
-});
-desk.addEventListener('input',e=>{
- const inp=e.target.closest('[data-live]');if(!inp)return;
- const ctx=sheetOf(inp);if(!ctx)return;
- if(inp.value==='')return;
- CthPlay.setLive(ctx.p,inp.dataset.live,+inp.value);ctx.p.edit=true;CthPlay.liveRefresh(ctx.p,ctx.win);persist();
-});
-desk.addEventListener('change',e=>{
- const t=e.target;
- const inp=t.closest('[data-live]');
- if(inp){const ctx=sheetOf(inp);if(ctx){inp.value=CthPlay.live(ctx.p,inp.dataset.live)}return}
- const flag=t.closest('[data-live-flag]');
- if(flag){const ctx=sheetOf(flag);if(!ctx)return;ctx.p.status=ctx.p.status||{};if(flag.checked)ctx.p.status[flag.dataset.liveFlag]=true;else delete ctx.p.status[flag.dataset.liveFlag];ctx.p.edit=true;persist();return}
- const dice=t.closest('[data-dice]');
- if(dice){const ctx=sheetOf(dice);if(!ctx)return;ctx.p.ui=ctx.p.ui||{};ctx.p.ui.dice=Math.max(-2,Math.min(2,+dice.value||0));persist();return}
- const auto=t.closest('[data-automark]');
- if(auto){const ctx=sheetOf(auto);if(!ctx)return;ctx.p.ui=ctx.p.ui||{};ctx.p.ui.autoMark=auto.checked;persist()}
-});
-/* importar fichas enviadas pelos jogadores */
-(function(){
- const btn=document.getElementById('sheetIn');if(!btn)return;
- const file=document.createElement('input');file.type='file';file.accept='.json,application/json';file.multiple=true;file.hidden=true;document.body.appendChild(file);
- btn.onclick=()=>file.click();
- file.onchange=async()=>{
-  const files=[...file.files];file.value='';if(!files.length)return;
-  let ok=0;const bad=[];
-  for(const f of files){
-   try{
-    if(f.size>12e6)throw new Error('arquivo muito grande');
-    const list=CthPlay.parseExport(JSON.parse(await f.text()));
-    for(const entry of list){const p=importedSheet(entry);placeNew(p,cur.length,cur);cur.push(p);ok++}
-   }catch(err){bad.push(`<li>${esc(f.name)}: ${esc(err.message||'arquivo inválido')}</li>`)}
-  }
-  if(ok){draw();persist();const el=winEl(cur.length-1);if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'})}
-  await askInfo(ok?'Ficha importada':'Não foi possível importar',(ok?`<strong>${ok}</strong> ficha${ok>1?'s':''} adicionada${ok>1?'s':''} à mesa (fixada${ok>1?'s':''}).`:'')+(bad.length?`<ul>${bad.join('')}</ul>`:''));
- };
-})();
 function placeNew(p,i,anchors){
  let x=28+(i%5)*40,y=16+(i%5)*32;
  if(anchors&&anchors.length){
@@ -1510,7 +1349,7 @@ async function pdfInvestigator(doc,p,C){
 }
 function pdfLore(doc,p,C,startY){
  const W=doc.internal.pageSize.getWidth(),left=39,right=W-39,bottom=802,font=10.5,lineH=14;
- doc.setFont('times','normal');doc.setFontSize(font);const lines=doc.splitTextToSize(CthPlay.loreText(p),right-left);
+ doc.setFont('times','normal');doc.setFontSize(font);const lines=doc.splitTextToSize(String(p.back||''),right-left);
  let offset=0,page=0,y=startY;
  while(offset<lines.length){
   if(page>0){
@@ -1566,20 +1405,20 @@ async function pdfEquipment(doc,p,C){
 }
 async function savePdf(list,b){
  if(!list.length||b.disabled)return;
- const label=b.innerHTML;b.textContent='⏳ Gerando…';b.disabled=true;
+ const label=b.textContent;b.textContent='⏳ Gerando…';b.disabled=true;
  try{
   if(!window.jspdf)await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js');
   const {jsPDF}=window.jspdf,C=pdfColors(),pdf=new jsPDF({unit:'pt',format:'a4',orientation:'portrait',compress:true});
   for(const [i,p] of list.entries()){
    if(i)pdf.addPage('a4','portrait');
    const loreStart=await pdfInvestigator(pdf,p,C);
-   if(CthPlay.loreText(p).trim())pdfLore(pdf,p,C,loreStart);
+   if(String(p.back||'').trim())pdfLore(pdf,p,C,loreStart);
    await pdfEquipment(pdf,p,C);
   }
   const name=(list.length===1?list[0].nome:'investigadores').replace(/[^\w\u00C0-\u017F -]/g,'').trim().replace(/\s+/g,'_')||'ficha';
   pdf.save(name+'.pdf');
  }catch(_){alert('Não foi possível gerar o PDF. Verifique sua conexão e tente novamente.');}
- finally{b.innerHTML=label;b.disabled=false}
+ finally{b.textContent=label;b.disabled=false}
 }
 sel.onchange=sel2.onchange=document.getElementById('qty').onchange=persist;
 window.DynamicInfo=(()=>{
@@ -1614,7 +1453,7 @@ window.DynamicInfo=(()=>{
    cur=d.cur;zTop=d.zTop||20;
    if(d.occ)sel.value=d.occ;if(d.occ2)sel2.value=d.occ2;
    if(d.qty)document.getElementById('qty').value=d.qty;
-   cur.forEach(CthPlay.migrate);cur.forEach(uiOf);draw();return;
+   cur.forEach(uiOf);draw();return;
   }
  }catch(_){}
  draw();
