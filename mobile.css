@@ -43,12 +43,11 @@ body.mobile .quote{display:none}
 body.mobile .tag{margin:3px 0 6px;font-size:.78rem}
 body.mobile .quote{margin-bottom:8px;font-size:.74rem;line-height:1.35}
 body.mobile .bar{gap:7px;margin-bottom:9px;padding:7px 8px 8px;border-radius:8px}
-body.mobile .bar-head{gap:5px;padding-bottom:6px}
+body.mobile .bar-head{flex-direction:column;align-items:stretch;flex-wrap:wrap;gap:5px;padding-bottom:6px}
 body.mobile .bar-title{gap:2px 8px}
 body.mobile .bar-title b{font-size:.84rem}
 body.mobile .bar-note{font-size:.68rem;line-height:1.25}
-body.mobile .tools{flex-wrap:nowrap;max-width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
-body.mobile .tools::-webkit-scrollbar{display:none}
+body.mobile .tools{flex:1 1 auto;flex-wrap:wrap;max-width:100%;min-width:0;justify-content:flex-start;overflow:visible;padding-bottom:1px}
 body.mobile .tools button.chip{flex:0 0 auto;min-height:34px;padding:3px 8px;font-size:.74rem}
 body.mobile .gen{gap:6px}
 body.mobile .gen label{gap:2px;font-size:.74rem}
@@ -59,7 +58,7 @@ body.mobile #desk{gap:9px;padding-bottom:14px}
 body.mobile #desk .win{border-radius:6px}
 body.mobile #desk .win-bar{padding:4px 5px 4px 14px}
 body.mobile #desk .win-bar button{width:34px;height:34px;font-size:.88rem}
-body.mobile #desk .win-bar .copb,body.mobile #desk .win-bar .dupb{display:none}
+body.mobile #desk .win-bar .dupb{display:none}
 body.mobile #desk .ficha-heading{display:flex;align-items:center;gap:6px;margin:2px 0 4px;padding-bottom:4px;border-bottom:2px solid var(--rule)}
 body.mobile #desk .ficha-heading h2{flex:1;min-width:0;margin:0;padding:0;border:0}
 body.mobile #desk .ficha-heading .nm{width:100%;font-size:1.02rem}

@@ -109,9 +109,9 @@ function body(p,i){
  const skillPool=free?unlimitedPanel():bud?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
  const hl=bud&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':'';
  const addM=bud?`<div class="add"><input class="in" style="width:76%" placeholder="Nova perícia (entra com o valor-base; gaste pontos nela)" list="skillSuggest" data-add="n" aria-label="Nome da nova perícia"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`:`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" list="skillSuggest" data-add="n" aria-label="Nome da nova perícia"><input class="in" type="number" value="50" title="Valor" data-add="v" aria-label="Valor"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
- const d=[['hp','PV'],['san','Sanidade'],['sanMax','SAN máx.'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k,k==='sanMax'?'readonly tabindex="-1" title="99 − Mitos de Cthulhu"':'',l)}</label>`).join('');
+ const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k,k==='sanMax'?'readonly tabindex="-1" title="99 − Mitos de Cthulhu"':'',l)}</label>`).join('');
  const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias não treinadas':'▼ Perícias não treinadas'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias não treinadas (valor-base)</h3><div class="sk${hl}">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" list="skillSuggest" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
- const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
+ const mobileActions=`<div class="mobile-card-actions"><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
  const pb=free?'':`<button type="button" class="pbb" data-i="${i}" title="Distribuir 460 pontos entre os atributos (regra opcional do livro)">⚖ Compra de pontos</button>`;
  return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" aria-label="Nome do investigador" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" aria-label="Idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
@@ -135,7 +135,6 @@ function card(p,i){
   <header class="win-bar">
    <button class="colb" data-i="${i}" title="Recolher / expandir">${u.collapsed?'▢':'–'}</button>
    <span class="win-title">${esc(ttl(p))}</span>
-   <button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 <span class="bl">Copiar</span></button>
    <button class="pdfb" data-i="${i}" title="Imprimir ou salvar esta ficha como PDF">📄 <span class="bl">PDF</span></button>
    <button class="shb" data-i="${i}" title="Compartilhar: baixar arquivo da ficha ou copiar link">📤 <span class="bl">Enviar</span></button>
    <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Manter na mesa: a ficha não some quando você gera novas">${p.pinned?'📌 <span class="bl">Mantida</span>':'📌 <span class="bl">Manter</span>'}</button>
@@ -148,10 +147,6 @@ function card(p,i){
   <div class="rsz" data-i="${i}"></div>
  </section>`;
 }
-function txtBase(p){
- return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san}/${sanMaxOf(p)} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nNão treinadas (valor-base): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'')+window.CthEquipment.plainText(p);
-}
-function txt(p){const t=txtBase(p),x=histTxt(p);return x?t+'\n\n'+x:t}
 /* Gravação: marca como "sujo" e grava depois de 180 ms; ao sair da página grava na hora. Falhas aparecem na tela (veja showSaveBanner). */
 function snapshot(){return{cur,occ:sel.value,occ2:sel2.value,qty:document.getElementById('qty').value,zTop}}
 function persist(){
@@ -398,12 +393,6 @@ desk.addEventListener('click',e=>{
  }
  if(e.target.closest('.addb')){const b=e.target.closest('.addb');(b.dataset.m?addMain:addSkill)(+b.dataset.i,b.parentElement);return}
  if(e.target.closest('.pdfb')){const b=e.target.closest('.pdfb');savePdf([cur[+b.dataset.i]],b);return}
- if(e.target.closest('.copb')){
-  const b=e.target.closest('.copb'),t=txt(cur[+b.dataset.i]);
-  (async()=>{
-   try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}
-   const l='📋 <span class="bl">Copiar</span>';b.innerHTML='✔<span class="bl"> Copiado!</span>';setTimeout(()=>{b.innerHTML=l},1200);
-  })();return}
  if(e.target.closest('.burb')){const k=+e.target.closest('.burb').dataset.i,p=cur[k];askConfirm({title:'Levar ao cemitério?',html:`<strong>${esc(ttl(p))}</strong> será enterrado no cemitério. Em seguida você informa a causa da morte.`,ok:'🪦 Levar ao cemitério',danger:false}).then(y=>{if(y&&cur[k]===p)buryFicha(k)});return}
  if(e.target.closest('.delb')){const k=+e.target.closest('.delb').dataset.i,p=cur[k];confirmDel(ttl(p)).then(y=>{if(y&&cur[k]===p){cur.splice(k,1);draw()}});return}
  if(e.target.closest('.rrb')){

@@ -21,12 +21,12 @@ function wzModal(html,cls=''){
 /* ---------- compra de pontos ---------- */
 function openPointBuy(opt={}){
  const v={...(opt.initial||pointBuyStart())};
- const m=wzModal(`<h4>Compra de pontos (${POINT_BUY_TOTAL})</h4><p class="wz-help">Distribua exatamente ${POINT_BUY_TOTAL} pontos. Força, Constituição, Poder, Destreza e Aparência vão de 15 a 90; Tamanho, Inteligência e Educação, de 40 a 90 — sempre de 5 em 5.</p><div class="pb-total" role="status">Restam <b data-pb-left></b> pontos</div><div class="pb-grid">${ATTR_KEYS.map(k=>`<div class="pb-row"><label for="pb-${k}">${ATTR_NAMES[k]} <small>${ATTR_RANGE[k][0]}–${ATTR_RANGE[k][1]}</small></label><span class="pb-ctl"><button type="button" class="alt" data-pb="-" data-k="${k}" aria-label="Diminuir ${ATTR_NAMES[k]}">−</button><input id="pb-${k}" class="in" type="number" min="${ATTR_RANGE[k][0]}" max="${ATTR_RANGE[k][1]}" step="5" data-pbi="${k}"><button type="button" class="alt" data-pb="+" data-k="${k}" aria-label="Aumentar ${ATTR_NAMES[k]}">＋</button></span></div>`).join('')}</div><div class="row"><button type="button" class="alt" data-pb="min">Mínimos</button><button type="button" class="alt" data-pb="cancel">Cancelar</button><button type="button" data-pb="ok">${esc(opt.okLabel||'Usar estes atributos')}</button></div>`,'pb-dlg');
+ const m=wzModal(`<h4>Compra de pontos (${POINT_BUY_TOTAL})</h4><p class="wz-help">Distribua exatamente ${POINT_BUY_TOTAL} pontos. Força, Constituição, Poder, Destreza e Aparência vão de 15 a 90; Tamanho, Inteligência e Educação, de 40 a 90 — sempre de 5 em 5.</p><div class="pb-total" role="status">Restam <b data-pb-left></b> pontos</div><div class="pb-grid">${ATTR_KEYS.map(k=>`<div class="pb-row"><label for="pb-${k}">${ATTR_NAMES[k]} <small>${ATTR_RANGE[k][0]}–${ATTR_RANGE[k][1]}</small></label><span class="pb-ctl"><button type="button" class="alt" data-pb="-" data-k="${k}" aria-label="Diminuir ${ATTR_NAMES[k]}">−</button><input id="pb-${k}" class="in" type="number" min="${ATTR_RANGE[k][0]}" max="${ATTR_RANGE[k][1]}" step="5" data-pbi="${k}"><button type="button" class="alt" data-pb="+" data-k="${k}" aria-label="Aumentar ${ATTR_NAMES[k]}">＋</button></span></div>`).join('')}</div><div class="row"><button type="button" class="alt" data-pb="min">Refazer</button><button type="button" class="alt" data-pb="cancel">Cancelar</button><button type="button" data-pb="ok">${esc(opt.okLabel||'Usar estes atributos')}</button></div>`,'pb-dlg');
  const left=()=>POINT_BUY_TOTAL-pointBuyUsed(v);
  const paint=()=>{
   ATTR_KEYS.forEach(k=>{const i=m.box.querySelector(`[data-pbi="${k}"]`);if(i!==document.activeElement)i.value=v[k]});
   const l=left(),b=m.box.querySelector('[data-pb-left]');b.textContent=l;b.parentElement.classList.toggle('bad',l<0);b.parentElement.classList.toggle('ok',l===0);
-  m.box.querySelector('[data-pb="ok"]').disabled=!pointBuyValid(v);
+  m.box.querySelector('[data-pb="ok"]').disabled=!ATTR_KEYS.every(k=>{const[a,b]=ATTR_RANGE[k],n=+v[k];return n>=a&&n<=b&&n%5===0});
   ATTR_KEYS.forEach(k=>{const[mn,mx]=ATTR_RANGE[k];m.box.querySelector(`[data-pb="-"][data-k="${k}"]`).disabled=v[k]<=mn;m.box.querySelector(`[data-pb="+"][data-k="${k}"]`).disabled=v[k]>=mx||l<5});
  };
  m.box.addEventListener('click',e=>{
@@ -35,7 +35,7 @@ function openPointBuy(opt={}){
   else if(a==='-'&&v[k]>ATTR_RANGE[k][0])v[k]-=5;
   else if(a==='min')Object.assign(v,pointBuyStart());
   else if(a==='cancel'){m.close(null);return}
-  else if(a==='ok'){if(pointBuyValid(v))m.close({...v});return}
+  else if(a==='ok'){if(!ATTR_KEYS.every(k=>{const[min,max]=ATTR_RANGE[k],n=+v[k];return n>=min&&n<=max&&n%5===0}))return;if(left()!==0){window.alert('Ainda restam '+left()+' pontos para distribuir.');return}m.close({...v});return}
   paint();
  });
  m.box.addEventListener('change',e=>{
