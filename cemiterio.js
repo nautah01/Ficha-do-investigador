@@ -1,10 +1,10 @@
 /* Cemitério dos investigadores — salvo no navegador (localStorage). API usada pelo index.html: Cemiterio.add / hover / over */
 (()=>{
-const KEY='cthulhu-cemiterio';let list=[];
-try{list=JSON.parse(localStorage.getItem(KEY)||'[]')}catch{}
+const KEY='cthulhu-cemiterio';let list=[],storageCorrupt=false;
+try{list=JSON.parse(localStorage.getItem(KEY)||'[]');if(!Array.isArray(list)||list.some(r=>!r||typeof r!=='object'||Array.isArray(r)||typeof r.id!=='string'||typeof r.nome!=='string'||typeof r.causa!=='string'))throw new Error('Formato inesperado')}catch{storageCorrupt=true}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const mk=h=>{const d=document.createElement('div');d.innerHTML=h.trim();return d.firstChild};
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(list))}catch{alert('Não foi possível salvar: o armazenamento do navegador está cheio.')}};
+const save=next=>{if(storageCorrupt){alert('O cemitério local está corrompido. Seus dados foram preservados; exporte um backup antes de tentar recuperá-los.');return false}try{localStorage.setItem(KEY,JSON.stringify(next));list=next;return true}catch{alert('Não foi possível salvar o cemitério. A ficha ativa e os registros anteriores foram mantidos. Libere espaço no navegador e tente novamente.');return false}};
 
 const cemBtn=document.getElementById('cemPanelBtn');
 const win=mk(`<section class="cem" id="cem" hidden aria-label="Cemitério dos investigadores">
@@ -23,7 +23,7 @@ const listEl=win.querySelector('#cemList'),form=dlg.querySelector('form'),cv=dlg
 let cur=null,done=null,ed={img:null,orig:'',z:1,x:0,y:0};
 
 function render(){
- listEl.innerHTML=list.length?list.map(r=>`<article class="stone" data-id="${r.id}">
+ listEl.innerHTML=storageCorrupt?'<p class="cem-empty" role="alert">Não foi possível ler o cemitério salvo. Nenhum dado será substituído. Exporte um backup antes de recuperar o armazenamento.</p>':list.length?list.map(r=>`<article class="stone" data-id="${r.id}">
  <div class="stone-photo">${r.foto?`<img alt="Foto de ${esc(r.nome)}" src="${r.foto}">`:'<span>✝</span>'}</div>
  <h3>${esc(r.nome)}</h3><p class="stone-age">${r.idade!==''?esc(r.idade)+' anos':'&nbsp;'}</p>
  <p class="stone-cause">${esc(r.causa)}</p>${r.frase?`<blockquote>“${esc(r.frase)}”</blockquote>`:''}
@@ -52,6 +52,7 @@ cv.addEventListener('pointerdown',e=>{if(!ed.img)return;cv.setPointerCapture(e.p
 cv.addEventListener('pointermove',e=>{if(!drag)return;const r=cv.getBoundingClientRect();ed.x=drag.ox+(e.clientX-drag.x)/r.width;ed.y=drag.oy+(e.clientY-drag.y)/r.height;redraw()});
 cv.addEventListener('pointerup',()=>drag=null);cv.addEventListener('pointercancel',()=>drag=null);
 function openDlg(rec,isNew,cb){
+ if(storageCorrupt){alert('O cemitério está em modo de recuperação e não pode ser alterado até os dados serem recuperados.');return}
  cur={rec,isNew};done=cb||null;
  dlg.querySelector('#cemDlgT').textContent=isNew?'Enterrar investigador':'Editar lápide';
  dlg.querySelector('#cemOk').textContent=isNew?'Enterrar':'Salvar';
@@ -66,17 +67,16 @@ dlg.querySelector('#cemFile').onchange=async e=>{const f=e.target.files[0];e.tar
 dlg.querySelector('#cemNoPhoto').onclick=()=>setPhoto('');
 dlg.querySelector('#cemCancel').onclick=()=>dlg.close();
 form.onsubmit=e=>{
- e.preventDefault();const f=form.elements,r=cur.rec;
- Object.assign(r,{nome:f.nome.value.trim(),idade:f.idade.value.trim(),causa:f.causa.value.trim(),frase:f.frase.value.trim()});
+  e.preventDefault();const f=form.elements,r={...cur.rec,nome:f.nome.value.trim(),idade:f.idade.value.trim(),causa:f.causa.value.trim(),frase:f.frase.value.trim()};
  if(ed.img){const o=document.createElement('canvas');o.width=234;o.height=288;paint(o.getContext('2d'),234,288);Object.assign(r,{foto:o.toDataURL('image/jpeg',.88),orig:ed.orig,fz:ed.z,fx:ed.x,fy:ed.y})}else Object.assign(r,{foto:'',orig:''});
- if(cur.isNew)list.unshift(r);save();render();dlg.close();
+  const next=cur.isNew?[r,...list]:list.map(item=>item===cur.rec?r:item);if(!save(next))return;cur.rec=r;render();dlg.close();
  if(cur.isNew){setOpen(true);if(done)done()}
 };
 const ask=o=>window.askConfirm?askConfirm(o):Promise.resolve(confirm(o.title));
 listEl.onclick=async e=>{
  const b=e.target.closest('button'),id=b&&b.closest('.stone').dataset.id,r=list.find(x=>x.id===id);if(!r)return;
  if(b.dataset.a==='edit')openDlg(r,false);
- else if(await ask({title:'Remover do cemitério?',html:'<strong>'+esc(r.nome)+'</strong> será removido do cemitério e isso não dá para desfazer.',ok:'🗑 Remover'})){list=list.filter(x=>x!==r);save();render()}
+  else if(await ask({title:'Remover do cemitério?',html:'<strong>'+esc(r.nome)+'</strong> será removido do cemitério e isso não dá para desfazer.',ok:'🗑 Remover'})){if(save(list.filter(x=>x!==r)))render()}
 };
 
 function setOpen(o){win.hidden=!o;syncButton()}

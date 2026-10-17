@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id);
 const win=$('note'),vp=$('noteViewport'),board=$('noteBoard'),cards=$('noteCards'),svg=$('noteLines'),ink=$('noteInk'),ctx=ink.getContext('2d'),
  empty=$('noteEmpty'),hint=$('noteHint'),status=$('noteStatus'),btn=$('notesFab'),diary=$('diary');
 const W=2400,H=1600;
-const HINTS={move:'Arraste o fundo para mover · Shift+arrastar seleciona várias peças · roda do mouse = zoom',select:'Selecionar: arraste no fundo para marcar várias peças ou toque nelas para somar',brush:'Pincel ativo: desenhe sobre o quadro',connect:'Interligar: toque na peça de origem e depois na de destino (a seta aponta para o destino)'};
+const HINTS={move:'Arraste o fundo para mover · Shift+arrastar seleciona várias peças · Tab até uma peça; setas movem e Shift+setas redimensionam',select:'Selecionar: arraste no fundo para marcar várias peças ou toque nelas para somar',brush:'Pincel ativo: desenhe sobre o quadro',connect:'Interligar: toque nas peças ou foque cada uma e pressione Enter (a seta aponta para o destino)'};
 const ask=o=>window.askConfirm?askConfirm(o):Promise.resolve(confirm(o.title));
 const uid=()=>Math.random().toString(36).slice(2,9),clamp=(v,a,b)=>Math.min(b,Math.max(a,v)),rnd=n=>(Math.random()*2-1)*n,say=t=>status.textContent=t;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -37,7 +37,7 @@ const undo=()=>{if(hi>0){hi--;restore(hist[hi])}},redo=()=>{if(hi<hist.length-1)
 /* ---------- peças ---------- */
 function place(e,it){const s=e.style;s.left=it.x+'px';s.top=it.y+'px';s.width=it.w+'px';s.zIndex=it.z;s.setProperty('--r',it.r+'deg');if(it.type==='txt')s.height=it.h+'px'}
 function mk(it,isNew){
- const e=document.createElement('div');e.className='nc '+it.type+(isNew?' new':'');e.dataset.id=it.id;
+ const e=document.createElement('div');e.className='nc '+it.type+(isNew?' new':'');e.dataset.id=it.id;e.tabIndex=0;e.setAttribute('role','group');
  if(it.type==='img'){
   e.innerHTML='<img alt="Foto do quadro" draggable="false"><input class="cap" maxlength="40" placeholder="Legenda" aria-label="Legenda da foto">';
   const im=e.firstChild,cp=e.lastChild;im.src=it.src;im.onload=drawLinks;cp.value=it.cap||'';cp.oninput=()=>{it.cap=cp.value;save()};cp.onchange=commit;
@@ -55,7 +55,7 @@ function add(it,focus){
 function renderAll(){cards.innerHTML='';B.items.forEach(i=>mk(i));empty.hidden=B.items.length>0;loadInk();refresh()}
 function loadInk(){ctx.clearRect(0,0,W,H);if(B.ink){const im=new Image(),id=B.id;im.onload=()=>{if(B.id===id)ctx.drawImage(im,0,0)};im.src=B.ink}}
 function refresh(){
- cards.querySelectorAll('.nc').forEach(e=>{const s=sel.has(e.dataset.id);e.classList.toggle('sel',s);e.classList.toggle('one',s&&sel.size===1);e.classList.toggle('pick',!!pick&&pick.id===e.dataset.id)});
+ cards.querySelectorAll('.nc').forEach(e=>{const s=sel.has(e.dataset.id),it=get(e.dataset.id);e.classList.toggle('sel',s);e.classList.toggle('one',s&&sel.size===1);e.classList.toggle('pick',!!pick&&pick.id===e.dataset.id);if(it)e.setAttribute('aria-label',it.type==='img'?`Foto: ${it.cap||'sem legenda'}. Setas movem; Shift+setas redimensionam.`:`Nota: ${it.title||it.text||'sem texto'}. Setas movem; Shift+setas redimensionam.`)});
  drawLinks();
  $('noteDelete').disabled=!sel.size&&selLink<0;$('noteDup').disabled=!sel.size;$('noteDir').disabled=selLink<0;
  $('noteSelectionActions').hidden=!sel.size&&selLink<0;
@@ -90,11 +90,22 @@ svg.addEventListener('pointerdown',e=>{const i=e.target.dataset.i;if(i==null)ret
 const cycleDir=()=>{const l=B.links[selLink];if(!l)return;l.d={f:'r',r:'b',b:'n',n:'f'}[l.d]||'f';commit()};
 svg.addEventListener('dblclick',e=>{if(e.target.dataset.i!=null)cycleDir()});
 function connect(it){
- if(!pick){pick=it;return refresh()}
+ if(!pick){pick=it;say('Peça de origem escolhida. Foque a peça de destino e pressione Enter.');return refresh()}
  if(pick.id!==it.id){const k=B.links.findIndex(l=>(l.a===pick.id&&l.b===it.id)||(l.a===it.id&&l.b===pick.id));
-  if(k>=0)B.links.splice(k,1);else B.links.push({a:pick.id,b:it.id,d:'f'});pick=null;commit();return}
+  if(k>=0){B.links.splice(k,1);say('Ligação removida.')}else{B.links.push({a:pick.id,b:it.id,d:'f'});say('Ligação criada.')}pick=null;commit();return}
  pick=null;refresh();
 }
+
+cards.addEventListener('keydown',e=>{
+ const node=e.target.closest('.nc');if(!node||e.target.matches('textarea,input,button'))return;const it=get(node.dataset.id);if(!it)return;
+ if(mode==='connect'&&e.key==='Enter'){e.preventDefault();connect(it);return}
+ if(e.key===' '){e.preventDefault();sel.has(it.id)?sel.delete(it.id):sel.add(it.id);selLink=-1;refresh();return}
+ if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key))return;
+ e.preventDefault();const amount=e.shiftKey?10:1;
+ if(e.shiftKey){it.w=clamp(it.w+(e.key==='ArrowRight'?amount:e.key==='ArrowLeft'?-amount:0),100,900);if(it.type==='txt')it.h=clamp((it.h||150)+(e.key==='ArrowDown'?amount:e.key==='ArrowUp'?-amount:0),70,700)}
+ else{it.x=clamp(it.x+(e.key==='ArrowRight'?amount:e.key==='ArrowLeft'?-amount:0),0,W-60);it.y=clamp(it.y+(e.key==='ArrowDown'?amount:e.key==='ArrowUp'?-amount:0),0,H-60)}
+ place(node,it);drawLinks();commit();
+});
 
 /* ---------- mover / redimensionar (um ou vários) ---------- */
 cards.addEventListener('pointerdown',e=>{
@@ -249,7 +260,7 @@ addEventListener('resize',()=>{if(ready)applyView()});
 
 /* ---------- vários quadros ---------- */
 function renderTabs(){
- $('boardTabs').innerHTML=DB.boards.map(b=>`<button type="button" role="tab" class="bt${b.id===B.id?' on':''}" data-id="${b.id}" aria-selected="${b.id===B.id}">${esc(b.name)}</button>`).join('');
+ $('boardTabs').innerHTML=DB.boards.map(b=>`<button type="button" role="tab" class="bt${b.id===B.id?' on':''}" data-id="${b.id}" aria-controls="noteBoardPanel" aria-selected="${b.id===B.id}" tabindex="${b.id===B.id?'0':'-1'}">${esc(b.name)}</button>`).join('');
  $('boardDel').disabled=DB.boards.length<2;
 }
 function openBoard(id,first){
@@ -260,6 +271,7 @@ function openBoard(id,first){
  if(!first)save();
 }
 $('boardTabs').addEventListener('click',e=>{const b=e.target.closest('.bt');if(b&&ready&&b.dataset.id!==B.id)openBoard(b.dataset.id)});
+$('boardTabs').addEventListener('keydown',e=>{const b=e.target.closest('.bt');if(!b||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const all=[...$('boardTabs').querySelectorAll('.bt')],i=all.indexOf(b),next=e.key==='Home'?0:e.key==='End'?all.length-1:(i+(e.key==='ArrowRight'?1:-1)+all.length)%all.length;all[next].focus();all[next].click()});
 $('boardTabs').addEventListener('dblclick',e=>{if(e.target.closest('.bt.on'))rename()});
 on('boardAdd',()=>{const n=newBoard('Quadro '+(DB.boards.length+1));DB.boards.push(n);openBoard(n.id);rename()});
 on('boardRen',rename);
@@ -304,6 +316,7 @@ new ResizeObserver(()=>diary.classList.toggle('narrow',diary.clientWidth<660)).o
 
 /* ---------- abas, janela e carregamento ---------- */
 const tabs={noteBoardTab:'noteBoardPanel',noteTextTab:'noteTextPanel'};
+$('note').querySelector('.note-tabs').addEventListener('keydown',e=>{const tab=e.target.closest('[role="tab"]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;e.preventDefault();const all=[...$('note').querySelectorAll('.note-tabs [role="tab"]')],i=all.indexOf(tab),next=e.key==='Home'?0:e.key==='End'?all.length-1:(i+(e.key==='ArrowRight'?1:-1)+all.length)%all.length;all[next].focus();all[next].click()});
 Object.keys(tabs).forEach(t=>$(t).onclick=()=>{
  for(const k in tabs){const o=k===t;$(k).setAttribute('aria-selected',o);$(k).tabIndex=o?0:-1;$(tabs[k]).hidden=!o}
  if(t==='noteBoardTab'&&ready){applyView();if(needFit){needFit=false;if(!B.view&&B.items.length)fit(true)}}

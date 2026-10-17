@@ -6,6 +6,8 @@
  --card:#0d1e1c;--txt:#e6dcc3;--muted:#9fb0a3;--head:#d8c58a;--rule:rgba(216,197,138,.4);--line:rgba(168,139,74,.3);
  --field:#08110f;--field-ink:#efe6cc;--spine1:#5a1414;--spine2:#8f2323;--spine3:#040a0a;--stamp:rgba(216,197,138,.42);--warn:#d9b36a}
 *{box-sizing:border-box}
+:focus-visible{outline:2px solid var(--head);outline-offset:2px}
+#saved[data-state="error"]{color:#ff9696}#saved[data-state="saved"]{color:#b9d8ad}#saved[data-state="saving"]{color:var(--warn)}
 body{font-family:"Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;color:var(--txt);margin:0;min-height:100vh;background:
  radial-gradient(ellipse 55% 38% at 88% 4%,rgba(var(--glow),.16),transparent 62%),
  radial-gradient(ellipse 70% 45% at 8% 100%,rgba(var(--redglow),.28),transparent 60%),
@@ -98,7 +100,7 @@ h2{margin:4px 0 2px;padding-bottom:6px;font-size:1.15rem;border-bottom:2px solid
 .nm{font-size:1.12rem;font-weight:bold;width:62%;color:var(--head);background:transparent;border:none;border-bottom:1px solid var(--line);border-radius:0;text-align:left}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0}
 .stats div{background:linear-gradient(var(--k5),var(--k4));border:1px solid var(--gold);border-radius:6px;text-align:center;padding:6px 4px;color:var(--btnt);box-shadow:inset 0 0 0 1px rgba(var(--gr),.15)}
-.stats b{display:block;font-size:.72rem;color:var(--head);letter-spacing:1px}
+.stats label{display:block;font-size:.72rem;color:var(--head);letter-spacing:1px;cursor:pointer}
 .stats-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:12px 0 -4px}
 .stats-head span{color:var(--head);font-size:.8rem;font-variant:small-caps;letter-spacing:1px}
 button.rrb{padding:3px 10px;font-size:.78rem;background:transparent;color:var(--ink2);border:1px solid rgba(var(--gr),.45);border-radius:4px;cursor:pointer;white-space:nowrap}
@@ -271,7 +273,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 .dynamic-info{position:fixed;z-index:2147483647;width:max-content;max-width:min(360px,calc(100vw - 24px));max-height:min(42vh,320px);overflow:auto;padding:10px 12px;border:1px solid var(--head);border-radius:7px;background:linear-gradient(var(--k6),var(--k2));color:var(--txt);box-shadow:0 10px 30px rgba(0,0,0,.75);font-size:.86rem;line-height:1.45;white-space:normal;overflow-wrap:anywhere;pointer-events:none}
 .dynamic-info[hidden]{display:none!important}
 @media(max-width:640px){.backstory-layout{grid-template-columns:1fr}.backstory-photo{display:grid;grid-template-columns:minmax(115px,156px) minmax(0,1fr);gap:8px;align-items:start}.backstory-photo h3{grid-column:1/-1}.portrait-canvas{grid-row:span 2;width:100%;height:auto;aspect-ratio:156/192}.portrait-controls{min-width:0}}
-</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><script src="equipment.js"></script></head><body>
+</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><script src="rules.js"></script><script src="equipment.js"></script></head><body>
 <button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <div class="top">
 <h1>Criador de Investigadores</h1>
@@ -279,7 +281,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <p class="quote">“O mais misericordioso no mundo é a incapacidade da mente humana de correlacionar todos os seus conteúdos.” — H. P. Lovecraft</p>
 <div class="bar" id="panel">
 <div class="bar-head">
-<div class="bar-title"><b>Painel</b><span class="bar-note">Não se preocupe, a ficha fica salva no navegador <small id="saved"></small></span></div>
+ <div class="bar-title"><b>Painel</b><span class="bar-note">Salvamento local <small id="saved" role="status" aria-live="polite"></small><button type="button" id="retrySave" class="alt" hidden>Salvar de novo</button></span></div>
 <div class="tools">
 <button class="alt chip" id="cemPanelBtn" aria-pressed="false" title="Abrir ou fechar o cemitério">🪦 Cemitério</button>
 <button class="alt chip" id="bkpOut" title="Baixar fichas, bloco de notas e cemitério num arquivo de backup">💾 Baixar dados</button>
@@ -304,8 +306,8 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <button id="notesFab" title="Abrir quadro de pistas e livro de anotações" aria-label="Abrir quadro de pistas e livro de anotações" aria-pressed="false">📖</button>
 <section class="note" id="note" hidden aria-label="Bloco de notas">
 <header class="note-bar" title="Arraste para mover · duplo clique para minimizar"><span class="note-title">Bloco de notas</span><button id="noteMin" title="Minimizar" aria-label="Minimizar bloco de notas">–</button><button id="noteX" title="Fechar (tudo fica guardado)" aria-label="Fechar bloco de notas">✕</button></header>
-<div class="note-tabs" role="tablist" aria-label="Seções do bloco de notas"><button id="noteBoardTab" role="tab" aria-selected="true" aria-controls="noteBoardPanel">Quadro de pistas</button><button id="noteTextTab" role="tab" aria-selected="false" aria-controls="noteTextPanel" tabindex="-1">Livro de anotações</button></div>
-<div id="noteBoardPanel" class="note-pane" role="tabpanel" aria-labelledby="noteBoardTab">
+<div class="note-tabs" role="tablist" aria-label="Seções do bloco de notas"><button id="noteBoardTab" role="tab" aria-selected="true" aria-controls="noteBoardPanel" tabindex="0">Quadro de pistas</button><button id="noteTextTab" role="tab" aria-selected="false" aria-controls="noteTextPanel" tabindex="-1">Livro de anotações</button></div>
+<div id="noteBoardPanel" class="note-pane" role="tabpanel" aria-labelledby="noteBoardTab" tabindex="0">
 <div class="note-boards"><div id="boardTabs" class="btabs" role="tablist" aria-label="Quadros"></div><button id="boardAdd" title="Criar um novo quadro">＋ Novo</button><button id="boardRen" title="Renomear quadro (ou dê dois cliques na aba)" aria-label="Renomear quadro">✎</button><button id="boardDel" title="Excluir quadro" aria-label="Excluir quadro">🗑</button></div>
 <div class="note-tools">
 <button id="noteSelect" aria-label="Selecionar peças" aria-pressed="false" title="Selecionar várias peças (Shift+arrastar)">⬚ Selecionar</button><button id="noteAdd" aria-label="Adicionar foto" title="Adicionar foto">＋ Foto</button><button id="noteAddText" aria-label="Adicionar texto" title="Adicionar texto">＋ Texto</button><button id="noteExport" aria-label="Baixar imagem PNG" title="Baixar uma imagem PNG do quadro completo">⇩ Baixar PNG</button><button id="noteConnect" aria-label="Interligar peças" aria-pressed="false" title="Ligar duas peças com uma seta">↗ Interligar</button>
@@ -320,7 +322,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <div class="note-zoom"><button id="noteZoomOut" aria-label="Diminuir zoom">−</button><output id="noteZoomVal">100%</output><button id="noteZoomIn" aria-label="Aumentar zoom">+</button><button id="noteFit" title="Enquadrar todas as peças">Ajustar</button></div>
 </div>
 </div>
-<div id="noteTextPanel" class="note-pane" role="tabpanel" aria-labelledby="noteTextTab" hidden>
+<div id="noteTextPanel" class="note-pane" role="tabpanel" aria-labelledby="noteTextTab" tabindex="0" hidden>
 <div id="diary" class="diary" data-view="page"><div class="dia-book">
 <aside class="dia-index" aria-label="Índice do livro"><header><h5>Índice</h5><button id="diaNew" type="button">＋ Nova entrada</button></header><input id="diaSearch" type="search" placeholder="Procurar no livro…" aria-label="Procurar no livro"><ol id="diaList"></ol><footer id="diaTotal"></footer></aside>
 <section class="dia-page" aria-label="Página do livro"><span class="ribbon" aria-hidden="true"></span>
@@ -359,7 +361,7 @@ const NF=['Edith','Dorothy','Mabel','Harriet','Clara','Eleanor','Agnes','Beatric
 const NM=['Arthur','Walter','Harold','Edmund','Henry','Frank','Albert','Raymond','Theodore','Victor'];
 const SN=['Whitlock','Crane','Ashford','Bellamy','Hartwell','Kendrick','Dunmore','Sinclair','Prescott','Blackwood'];
 const BASE={'Ciência (Química)':1,'Ciência (Geologia)':1,'Ciência (Botânica)':1,'Ciência (Zoologia)':1,'Ciência (Matemática)':1,'Ciência (Meteorologia)':1,'Ciência (Ciência Forense)':1,'Arte/Ofício (Escultura)':5,'Arte/Ofício (Desenho)':5,'Arte/Ofício (Piano)':5,'Arte/Ofício (Violino)':5,'Arte/Ofício (Canto)':5,'Arte/Ofício (Violão)':5,'Arte/Ofício (Saxofone)':5,'Antropologia':1,'Armas de Fogo (Pistolas)':20,'Armas de Fogo (Rifles)':25,'Arqueologia':1,'Arremessar':20,'Arte/Ofício (Pintura)':5,'Arte/Ofício (Fotografia)':5,'Avaliação':5,'Cavalgar':5,'Charme':15,'Chaveiro':1,'Ciência (Biologia)':1,'Ciência (Farmácia)':1,'Ciência (Astronomia)':1,'Consertos Elétricos':10,'Consertos Mecânicos':5,'Contabilidade':5,'Direito':5,'Dirigir Auto':20,'Disfarce':5,'Encontrar':25,'Usar Computadores':5,'Escutar':20,'Escalar':20,'Esquivar':0,'Eletrônica':1,'Lábia':5,'Intimidação':15,'História':5,'Furtividade':20,'Lutar (Brigar)':25,'Medicina':1,'Mundo Natural':10,'Natação':20,'Navegação':10,'Ocultismo':5,'Operar Maquinário':1,'Persuasão':10,'Pilotar (Barcos)':1,'Prestidigitação':10,'Primeiros Socorros':30,'Psicanálise':1,'Psicologia':10,'Saltar':20,'Rastrear':10,'Sobrevivência':10,'Usar Biblioteca':20,'Arte/Ofício (Literatura)':5,'Arte/Ofício (Instrumento)':5,'Arte/Ofício (Atuar)':5,'Arte/Ofício (Desenho Técnico)':5,'Arte/Ofício (Trabalhos de Fazenda)':5,'Ciência (Engenharia)':1,'Ciência (Física)':1,'Operar Maquinário Pesado':1,'Pilotar (Aeronaves)':1,'Nível de Crédito':0};
-const base=(n,c)=>n==='Esquivar'?c.DES>>1:n==='Língua Natural'?Math.min(MAXS,c.EDU):n.startsWith('Língua (')?1:BASE[n];
+const base=(n,c)=>CoCRules.baseSkill(n,c)??BASE[n];
 const E4='EDU*4',ED='EDU*2+DES*2|EDU*2+FOR*2',ART='Arte/Ofício (Pintura)|Arte/Ofício (Fotografia)|Arte/Ofício (Literatura)|Arte/Ofício (Instrumento)|Arte/Ofício (Atuar)',PF='Armas de Fogo (Pistolas)|Armas de Fogo (Rifles)',CR='Armas de Fogo (Pistolas)|Avaliação|Chaveiro|Consertos Mecânicos|Disfarce|Lutar (Brigar)|Prestidigitação';
 /* n=nome, p=pontos (use | para alternativas, vale a maior), c=faixa de Crédito, s=perícias. Em s: A|B = sorteia uma; @soc = perícia social; @lang = língua; @any = qualquer outra (das COMMON); prefixo ! = perícia principal, recebe mais pontos */
 const OCC=[
@@ -441,8 +443,31 @@ const SEC=[
 {n:'Contador',s:['!Contabilidade','Direito','Usar Biblioteca','Persuasão']},
 {n:'Eletricista',s:['!Consertos Elétricos','Operar Maquinário','Escalar','Contabilidade']}
 ];
-const calc=c=>{const sum=c.FOR+c.TAM,[db,corpo]=sum<65?['-2',-2]:sum<85?['-1',-1]:sum<125?['0',0]:sum<165?['+1d4',1]:['+1d6',2];
- return{hp:Math.floor((c.CON+c.TAM)/10),san:c.POD,pm:Math.floor(c.POD/5),mov:(c.FOR>c.TAM&&c.DES>c.TAM)?9:(c.FOR<c.TAM&&c.DES<c.TAM)?7:8,db,corpo}};
+const calc=(c,agePenalty=0)=>CoCRules.derived(c,{movementPenalty:agePenalty});
+const movementPenaltyOf=p=>p.ageApplied?CoCRules.ageProfile(p.ageApplied).movementPenalty:0;
+const sanMaxOf=p=>Math.max(0,99-(+p.sk?.['Mythos de Cthulhu']||0));
+function syncSanityLimit(p){p.der.sanMax=sanMaxOf(p);if((+p.der.san||0)>p.der.sanMax)p.der.san=p.der.sanMax}
+const copyData=v=>JSON.parse(JSON.stringify(v));
+function restoreAgeSnapshot(p){if(!p.ageSnapshot)return;const s=copyData(p.ageSnapshot);for(const key of ['c','sk','der','skillFloors','custom','skillAllocations','skillPoints','skillNotice','edit'])if(!(key in s))delete p[key];Object.assign(p,s);delete p.ageSnapshot;delete p.ageApplied}
+async function toggleAgeRules(i){
+ const p=cur[i];if(!p||p.unlimited||isAmnesia(p))return;
+ if(p.ageSnapshot){if(!await askConfirm({title:'Reverter as regras de idade?',html:'Os atributos e perícias voltarão ao estado anterior à aplicação.',ok:'Reverter',danger:false}))return;restoreAgeSnapshot(p);p.edit=true;draw();return}
+ const age=Number(p.idade),profile=CoCRules.ageProfile(age);if(!profile.valid){alert('Informe uma idade inteira de 15 anos ou mais para aplicar as regras etárias.');return}
+ const allocations=p.skillAllocations||{},hasPoints=p.blank&&Object.values(allocations).some(a=>(+a.occupational||0)+(+a.personal||0)>0);
+ if(hasPoints&&!await askConfirm({title:'Recalcular perícias?',html:'A idade altera atributos e totais de criação. A distribuição atual de perícias será reiniciada para os valores mínimos.',ok:'Continuar',danger:false}))return;
+ let loss=Array(profile.physicalCharacteristics.length).fill(0);
+ if(profile.physicalLoss){const keys=profile.physicalCharacteristics;if(profile.singlePhysicalLoss){const choice=prompt(`Escolha FOR ou TAM para reduzir em ${profile.physicalLoss} pontos.`);if(choice===null)return;const index=keys.indexOf(choice.trim().toUpperCase());if(index<0||+p.c[keys[index]]<profile.physicalLoss){alert(`Escolha FOR ou TAM com pelo menos ${profile.physicalLoss} pontos.`);return}loss[index]=profile.physicalLoss}else{const example=keys.map(()=>0);example[0]=profile.physicalLoss;const raw=prompt(`Distribua ${profile.physicalLoss} ponto(s) de perda entre ${keys.join(', ')}. Digite ${keys.length} números separados por vírgula (ex.: ${example.join(',')}).`);if(raw===null)return;loss=raw.split(',').map(x=>Number(x.trim()));if(loss.length!==keys.length||loss.some(x=>!Number.isInteger(x)||x<0)||loss.reduce((a,b)=>a+b,0)!==profile.physicalLoss||loss.some((x,j)=>x>+p.c[keys[j]])){alert(`A distribuição precisa somar ${profile.physicalLoss} e não pode reduzir um atributo abaixo de zero.`);return}}}
+ const derivedSkills=['Esquivar','Língua Natural'].map(n=>({n,value:p.sk[n],floor:skillFloor(p,n)})),snapshot={};for(const key of ['c','sk','der','skillFloors','custom','skillAllocations','skillPoints','skillNotice','edit'])if(p[key]!==undefined)snapshot[key]=copyData(p[key]);
+ p.ageSnapshot=snapshot;p.ageApplied=age;
+ profile.physicalCharacteristics.forEach((key,j)=>p.c[key]=Math.max(0,+p.c[key]-loss[j]));
+ p.c.APA=Math.max(0,+p.c.APA-profile.appLoss);p.c.EDU=Math.max(0,+p.c.EDU-profile.eduLoss);
+ const eduRolls=[];for(let n=0;n<profile.eduChecks;n++){const roll=1+Math.floor(Math.random()*100),before=+p.c.EDU;if(roll>before){const gain=1+Math.floor(Math.random()*10);p.c.EDU=Math.min(99,before+gain);eduRolls.push(`${roll} > ${before}: +${p.c.EDU-before} EDU`)}else eduRolls.push(`${roll} ≤ ${before}: sem aumento`)}
+ if(profile.luckRolls){const rolls=Array.from({length:profile.luckRolls},()=>A());p.der.luck=Math.max(...rolls);eduRolls.push(`Sorte: ${rolls.join(' e ')}; ficou ${p.der.luck}`)}
+ if(p.blank)resetBlankDistribution(p,p.occ,p.occFormula||0);else for(const d of derivedSkills)if(d.value!==undefined){const nextFloor=Math.max(0,+base(d.n,p.c)||0),bonus=Math.max(0,(+d.value||0)-d.floor);p.sk[d.n]=Math.min(99,nextFloor+bonus);(p.skillFloors=p.skillFloors||{})[d.n]=nextFloor}
+ const movementPenalty=profile.movementPenalty,oldSan=+p.der.san||0;p.der={...p.der,...calc(p.c,movementPenalty),san:oldSan};syncSanityLimit(p);p.edit=true;
+ const details=[`Idade ${age}: perdas ${profile.physicalCharacteristics.length?profile.physicalCharacteristics.map((k,j)=>`${k} −${loss[j]}`).join(', '):'nenhuma'}${profile.appLoss?`, APA −${profile.appLoss}`:''}${profile.eduLoss?`, EDU −${profile.eduLoss}`:''}${movementPenalty?`, MOV −${movementPenalty}`:''}.`,...eduRolls].join('\n');
+ alert(details);draw();
+}
 /* Especializações: cada ocupação pode ter uma sub-lista. "at" são as posições das perícias da ocupação que são trocadas pelas da opção escolhida (! = perícia principal) */
 const SUB={
   'Cientista':{lbl:'Área de pesquisa',at:[0,1,2],o:{'Biologia':['!Ciência (Biologia)','!Ciência (Botânica)','Ciência (Zoologia)'],'Química':['!Ciência (Química)','!Ciência (Farmácia)','Ciência (Física)'],'Física':['!Ciência (Física)','!Ciência (Matemática)','Ciência (Engenharia)'],'Astronomia':['!Ciência (Astronomia)','!Ciência (Matemática)','Ciência (Física)'],'Geologia':['!Ciência (Geologia)','!Ciência (Química)','Ciência (Meteorologia)'],'Farmácia':['!Ciência (Farmácia)','!Ciência (Química)','Ciência (Biologia)'],'Zoologia':['!Ciência (Zoologia)','!Ciência (Biologia)','Mundo Natural'],'Ciência Forense':['!Ciência (Ciência Forense)','!Ciência (Química)','Ciência (Biologia)'],'Matemática':['!Ciência (Matemática)','!Ciência (Física)','Contabilidade'],'Meteorologia':['!Ciência (Meteorologia)','!Ciência (Física)','Ciência (Matemática)']},crMod:{'Ciência Forense':10,'Matemática':10}},
@@ -575,7 +600,7 @@ function creditBounds(p){
  if(p.blank){
   const occupationInfo=occInfoOf(p);
   if(!occupationInfo)return null;
-  const total=isAmnesia(p)?amnesiaState(p).usable:occupationPointTotal(occupationInfo.occupation,p.c),mod=occupationInfo.specialization&&SUB[occupationInfo.occupation.n]?.crMod?.[occupationInfo.specialization]||0;
+   const total=isAmnesia(p)?amnesiaState(p).usable:occupationPointTotal(occupationInfo.occupation,p.c,p.occFormula||0),mod=occupationInfo.specialization&&SUB[occupationInfo.occupation.n]?.crMod?.[occupationInfo.specialization]||0;
   const max=Math.max(0,Math.min(99,total,occupationInfo.occupation.c[1]+mod));
   return{min:Math.max(0,Math.min(max,occupationInfo.occupation.c[0]+mod)),max};
  }
@@ -590,9 +615,7 @@ function occupationFor(value){
  const specialized=name.match(/^(.*) \((.*)\)$/),baseName=specialized?specialized[1]:name,occupation=OCC.find(o=>o.n===baseName);
  return occupation?{occupation,specialization:specialized&&SUB[baseName]?.o[specialized[2]]?specialized[2]:''}:null;
 }
-function occupationPointTotal(o,c){
- return Math.max(...o.p.split('|').map(f=>f.split('+').reduce((sum,term)=>{const[k,m]=term.split('*');return sum+(+c[k]||0)*(+m||0)},0)));
-}
+function occupationPointTotal(o,c,choice=0){return CoCRules.occupationPointTotal(o.p,c,choice)}
 /* Amnésia: ocupação exclusiva da ficha em branco normal. Não entra em OCC, então não aparece no gerador. */
 const AMNESIA_OCC={n:'Amnésia',p:'EDU*4',c:[0,99],s:['@any']};
 const isAmnesia=p=>!!p&&p.blank&&!p.unlimited&&p.occ==='Amnésia';
@@ -761,7 +784,15 @@ const sel2=document.getElementById('occ2');
 const subOpts=()=>Object.entries(SUB).forEach(([n,s])=>Object.keys(s.o).forEach(k=>{sel.insertAdjacentHTML('beforeend',`<option value="${n}::${k}" hidden>${n} (${k})</option>`);sel2.insertAdjacentHTML('beforeend',`<option value="occ:${n}::${k}" hidden>${n} (${k}) — como secundária</option>`)}));
 sel2.innerHTML='<option value="">Nenhuma</option><option value="*">🎲 Aleatória</option><optgroup label="Ocupações">'+[...OCC].sort(srt).map(o=>`<option value="occ:${o.n}">${o.n}</option>`).join('')+'</optgroup>';
 subOpts();
-let cur=[],zTop=10,drag=null,rsz=null,saveT=0;
+let cur=[],zTop=10,drag=null,rsz=null,saveT=0,fichaReady=Promise.resolve();
+const fichaDb=new Promise((resolve,reject)=>{try{const r=indexedDB.open('cthulhu-notas',1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains('kv'))r.result.createObjectStore('kv')};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)}catch(e){reject(e)}});
+const fichaDbGet=key=>fichaDb.then(d=>new Promise((resolve,reject)=>{const q=d.transaction('kv').objectStore('kv').get(key);q.onsuccess=()=>resolve(q.result??null);q.onerror=()=>reject(q.error)}));
+function fichaPayload(state){const cur=JSON.parse(JSON.stringify(state.cur||[])),photos={};for(const p of cur){if(!p.storageId)p.storageId=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now());if(p.portrait?.src){photos[p.storageId]=p.portrait.src;p.portrait.src=''}}return{state:{...state,cur},photos}}
+function writeFichaDb(state){const payload=fichaPayload(state);return fichaDb.then(d=>new Promise((resolve,reject)=>{const t=d.transaction('kv','readwrite'),s=t.objectStore('kv');s.put(payload.state,'investigators');s.put(payload.photos,'investigator-portraits');t.oncomplete=()=>resolve();t.onerror=()=>reject(t.error);t.onabort=()=>reject(t.error||new Error('Transação cancelada'))}))}
+function readFichaDb(){return fichaDb.then(d=>new Promise((resolve,reject)=>{const t=d.transaction('kv'),s=t.objectStore('kv'),q=s.get('investigators'),r=s.get('investigator-portraits');let state,photos;q.onsuccess=()=>state=q.result??null;r.onsuccess=()=>photos=r.result||{};t.oncomplete=()=>{if(state)state.cur=(state.cur||[]).map(p=>{if(p.portrait&&p.storageId)p.portrait.src=photos[p.storageId]||'';return p});resolve(state)};t.onerror=()=>reject(t.error)}))}
+function fichaSnapshot(){for(const p of cur)if(!p.storageId)p.storageId=(crypto.randomUUID?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now());return JSON.parse(JSON.stringify({cur,occ:sel.value,occ2:sel2.value,qty:document.getElementById('qty').value,zTop}))}
+window.getFichaBackupState=()=>fichaSnapshot();
+window.importFichaState=async state=>{const value=state||{cur:[],occ:'',occ2:'',qty:'1',zTop:10};try{await writeFichaDb(value);try{localStorage.removeItem(STORE)}catch{}}catch(error){let available=true;try{await fichaDb}catch{available=false}if(available)throw error;localStorage.setItem(STORE,JSON.stringify(value))}};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const get=(p,k)=>{const[a,x]=k.split(/:(.+)/);return a==='c'?p.c[x]:a==='d'?p.der[x]:a==='n'?p[x]:p.sk[x]??(p.custom&&x in p.custom?p.custom[x]:base(x,p.c))};
 function ensureSkillBudget(p){
@@ -816,13 +847,13 @@ function blankBudgetState(p){
  const allocations=p.skillAllocations||{};
  const usedOcc=Object.values(allocations).reduce((sum,a)=>sum+(+a.occupational||0),0);
  const usedPersonal=Object.values(allocations).reduce((sum,a)=>sum+(+a.personal||0),0);
- const occupationalTotal=info?Math.max(0,(isAmnesia(p)?amnesiaState(p).usable:occupationPointTotal(info.occupation,p.c))-creditBase):0;
+  const occupationalTotal=info?Math.max(0,(isAmnesia(p)?amnesiaState(p).usable:occupationPointTotal(info.occupation,p.c,p.occFormula||0))-creditBase):0;
  const personalTotal=Math.max(0,(+p.c.INT||0)*2);
  return{occupational:{total:occupationalTotal,used:usedOcc,available:Math.max(0,occupationalTotal-usedOcc)},personal:{total:personalTotal,used:usedPersonal,available:Math.max(0,personalTotal-usedPersonal)},credit:range};
 }
-function resetBlankDistribution(p,occupation){
+function resetBlankDistribution(p,occupation,formulaChoice=0){
  stripFragments(p);delete p.amnesia;
- p.occ=occupation;p.skillAllocations={};p.skillPoints={available:0};p.skillNotice='';
+ p.occ=occupation;p.occFormula=formulaChoice;p.skillAllocations={};p.skillPoints={available:0};p.skillNotice='';
  ensureSkillBudget(p);
  const range=creditBounds(p);
  for(const n of Object.keys(p.custom||{})){p.custom[n]=Math.max(0,+base(n,p.c)||0);p.skillFloors[n]=p.custom[n]}
@@ -836,16 +867,20 @@ function blankBudgetPanel(p,i){
  const b=blankBudgetState(p),credit=b.credit,mode=p.skillBudgetMode||'occupational';
   const defaultNote='Pontos ocupacionais descontam o Crédito mínimo e valem para perícias da ocupação. Pontos pessoais equivalem a INT × 2. Trocar de ocupação zera a distribuição.';
   const creditParts=credit?`Mínimo <b>${credit.min}</b> · Máximo <b>${credit.max}</b>`:'Escolha uma ocupação para ver a faixa';
-  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div><small class="occ-legend" data-occ-legend ${mode==='occupational'&&credit?'':'hidden'}>${isAmnesia(p)?'🌫️ Instinto: qualquer perícia aceita pontos ocupacionais, mas só até 60%. Metade dos pontos está adormecida (veja Amnésia abaixo).':'<span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.'}</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
+  const info=occInfoOf(p),formulas=info&&!isAmnesia(p)?info.occupation.p.split('|'):[];
+  const formulaPicker=formulas.length>1?`<label class="budget-mode"><span>Fórmula ocupacional</span><select data-occ-formula data-i="${i}" aria-label="Fórmula de pontos da ocupação">${formulas.map((formula,index)=>`<option value="${index}" ${index===(+p.occFormula||0)?'selected':''}>${esc(formula.replace(/\*/g,' × ').replace(/\+/g,' + '))}</option>`).join('')}</select></label>`:'';
+  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label>${formulaPicker}<div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div><small class="occ-legend" data-occ-legend ${mode==='occupational'&&credit?'':'hidden'}>${isAmnesia(p)?'🌫️ Instinto: qualquer perícia aceita pontos ocupacionais, mas só até 60%. Metade dos pontos está adormecida (veja Amnésia abaixo).':'<span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.'}</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
 }
 const fr=(p,k)=>{const v=+get(p,k)||0;return(v>>1)+' / '+Math.floor(v/5)};
-const inp=(p,i,k,attrs='')=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${k}" ${attrs} value="${esc(get(p,k))}">`;
+const fieldLabel=(p,k)=>{const[a,x]=k.split(/:(.+)/),labels={hp:'Pontos de Vida atuais',san:'Sanidade atual',luck:'Sorte',pm:'Pontos de Magia atuais',mov:'Movimento',db:'Bônus de Dano',corpo:'Corpo'};return a==='c'?`${x} de ${ttl(p)}`:a==='s'?`Perícia ${x} de ${ttl(p)}`:a==='d'?`${labels[x]||x} de ${ttl(p)}`:x};
+const fieldId=(i,k)=>`f-${i}-${[...k].map(ch=>ch.codePointAt(0).toString(16)).join('-')}`;
+const inp=(p,i,k,attrs='')=>{const[a]=k.split(':'),limit=p.unlimited||!['c','s','d'].includes(a)||k==='d:db'?'':a==='s'?'max="99"':'min="0" max="99"';return`<input class="in" id="${fieldId(i,k)}" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${k}" ${limit} ${attrs} value="${esc(get(p,k))}">`};
 const falta=p=>Object.entries({...BASE,...EXTRA,...(p.custom||{})}).filter(([n])=>p.sk[n]===undefined&&!(p.removed&&p.removed[n])).sort((a,b)=>a[0].localeCompare(b[0],'pt'));
 const EXTRA={'Arte/Ofício (outra)':5,'Ciência (outra)':1,'Língua (outra)':1,'Pilotar (outra)':1,'Mythos de Cthulhu':0};
 const row=(p,i,n,rm)=>{
  const minimum=skillFloor(p,n);
  const occ=isOccupationHighlight(p,n);
- return`<span class="skill-row${occ?' occ-skill':''}"${occ?' title="Perícia da sua ocupação"':''}><span class="sk-label"><span class="sk-name">${esc(n)}</span></span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
+ return`<span class="skill-row${occ?' occ-skill':''}"${occ?' title="Perícia da sua ocupação"':''}><label class="sk-label" for="${fieldId(i,'s:'+n)}"><span class="sk-name">${esc(n)}</span></label><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`)}<small data-f="s:${n}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
 };
 function uiOf(p,i){
  p.ui=p.ui||{};
@@ -855,17 +890,27 @@ function uiOf(p,i){
  if(!p.ui.z)p.ui.z=++zTop;
  return p.ui;
 }
+function normalizeCharacter(p){
+ if(!p||p.unlimited)return;
+ p.c=p.c&&typeof p.c==='object'?p.c:{};p.sk=p.sk&&typeof p.sk==='object'?p.sk:{};
+ for(const k of ['FOR','CON','POD','DES','APA','TAM','INT','EDU'])p.c[k]=Math.max(0,Math.min(99,Math.floor(+p.c[k]||0)));
+ for(const values of [p.sk,p.custom||{}])for(const k of Object.keys(values))values[k]=Math.max(0,Math.min(99,Math.floor(+values[k]||0)));
+ const oldLanguageBase=Math.min(75,p.c.EDU),oldLanguageValue=+p.sk['Língua Natural'];
+ if(Number.isFinite(oldLanguageValue)&&oldLanguageValue>=oldLanguageBase&&oldLanguageValue<=99){const oldFloor=+(p.skillFloors&&p.skillFloors['Língua Natural']);if(oldLanguageValue===oldLanguageBase||oldFloor===oldLanguageBase){p.sk['Língua Natural']=Math.min(99,p.c.EDU+Math.max(0,oldLanguageValue-oldLanguageBase));if(oldFloor===oldLanguageBase)p.skillFloors['Língua Natural']=p.c.EDU}}
+ p.der=p.der&&typeof p.der==='object'?p.der:calc(p.c);
+ syncSanityLimit(p);
+}
 function body(p,i){
  ensureSkillBudget(p);
- const st=Object.keys(p.c).map(k=>`<div><b>${k}</b>${inp(p,i,'c:'+k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`).join('');
+ const st=Object.keys(p.c).map(k=>`<div><label for="${fieldId(i,'c:'+k)}">${k}</label>${inp(p,i,'c:'+k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`).join('');
  const sk=Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n])=>row(p,i,n,1)).join('');
  const skillPool=p.unlimited?unlimitedPanel():p.blank?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
  const addM=`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" data-add="n"><input class="in" type="number" value="50" title="Valor" data-add="v"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
-  const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k)}</label>`).join('');
+  const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${inp(p,i,'d:'+k)}${k==='san'?`<small data-san-max>máx. ${p.der.sanMax??99}</small>`:''}</label>`).join('');
  const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias que não tenho':'▼ Perícias que não tenho'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias que não tenho (valor inicial)</h3><div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
  const mobileActions=`<div class="mobile-card-actions"><button class="copb" data-i="${i}" title="Copiar o texto desta ficha">📋 Copiar</button><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha">❐ Duplicar</button></div>`;
  return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
-  <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
+   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" value="${esc(p.idade)}"><span>anos</span>${!p.unlimited&&!isAmnesia(p)?`<button type="button" class="alt age-rule-button" data-age-rules data-i="${i}" title="${p.ageSnapshot?`Reverter os efeitos aplicados para ${p.ageApplied} anos`:''}">${p.ageSnapshot?`Reverter idade (${p.ageApplied})`:'Aplicar regras de idade'}</button>`:''}${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
   <div class="stats-head"><span>Atributos</span><button type="button" class="rrb" data-i="${i}" title="Sortear novos atributos (e redistribuir as perícias)">🎲 Rerolar atributos</button></div><div class="stats">${st}</div><div class="der">${d}</div>${skillPool}${isAmnesia(p)?amnesiaPanel(p,i):''}
   <h3 class="st">Perícias do personagem</h3><div class="sk${p.blank&&!p.unlimited&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':''}">${sk}</div>${addM}${fa}${mobileActions}`;
 }
@@ -892,26 +937,33 @@ function card(p,i){
    <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>
   </header>
-  <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" data-sheet-tab="sheet" role="tab" aria-selected="${!isEq&&!isBack}">🗂 Ficha</button><button type="button" data-sheet-tab="backstory" role="tab" aria-selected="${isBack}">📖 Backstory</button><button type="button" data-sheet-tab="equipment" role="tab" aria-selected="${isEq}">🎒 Equipamentos${p.equipment&&p.equipment.length?` (${p.equipment.length})`:''}</button></div>
-  <div class="win-body"><div class="win-pane sheet-pane" role="tabpanel" ${isEq||isBack?'hidden':''}>${body(p,i)}</div><div class="win-pane equipment-pane" role="tabpanel" ${isEq?'':'hidden'}>${window.CthEquipment.render(p,i)}</div><div class="win-pane backstory-pane" role="tabpanel" ${isBack?'':'hidden'}>${backstory(p,i)}</div></div>
+   <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" id="sheet-tab-${i}-sheet" data-sheet-tab="sheet" role="tab" aria-controls="sheet-panel-${i}-sheet" aria-selected="${!isEq&&!isBack}" tabindex="${!isEq&&!isBack?'0':'-1'}">🗂 Ficha</button><button type="button" id="sheet-tab-${i}-backstory" data-sheet-tab="backstory" role="tab" aria-controls="sheet-panel-${i}-backstory" aria-selected="${isBack}" tabindex="${isBack?'0':'-1'}">📖 Backstory</button><button type="button" id="sheet-tab-${i}-equipment" data-sheet-tab="equipment" role="tab" aria-controls="sheet-panel-${i}-equipment" aria-selected="${isEq}" tabindex="${isEq?'0':'-1'}">🎒 Equipamentos${p.equipment&&p.equipment.length?` (${p.equipment.length})`:''}</button></div>
+   <div class="win-body"><div id="sheet-panel-${i}-sheet" class="win-pane sheet-pane" role="tabpanel" aria-labelledby="sheet-tab-${i}-sheet" tabindex="0" ${isEq||isBack?'hidden':''}>${body(p,i)}</div><div id="sheet-panel-${i}-equipment" class="win-pane equipment-pane" role="tabpanel" aria-labelledby="sheet-tab-${i}-equipment" tabindex="0" ${isEq?'':'hidden'}>${window.CthEquipment.render(p,i)}</div><div id="sheet-panel-${i}-backstory" class="win-pane backstory-pane" role="tabpanel" aria-labelledby="sheet-tab-${i}-backstory" tabindex="0" ${isBack?'':'hidden'}>${backstory(p,i)}</div></div>
   <div class="rsz" data-i="${i}"></div>
  </section>`;
 }
 function txtBase(p){
- return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nSem pontos (valor inicial): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'')+window.CthEquipment.plainText(p);
+  return`${ttl(p)}${p.idade!==''?', '+p.idade+' anos':''}${p.sec?' · secundária: '+p.sec:''}\n`+Object.entries(p.c).map(([k,v])=>`${k} ${v}`).join(' | ')+`\nPV ${p.der.hp} | Sanidade ${p.der.san}/${p.der.sanMax??99} | Sorte ${p.der.luck} | PM ${p.der.pm} | Mov ${p.der.mov} | BD ${p.der.db} | Corpo ${p.der.corpo}\nPerícias: `+Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`${n} ${v}%`).join(', ')+(p.falta?`\nSem pontos (valor inicial): `+falta(p).map(([n,v])=>`${n} ${v}%`).join(', '):'')+window.CthEquipment.plainText(p);
 }
 function txt(p){const t=txtBase(p),x=histTxt(p);return x?t+'\n\n'+x:t}
-function persist(){
- clearTimeout(saveT);
- saveT=setTimeout(()=>{
-  try{
-   localStorage.setItem(STORE,JSON.stringify({cur,occ:sel.value,occ2:sel2.value,qty:document.getElementById('qty').value,zTop}));
-   const el=document.getElementById('saved');
-   const t=new Date();
-   el.textContent='· salvo às '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
-  }catch(_){}
- },180);
+async function saveLocalNow(){
+ const el=document.getElementById('saved'),retry=document.getElementById('retrySave');
+ try{
+  const snapshot=fichaSnapshot();
+  try{await writeFichaDb(snapshot);try{localStorage.removeItem(STORE)}catch{}}
+  catch(error){let dbAvailable=true;try{await fichaDb}catch{dbAvailable=false}if(dbAvailable)throw error;localStorage.setItem(STORE,JSON.stringify(snapshot))}
+  const t=new Date();el.textContent='· salvo às '+String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');el.dataset.state='saved';el.title='';retry.hidden=true;
+ }catch(error){
+  el.textContent='· falha ao salvar; a última gravação válida foi preservada';el.dataset.state='error';el.title='Verifique o espaço disponível no navegador e tente salvar novamente.';retry.hidden=false;
+ }
 }
+function persist(){
+ clearTimeout(saveT);const el=document.getElementById('saved'),retry=document.getElementById('retrySave');
+ el.textContent='· salvando…';el.dataset.state='saving';retry.hidden=true;
+ saveT=setTimeout(saveLocalNow,180);
+}
+document.getElementById('retrySave').onclick=()=>{clearTimeout(saveT);saveLocalNow()};
+window.flushFichaSave=async()=>{clearTimeout(saveT);await fichaReady;return saveLocalNow()};
 function fitDesk(){
  let w=800,h=560;
  const mob=document.body.classList.contains('mobile'),aw=fichaDeskW();
@@ -976,6 +1028,7 @@ function rerollFull(p){
 const hasBlankPoints=p=>!!p&&p.blank&&!p.unlimited&&(Object.values(p.skillAllocations||{}).some(a=>(+a.occupational||0)+(+a.personal||0)>0)||!!(p.amnesia&&Array.isArray(p.amnesia.frag)&&p.amnesia.frag.length));
 function rerollAttrs(i){
  const p=cur[i];if(!p)return;
+ if(p.ageSnapshot)restoreAgeSnapshot(p);
  if(!p.blank&&rerollFull(p))return;
  const next={FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()};
  if(p.blank&&!p.unlimited){
@@ -983,8 +1036,8 @@ function rerollAttrs(i){
      zera alocações e perícias para o mínimo (mesmo reset de trocar de ocupação), mantendo ocupação, Sorte e perícias adicionadas. */
   const luck=p.der&&p.der.luck,had=hasBlankPoints(p);
   Object.assign(p.c,next);
-  p.der={...p.der,...calc(p.c)};if(luck!==undefined)p.der.luck=luck;
-  resetBlankDistribution(p,p.occ);
+  p.der={...p.der,...calc(p.c,movementPenaltyOf(p))};if(luck!==undefined)p.der.luck=luck;
+   resetBlankDistribution(p,p.occ,p.occFormula||0);
   p.skillNotice=had?'Os atributos foram rerolados, então os pontos distribuídos foram zerados. Distribua os pontos novamente.':'';
   p.rolledC=rollSig(p);p.edit=true;
   draw();window.CthEquipment.refreshWarnings(p,winEl(i)&&winEl(i).querySelector('[data-eq-panel]'));persist();return;
@@ -992,7 +1045,7 @@ function rerollAttrs(i){
  const derived=['Esquivar','Língua Natural'].map(n=>({n,oldBase:base(n,p.c),oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');
  Object.assign(p.c,next);
  const luck=p.der&&p.der.luck;
- p.der={...p.der,...calc(p.c)};if(luck!==undefined)p.der.luck=luck; /* a Sorte é outra rolagem: não muda */
+ p.der={...p.der,...calc(p.c,movementPenaltyOf(p))};if(luck!==undefined)p.der.luck=luck; /* a Sorte é outra rolagem: não muda */
  for(const d of derived)if(d.value!==undefined){const newBase=Math.max(0,+base(d.n,p.c)||0);if(p.unlimited){if((+d.value||0)===d.oldBase)p.sk[d.n]=newBase;p.skillFloors[d.n]=0}else{const bonus=Math.max(0,(+d.value||0)-d.oldFloor);p.sk[d.n]=newBase+bonus;p.skillFloors[d.n]=newBase}}
  if(p.blank&&!p.unlimited&&p.sk['Nível de Crédito']!==undefined){
   const range=creditBounds(p),floor=range?range.min:Math.max(0,+base('Nível de Crédito',p.c)||0),ceiling=range?range.max:999;
@@ -1005,9 +1058,11 @@ function rerollAttrs(i){
 }
 function refresh(i){
  const el=winEl(i),p=cur[i];if(!el)return;
- el.querySelectorAll('[data-k]').forEach(x=>{if(x!==document.activeElement)x.value=get(p,x.dataset.k)});
+ syncSanityLimit(p);
+ el.querySelectorAll('[data-k]').forEach(x=>{if(x!==document.activeElement)x.value=get(p,x.dataset.k);if(x.dataset.k==='d:san'&&!p.unlimited)x.max=String(p.der.sanMax)});
  el.querySelectorAll('[data-f]').forEach(x=>x.textContent=fr(p,x.dataset.f));
- el.querySelectorAll('[data-skill-input]').forEach(input=>{const n=input.dataset.k.slice(2),range=n==='Nível de Crédito'&&p.blank?creditBounds(p):null;input.min=String(skillFloor(p,n));if(range)input.max=String(range.max);else input.removeAttribute('max')});
+ el.querySelectorAll('[data-skill-input]').forEach(input=>{const n=input.dataset.k.slice(2),range=n==='Nível de Crédito'&&p.blank?creditBounds(p):null;input.min=String(skillFloor(p,n));if(range)input.max=String(range.max);else if(!p.unlimited)input.max='99';else input.removeAttribute('max')});
+ const sanMax=el.querySelector('[data-san-max]');if(sanMax)sanMax.textContent='máx. '+p.der.sanMax;
  if(p.unlimited){/* ficha sem limites: sem pontos nem faixas */}else if(p.blank){
   const budgets=blankBudgetState(p);
   for(const type of ['occupational','personal']){
@@ -1015,6 +1070,7 @@ function refresh(i){
    if(available)available.textContent=String(budgets[type].available);if(total)total.textContent=String(budgets[type].total);
   }
   const mode=el.querySelector('[data-budget-mode]');if(mode&&mode!==document.activeElement)mode.value=p.skillBudgetMode||'occupational';
+   const formula=el.querySelector('[data-occ-formula]');if(formula&&formula!==document.activeElement)formula.value=String(p.occFormula||0);
   const occMode=(p.skillBudgetMode||'occupational')==='occupational';
   el.querySelectorAll('.sk').forEach(box=>box.classList.toggle('hl-occ',occMode));
   const legend=el.querySelector('[data-occ-legend]');if(legend)legend.hidden=!(occMode&&budgets.credit);
@@ -1029,13 +1085,13 @@ function refresh(i){
  persist();
 }
 function addMain(i,box){
- const p=cur[i],nome=box.querySelector('[data-add=n]').value.replace(/[<>&"']/g,'').trim(),v=Math.max(0,Math.min(999,+box.querySelector('[data-add=v]').value||0));
+ const p=cur[i],nome=box.querySelector('[data-add=n]').value.replace(/[<>&"']/g,'').trim(),v=Math.max(0,Math.min(p.unlimited?999:99,+box.querySelector('[data-add=v]').value||0));
  if(!nome||p.sk[nome]!==undefined)return;
  if(p.removed)delete p.removed[nome];if(p.custom)delete p.custom[nome];
  p.sk[nome]=v;p.edit=true;draw();
 }
 function addSkill(i,box){
- const p=cur[i],nome=box.querySelector('[data-add=n]').value.replace(/[<>&"']/g,'').trim(),v=Math.max(0,Math.min(999,+box.querySelector('[data-add=v]').value||0));
+ const p=cur[i],nome=box.querySelector('[data-add=n]').value.replace(/[<>&"']/g,'').trim(),v=Math.max(0,Math.min(p.unlimited?999:99,+box.querySelector('[data-add=v]').value||0));
  if(p.removed&&p.removed[nome]){delete p.removed[nome];draw();return}
  if(!nome||p.sk[nome]!==undefined||nome in BASE||nome in EXTRA||(p.custom&&nome in p.custom))return;
  (p.custom=p.custom||{})[nome]=v;p.edit=true;draw();
@@ -1048,10 +1104,11 @@ async function approveEquipment(p,item){
 desk.addEventListener('click',e=>{
  const i=e.target.closest('[data-i]');
  const idx=i?+i.dataset.i:NaN;
+  const ageButton=e.target.closest('[data-age-rules]');if(ageButton){toggleAgeRules(+ageButton.dataset.i);return}
  const blankOcc=e.target.closest('[data-blank-occ]');if(blankOcc){const k=+blankOcc.dataset.i,p=cur[k];if(p&&p.blank&&window.openBlankOccupationPicker)window.openBlankOccupationPicker(p.occ,next=>{const live=cur[k];if(!live||!live.blank||live.occ===next)return;resetBlankDistribution(live,next);live.edit=true;draw();persist()});return}
  const amBtn=e.target.closest('[data-am]');if(amBtn){const k=+amBtn.dataset.i,p=cur[k];if(p&&isAmnesia(p))amnesiaAction(p,amBtn.dataset.am,amBtn);return}
  const removePortrait=e.target.closest('[data-portrait-remove]');if(removePortrait){const k=+removePortrait.dataset.i,p=cur[k];if(p){delete p.portrait;p.edit=true;draw()}return}
- const tab=e.target.closest('[data-sheet-tab]');if(tab){const k=+tab.closest('.win').dataset.i,chosen=tab.dataset.sheetTab;cur[k].ui.tab=['equipment','backstory'].includes(chosen)?chosen:'sheet';draw();return}
+  const tab=e.target.closest('[data-sheet-tab]');if(tab){const k=+tab.closest('.win').dataset.i,chosen=tab.dataset.sheetTab;cur[k].ui.tab=['equipment','backstory'].includes(chosen)?chosen:'sheet';draw();winEl(k)?.querySelector(`[data-sheet-tab="${chosen}"]`)?.focus();return}
  const eqAction=e.target.closest('[data-eq-action]');if(eqAction){
   const win=eqAction.closest('.win'),k=win?+win.dataset.i:NaN,p=cur[k],panel=eqAction.closest('[data-eq-panel]'),action=eqAction.dataset.eqAction;
   if(!p||!panel)return;
@@ -1103,7 +1160,13 @@ desk.addEventListener('click',e=>{
  if(e.target.closest('.pinb')){const p=cur[idx];p.pinned=!p.pinned;draw();return}
  if(e.target.closest('.dupb')){const p=JSON.parse(JSON.stringify(cur[idx]));p.pinned=false;p.ui={...p.ui,x:(p.ui.x||0)+28,y:(p.ui.y||0)+28,z:++zTop,collapsed:false};p.nome=p.nome.replace(/ \(cópia\)$/,'')+' (cópia)';if(!cur[idx].nome)p.nome='';cur.push(p);draw();return}
 });
-desk.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset.add==='n'){const b=e.target.parentElement.querySelector('.addb');(b.dataset.m?addMain:addSkill)(+b.dataset.i,e.target.parentElement)}});
+desk.addEventListener('keydown',e=>{
+ const current=e.target.closest('[data-sheet-tab]');
+ if(current&&['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){
+  e.preventDefault();const tabs=[...current.closest('[role="tablist"]').querySelectorAll('[data-sheet-tab]')],index=tabs.indexOf(current),next=e.key==='Home'?0:e.key==='End'?tabs.length-1:(index+(e.key==='ArrowRight'?1:-1)+tabs.length)%tabs.length;tabs[next].click();return;
+ }
+ if(e.key==='Enter'&&e.target.dataset.add==='n'){const b=e.target.parentElement.querySelector('.addb');(b.dataset.m?addMain:addSkill)(+b.dataset.i,e.target.parentElement)}
+});
 desk.addEventListener('change',e=>{
  const portraitFile=e.target.closest('[data-portrait-file]');if(portraitFile){const i=+portraitFile.dataset.i,p=cur[i],file=portraitFile.files&&portraitFile.files[0];portraitFile.value='';if(!p||!file)return;shrinkPortrait(file).then(src=>{p.portrait={src,zoom:1,x:0,y:0};p.edit=true;draw()}).catch(()=>alert('Não foi possível abrir essa imagem.'));return}
  const skillInput=e.target.closest('[data-skill-input]');if(skillInput){
@@ -1111,7 +1174,7 @@ desk.addEventListener('change',e=>{
   ensureSkillBudget(p);
   if(p.unlimited){const inSk=Object.prototype.hasOwnProperty.call(p.sk,n),free=Math.max(0,Math.min(999,Math.floor(Number(skillInput.value)||0)));p.sk[n]=free;p.skillNotice='';p.edit=true;skillInput.value=String(free);if(inSk)refresh(i);else draw();persist();return}
   const wasMain=Object.prototype.hasOwnProperty.call(p.sk,n),old=Math.max(0,+get(p,'s:'+n)||0),minimum=skillFloor(p,n);
-  let next=Math.max(0,Math.min(999,Math.floor(Number(skillInput.value)||0))),notice='';
+  let next=Math.max(0,Math.min(p.unlimited?999:99,Math.floor(Number(skillInput.value)||0))),notice='';
   const creditRange=p.blank&&n==='Nível de Crédito'?creditBounds(p):null;
   if(next<minimum){notice=`Não é possível reduzir ${n} para menos de ${minimum}%. O mínimo é ${minimum}%; a perícia foi ajustada para esse limite.`;next=minimum}
   else if(creditRange&&next>creditRange.max){notice=`O máximo de Nível de Crédito para esta ocupação é ${creditRange.max}%. O valor foi ajustado para esse limite.`;next=creditRange.max}
@@ -1138,9 +1201,10 @@ desk.addEventListener('change',e=>{
    if(requested>available){next=old+available;notice=`Você tem ${available} ponto(s) disponível(is). ${n} pode chegar, no máximo, a ${next}%.`}
    p.skillPoints.available-=next-old;
   }else if(!p.blank&&next<old)p.skillPoints.available+=old-next;
-  p.sk[n]=next;p.skillNotice=notice;p.edit=true;skillInput.value=String(next);if(wasMain)refresh(i);else draw();persist();return;
+  p.sk[n]=next;if(n==='Mythos de Cthulhu')syncSanityLimit(p);p.skillNotice=notice;p.edit=true;skillInput.value=String(next);if(wasMain)refresh(i);else draw();persist();return;
  }
- const budgetMode=e.target.closest('[data-budget-mode]');if(budgetMode){const i=+budgetMode.dataset.i,p=cur[i];if(!p)return;p.skillBudgetMode=budgetMode.value;p.skillNotice='';refresh(i);persist();return}
+  const formulaMode=e.target.closest('[data-occ-formula]');if(formulaMode){const i=+formulaMode.dataset.i,p=cur[i],choice=+formulaMode.value;if(!p||!p.blank)return;const hasPoints=Object.values(p.skillAllocations||{}).some(a=>(+a.occupational||0)+(+a.personal||0)>0);const apply=()=>{resetBlankDistribution(p,p.occ,choice);p.edit=true;draw()};if(hasPoints)askConfirm({title:'Trocar fórmula ocupacional?',html:'A fórmula altera o total de pontos de ocupação e o intervalo de Nível de Crédito. A distribuição atual de perícias será reiniciada.',ok:'Trocar fórmula',danger:false}).then(yes=>{if(yes)apply();else formulaMode.value=String(p.occFormula||0)});else apply();return}
+  const budgetMode=e.target.closest('[data-budget-mode]');if(budgetMode){const i=+budgetMode.dataset.i,p=cur[i];if(!p)return;p.skillBudgetMode=budgetMode.value;p.skillNotice='';refresh(i);persist();return}
  const occupationMain=e.target.closest('[data-occ-main]'),occupationSpec=e.target.closest('[data-occ-spec]');if(occupationMain||occupationSpec){
   const control=occupationMain||occupationSpec,i=+control.dataset.i,p=cur[i];if(!p)return;
   let next;
@@ -1202,12 +1266,15 @@ desk.addEventListener('input',e=>{
  const t=e.target,k=t.dataset.k;if(!k)return;
  const i=+t.dataset.i,p=cur[i],[a,x]=k.split(/:(.+)/);
   if(a==='s')return;
- if(a==='n'){p[x]=t.value;if(x==='back'){persist();return}}
+  if(a==='n'&&x==='idade'&&p.ageSnapshot&&Number(t.value)!==Number(p.ageApplied)){
+   const nextAge=t.value;askConfirm({title:'Alterar idade aplicada?',html:`As regras etárias aplicadas para ${p.ageApplied} anos serão revertidas antes de salvar a nova idade.`,ok:'Reverter e alterar idade',danger:false}).then(yes=>{if(yes){restoreAgeSnapshot(p);p.idade=nextAge;p.edit=true;draw()}else t.value=p.idade});return;
+  }
+  if(a==='n'){p[x]=t.value;if(x==='back'){persist();return}}
  else{
-  const v=x==='db'?t.value:Math.max(0,Math.min(999,+t.value||0));
+  const v=x==='db'?t.value:Math.max(0,Math.min(p.unlimited?999:99,+t.value||0));
   if(a==='c'){
    const derived=['Esquivar','Língua Natural'].map(n=>({n,oldBase:base(n,p.c),oldFloor:skillFloor(p,n),value:p.sk[n]})),oldCredit=p.blank?creditBounds(p):null,oldCreditValue=+p.sk['Nível de Crédito']||0,oldCreditFloor=skillFloor(p,'Nível de Crédito');p.c[x]=v;
-   p.der={...p.der,...calc(p.c)};
+   p.der={...p.der,...calc(p.c,movementPenaltyOf(p))};
    for(const d of derived)if(d.value!==undefined){const newBase=Math.max(0,+base(d.n,p.c)||0);if(p.unlimited){if((+d.value||0)===d.oldBase)p.sk[d.n]=newBase;p.skillFloors[d.n]=0}else{const bonus=Math.max(0,(+d.value||0)-d.oldFloor);p.sk[d.n]=newBase+bonus;p.skillFloors[d.n]=newBase}}
    if(p.blank&&!p.unlimited&&p.sk['Nível de Crédito']!==undefined){
     const range=creditBounds(p),floor=range?range.min:Math.max(0,+base('Nível de Crédito',p.c)||0),ceiling=range?range.max:999;
@@ -1330,7 +1397,7 @@ async function pdfInvestigator(doc,p,C){
   pdfCentered(doc,key,x+boxW/2,y+13,7,C.head,'bold');pdfCentered(doc,value,x+boxW/2,y+32,15,C.text,'normal');
   pdfCentered(doc,`${value>>1} / ${Math.floor(value/5)}`,x+boxW/2,y+46,7,C.muted,'normal');
  });y+=boxH+8;
- const pairs=[['PV',p.der.hp],['Sanidade',p.der.san],['Sorte',p.der.luck],['PM',p.der.pm],['Mov',p.der.mov],['Bônus de Dano',p.der.db],['Corpo',p.der.corpo]];
+  const pairs=[['PV',p.der.hp],['Sanidade',`${p.der.san}/${p.der.sanMax??99}`],['Sorte',p.der.luck],['PM',p.der.pm],['Mov',p.der.mov],['Bônus de Dano',p.der.db],['Corpo',p.der.corpo]];
  doc.setFont('times','bold');doc.setFontSize(7.4);
  const pairRows=[[]];let rowW=0,maxW=right-39-16;
  for(const [label,value] of pairs){doc.setFont('times','bold');const lw=doc.getTextWidth(label);doc.setFont('times','normal');const vw=doc.getTextWidth(String(value));const width=lw+vw+10;if(rowW&&rowW+width>maxW){pairRows.push([]);rowW=0}pairRows[pairRows.length-1].push({label,value,lw,width});rowW+=width}
@@ -1446,16 +1513,16 @@ window.DynamicInfo=(()=>{
  mn.onclick=()=>set(true);btn.onclick=()=>set(false);
  apply();
 })();
-(function boot(){
- try{
-  const d=JSON.parse(localStorage.getItem(STORE)||'null');
-  if(d&&Array.isArray(d.cur)&&d.cur.length){
-   cur=d.cur;zTop=d.zTop||20;
-   if(d.occ)sel.value=d.occ;if(d.occ2)sel2.value=d.occ2;
-   if(d.qty)document.getElementById('qty').value=d.qty;
-   cur.forEach(uiOf);draw();return;
-  }
- }catch(_){}
+fichaReady=(async function boot(){
+ let d=null,fromLegacy=false;
+ try{d=await readFichaDb()}catch{}
+ if(!d)try{d=JSON.parse(localStorage.getItem(STORE)||'null');fromLegacy=!!d}catch{}
+ if(d&&Array.isArray(d.cur)){
+  cur=d.cur;zTop=d.zTop||20;
+  if(d.occ)sel.value=d.occ;if(d.occ2)sel2.value=d.occ2;
+  if(d.qty)document.getElementById('qty').value=d.qty;
+  cur.forEach(p=>{normalizeCharacter(p);uiOf(p)});draw();if(fromLegacy)await saveLocalNow();return;
+ }
  draw();
 })();
 </script><script src="notebook.js" defer></script><script src="cemiterio.js" defer></script><script src="backup.js" defer></script><script src="ocupacoes.js" defer></script><script src="lua.js" defer></script><script src="mobile.js" defer></script></body></html>
