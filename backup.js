@@ -25,6 +25,13 @@ async function importar(file){
  if(!data||data.format!==FORMAT||!data.ls||typeof data.ls!=='object'||Array.isArray(data.ls)||![1,2].includes(data.version??1))return alert('Este arquivo não parece ser um backup deste site.');
  if(data.tema!=null&&!THEMES.includes(data.tema))return alert('O tema informado no backup não é válido.');
  for(const k of LS){const v=data.ls[k];if(v!=null)try{JSON.parse(v)}catch{return alert('O backup está corrompido ('+k+').')}}
+ /* fichas do backup passam pela mesma sanitização das fichas importadas (arquivos compartilhados entre jogadores) */
+ if(window.CthPlay&&data.ls['coc7-investigadores-v2']!=null){
+  try{
+   const d=JSON.parse(data.ls['coc7-investigadores-v2']);
+   if(d&&Array.isArray(d.cur)){d.cur=d.cur.map(x=>{try{return CthPlay.sanitize(x)}catch{return null}}).filter(Boolean);data.ls['coc7-investigadores-v2']=JSON.stringify(d)}
+  }catch{}
+ }
  if(!await(window.askConfirm?askConfirm({title:'Carregar este backup?',html:'Isso vai <strong>substituir</strong> as fichas, o tema, os quadros de pistas, o livro de anotações e o cemitério deste navegador pelos do arquivo. Não dá para desfazer.',ok:'📂 Carregar dados'}):Promise.resolve(confirm('Carregar este backup vai substituir os dados deste navegador. Continuar?'))))return;
  try{
   if(window.Notas&&window.Notas.flush)await window.Notas.flush();
