@@ -35,7 +35,7 @@ function openPointBuy(opt={}){
   else if(a==='-'&&v[k]>ATTR_RANGE[k][0])v[k]-=5;
   else if(a==='min')Object.assign(v,pointBuyStart());
   else if(a==='cancel'){m.close(null);return}
-  else if(a==='ok'){if(!ATTR_KEYS.every(k=>{const[min,max]=ATTR_RANGE[k],n=+v[k];return n>=min&&n<=max&&n%5===0}))return;if(left()!==0){window.alert('Ainda restam '+left()+' pontos para distribuir.');return}m.close({...v});return}
+  else if(a==='ok'){if(!ATTR_KEYS.every(k=>{const[min,max]=ATTR_RANGE[k],n=+v[k];return n>=min&&n<=max&&n%5===0}))return;if(left()!==0){askChoice({title:'Pontos não distribuídos',html:'Ainda restam <strong>'+left()+' pontos</strong> para distribuir.',choices:[{v:'ok',label:'Entendi',primary:true}]});return}m.close({...v});return}
   paint();
  });
  m.box.addEventListener('change',e=>{

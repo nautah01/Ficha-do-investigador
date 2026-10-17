@@ -1,7 +1,7 @@
 /* Compartilhar fichas e Mesa do Guardião.
    - Jogador: baixa a ficha como arquivo (.json, leva retrato e equipamento) ou copia um link (dados dentro da URL, sem imagens).
    - Qualquer pessoa: importa arquivos ou links; tudo passa por sanitizeSheet() antes de entrar.
-   - Guardião: a Mesa guarda cópias das fichas recebidas neste navegador, mostra PV/SAN/PM/Sorte e rola testes de grupo. */
+   - Guardião: a Mesa guarda cópias das fichas recebidas neste navegador e permite ajustar PV/SAN/PM/Sorte. */
 const SHARE_APP='ficha-do-investigador';
 const slug=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-|-$/g,'').toLowerCase()||'investigador';
 const newShareId=()=>'s-'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
@@ -142,48 +142,30 @@ async function mesaAdd(list){
  }
  await FichaStore.kvSet('mesa',mesa);
 }
-const skillOfSheet=(s,name)=>{const v=get(s,'s:'+name);return v===undefined||v===null||v===''?null:(+v||0)};
-function mesaSkillNames(){
- const names=new Set([...Object.keys(BASE),...Object.keys(EXTRA)]);
- mesa.list.forEach(x=>Object.keys(x.sheet.sk||{}).forEach(n=>names.add(n)));
- return[...names].sort((a,b)=>a.localeCompare(b,'pt'));
-}
-function mesaHtml(testSkill,rolls){
- const rows=mesa.list.map(x=>{const s=x.sheet,d=s.der||{};
-  const num=(f,v)=>`<input class="in ms-num" type="number" min="0" max="999" value="${+v||0}" data-ms-f="${f}" data-ms-id="${esc(x.id)}" aria-label="${f} de ${esc(s.nome||'investigador')}">`;
-  return`<tr><th scope="row" data-label="Investigador"><b>${esc(s.nome||'Sem nome')}</b><small>${esc(s.occ||'')}${s.idade?' · '+esc(s.idade)+' anos':''}</small></th><td data-label="PV">${num('hp',d.hp)}</td><td data-label="SAN">${num('san',d.san)}<small>máx ${sanMaxOf(s)}</small></td><td data-label="PM">${num('pm',d.pm)}</td><td data-label="Sorte">${num('luck',d.luck)}</td><td data-label="Esquivar">${skillOfSheet(s,'Esquivar')??'—'}</td><td data-label="BD / Corpo">${esc(d.db??'0')} / ${esc(d.corpo??0)}</td><td data-label="" class="ms-acts"><button type="button" class="alt" data-ms="open" data-ms-id="${esc(x.id)}" title="Copiar esta ficha para a sua mesa">Abrir</button><button type="button" class="alt danger" data-ms="del" data-ms-id="${esc(x.id)}" aria-label="Remover ${esc(s.nome||'investigador')} da Mesa">🗑</button></td></tr>`}).join('');
- let test='';
- if(testSkill){
-  const trs=mesa.list.map(x=>{const v=skillOfSheet(x.sheet,testSkill),c=v==null?null:chancesOf(v),r=rolls&&rolls[x.id];
-   return`<tr><th scope="row" data-label="Investigador">${esc(x.sheet.nome||'Sem nome')}</th><td data-label="Valor">${c?c.n+'%':'—'}</td><td data-label="Difícil">${c?c.h+'%':'—'}</td><td data-label="Extremo">${c?c.e+'%':'—'}</td><td data-label="d100">${r?`<b>${r.roll}</b>`:''}</td><td data-label="Resultado">${r?`<span class="ms-res ${r.level}">${ROLL_LABEL[r.level]}</span>`:''}</td></tr>`}).join('');
-  test=`<table class="ms-table ms-test"><thead><tr><th>Investigador</th><th>Valor</th><th>Difícil</th><th>Extremo</th><th>d100</th><th>Resultado</th></tr></thead><tbody>${trs}</tbody></table>`;
- }
- return`<div class="ms-wrap">${mesa.list.length?`<table class="ms-table"><thead><tr><th>Investigador</th><th>PV</th><th>SAN</th><th>PM</th><th>Sorte</th><th>Esquivar</th><th>BD / Corpo</th><th></th></tr></thead><tbody>${rows}</tbody></table>`:'<p class="wz-empty">A Mesa está vazia. Peça aos jogadores o arquivo ou o link da ficha (botão 📤 Enviar) e use “Adicionar fichas”.</p>'}</div>
- <h5 class="ms-sub">Teste de grupo</h5><div class="ms-testbar"><label>Perícia<input class="in" list="msSkills" data-ms-skill placeholder="Ex.: Encontrar" value="${esc(testSkill||'')}"></label><datalist id="msSkills">${mesaSkillNames().map(n=>`<option value="${esc(n)}">`).join('')}</datalist><button type="button" data-ms="roll" ${mesa.list.length?'':'disabled'}>🎲 Rolar d100 para todos</button></div>${test}`;
+function mesaHtml(){
+ const rows=mesa.list.map(x=>{
+  const s=x.sheet,d=s.der||{};
+  const num=(f,v)=>'<input class="in ms-num" type="number" min="0" max="999" value="'+(+v||0)+'" data-ms-f="'+f+'" data-ms-id="'+esc(x.id)+'" aria-label="'+esc(f+' de '+(s.nome||'investigador'))+'">';
+  return '<tr><th scope="row" data-label="Investigador"><b>'+esc(s.nome||'Sem nome')+'</b><small>'+esc(s.occ||'')+(s.idade?' · '+esc(s.idade)+' anos':'')+'</small></th><td data-label="PV">'+num('hp',d.hp)+'</td><td data-label="SAN">'+num('san',d.san)+'</td><td data-label="PM">'+num('pm',d.pm)+'</td><td data-label="Sorte">'+num('luck',d.luck)+'</td><td data-label="Esquivar">'+((s.sk&&s.sk['Esquivar']!=null?(+s.sk['Esquivar']||0):'—'))+'</td><td data-label="BD / Corpo">'+esc(d.db??'0')+' / '+esc(d.corpo??0)+'</td><td data-label="" class="ms-acts"><button type="button" class="alt" data-ms="open" data-ms-id="'+esc(x.id)+'" title="Abrir cópia desta ficha na mesa">Abrir</button><button type="button" class="alt danger" data-ms="del" data-ms-id="'+esc(x.id)+'" aria-label="Remover '+esc(s.nome||'investigador')+' da Mesa">🗑</button></td></tr>';
+ }).join('');
+ return '<div class="ms-wrap">'+(mesa.list.length?'<table class="ms-table"><thead><tr><th>Investigador</th><th>PV</th><th>SAN</th><th>PM</th><th>Sorte</th><th>Esquivar</th><th>BD / Corpo</th><th></th></tr></thead><tbody>'+rows+'</tbody></table>':'<p class="wz-empty">A Mesa está vazia. Peça aos jogadores o arquivo ou o link da ficha (botão 📤 Enviar) e use “Adicionar fichas”.</p>')+'</div>';
 }
 async function openMesa(){
  await mesaLoad();
- const m=wzModal(`<h4>🕯️ Mesa do Guardião</h4><p class="wz-help">Fichas recebidas dos jogadores, guardadas só neste navegador. Os números de PV, SAN, PM e Sorte podem ser ajustados aqui durante a sessão.</p><div class="ms-toolbar"><button type="button" data-ms="add">📥 Adicionar fichas</button></div><div data-ms-body></div><div class="row"><button type="button" class="alt" data-ms="close">Fechar</button></div>`,'wz-dlg ms-dlg');
- let skill='',rolls=null;
+ const m=wzModal('<h4>🕯️ Mesa do Guardião</h4><p class="wz-help">Fichas recebidas dos jogadores, guardadas só neste navegador. Os números de PV, SAN, PM e Sorte podem ser ajustados aqui durante a sessão.</p><div class="ms-toolbar"><button type="button" data-ms="add">📥 Adicionar fichas</button></div><div data-ms-body></div><div class="row"><button type="button" class="alt" data-ms="close">Fechar</button></div>','wz-dlg ms-dlg');
  const body=m.box.querySelector('[data-ms-body]');
- const paint=()=>{body.innerHTML=mesaHtml(skill,rolls)};paint();
+ const paint=()=>{body.innerHTML=mesaHtml()};paint();
  body.addEventListener('input',e=>{
   const f=e.target.closest('[data-ms-f]');
   if(f){const x=mesa.list.find(y=>y.id===f.dataset.msId);if(x){x.sheet.der[f.dataset.msF]=Math.max(0,Math.min(999,Math.floor(+f.value||0)));mesaSave()}}
  });
- body.addEventListener('change',e=>{const s=e.target.closest('[data-ms-skill]');if(s){skill=s.value.trim();rolls=null;paint();const n=body.querySelector('[data-ms-skill]');n&&n.focus()}});
  m.box.addEventListener('click',async e=>{
   const b=e.target.closest('[data-ms]');if(!b)return;const a=b.dataset.ms;
   if(a==='close'){m.close(null);return}
   if(a==='add'){const n=await openImport('mesa');if(n){await mesaLoad();paint()}return}
-  if(a==='roll'){
-   const sk=body.querySelector('[data-ms-skill]').value.trim();if(!sk)return;skill=sk;rolls={};
-   mesa.list.forEach(x=>{const v=skillOfSheet(x.sheet,skill);if(v==null)return;const roll=1+Math.floor(Math.random()*100);rolls[x.id]={roll,level:rollLevel(roll,v)}});
-   paint();return;
-  }
   const id=b.dataset.msId,x=mesa.list.find(y=>y.id===id);if(!x)return;
   if(a==='open'){const c=JSON.parse(JSON.stringify(x.sheet));addSheetsToDesk([c]);m.close(null)}
-  else if(a==='del'){const ok=await askConfirm({title:'Remover da Mesa?',html:`<strong>${esc(x.sheet.nome||'Investigador')}</strong> sai da Mesa do Guardião (a ficha original do jogador não é afetada).`,ok:'Remover'});if(ok){mesa.list=mesa.list.filter(y=>y.id!==id);await FichaStore.kvSet('mesa',mesa);paint()}}
+  else if(a==='del'){const ok=await askConfirm({title:'Remover da Mesa?',html:'<strong>'+esc(x.sheet.nome||'Investigador')+'</strong> sai da Mesa do Guardião (a ficha original do jogador não é afetada).',ok:'Remover'});if(ok){mesa.list=mesa.list.filter(y=>y.id!==id);await FichaStore.kvSet('mesa',mesa);paint()}}
  });
 }
 document.getElementById('gmTable')?.addEventListener('click',openMesa);

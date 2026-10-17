@@ -34,8 +34,8 @@ button.chip.sq{padding:3px 10px;font-weight:bold}
 #go{padding:0 22px}
 .blank-sheet-option{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:12px;padding:11px 12px;border:1px solid var(--line);border-radius:7px;background:rgba(var(--gr),.07)}
 .blank-sheet-copy{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1 1 auto}
-.blank-btns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;flex:0 0 auto}
-.blank-btns button{width:100%;min-width:0;white-space:normal}
+.blank-btns{display:flex;flex-wrap:nowrap;gap:8px;flex:0 0 auto}
+.blank-btns button{min-width:0;white-space:nowrap}
 .blank-sheet-copy strong{color:var(--head);font-size:.9rem;letter-spacing:.4px}
 .blank-sheet-copy span{color:var(--muted);font-size:.8rem;line-height:1.4}
 .blank-sheet-option button{flex:0 0 auto;min-height:38px;white-space:nowrap}
@@ -55,14 +55,14 @@ body.mobile #panel .gen .qtl{grid-column:1;grid-row:2}
 body.mobile #panel #go{grid-column:2;grid-row:2;width:100%;padding:0 7px}
 body.mobile #panel .blank-sheet-option{flex-direction:column;align-items:stretch;gap:7px;margin-top:6px;padding:7px 8px}
 body.mobile #panel .blank-sheet-copy span{display:block}
-body.mobile #panel .blank-btns{width:100%;grid-template-columns:repeat(2,minmax(0,1fr))}
+body.mobile #panel .blank-btns{width:100%;display:flex;flex-direction:column}
 body.mobile #panel .blank-sheet-option button{width:100%;min-width:0;min-height:38px;padding:5px 7px;font-size:.78rem;white-space:normal}
 label{display:flex;flex-direction:column;font-size:.8rem;gap:3px;color:var(--ink2);min-width:0}
 @media(max-width:640px){
  .gen{grid-template-columns:1fr 1fr}.gen .qtl{grid-column:1/-1}
  .blank-sheet-option{align-items:stretch;flex-direction:column;gap:9px}
  .blank-sheet-option button{width:100%}
- .blank-btns{width:100%;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .blank-btns{width:100%;display:flex;flex-direction:column}
  .bar-head{flex-direction:column;align-items:stretch}
  h1{padding-left:0}
 }
@@ -286,7 +286,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <div class="bar-title"><b>Painel</b><span class="bar-note">Não se preocupe, a ficha fica salva no navegador <small id="saved"></small></span></div>
 <div class="tools">
 <button class="alt chip" id="cemPanelBtn" aria-pressed="false" title="Abrir ou fechar o cemitério">🪦 Cemitério</button>
-<button class="alt chip" id="gmTable" title="Mesa do Guardião: fichas recebidas dos jogadores, PV/SAN e testes de grupo">🕯️ Mesa do Guardião</button>
+<button class="alt chip" id="gmTable" title="Mesa do Guardião: fichas recebidas dos jogadores e valores da sessão">🕯️ Mesa do Guardião</button>
 <button class="alt chip" id="impSheet" title="Importar uma ficha (arquivo .json ou link)">📥 Importar ficha</button>
 <button class="alt chip" id="bkpOut" title="Baixar fichas, bloco de notas e cemitério num arquivo de backup">💾 Baixar dados</button>
 <button class="alt chip" id="bkpIn" title="Carregar um arquivo de backup neste navegador">📂 Carregar dados</button>
@@ -301,7 +301,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 </div>
 <div class="blank-sheet-option">
 <div class="blank-sheet-copy"><strong>Começar uma ficha do zero</strong><span>Cria uma ficha em branco para preencher à mão. Você escolhe entre a ficha normal (com as regras de criação) e a ficha sem limites.</span></div>
-<div class="blank-btns"><button class="alt" id="guided" title="Passo a passo: atributos, ocupação, pontos e backstory">🧭 Criação guiada</button><button class="alt" id="blank" title="Criar uma ficha em branco para preencher manualmente">📝 Criar ficha em branco</button></div>
+<div class="blank-btns"><button class="alt" id="guided" title="Passo a passo: atributos, ocupação, pontos e backstory">🧭 Criação guiada</button><button class="alt" id="blank" title="Criar uma ficha em branco para preencher manualmente">📝 Criar ficha</button></div>
 </div>
 </div>
 </div>

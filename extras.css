@@ -60,7 +60,6 @@ input[readonly].in{opacity:.8;cursor:default}
 .guide-bar p{margin:6px 0 8px;font-size:.8rem;line-height:1.4;color:var(--muted)}
 .gd-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
 .gd-actions button{min-height:32px;padding:3px 12px;font-size:.8rem}
-.blank-btns{display:flex;gap:8px;flex-wrap:wrap}
 
 /* combate */
 .cb-panel{padding:4px 2px;container-type:inline-size}
@@ -103,8 +102,6 @@ input[readonly].in{opacity:.8;cursor:default}
 .ms-acts{white-space:nowrap}
 .ms-acts button{min-height:30px;padding:2px 9px;font-size:.75rem}
 .ms-sub{margin:16px 0 6px;color:var(--head);font-variant:small-caps;letter-spacing:1px}
-.ms-testbar{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin:0 0 10px}
-.ms-testbar label{display:flex;flex-direction:column;gap:3px;font-size:.78rem;color:var(--muted)}
 .ms-res{font-weight:700}
 .ms-res.crit,.ms-res.extreme{color:#7ad48d}.ms-res.hard{color:#a8d86a}.ms-res.regular{color:var(--head)}
 .ms-res.fail{color:#e0a05a}.ms-res.fumble{color:#ff7d6a}
