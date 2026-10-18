@@ -129,7 +129,7 @@ const skillFloor=(p,n)=>{
  return cr?cr.min:Math.max(0,+base(n,p.c)||0);
 };
 function occupationSkillRules(p){
- const info=occupationFor(occRefOf(p));if(!info)return{any:false,social:false,language:false,names:new Set()};
+ const info=occupationFor(occRefOf(p));if(!info)return{any:0,social:false,language:false,names:new Set()};
  const variants=SUB[info.occupation.n];
  const lists=variants?(info.specialization?[tokens(info.occupation,info.specialization).t]:Object.keys(variants.o).map(k=>tokens(info.occupation,k).t)):[info.occupation.s];
  const rules={any:0,social:false,language:false,names:new Set()};
@@ -138,6 +138,15 @@ function occupationSkillRules(p){
  }));
  rules.any+=Math.max(0,Math.floor(+p.anyExtra||0)); /* vagas extras de "qualquer perícia" criadas pelo gerador */
  return rules;
+}
+function occupationChoiceSlots(p){
+ if(isAmnesia(p))return{any:0,social:0};
+ const info=occInfoOf(p);if(!info)return{any:0,social:0};
+ const variants=SUB[info.occupation.n],list=variants&&info.specialization?tokens(info.occupation,info.specialization).t:info.occupation.s;
+ const slots={any:0,social:0};
+ list.forEach(raw=>{const name=String(raw).replace(/^!/,'');if(name==='@any')slots.any++;else if(name==='@soc')slots.social++});
+ slots.any+=Math.max(0,Math.floor(+p.anyExtra||0));
+ return slots;
 }
 function hasExplicitOccupationalSkill(rules,n){return rules.names.has(n)||(rules.social&&SOC.includes(n))||(rules.language&&/^Língua \(/.test(n))}
 function isOccupationalSkill(p,n){
