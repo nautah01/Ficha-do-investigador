@@ -81,11 +81,23 @@ sel2.innerHTML='<option value="">Nenhuma</option><option value="*">🎲 Aleatór
 subOpts();
 let cur=[],zTop=10,drag=null,rsz=null,saveT=0,dirty=false,blockSaves=false,storeReady=false;
 const unlimitedPanel=()=>`<aside class="skill-pool unlimited-note" role="note"><b>Ficha sem limites</b><small>Não há pontos para distribuir nem mínimos ou máximos. Edite livremente atributos, perícias, ocupação e Nível de Crédito.</small></aside>`;
+const budgetModeGuidance=new WeakMap();
+function guideBudgetMode(i,mode){
+ const p=cur[i];if(!p)return;
+ const previous=budgetModeGuidance.get(p);if(previous)clearTimeout(previous.timer);
+ const hint={mode,timer:null};
+ hint.timer=setTimeout(()=>{
+  if(budgetModeGuidance.get(p)!==hint)return;
+  budgetModeGuidance.delete(p);
+  const currentIndex=cur.indexOf(p);if(currentIndex>=0)refresh(currentIndex);
+ },3200);
+ budgetModeGuidance.set(p,hint);
+}
 function blankBudgetPanel(p,i){
- const b=blankBudgetState(p),credit=b.credit,mode=p.skillBudgetMode||'occupational';
+ const b=blankBudgetState(p),credit=b.credit,mode=p.skillBudgetMode||'occupational',guideMode=budgetModeGuidance.get(p)?.mode;
   const defaultNote='Pontos ocupacionais descontam o Crédito mínimo e valem para perícias da ocupação. Pontos pessoais equivalem a INT × 2. Trocar de ocupação zera a distribuição.';
   const creditParts=credit?`Mínimo <b>${credit.min}</b> · Máximo <b>${credit.max}</b>`:'Escolha uma ocupação para ver a faixa';
-  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div><small class="occ-legend" data-occ-legend ${mode==='occupational'&&credit?'':'hidden'}>${isAmnesia(p)?'🌫️ Instinto: qualquer perícia aceita pontos ocupacionais, mas só até 60%. Metade dos pontos está adormecida (veja Amnésia abaixo).':'<span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.'}</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
+  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode${guideMode?' is-guide':''}"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div><small class="occ-legend" data-occ-legend ${mode==='occupational'&&credit?'':'hidden'}>${isAmnesia(p)?'🌫️ Instinto: qualquer perícia aceita pontos ocupacionais, mas só até 60%. Metade dos pontos está adormecida (veja Amnésia abaixo).':'<span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.'}</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
 }
 const inp=(p,i,k,attrs='',label='')=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${esc(k)}"${label?` aria-label="${esc(label)}"`:''} ${attrs} value="${esc(get(p,k))}">`;
 const row=(p,i,n,rm)=>{
@@ -325,6 +337,7 @@ function refresh(i){
    if(available)available.textContent=String(budgets[type].available);if(total)total.textContent=String(budgets[type].total);
   }
   const mode=el.querySelector('[data-budget-mode]');if(mode&&mode!==document.activeElement)mode.value=p.skillBudgetMode||'occupational';
+  const modeLabel=el.querySelector('.budget-mode');if(modeLabel)modeLabel.classList.toggle('is-guide',!!budgetModeGuidance.get(p));
   const occMode=(p.skillBudgetMode||'occupational')==='occupational';
   el.querySelectorAll('.sk').forEach(box=>box.classList.toggle('hl-occ',occMode));
   const legend=el.querySelector('[data-occ-legend]');if(legend)legend.hidden=!(occMode&&budgets.credit);
@@ -434,8 +447,8 @@ desk.addEventListener('change',e=>{
   else if(next===minimum)notice=`${n} chegou ao mínimo de ${minimum}%. Não é possível retirar mais pontos desta perícia.`;
   if(isBudget(p)&&next>old){
    const mode=p.skillBudgetMode||'occupational',budgets=blankBudgetState(p);
-   if(mode==='personal'&&n==='Nível de Crédito'){next=old;notice='Nível de Crédito usa pontos ocupacionais, não pontos pessoais.'}
-   else if(mode==='occupational'&&n!=='Nível de Crédito'&&!isOccupationalSkill(p,n)){next=old;notice=`${n} não faz parte das perícias desta ocupação. Use pontos pessoais para esta perícia.`}
+   if(mode==='personal'&&n==='Nível de Crédito'){next=old;notice='Nível de Crédito usa pontos ocupacionais, não pontos pessoais.';guideBudgetMode(i,'occupational')}
+   else if(mode==='occupational'&&n!=='Nível de Crédito'&&!isOccupationalSkill(p,n)){next=old;notice=`${n} não faz parte das perícias desta ocupação. Use pontos pessoais para esta perícia.`;guideBudgetMode(i,'personal')}
    else{
     if(isAmnesia(p)&&mode==='occupational'&&n!=='Nível de Crédito'&&next>60){next=Math.max(old,60);notice='Instinto: com pontos ocupacionais, a Amnésia só chega a 60% numa perícia. Pontos pessoais podem passar disso.'}
     const cap=Math.max(old,skillCapFor(p,n));if(next>cap&&n!=='Nível de Crédito'){next=cap;notice=`Na criação, nenhuma perícia passa de ${SKILL_CAP}% com pontos gastos (só o Nível de Crédito tem faixa própria). ${n} ficou em ${cap}%.`}
@@ -458,7 +471,7 @@ desk.addEventListener('change',e=>{
   }else if(!isBudget(p)&&next<old)p.skillPoints.available+=old-next;
   p.sk[n]=next;p.skillNotice=notice;p.edit=true;skillInput.value=String(next);if(wasMain)refresh(i);else draw();persist();return;
  }
- const budgetMode=e.target.closest('[data-budget-mode]');if(budgetMode){const i=+budgetMode.dataset.i,p=cur[i];if(!p)return;p.skillBudgetMode=budgetMode.value;p.skillNotice='';refresh(i);persist();return}
+ const budgetMode=e.target.closest('[data-budget-mode]');if(budgetMode){const i=+budgetMode.dataset.i,p=cur[i];if(!p)return;const hint=budgetModeGuidance.get(p);if(hint)clearTimeout(hint.timer);budgetModeGuidance.delete(p);p.skillBudgetMode=budgetMode.value;p.skillNotice='';refresh(i);persist();return}
  const occupationMain=e.target.closest('[data-occ-main]'),occupationSpec=e.target.closest('[data-occ-spec]');if(occupationMain||occupationSpec){
   const control=occupationMain||occupationSpec,i=+control.dataset.i,p=cur[i];if(!p)return;
   let next;
