@@ -53,16 +53,16 @@ function gen(sel,sel2,keep){
  const[selN,selSub]=String(sel).split('::'),o=sel==='*'?pick(OCC):OCC.find(x=>x.n===selN),oT=tokens(o,selSub);
  const c=keep&&keep.c?{...keep.c}:rollAttrs();
  const lang=keep&&keep.lang||pick(LANGS),sk={},bs=n=>base(n,c),cu=n=>sk[n]??bs(n);
- const ALL=Object.keys(BASE).filter(n=>n!=='Nível de Crédito'),used=new Set(),keys=[];let anyExtra=0; /* vagas ocupacionais que viraram "qualquer perícia" porque todas as alternativas já estavam usadas */
- const res=(t,keep)=>{let op=(t==='@soc'?SOC.join('|'):t==='@any'?COMMON.join('|'):t).split('|').map(x=>x==='@lang'?'Língua ('+lang+')':x);
-  if(!keep)op=op.filter(x=>!used.has(x));if(!op.length){op=ALL.filter(x=>!used.has(x));if(!keep)anyExtra++}const n=pick(op);used.add(n);return n};
+ const ALL=Object.keys(BASE).filter(n=>n!=='Nível de Crédito'),used=new Set(),keys=[],choiceKinds={};let anyExtra=0; /* vagas ocupacionais que viraram "qualquer perícia" porque todas as alternativas já estavam usadas */
+ const res=(t,keep,choiceType)=>{let op=(t==='@soc'?SOC.join('|'):t==='@any'?COMMON.join('|'):t).split('|').map(x=>x==='@lang'?'Língua ('+lang+')':x);
+  if(!keep)op=op.filter(x=>!used.has(x));let actualChoiceType=choiceType;if(!op.length){op=ALL.filter(x=>!used.has(x));if(!keep){anyExtra++;actualChoiceType='any'}}const n=pick(op);used.add(n);if(actualChoiceType)choiceKinds[n]=actualChoiceType;return n};
   const isOcc2=sel2.startsWith('occ:'),s2Parts=isOcc2?sel2.slice(4).split('::'):[],s2N=s2Parts[0]||'',s2Spec=s2Parts[1]||'';
  const requestedSec=sel2==='*'?pick(OCC.filter(x=>!window.secondaryBlocked(o.n,x.n))):isOcc2?OCC.find(x=>x.n===s2N):null;
   const sec=requestedSec&&!window.secondaryBlocked(o.n,requestedSec.n)?requestedSec:null,secT=sec?tokens(sec,s2Spec):null;
   const hist=keep&&Array.isArray(keep.hist)?keep.hist:[bgFor('p',o),isOcc2&&sec?bgFor('s',sec):null].filter(Boolean);
   const rawCreditMod=(oT.crMod||0)+(secT?secT.crMod||0:0)+hist.reduce((sum,g)=>sum+(g.crMod||0),0);
   const creditMod=Math.max(-10,Math.min(20,rawCreditMod));
- const occS=oT.t.map(t=>{const k=t[0]==='!',n=res(k?t.slice(1):t);if(k)keys.push(n);return n});
+ const occS=oT.t.map(t=>{const k=t[0]==='!',token=k?t.slice(1):t,kind=token==='@any'?'any':token==='@soc'?'social':null,n=res(token,false,kind);if(k)keys.push(n);return n});
  const s2=[],keys2=[];
  if(sec){const hasK=secT.t.some(t=>t[0]==='!');secT.t.forEach((t,i)=>{if(t==='@any')return;const n=res(t.replace(/^!/,''),true);if(!s2.includes(n))s2.push(n);if((t[0]==='!'||(!hasK&&i===0))&&!keys2.includes(n))keys2.push(n)})}
  let occP=Math.max(...o.p.split('|').map(f=>f.split('+').reduce((a,t)=>{const[k,m]=t.split('*');return a+c[k]*m},0)));
@@ -81,7 +81,7 @@ function gen(sel,sel2,keep){
  /* degraus de nível: as perícias principais (!) sobem primeiro (50→65→75) e as demais da lista ficam em 30-40; só depois o resto é sorteado com pesos */
  const lift=(pts,list,t)=>{let go=true;while(go&&pts>0){go=false;for(const n of list){const inc=Math.min(5,t-cu(n),SKILL_CAP-cu(n));if(inc>0&&pts>=inc){sk[n]=cu(n)+inc;pts-=inc;go=true}}}return pts};
  const tiers=(pts,K,N,T)=>{for(const[w,t]of T)pts=lift(pts,w==='K'?K:N,t);return pts};
- const alloc={},track=(kind,before)=>{for(const n of Object.keys(sk)){const d=sk[n]-(before[n]??bs(n));if(d>0)(alloc[n]=alloc[n]||{occupational:0,personal:0})[kind]+=d}};
+ const alloc={},track=(kind,before)=>{for(const n of Object.keys(sk)){const d=sk[n]-(before[n]??bs(n));if(d>0){const entry=alloc[n]=alloc[n]||{occupational:0,personal:0};entry[kind]+=d;if(kind==='occupational'&&choiceKinds[n])entry.choiceType=choiceKinds[n]}}};
   let snap={...sk};
   const K1=[...new Set(occS.filter(n=>keys.includes(n)))],N1=[...new Set(occS)].filter(n=>!K1.includes(n));
  const oi=[...new Set(occS)].map(n=>({n,w:keys.includes(n)?3:1,cap:keys.includes(n)?MAXS:50}));
@@ -148,15 +148,34 @@ function occupationChoiceSlots(p){
  slots.any+=Math.max(0,Math.floor(+p.anyExtra||0));
  return slots;
 }
-function hasExplicitOccupationalSkill(rules,n){return rules.names.has(n)||(rules.social&&SOC.includes(n))||(rules.language&&/^Língua \(/.test(n))}
+function occupationChoiceUsage(p){
+ const rules=occupationSkillRules(p),slots=occupationChoiceSlots(p),used={any:0,social:0};
+ for(const[n,a]of Object.entries(p.skillAllocations||{})){
+  if((+a?.occupational||0)<=0||n==='Nível de Crédito'||rules.names.has(n)||(rules.language&&/^Língua \(/.test(n)))continue;
+  let type=a.choiceType;
+  if(type!=='any'&&type!=='social')type=SOC.includes(n)&&rules.social&&used.social<slots.social?'social':'any';
+  used[type]++;
+ }
+ return{any:Math.min(slots.any,used.any),social:Math.min(slots.social,used.social)};
+}
+function occupationChoiceRemaining(p){const total=occupationChoiceSlots(p),used=occupationChoiceUsage(p);return{any:Math.max(0,total.any-used.any),social:Math.max(0,total.social-used.social)}}
+function hasExplicitOccupationalSkill(rules,n){return rules.names.has(n)||(rules.language&&/^Língua \(/.test(n))}
+function occupationChoiceType(p,n){
+ if(isAmnesia(p)||n==='Nível de Crédito')return null;
+ const rules=occupationSkillRules(p),entry=p.skillAllocations&&p.skillAllocations[n];
+ if(hasExplicitOccupationalSkill(rules,n)||(+entry?.occupational||0)>0)return null;
+ const remaining=occupationChoiceRemaining(p);
+ if(rules.social&&SOC.includes(n)&&remaining.social>0)return'social';
+ if(remaining.any>0)return'any';
+ return null;
+}
+function isSocialChoiceAvailable(p,n){return occupationChoiceType(p,n)==='social'}
 function isOccupationalSkill(p,n){
  if(isAmnesia(p))return true;
  const rules=occupationSkillRules(p);
  if(hasExplicitOccupationalSkill(rules,n))return true;
- if(!rules.any)return false;
- const allocations=p.skillAllocations||{},allocatedAny=Object.entries(allocations).filter(([name,a])=>+a?.occupational>0&&!hasExplicitOccupationalSkill(rules,name)).map(([name])=>name);
- if(allocatedAny.includes(n))return allocatedAny.indexOf(n)<rules.any;
- return allocatedAny.length<rules.any;
+ if((+p.skillAllocations?.[n]?.occupational||0)>0)return true;
+ return!!occupationChoiceType(p,n);
 }
 let occHlCache={key:null,rules:null};
 function isOccupationHighlight(p,n){
@@ -165,7 +184,7 @@ function isOccupationHighlight(p,n){
  if(n==='Nível de Crédito')return true;
  if(occHlCache.key!==occRefOf(p)){occHlCache={key:occRefOf(p),rules:occupationSkillRules(p)}}
  const rules=occHlCache.rules;
- return rules.names.has(n)||(rules.social&&SOC.includes(n))||(rules.language&&/^Língua \(/.test(n));
+ return hasExplicitOccupationalSkill(rules,n)||(+p.skillAllocations?.[n]?.occupational||0)>0;
 }
 function blankBudgetState(p){
  ensureSkillBudget(p);
@@ -294,7 +313,7 @@ function sanitizeSheet(raw){
  p.c=Object.fromEntries(ATTR_KEYS.map(k=>[k,clampInt(raw.c[k],0,999)]));
  p.sk=cleanDict(raw.sk);
  for(const k of ['custom','removed','skillFloors'])if(raw[k]!==undefined){p[k]=k==='removed'?Object.fromEntries(Object.keys(cleanDict(raw[k])).map(n=>[n,true])):cleanDict(raw[k])}
- if(raw.skillAllocations&&typeof raw.skillAllocations==='object'){p.skillAllocations={};for(const k of Object.keys(raw.skillAllocations)){const n=cleanName(k),a=raw.skillAllocations[k];if(n&&a&&typeof a==='object')p.skillAllocations[n]={occupational:clampInt(a.occupational,0,999),personal:clampInt(a.personal,0,999)}}}
+ if(raw.skillAllocations&&typeof raw.skillAllocations==='object'){p.skillAllocations={};for(const k of Object.keys(raw.skillAllocations)){const n=cleanName(k),a=raw.skillAllocations[k];if(n&&a&&typeof a==='object')p.skillAllocations[n]={occupational:clampInt(a.occupational,0,999),personal:clampInt(a.personal,0,999),...(a.choiceType==='any'||a.choiceType==='social'?{choiceType:a.choiceType}:{})}}}
  const d=raw.der&&typeof raw.der==='object'?raw.der:{};
  p.der={hp:clampInt(d.hp,0,999),san:clampInt(d.san,0,999),luck:clampInt(d.luck,0,999),pm:clampInt(d.pm,0,999),mov:clampInt(d.mov,0,99),corpo:clampInt(d.corpo,-20,99),db:String(d.db??'0').replace(/[^0-9dD+\-\s]/g,'').slice(0,12)||'0'};
  ['edit','pinned','blank','unlimited','budget'].forEach(k=>{if(k in p)p[k]=!!p[k]});
