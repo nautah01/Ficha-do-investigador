@@ -95,13 +95,13 @@ function guideBudgetMode(i,mode){
 }
 function budgetChoiceNote(p){
  const left=occupationChoiceRemaining(p);if(!left.any&&!left.social)return'';
- return`<aside class="budget-choice-note" data-budget-choice-note role="status" aria-live="polite"><strong>Vagas da ocupação para escolher</strong><div>${left.any?`<span class="choice-count"><b>Perícias aleatórias</b><strong>${left.any}</strong></span>`:''}${left.social?`<span class="choice-count"><b>Perícias sociais</b><strong>${left.social}</strong></span>`:''}</div><small>Escolha ao distribuir pontos ocupacionais.</small></aside>`;
+ return`<aside class="budget-choice-note" data-budget-choice-note role="status" aria-live="polite" title="Use estas vagas ao distribuir pontos ocupacionais."><strong>Vagas da ocupação</strong>${left.any?`<span class="choice-count"><b>Perícias aleatórias</b><strong>${left.any}</strong></span>`:''}${left.social?`<span class="choice-count"><b>Perícias sociais</b><strong>${left.social}</strong></span>`:''}<small>escolha com pontos ocupacionais</small></aside>`;
 }
-function skillAllocationLabel(p,n){
+function skillAllocationHint(p,n){
  const a=p.skillAllocations?.[n];if(!isBudget(p)||!a)return'';
  const occupational=Math.max(0,+a.occupational||0),personal=Math.max(0,+a.personal||0);
  if(!occupational&&!personal)return'';
- return`<small class="skill-allocation" data-allocation-for="${esc(n)}" aria-label="Distribuição: ${occupational} pontos ocupacionais e ${personal} pontos pessoais"><span>Ocup. ${occupational}</span><span>Pess. ${personal}</span></small>`;
+ return`Pontos distribuídos: ${occupational} ocupacionais e ${personal} pessoais.`;
 }
 function blankBudgetPanel(p,i){
  const b=blankBudgetState(p),credit=b.credit,mode=p.skillBudgetMode||'occupational',guideMode=budgetModeGuidance.get(p)?.mode;
@@ -113,7 +113,8 @@ const inp=(p,i,k,attrs='',label='')=>`<input class="in" type="${k==='d:db'?'text
 const row=(p,i,n,rm)=>{
  const minimum=skillFloor(p,n);
  const occ=isOccupationHighlight(p,n),socialChoice=isSocialChoiceAvailable(p,n),title=occ?'Perícia da ocupação':socialChoice?'Vaga social disponível; confirme ao distribuir pontos ocupacionais':'';
- return`<span class="skill-row${occ?' occ-skill':''}${socialChoice&&(!isBudget(p)||(p.skillBudgetMode||'occupational')==='occupational')?' social-choice':''}"${title?` title="${title}"`:''}><span class="sk-label"><span class="sk-name">${esc(n)}</span>${skillAllocationLabel(p,n)}</span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input`,n+' (%)')}<small data-f="${esc('s:'+n)}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
+ const allocationHint=skillAllocationHint(p,n),hintAttr=allocationHint?` title="${esc(allocationHint)}" aria-description="${esc(allocationHint)}"`:'';
+ return`<span class="skill-row${occ?' occ-skill':''}${socialChoice&&(!isBudget(p)||(p.skillBudgetMode||'occupational')==='occupational')?' social-choice':''}"${title?` title="${title}"`:''}><span class="sk-label"><span class="sk-name">${esc(n)}</span></span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input${hintAttr}`,n+' (%)')}<small data-f="${esc('s:'+n)}">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
 };
 function uiOf(p,i){
  p.ui=p.ui||{};
@@ -350,7 +351,7 @@ function refresh(i){
   const modeLabel=el.querySelector('.budget-mode');if(modeLabel)modeLabel.classList.toggle('is-guide',!!budgetModeGuidance.get(p));
   const occMode=(p.skillBudgetMode||'occupational')==='occupational';
   el.querySelectorAll('.sk').forEach(box=>box.classList.toggle('hl-occ',occMode));
-  el.querySelectorAll('.sk>.skill-row').forEach(skillRow=>{const input=skillRow.querySelector('[data-skill-input]'),name=input&&input.dataset.k.slice(2);if(name){skillRow.classList.toggle('occ-skill',isOccupationHighlight(p,name));skillRow.classList.toggle('social-choice',occMode&&isSocialChoiceAvailable(p,name));const label=skillRow.querySelector('.sk-label'),box=label?.querySelector('.skill-allocation'),markup=skillAllocationLabel(p,name);if(markup){if(box)box.outerHTML=markup;else label?.insertAdjacentHTML('beforeend',markup)}else if(box)box.remove()}});
+  el.querySelectorAll('.sk>.skill-row').forEach(skillRow=>{const input=skillRow.querySelector('[data-skill-input]'),name=input&&input.dataset.k.slice(2);if(name){skillRow.classList.toggle('occ-skill',isOccupationHighlight(p,name));skillRow.classList.toggle('social-choice',occMode&&isSocialChoiceAvailable(p,name));const hint=skillAllocationHint(p,name);if(hint){input.title=hint;input.setAttribute('aria-description',hint)}else{input.removeAttribute('title');input.removeAttribute('aria-description')}}});
   const choiceNote=el.querySelector('[data-budget-choice-note]'),choiceNoteHtml=budgetChoiceNote(p),choiceControls=el.querySelector('.budget-controls');
   if(choiceNoteHtml){if(choiceNote)choiceNote.outerHTML=choiceNoteHtml;else if(choiceControls)choiceControls.insertAdjacentHTML('afterend',choiceNoteHtml)}else if(choiceNote)choiceNote.remove();
   const legend=el.querySelector('[data-occ-legend]');if(legend)legend.hidden=!(occMode&&budgets.credit);
