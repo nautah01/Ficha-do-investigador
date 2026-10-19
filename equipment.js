@@ -341,6 +341,7 @@
   document.body.appendChild(dlg);
   q=dlg.querySelector('#eqkQ');grid=dlg.querySelector('#eqkGrid');chips=dlg.querySelector('#eqkChips');bar=dlg.querySelector('#eqkBar');
   const helpBox=dlg.querySelector('#eqkHelp'),helpBtn=dlg.querySelector('#eqkHelpBtn');
+  const lockPage=on=>{document.documentElement.classList.toggle('eq-picker-open',on);document.body.classList.toggle('eq-picker-open',on)};
   helpBox.innerHTML=`<h5>Época do cenário</h5><p>O ano escolhido na ficha altera os avisos de disponibilidade. Um item pode ainda não existir naquela época ou estar fora de linha; ele continua selecionável, mas pode ser raro ou exigir uma explicação narrativa.</p><h5>Nível de Crédito</h5><p>Cada cartão mostra uma referência de Crédito para acesso legal e plausível. <span class="eq-credit is-ok">Verde</span> indica margem confortável; <span class="eq-credit is-edge">laranja</span> indica que está no limite; <span class="eq-credit is-low">vermelho</span> indica que o Crédito está abaixo da referência. A cor é um alerta, nunca bloqueia a escolha: converse com o Guardião ou justifique o item na backstory.</p><h5>Conjunto e quantidade</h5><p>Cada unidade carregada contribui para a referência de todos os equipamentos: itens simples acrescentam cerca de 2–5 pontos; itens caros ou restritos podem acrescentar 5–15, conforme o Crédito indicado e a categoria. As contribuições se somam. Por isso, levar duas armas ou várias unidades pode elevar também a referência dos itens comuns. Itens personalizados usam o nível definido por quem os criou; sem um nível informado, contam como item de Crédito 0.</p><button type="button" class="opk-back" data-eqk-help-back>← Voltar à lista</button>`;
   const setHelp=(on,returnFocus=true)=>{dlg.classList.toggle('help',on);helpBtn.setAttribute('aria-pressed',String(on));helpBtn.textContent=on?'← Lista':'❔ Ajuda';if(on){helpBox.scrollTop=0;helpBox.focus()}else if(returnFocus&&dlg.open)q.focus()};
   helpBtn.addEventListener('click',()=>setHelp(!dlg.classList.contains('help')));
@@ -360,7 +361,7 @@
   });
   dlg.querySelector('.opk-x').onclick=()=>dlg.close();
   dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
-  dlg.addEventListener('close',()=>{pk=null;if(io){io.disconnect();io=null}hideBar();window.DynamicInfo?.hide(dlg)});
+  dlg.addEventListener('close',()=>{lockPage(false);pk=null;if(io){io.disconnect();io=null}hideBar();window.DynamicInfo?.hide(dlg)});
  }
  function hideBar(){if(bar){bar.hidden=true;bar.innerHTML=''}if(pk)pk.pending=null}
  function renderChips(){
@@ -429,7 +430,7 @@
   pk={p:opts.person,opts,cat:'',flash:'',pending:null};
   dlg.querySelector('#eqkT').textContent='Equipamentos'+(pk.p.nome?' — '+pk.p.nome:'');
   q.value='';hideBar();renderChips();renderGrid();
-  dlg.showModal();q.focus();
+  dlg.showModal();document.documentElement.classList.add('eq-picker-open');document.body.classList.add('eq-picker-open');q.focus();
  }
 
  /* ---------- ficha: lista de itens do investigador ---------- */
