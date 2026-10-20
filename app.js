@@ -127,7 +127,7 @@ function uiOf(p,i){
  if(p.ui.x==null)p.ui.x=18+(i%6)*36;
  if(p.ui.y==null)p.ui.y=10+(i%6)*28;
  if(!p.ui.w)p.ui.w=520;
- if(p.blank&&!p.ui.skillsWide&&p.ui.w===520&&!document.body.classList.contains('mobile')){p.ui.w=Math.min(1120,Math.max(520,fichaDeskW()-40));p.ui.skillsWide=true}
+ if(p.ui.skillsWide){p.ui.w=520;delete p.ui.skillsWide}
  if(!p.ui.z)p.ui.z=++zTop;
  return p.ui;
 }
@@ -598,7 +598,7 @@ desk.addEventListener('pointermove',e=>{
 const endPortraitDrag=e=>{const canvas=e.target.closest&&e.target.closest('[data-portrait-canvas]');if(canvas&&canvas._portraitDrag){canvas._portraitDrag=null;persist()}};
 desk.addEventListener('pointerup',endPortraitDrag);desk.addEventListener('pointercancel',endPortraitDrag);
 function placeNew(p,i,anchors){
- const width=p.blank&&!document.body.classList.contains('mobile')?Math.min(1120,Math.max(520,fichaDeskW()-40)):520;
+ const width=520;
  let x=28+(i%5)*40,y=16+(i%5)*32;
  if(anchors&&anchors.length){
   const maxX=Math.max(...anchors.map(a=>(a.ui&&a.ui.x||0)+(a.ui&&a.ui.w||520)));
@@ -606,7 +606,7 @@ function placeNew(p,i,anchors){
   y=12+(i%5)*26;
   if(x+width>fichaDeskW()){x=28+(i%5)*40;y=16+(i%5)*32}
  }
- p.ui={x,y,w:width,z:++zTop,collapsed:false,...(p.blank&&width>520?{skillsWide:true}:{})};
+ p.ui={x,y,w:width,z:++zTop,collapsed:false};
 }
 /* cemitério: arraste a ficha até o botão do cemitério no painel; ela só sai da mesa depois de confirmar */
 function buryFicha(i){const p=cur[i];if(!p||!window.Cemiterio)return;Cemiterio.add({nome:p.nome,idade:p.idade,portrait:p.portrait},()=>{const k=cur.indexOf(p);if(k>=0){cur.splice(k,1);draw()}})}
