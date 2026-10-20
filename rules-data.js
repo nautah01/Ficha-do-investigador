@@ -243,7 +243,9 @@ const AMNESIA_FRAGS=[
  {id:'intimid',sk:'Intimidação',t:'As pessoas recuam quando você as encara, e isso assusta você mais do que a elas.'},
  {id:'persuade',sk:'Persuasão',t:'Estranhos confiam em você rápido demais.'}];
 /* ficha em branco: atributos zerados, sem nome/ocupação, perícias mais usadas com o valor inicial */
-const BLANK_SK=['Esquivar','Encontrar','Escutar','Psicologia','Usar Biblioteca','Furtividade','Lutar (Brigar)','Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Primeiros Socorros','Persuasão','Lábia','Charme','Intimidação','Ocultismo','História','Dirigir Auto','Escalar','Mundo Natural','Consertos Mecânicos','Eletrônica','Usar Computadores','Língua Natural','Nível de Crédito'];
+const BLANK_SK=['Esquivar','Encontrar','Escutar','Psicologia','Usar Biblioteca','Furtividade','Lutar (Brigar)','Armas de Fogo (Pistolas)','Armas de Fogo (Rifles)','Primeiros Socorros','Persuasão','Lábia','Charme','Intimidação','Ocultismo','História','Dirigir Auto','Escalar','Mundo Natural','Consertos Mecânicos','Eletrônica','Usar Computadores','Língua Natural','Nível de Crédito',
+ 'Consertos Elétricos','Contabilidade','Direito','Disfarce','Língua (outra)','Medicina','Mitos de Cthulhu','Natação','Navegação','Operar Maquinário','Operar Maquinário Pesado','Pilotar (Aeronaves)','Pilotar (Barcos)','Pilotar (outra)','Prestidigitação','Psicanálise','Rastrear','Saltar','Sobrevivência',
+ 'Avaliação','Cavalgar','Chaveiro','Arremessar','Antropologia','Arqueologia'];
 const EXTRA={'Arte/Ofício (outra)':5,'Ciência (outra)':1,'Língua (outra)':1,'Pilotar (outra)':1,'Mitos de Cthulhu':0};
 /* Especializações que não aparecem na lista "não treinadas" (e portanto não entram no PDF), mas têm valor-base conhecido ao adicionar uma perícia nova. */
 const SPECIAL_BASE={'Lutar (Espada)':20,'Lutar (Lança)':20,'Lutar (Machado)':15,'Lutar (Corrente)':15,'Lutar (Garrote)':15,'Lutar (Mangual)':10,'Lutar (Motosserra)':10,'Lutar (Chicote)':5,'Armas de Fogo (Submetralhadora)':15,'Armas de Fogo (Metralhadoras)':10,'Armas de Fogo (Arco)':15,'Armas de Fogo (Lança-chamas)':10,'Armas de Fogo (Armas Pesadas)':10};

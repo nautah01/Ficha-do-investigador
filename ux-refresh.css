@@ -6,10 +6,9 @@ button:not(:disabled):active{transform:translateY(1px)}
 button:disabled{cursor:not-allowed}
 
 @media(min-width:761px){
- body:not(.mobile){padding-inline:24px}
- body:not(.mobile)>.top{width:min(100%,1100px);margin-inline:auto}
+ body:not(.mobile)>.top{width:auto;margin-inline:0}
  body:not(.mobile)>.top>.bar{width:100%;max-width:none;border-radius:12px;padding:12px 16px 16px;gap:14px}
- body:not(.mobile) #desk{width:min(100%,1460px);margin-inline:auto}
+ body:not(.mobile) #desk{width:auto;margin-inline:0}
 }
 
 .bar{border-color:rgba(var(--gr2),.62);background:linear-gradient(145deg,rgba(var(--gr),.085),transparent 52%),linear-gradient(var(--k2),var(--k1));transition:border-color .18s,box-shadow .18s}

@@ -436,10 +436,12 @@ desk.addEventListener('click',e=>{
   return;
  }
  if(e.target.closest('.ftg')){const p=cur[+e.target.closest('.ftg').dataset.i];p.falta=!p.falta;draw();return}
- if(e.target.closest('.rmb')){const x=e.target.closest('.rmb'),p=cur[+x.dataset.i],n=x.dataset.n;
-  if(p.sk[n]!==undefined){ensureSkillBudget(p);if(!isBudget(p)&&!p.unlimited)p.skillPoints.available+=Math.max(0,(+p.sk[n]||0)-skillFloor(p,n));if(isBudget(p)&&p.skillAllocations)delete p.skillAllocations[n];delete p.sk[n];delete p.skillFloors[n];if(n in BASE||n in EXTRA)(p.removed=p.removed||{})[n]=1}
-  else if(p.custom&&n in p.custom)delete p.custom[n];else(p.removed=p.removed||{})[n]=1;
-  p.edit=true;draw();return}
+ if(e.target.closest('.rmb')){const x=e.target.closest('.rmb'),i=+x.dataset.i,p=cur[i],n=x.dataset.n;if(!p)return;
+  askConfirm({title:'Remover perícia?',html:`<strong>${esc(n)}</strong> será removida desta ficha.`,ok:'Remover perícia',danger:true}).then(ok=>{if(!ok||cur[i]!==p)return;
+   if(p.sk[n]!==undefined){ensureSkillBudget(p);if(!isBudget(p)&&!p.unlimited)p.skillPoints.available+=Math.max(0,(+p.sk[n]||0)-skillFloor(p,n));if(isBudget(p)&&p.skillAllocations)delete p.skillAllocations[n];delete p.sk[n];delete p.skillFloors[n];if(n in BASE||n in EXTRA)(p.removed=p.removed||{})[n]=1}
+   else if(p.custom&&n in p.custom)delete p.custom[n];else(p.removed=p.removed||{})[n]=1;
+   p.edit=true;draw();
+  });return}
  if(e.target.closest('.colb')){const p=cur[idx];p.ui.collapsed=!p.ui.collapsed;draw();return}
  if(e.target.closest('.pinb')){const p=cur[idx];p.pinned=!p.pinned;draw();return}
  if(e.target.closest('.dupb')){const p=JSON.parse(JSON.stringify(cur[idx]));p.pinned=false;delete p.shareId;p.ui={...p.ui,x:(p.ui.x||0)+28,y:(p.ui.y||0)+28,z:++zTop,collapsed:false};p.nome=p.nome.replace(/ \(cópia\)$/,'')+' (cópia)';if(!cur[idx].nome)p.nome='';cur.push(p);draw();return}
