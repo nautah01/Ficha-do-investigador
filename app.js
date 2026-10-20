@@ -117,15 +117,17 @@ function blankBudgetPanel(p,i){
 const inp=(p,i,k,attrs='',label='')=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${esc(k)}"${label?` aria-label="${esc(label)}"`:''} ${attrs} value="${esc(get(p,k))}">`;
 const row=(p,i,n,rm)=>{
  const minimum=skillFloor(p,n);
+ const score=Math.max(0,Math.min(100,+get(p,'s:'+n)||0));
  const occ=isOccupationHighlight(p,n),socialChoice=isSocialChoiceAvailable(p,n),title=occ?'Perícia da ocupação':socialChoice?'Vaga social disponível; confirme ao distribuir pontos ocupacionais':'';
  const allocationHint=skillAllocationHint(p,n),hintAttr=allocationHint?` title="${esc(allocationHint)}" aria-description="${esc(allocationHint)}"`:'';
- return`<span class="skill-row${occ?' occ-skill':''}${socialChoice&&(!isBudget(p)||(p.skillBudgetMode||'occupational')==='occupational')?' social-choice':''}"${title?` title="${title}"`:''}><span class="sk-label"><span class="sk-name">${esc(n)}</span></span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input${hintAttr}`,n+' (%)')}<small data-f="${esc('s:'+n)}" aria-hidden="true">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
+ return`<span class="skill-row${occ?' occ-skill':''}${socialChoice&&(!isBudget(p)||(p.skillBudgetMode||'occupational')==='occupational')?' social-choice':''}" style="--skill-score:${score}%"${title?` title="${title}"`:''}><span class="sk-label"><span class="sk-name">${esc(n)}</span></span><i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input${hintAttr}`,n+' (%)')}<small data-f="${esc('s:'+n)}" aria-hidden="true">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i></span>`;
 };
 function uiOf(p,i){
  p.ui=p.ui||{};
  if(p.ui.x==null)p.ui.x=18+(i%6)*36;
  if(p.ui.y==null)p.ui.y=10+(i%6)*28;
  if(!p.ui.w)p.ui.w=520;
+ if(p.blank&&!p.ui.skillsWide&&p.ui.w===520&&!document.body.classList.contains('mobile')){p.ui.w=Math.min(1120,Math.max(520,fichaDeskW()-40));p.ui.skillsWide=true}
  if(!p.ui.z)p.ui.z=++zTop;
  return p.ui;
 }
@@ -144,7 +146,7 @@ function body(p,i){
  return`<div class="ficha-heading"><h2><input class="in nm" data-i="${i}" data-k="n:nome" aria-label="Nome do investigador" placeholder="Nome do investigador" value="${esc(p.nome)}"></h2><button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button></div>
   <div class="sub">${occSelect(p,i)}<span>Idade</span><input class="in age-input" data-i="${i}" data-k="n:idade" type="number" min="0" max="999" placeholder="idade" aria-label="Idade" value="${esc(p.idade)}"><span>anos</span>${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
   <div class="stats-head"><span>Atributos</span><span class="stats-tools"><button type="button" class="rrb" data-i="${i}" title="Sortear novos atributos (3d6×5 e 2d6+6×5) e recalcular tudo que depende deles">🎲 Sortear atributos</button>${pb}</span></div><div class="stats">${st}</div><div class="der">${d}</div>${skillPool}${isAmnesia(p)?amnesiaPanel(p,i):''}${typeof resourcesPanel==='function'?resourcesPanel(p,i):''}
-  <h3 class="st">Perícias do personagem</h3><div class="sk${hl}">${sk}</div>${addM}${fa}${mobileActions}`;
+  <h3 class="st skill-heading"><span>Perícias do personagem</span><small data-skill-count>${Object.keys(p.sk).length} perícias</small></h3><div class="sk${hl}">${sk}</div>${addM}${fa}${mobileActions}`;
 }
 function occSelect(p,i){
  if(!p.blank||p.unlimited)return`<input class="in occ-text" data-i="${i}" data-k="n:occ" aria-label="Ocupação do investigador" placeholder="${p.unlimited?'Ocupação (escreva livremente)':'Ocupação'}" value="${esc(p.occ||'')}">`;
@@ -345,7 +347,7 @@ function refresh(i){
  const smax=sanMaxOf(p);if(p.der&&+p.der.san>smax)p.der.san=smax;
  el.querySelectorAll('[data-k]').forEach(x=>{if(x!==document.activeElement)x.value=get(p,x.dataset.k)});
  el.querySelectorAll('[data-f]').forEach(x=>x.textContent=fr(p,x.dataset.f));
- el.querySelectorAll('[data-skill-input]').forEach(input=>{const n=input.dataset.k.slice(2),range=n==='Nível de Crédito'&&isBudget(p)?creditBounds(p):null;input.min=String(skillFloor(p,n));if(range)input.max=String(range.max);else input.removeAttribute('max')});
+ el.querySelectorAll('[data-skill-input]').forEach(input=>{const n=input.dataset.k.slice(2),range=n==='Nível de Crédito'&&isBudget(p)?creditBounds(p):null;input.min=String(skillFloor(p,n));if(range)input.max=String(range.max);else input.removeAttribute('max');const row=input.closest('.skill-row');if(row)row.style.setProperty('--skill-score',`${Math.max(0,Math.min(100,+get(p,'s:'+n)||0))}%`)});
  if(p.unlimited){/* ficha sem limites: sem pontos nem faixas */}else if(isBudget(p)){
   const budgets=blankBudgetState(p);
   for(const type of ['occupational','personal']){
@@ -529,7 +531,7 @@ desk.addEventListener('change',async e=>{
 });
 function onDragMove(e){
  const dr=desk.getBoundingClientRect();
- if(rsz){const p=cur[rsz.i];p.ui.w=Math.max(Math.min(340,fichaDeskW()),Math.min(820,fichaDeskW()-p.ui.x,rsz.ow+(e.clientX-rsz.ox)));const el=winEl(rsz.i);if(el)el.style.width=p.ui.w+'px';return}
+ if(rsz){const p=cur[rsz.i];p.ui.w=Math.max(Math.min(340,fichaDeskW()),Math.min(1140,fichaDeskW()-p.ui.x,rsz.ow+(e.clientX-rsz.ox)));const el=winEl(rsz.i);if(el)el.style.width=p.ui.w+'px';return}
  if(!drag)return;
  const p=cur[drag.i];
  const el=winEl(drag.i),ww=el?el.offsetWidth:p.ui.w;
@@ -596,14 +598,15 @@ desk.addEventListener('pointermove',e=>{
 const endPortraitDrag=e=>{const canvas=e.target.closest&&e.target.closest('[data-portrait-canvas]');if(canvas&&canvas._portraitDrag){canvas._portraitDrag=null;persist()}};
 desk.addEventListener('pointerup',endPortraitDrag);desk.addEventListener('pointercancel',endPortraitDrag);
 function placeNew(p,i,anchors){
+ const width=p.blank&&!document.body.classList.contains('mobile')?Math.min(1120,Math.max(520,fichaDeskW()-40)):520;
  let x=28+(i%5)*40,y=16+(i%5)*32;
  if(anchors&&anchors.length){
   const maxX=Math.max(...anchors.map(a=>(a.ui&&a.ui.x||0)+(a.ui&&a.ui.w||520)));
   x=maxX+28+(i%3)*16;
   y=12+(i%5)*26;
-  if(x+520>fichaDeskW()){x=28+(i%5)*40;y=16+(i%5)*32}
+  if(x+width>fichaDeskW()){x=28+(i%5)*40;y=16+(i%5)*32}
  }
- p.ui={x,y,w:520,z:++zTop,collapsed:false};
+ p.ui={x,y,w:width,z:++zTop,collapsed:false,...(p.blank&&width>520?{skillsWide:true}:{})};
 }
 /* cemitério: arraste a ficha até o botão do cemitério no painel; ela só sai da mesa depois de confirmar */
 function buryFicha(i){const p=cur[i];if(!p||!window.Cemiterio)return;Cemiterio.add({nome:p.nome,idade:p.idade,portrait:p.portrait},()=>{const k=cur.indexOf(p);if(k>=0){cur.splice(k,1);draw()}})}

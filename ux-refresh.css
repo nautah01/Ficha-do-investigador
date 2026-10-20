@@ -19,6 +19,22 @@ button:disabled{cursor:not-allowed}
 .blank-sheet-option:focus-within{border-color:rgba(var(--gr2),.72);background:rgba(var(--gr),.09)}
 .blank-btns button{min-width:146px;min-height:40px}
 
+/* Cada cartão usa sua própria largura: perícias passam a três colunas quando
+   há espaço real no cartão, sem apertar a grade nos cartões menores. */
+.win-body{container-type:inline-size;container-name:sheet-body}
+@container sheet-body (min-width:740px){
+ .win-body .sk{grid-template-columns:repeat(3,minmax(0,1fr));gap:1px 9px;font-size:.8rem}
+ .win-body .sk>.skill-row{min-height:32px;padding:2px 4px}
+ .win-body .skill-row>i [data-skill-input]{width:48px;min-height:28px;padding:2px;font-size:.8rem}
+ .win-body .sk button.rmb{min-width:25px;min-height:28px;padding:0 4px;margin-left:3px}
+}
+@container sheet-body (min-width:1040px){
+ .win-body .sk{grid-template-columns:repeat(4,minmax(0,1fr));gap:1px 8px;font-size:.76rem}
+ .win-body .sk>.skill-row{min-height:30px;padding:1px 4px}
+ .win-body .skill-row>i [data-skill-input]{width:44px;min-height:26px;font-size:.76rem}
+ .win-body .sk button.rmb{min-width:23px;min-height:26px;padding:0 3px;margin-left:2px}
+}
+
 .win{border-color:rgba(var(--gr2),.64);box-shadow:0 16px 44px rgba(0,0,0,.5),inset 0 0 0 1px rgba(var(--gr),.1)}
 .win-bar{min-height:42px}
 .win-title{font-size:.86rem}
@@ -27,11 +43,16 @@ button:disabled{cursor:not-allowed}
 .win-tabs button:hover{color:var(--head);background:rgba(var(--gr),.08)}
 .win-tabs button[aria-selected=true]{box-shadow:inset 0 -2px 0 var(--head)}
 .win h3.st{margin-top:9px;padding-bottom:5px;font-size:.94rem}
+.win h3.skill-heading{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.skill-heading small{padding:2px 7px;border:1px solid rgba(var(--gr2),.25);border-radius:999px;background:rgba(var(--gr),.045);color:var(--muted);font:600 .66rem/1.3 system-ui,sans-serif;letter-spacing:.02em;white-space:nowrap}
 .win-pane[hidden]{display:none!important}
 
 .stats div{transition:transform .15s,border-color .15s,box-shadow .15s}
 .stats div:focus-within{border-color:var(--head);box-shadow:0 0 0 2px rgba(var(--gr),.18)}
-.sk>.skill-row{position:relative;min-height:36px;padding:4px 6px;border:1px solid transparent;border-bottom:1px dotted rgba(var(--gr2),.25);border-radius:5px;transition:background .14s,border-color .14s,box-shadow .14s}
+.sk>.skill-row{position:relative;min-height:32px;padding:2px 5px 4px;border:1px solid transparent;border-bottom:1px dotted rgba(var(--gr2),.25);border-radius:5px;transition:background .14s,border-color .14s,box-shadow .14s}
+.sk>.skill-row::after{position:absolute;right:5px;bottom:1px;left:5px;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(var(--gr2),.78) var(--skill-score,0%),rgba(var(--gr2),.09) var(--skill-score,0%));content:"";pointer-events:none;transition:background .18s}
+.sk>.skill-row.social-choice::after{background:linear-gradient(90deg,rgba(85,188,232,.9) var(--skill-score,0%),rgba(85,188,232,.1) var(--skill-score,0%))}
+.sk>.skill-row.occ-skill::after{background:linear-gradient(90deg,var(--head) var(--skill-score,0%),rgba(var(--gr2),.1) var(--skill-score,0%))}
 .sk>.skill-row:hover,.sk>.skill-row:focus-within{z-index:3;border-color:rgba(var(--gr2),.34);background:rgba(var(--gr),.07)}
 .sk>.skill-row:focus-within{box-shadow:0 0 0 2px rgba(var(--gr),.16)}
 .sk .skill-row>i small[data-f^="s:"]{position:absolute;right:38px;bottom:calc(100% - 2px);z-index:5;display:block;margin:0;padding:3px 7px;border:1px solid rgba(var(--gr2),.62);border-radius:5px;background:var(--k6);color:var(--head);font-size:.68rem;line-height:1.2;white-space:nowrap;box-shadow:0 5px 14px rgba(0,0,0,.45);opacity:0;visibility:hidden;transform:translateY(3px);transition:opacity .14s,transform .14s,visibility .14s;pointer-events:none}
@@ -68,9 +89,15 @@ html.eq-picker-open,html.eq-picker-open body{overflow:hidden!important;overscrol
 @media(max-width:760px){
  body.mobile>.top{width:100%;margin-inline:auto}
  body.mobile .blank-sheet-option{background:linear-gradient(120deg,rgba(var(--gr),.09),rgba(var(--gr),.025))}
+ body.mobile #desk .win-body .sk{grid-template-columns:repeat(2,minmax(0,1fr));gap:1px 7px;font-size:.72rem}
+ body.mobile #desk .win-body .sk>.skill-row{min-height:34px;padding:1px 3px 4px;gap:3px}
+ body.mobile #desk .win-body .skill-row .sk-label{min-width:0}
+ body.mobile #desk .win-body .skill-row .sk-name{font-size:.73rem;line-height:1.12;overflow-wrap:anywhere}
+ body.mobile #desk .win-body .skill-row>i{gap:2px}
+ body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:40px;min-height:30px;padding:2px;font-size:.73rem}
+ body.mobile #desk .win-body button.rmb{width:23px;min-width:23px;min-height:30px;padding:0 2px;margin-left:1px;font-size:.68rem}
  body.mobile #desk .win-tabs button{font-size:.74rem;line-height:1.15}
- body.mobile #desk .sk>.skill-row{min-height:42px;padding:5px 6px}
- body.mobile #desk .skill-row>i [data-skill-input]{min-height:36px}
+ body.mobile #desk .skill-row>i [data-skill-input]{min-height:34px}
  body.mobile #desk .sk .skill-row>i small[data-f^="s:"]{right:42px;padding:4px 7px}
  body.mobile #desk .budget-stat strong em{font-size:1.25rem}
  body.mobile .gd-left{margin-left:auto}
@@ -82,12 +109,26 @@ html.eq-picker-open,html.eq-picker-open body{overflow:hidden!important;overscrol
 }
 
 @media(max-width:640px){
+ body.mobile #desk .win-body .sk{gap:1px 5px;font-size:.7rem}
+ body.mobile #desk .win-body .skill-row .sk-name{font-size:.69rem}
+ body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:40px;min-height:34px;font-size:.72rem}
+ body.mobile #desk .win-body button.rmb{width:24px;min-width:24px}
  body.mobile .opk.eqk .eqk-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px;padding-inline:10px}
  body.mobile .opk.eqk .eqk-card{min-width:0}
  body.mobile .opk.eqk .eqk-img{aspect-ratio:5/3}
  body.mobile .opk.eqk .eqk-body{padding:8px 9px 10px}
  body.mobile .opk.eqk .eqk-card .oname{font-size:.9rem;line-height:1.25}
 }
+
+@media(max-width:480px){
+ body.mobile #desk .win-body .sk{grid-template-columns:repeat(2,minmax(0,1fr));gap:1px 5px;font-size:.71rem}
+ body.mobile #desk .win-body .sk>.skill-row{min-height:36px;padding:1px 2px 4px;gap:2px}
+ body.mobile #desk .win-body .skill-row .sk-name{font-size:.7rem;line-height:1.08;overflow-wrap:anywhere}
+ body.mobile #desk .win-body .skill-row>i{gap:1px}
+ body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:36px;min-height:28px;padding:1px;font-size:.69rem}
+ body.mobile #desk .win-body button.rmb{width:21px;min-width:21px;min-height:28px;margin-left:0}
+}
+@media(max-width:350px){body.mobile #desk .win-body .sk{grid-template-columns:1fr}body.mobile #desk .win-body .sk>.skill-row{min-height:32px;gap:5px}body.mobile #desk .win-body .skill-row .sk-name{font-size:.76rem}body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:44px}}
 
 @media(max-width:380px){
  body.mobile #desk .win-tabs{gap:1px;padding-right:3px;padding-left:11px}
