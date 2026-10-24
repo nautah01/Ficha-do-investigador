@@ -95,6 +95,7 @@ async function pdfInvestigator(doc,p,C){
  const mitosAt=skills.findIndex(([n])=>n==='Mitos de Cthulhu'),mitosAbs=absent.findIndex(([n])=>n==='Mitos de Cthulhu');
  const mitosField=mitosAt>=0?skName('s',mitosAt):mitosAbs>=0?skName('a',mitosAbs):'';
  const portrait=await pdfPortrait(p,C),photoW=64,photoH=79,photoX=right-photoW,photoY=32,titleRight=portrait?photoX-10:right-39;
+ pdfWrapped(doc,'Ficha editável e automática — use um aplicativo de PDF em que as duas funções funcionem (ex.: Adobe Acrobat). Alguns navegadores e visualizadores abrem o PDF só como editável, sem o cálculo automático.',39,31,titleRight-39,6.4,7,C.head,'italic');
  /* nome e linha de ocupação: campos de uma linha, com a fonte reduzida para caber */
  const fit=(text,max,size,min)=>{doc.setFont('times','bold');doc.setFontSize(size);while(size>min&&doc.getTextWidth(String(text))>max){size-=.5;doc.setFontSize(size)}return size};
  let y=55;
