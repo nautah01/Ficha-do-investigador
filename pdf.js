@@ -207,7 +207,8 @@ async function savePdf(list,b){
  if(!list.length||b.disabled)return;
  const label=b.textContent;b.textContent='⏳ Gerando…';b.disabled=true;
  try{
-  if(!window.PDFLib)await loadScript('vendor/pdf-lib.min.js');
+  if(typeof createMiniPdf!=='function')throw new Error('o arquivo pdfkit.js não foi carregado (confira se ele está na pasta do site e no index.html)');
+  if(!window.PDFLib){try{await loadScript('pdf-lib.min.js')}catch(_){throw new Error('o arquivo pdf-lib.min.js não foi encontrado (envie-o para o GitHub junto com os outros arquivos do site)')}}
   const C=pdfColors(),pdf=await createMiniPdf(window.PDFLib);
   for(const [i,p] of list.entries()){
    if(i)pdf.addPage('a4','portrait');
@@ -218,7 +219,7 @@ async function savePdf(list,b){
   }
   const name=(list.length===1?list[0].nome:'investigadores').replace(/[^\wÀ-ſ -]/g,'').trim().replace(/\s+/g,'_')||'ficha';
   await pdf.save(name+'.pdf',name);
- }catch(err){console.error(err);alert('Não foi possível gerar o PDF. Recarregue a página e tente novamente.');}
+ }catch(err){console.error(err);alert('Não foi possível gerar o PDF.\n\nDetalhe técnico: '+(err&&err.message||err));}
  finally{b.textContent=label;b.disabled=false}
 }
 sel.onchange=sel2.onchange=document.getElementById('qty').onchange=persist;
