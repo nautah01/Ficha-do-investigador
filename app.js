@@ -431,7 +431,7 @@ desk.addEventListener('click',e=>{
  if(e.target.closest('.delb')){const k=+e.target.closest('.delb').dataset.i,p=cur[k];confirmDel(ttl(p)).then(y=>{if(y&&cur[k]===p){cur.splice(k,1);draw()}});return}
  if(e.target.closest('.rrb')){
   const k=+e.target.closest('.rrb').dataset.i,p=cur[k];if(!p)return;
-  const untouched=!hasBlankPoints(p)&&(ATTR_KEYS.every(a=>!+p.c[a])||!p.edit||rollSig(p)===p.rolledC);
+  const untouched=(!p.blank||!hasBlankPoints(p))&&(ATTR_KEYS.every(a=>!+p.c[a])||!p.edit||rollSig(p)===p.rolledC);
   if(untouched)rerollAttrs(k);
   else askConfirm({title:'Sortear atributos?',html:`Os atributos de <strong>${esc(ttl(p))}</strong> serão substituídos por novos valores sorteados. ${p.blank?(p.unlimited?'PV, Sanidade, PM, Mov., Bônus de Dano, Corpo, Esquivar e Língua Natural são recalculados':'PV, Sanidade, PM, Mov., Bônus de Dano, Corpo, Esquivar e Língua Natural são recalculados, e <strong>os pontos de perícia já distribuídos são zerados</strong> (os totais de pontos mudam com os atributos novos; a ocupação continua a mesma)'):'As perícias também são redistribuídas com os pontos novos (mesma ocupação e histórico). <strong>Valores digitados à mão e pontos já redistribuídos se perdem</strong>'}. A Sorte não muda.`,ok:'🎲 Sortear',danger:false}).then(y=>{if(y&&cur[k]===p)rerollAttrs(k)});
   return;
