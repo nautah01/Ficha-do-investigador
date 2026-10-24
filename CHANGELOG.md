@@ -1,3 +1,15 @@
+# PDF editável e automático (esta versão)
+
+- O PDF baixado agora é um **formulário preenchível**: nome, ocupação, atributos, perícias, PV/Sanidade/PM/Sorte são campos que dá para editar no leitor de PDF.
+- **Cálculo automático dentro do PDF**: ao digitar um atributo, aparecem sozinhos metade/quinto, PV máx., PM máx., Mov, Bônus de Dano e Corpo; ao digitar o valor de uma perícia, aparece metade/quinto. A Sanidade máxima é 99 − Mitos de Cthulhu (campo da perícia). PV, PM e Sanidade "atuais" vazios se preenchem com o valor inicial (Sanidade = POD).
+- As fórmulas são as mesmas de `rules.js` (conferidas por `tests/pdf-calc.test.js`).
+- Backstory, histórico e equipamentos continuam como texto fixo (podem passar de uma página).
+- Funciona em Adobe Acrobat, Chrome, Edge e Firefox. Leitores simples (visualizador de celular, prévia de e-mail) mostram os valores gravados, mas não recalculam.
+- O PDF agora é gerado **sem internet**: o jsPDF (baixado de um CDN) foi trocado pelo pdf-lib incluído em `vendor/` (`pdfkit.js` faz a ponte). O CDN do jsPDF continua só no export de imagem do Cemitério (`cemiterio.js`) e o html2canvas no Quadro (`notebook.js`).
+- Testes: `npm test` (agora inclui `tests/pdf-calc.test.js`). `rules.test.js` e `load.js` ficaram em `tests/`, como descrito acima.
+
+---
+
 # Mudanças desta versão
 
 ## Estrutura do código
@@ -57,4 +69,4 @@ O script de ~1.100 linhas que ficava dentro do `index.html` foi dividido em arqu
 - Cada item usa um único caminho de imagem (sem tentativas em pastas inexistentes). A busca na Wikipédia só ocorre para itens personalizados sem imagem e somente com internet.
 
 ## Não alterado
-- `pdf.js` (layout do PDF) e o tema do PDF.
+- O layout visual do PDF e o tema do PDF.
