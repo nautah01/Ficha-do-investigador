@@ -48,7 +48,7 @@ function askSheetType(){return new Promise(ok=>{
 })}
 function askConfirm(o){return new Promise(ok=>{
  const ov=document.createElement('div'),prev=document.activeElement;ov.className='ovl';
- ov.innerHTML=`<div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlgT"><h4 id="dlgT">${o.title}</h4><p>${o.html}</p><div class="row"><button class="alt" data-r="0">Cancelar</button><button class="${o.danger===false?'':'danger'}" data-r="1">${o.ok||'Confirmar'}</button></div></div>`;
+ ov.innerHTML=`<div class="dlg confirm-dlg" role="alertdialog" aria-modal="true" aria-labelledby="dlgT"><h4 id="dlgT">${o.title}</h4><p>${o.html}</p><div class="row"><button class="alt" data-r="0">Cancelar</button><button class="${o.danger===false?'':'danger'}" data-r="1">${o.ok||'Confirmar'}</button></div></div>`;
  const key=e=>{
   if(e.key==='Escape'){e.preventDefault();done(false)}
   else if(e.key==='Tab'){const bs=[...ov.querySelectorAll('button')],k=bs.indexOf(document.activeElement);e.preventDefault();bs[(k+(e.shiftKey?-1:1)+bs.length)%bs.length].focus()}
