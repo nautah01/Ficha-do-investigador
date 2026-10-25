@@ -24,7 +24,14 @@
 
  welcome.addEventListener('click',e=>{
   const action=e.target.closest('[data-mobile-action]')?.dataset.mobileAction;
-  const target=action==='guided'?'guided':action==='random'?'go':action==='blank'?'blank':null;
+  if(action==='random'){
+   if(panelBtn&&!panelBtn.hidden)panelBtn.click();
+   const autoToggle=document.getElementById('autoToggle');
+   if(autoToggle&&autoToggle.getAttribute('aria-expanded')!=='true')autoToggle.click();
+   document.getElementById('autoOptions')?.scrollIntoView({behavior:'smooth',block:'center'});
+   return;
+  }
+  const target=action==='guided'?'guided':action==='blank'?'blank':null;
   if(target)document.getElementById(target)?.click();
  });
  new MutationObserver(syncWelcome).observe(desk,{childList:true,subtree:true});

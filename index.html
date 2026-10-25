@@ -27,6 +27,19 @@ h1{margin:0;font-size:1.85rem;font-variant:small-caps;letter-spacing:2px;color:v
 .tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 button.chip{padding:3px 11px;font-size:.78rem;border-radius:999px;line-height:1.5}
 button.chip.sq{padding:3px 10px;font-weight:bold}
+.creation-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:8px;margin-top:2px}
+.creation-choice{display:flex;align-items:center;justify-content:flex-start;gap:9px;width:100%;min-width:0;min-height:56px;padding:8px 10px;text-align:left;white-space:normal;background:rgba(var(--gr),.055);border-color:rgba(var(--gr2),.48)}
+.creation-choice[aria-expanded=true]{color:var(--head);border-color:var(--head);background:rgba(var(--gr),.13)}
+.creation-choice:focus-visible{outline:2px solid var(--head);outline-offset:2px}
+.creation-choice .choice-icon{flex:0 0 auto;font-size:1.05rem}
+.choice-copy{display:grid;gap:2px;min-width:0}
+.choice-copy strong{color:var(--head);font-size:.84rem;line-height:1.2}
+.choice-copy small{color:var(--muted);font-size:.72rem;font-weight:normal;line-height:1.25}
+.auto-chevron{flex:0 0 auto;margin-left:auto;color:var(--head);transition:transform .15s ease}
+.creation-choice[aria-expanded=true] .auto-chevron{transform:rotate(180deg)}
+.auto-options{grid-column:1/-1;margin-top:0;padding:10px;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.045)}
+.auto-options[hidden]{display:none!important}
+.auto-options .gen{margin:0}
 .gen{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 70px auto;gap:10px;align-items:end}
 .gen select,.gen input{width:100%;min-width:0;height:36px;background:var(--field);color:var(--field-ink);border:1px solid var(--line);color-scheme:var(--scheme)}
 .gen select:focus,.gen input:focus{outline:2px solid var(--head);outline-offset:1px}
@@ -50,19 +63,16 @@ body.mobile #panel .bar-title{flex:1 1 auto;width:100%}
 body.mobile #panel .bar-note{display:none}
 body.mobile #panel .tools{flex:1 1 auto;width:100%;min-width:0;justify-content:flex-start;gap:4px}
 body.mobile #panel .tools button.chip{min-height:32px;padding:2px 7px;font-size:.7rem}
-body.mobile #panel .gen{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:5px 7px}
-body.mobile #panel .gen .qtl{grid-column:1;grid-row:2}
-body.mobile #panel #go{grid-column:2;grid-row:2;width:100%;padding:0 7px}
-body.mobile #panel .blank-sheet-option{flex-direction:column;align-items:stretch;gap:7px;margin-top:6px;padding:7px 8px}
-body.mobile #panel .blank-sheet-copy span{display:block}
-body.mobile #panel .blank-btns{width:100%;display:flex;flex-direction:column}
-body.mobile #panel .blank-sheet-option button{width:100%;min-width:0;min-height:38px;padding:5px 7px;font-size:.78rem;white-space:normal}
+body.mobile #panel .creation-actions{grid-template-columns:1fr;gap:6px}
+body.mobile #panel .creation-choice{min-height:44px;padding:7px 9px}
+body.mobile #panel .choice-copy small{font-size:.72rem}
+body.mobile #panel .auto-options{padding:8px}
+body.mobile #panel .auto-options .gen{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:5px 7px}
+body.mobile #panel .auto-options .gen .qtl{grid-column:1;grid-row:2}
+body.mobile #panel .auto-options #go{grid-column:2;grid-row:2;width:100%;padding:0 7px}
 label{display:flex;flex-direction:column;font-size:.8rem;gap:3px;color:var(--ink2);min-width:0}
 @media(max-width:640px){
  .gen{grid-template-columns:1fr 1fr}.gen .qtl{grid-column:1/-1}
- .blank-sheet-option{align-items:stretch;flex-direction:column;gap:9px}
- .blank-sheet-option button{width:100%}
- .blank-btns{width:100%;display:flex;flex-direction:column}
  .bar-head{flex-direction:column;align-items:stretch}
  h1{padding-left:0}
 }
@@ -287,7 +297,7 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 .dynamic-info{position:fixed;z-index:2147483647;width:max-content;max-width:min(360px,calc(100vw - 24px));max-height:min(42vh,320px);overflow:auto;padding:10px 12px;border:1px solid var(--head);border-radius:7px;background:linear-gradient(var(--k6),var(--k2));color:var(--txt);box-shadow:0 10px 30px rgba(0,0,0,.75);font-size:.86rem;line-height:1.45;white-space:normal;overflow-wrap:anywhere;pointer-events:none}
 .dynamic-info[hidden]{display:none!important}
 @media(max-width:640px){.backstory-layout{grid-template-columns:1fr}.backstory-photo{display:grid;grid-template-columns:minmax(115px,156px) minmax(0,1fr);gap:8px;align-items:start}.backstory-photo h3{grid-column:1/-1}.portrait-canvas{grid-row:span 2;width:100%;height:auto;aspect-ratio:156/192}.portrait-controls{min-width:0}}
-</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><link rel="stylesheet" href="extras.css"><link rel="stylesheet" href="ux-refresh.css"><script src="equipment.js"></script></head><body>
+</style><script>try{var t=localStorage.getItem("cthulhu-tema");if(t==="red"||t==="blue"||t==="paper")document.documentElement.dataset.theme=t}catch(e){}</script><link rel="stylesheet" href="notebook.css"><link rel="stylesheet" href="cemiterio.css"><link rel="stylesheet" href="ocupacoes.css"><link rel="stylesheet" href="themes.css"><link rel="stylesheet" href="mobile.css"><link rel="stylesheet" href="equipment.css"><link rel="stylesheet" href="extras.css"><link rel="stylesheet" href="ux-refresh.css"><link rel="stylesheet" href="mobile-redesign.css"><script src="equipment.js"></script></head><body>
 <button id="moon" class="moon" type="button" aria-label="Trocar o tema do site (lua)" title="Clique para mudar o cenário"><span class="mdots" aria-hidden="true"><i></i><i></i><i></i><i></i></span></button>
 <div class="top">
 <h1>Criador de Investigadores</h1>
@@ -305,19 +315,27 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <button class="alt chip sq" id="panelMin" title="Minimizar painel">–</button>
 </div>
 </div>
-<div class="gen">
+<div class="creation-actions" role="group" aria-label="Escolha como criar um investigador">
+<button class="alt creation-choice" id="blank" type="button" title="Criar uma ficha em branco para preencher manualmente"><span class="choice-icon" aria-hidden="true">📝</span><span class="choice-copy"><strong>Criar investigador</strong><small>Comece com uma ficha em branco</small></span></button>
+<button class="alt creation-choice" id="guided" type="button" title="Passo a passo: atributos, ocupação, pontos e história"><span class="choice-icon" aria-hidden="true">🧭</span><span class="choice-copy"><strong>Criação guiada</strong><small>Monte a ficha com orientação</small></span></button>
+<button class="alt creation-choice" id="autoToggle" type="button" aria-controls="autoOptions" aria-expanded="false"><span class="choice-icon" aria-hidden="true">🎲</span><span class="choice-copy"><strong>Gerar automaticamente</strong><small>Escolha ocupação e quantidade</small></span><span class="auto-chevron" aria-hidden="true">⌄</span></button>
+<div class="auto-options" id="autoOptions" hidden><div class="gen">
 <label>Ocupação<select id="occ"></select></label>
 <label>Ocupação secundária<select id="occ2"></select></label>
-<label class="qtl">Qtd.<input id="qty" type="number" min="1" max="8" value="1"></label>
-<button id="go">🎲 Gerar</button>
-</div>
-<div class="blank-sheet-option">
-<div class="blank-sheet-copy"><strong>Começar uma ficha do zero</strong><span>Cria uma ficha em branco para preencher à mão. Você escolhe entre a ficha normal (com as regras de criação) e a ficha sem limites.</span></div>
-<div class="blank-btns"><button class="alt" id="guided" title="Passo a passo: atributos, ocupação, pontos e backstory">🧭 Criação guiada</button><button class="alt" id="blank" title="Criar uma ficha em branco para preencher manualmente">📝 Criar ficha</button></div>
+<label class="qtl">Quantidade<input id="qty" type="number" min="1" max="8" value="1"></label>
+<button id="go" type="button">🎲 Gerar fichas</button>
+</div></div>
 </div>
 </div>
 </div>
 <button id="panelBtn" hidden title="Abrir painel de geração">☰ Painel</button>
+<section id="mobileWelcome" class="mobile-welcome" aria-labelledby="mobileWelcomeTitle" hidden>
+<h2 id="mobileWelcomeTitle">Vamos criar seu investigador?</h2>
+<p>Comece pelo passo a passo. Você não precisa conhecer as regras: a ficha calcula os valores e mostra o que fazer em seguida.</p>
+<button type="button" class="mobile-welcome-primary" data-mobile-action="guided">Criar com passo a passo <span aria-hidden="true">→</span></button>
+<div class="mobile-welcome-secondary"><button type="button" data-mobile-action="random">🎲 Gerar automaticamente</button><button type="button" data-mobile-action="blank">📝 Criar investigador</button></div>
+<p class="mobile-welcome-note">Suas fichas ficam salvas neste navegador.</p>
+</section>
 <div id="desk"></div>
 <button id="notesFab" title="Abrir quadro de pistas e livro de anotações" aria-label="Abrir quadro de pistas e livro de anotações" aria-pressed="false">📖</button>
 <section class="note" id="note" hidden aria-label="Bloco de notas">
@@ -365,4 +383,4 @@ h1{color:var(--head);text-shadow:0 2px 0 var(--k0),0 0 22px rgba(var(--glow),.28
 <script>
 (()=>{const sign=document.querySelector('.atmo .sign'),pupil=document.querySelector('.atmo .eye-pupil');if(!sign||!pupil)return;const reset=()=>{pupil.setAttribute('cx','0');pupil.setAttribute('cy','0')};document.addEventListener('pointermove',e=>{const b=sign.getBoundingClientRect(),dx=(e.clientX-(b.left+b.width/2))/b.width,dy=(e.clientY-(b.top+b.height/2))/b.height,m=Math.hypot(dx,dy);if(!m){reset();return}const reach=Math.min(2.1,m*8);pupil.setAttribute('cx',(dx/m*reach).toFixed(2));pupil.setAttribute('cy',(dy/m*reach).toFixed(2))},{passive:true});document.addEventListener('pointerout',e=>{if(!e.relatedTarget)reset()},{passive:true})})();
 </script>
-<datalist id="skillSuggest"></datalist><script src="rules-data.js"></script><script src="rules.js"></script><script src="store.js"></script><script src="app.js"></script><script src="combat.js"></script><script src="wizard.js"></script><script src="linkcodec.js"></script><script src="share.js"></script><script src="pdfkit.js"></script><script src="pdf.js"></script><script src="notebook.js" defer></script><script src="cemiterio.js" defer></script><script src="backup.js" defer></script><script src="ocupacoes.js" defer></script><script src="lua.js" defer></script><script src="mobile.js" defer></script></body></html>
+<datalist id="skillSuggest"></datalist><script src="rules-data.js"></script><script src="rules.js"></script><script src="store.js"></script><script src="app.js"></script><script src="combat.js"></script><script src="wizard.js"></script><script src="linkcodec.js"></script><script src="share.js"></script><script src="pdfkit.js"></script><script src="pdf.js"></script><script src="notebook.js" defer></script><script src="cemiterio.js" defer></script><script src="backup.js" defer></script><script src="ocupacoes.js" defer></script><script src="lua.js" defer></script><script src="mobile.js" defer></script><script src="mobile-redesign.js" defer></script></body></html>
