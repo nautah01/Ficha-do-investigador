@@ -54,7 +54,7 @@ button:disabled{cursor:not-allowed}
 .sk>.skill-row:focus-within{box-shadow:0 0 0 2px rgba(var(--gr),.16)}
 .sk .skill-row>i small[data-f^="s:"]{position:absolute;right:38px;bottom:calc(100% - 2px);z-index:5;display:block;margin:0;padding:3px 7px;border:1px solid rgba(var(--gr2),.62);border-radius:5px;background:var(--k6);color:var(--head);font-size:.68rem;line-height:1.2;white-space:nowrap;box-shadow:0 5px 14px rgba(0,0,0,.45);opacity:0;visibility:hidden;transform:translateY(3px);transition:opacity .14s,transform .14s,visibility .14s;pointer-events:none}
 .sk .skill-row>i small[data-f^="s:"]::before{content:"Difícil / Extremo: ";color:var(--muted);font-size:.64rem}
-.sk .skill-row:focus-within>i small[data-f^="s:"]{opacity:1;visibility:visible;transform:translateY(0)}
+.sk .skill-row.chance-visible>i small[data-f^="s:"]{opacity:1;visibility:visible;transform:translateY(0)}
 .skill-row>i [data-skill-input]{min-height:32px}
 
 .blank-budgets{gap:10px;padding:12px;border-radius:8px;background:linear-gradient(130deg,rgba(var(--gr),.09),rgba(var(--gr),.025));border-color:rgba(var(--gr2),.4);border-left-width:4px}
