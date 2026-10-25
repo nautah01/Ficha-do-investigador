@@ -219,6 +219,13 @@ function normAttr(k,v,allowEmpty){
  const[min,max]=ATTR_RANGE[k]||[15,90];
  return Math.max(min,Math.min(max,n));
 }
+/* atributo digitado à mão na ficha: qualquer inteiro dentro da faixa de criação (sem arredondar para múltiplo de 5; a compra de pontos continua usando normAttr) */
+function clampAttr(k,v,allowEmpty){
+ const n=Math.round(+v||0);
+ if(!n&&allowEmpty)return 0;
+ const[min,max]=ATTR_RANGE[k]||[15,90];
+ return Math.max(min,Math.min(max,n));
+}
 const pointBuyUsed=c=>ATTR_KEYS.reduce((s,k)=>s+(+c[k]||0),0);
 function pointBuyValid(c){return ATTR_KEYS.every(k=>{const[a,b]=ATTR_RANGE[k],v=+c[k];return v>=a&&v<=b&&v%5===0})&&pointBuyUsed(c)===POINT_BUY_TOTAL}
 /* ponto de partida da compra de pontos: mínimos da faixa; sobram 460 − 195 = 265 pontos */

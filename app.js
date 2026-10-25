@@ -133,7 +133,7 @@ function uiOf(p,i){
 function body(p,i){
  ensureSkillBudget(p);
  const bud=isBudget(p),free=!!p.unlimited,emptyOk=!!p.blank&&!p.budget;
- const st=Object.keys(p.c).map(k=>{const[mn,mx]=ATTR_RANGE[k]||[0,99],attrs=free?'min="0" max="999"':`min="${emptyOk?0:mn}" max="${mx}" step="5"`;return`<div><b>${k}</b>${inp(p,i,'c:'+k,attrs,ATTR_NAMES[k]||k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`}).join('');
+ const st=Object.keys(p.c).map(k=>{const[mn,mx]=ATTR_RANGE[k]||[0,99],attrs=free?'min="0" max="999"':`min="${emptyOk?0:mn}" max="${mx}" step="1"`;return`<div><b>${k}</b>${inp(p,i,'c:'+k,attrs,ATTR_NAMES[k]||k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`}).join('');
  const sk=Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n])=>row(p,i,n,1)).join('');
  const skillPool=free?unlimitedPanel():bud?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
  const hl=bud&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':'';
@@ -165,7 +165,7 @@ function card(p,i){
    <button class="colb" data-i="${i}" title="Recolher / expandir">${u.collapsed?'▢':'–'}</button>
    <span class="win-title">${esc(ttl(p))}</span>
    <button class="pdfb" data-i="${i}" title="Imprimir ou salvar esta ficha como PDF">📄 <span class="bl">PDF</span></button>
-   <button class="shb" data-i="${i}" title="Compartilhar: baixar arquivo da ficha ou copiar link">📤 <span class="bl">Enviar</span></button>
+   <button class="shb" data-i="${i}" title="Compartilhar: baixar arquivo da ficha ou copiar link">📤 <span class="bl">Enviar<span class="bx"> ficha</span></span></button>
    <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Manter na mesa: a ficha não some quando você gera novas">${p.pinned?'📌 <span class="bl">Mantida</span>':'📌 <span class="bl">Manter</span>'}</button>
    <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
    <button class="delb" data-i="${i}" title="Excluir">🗑</button>
@@ -452,8 +452,8 @@ desk.addEventListener('change',async e=>{
  const attrIn=e.target.closest('[data-k^="c:"]');if(attrIn){
   const i=+attrIn.dataset.i,p=cur[i],key=attrIn.dataset.k.slice(2);
   if(p&&!p.unlimited&&ATTR_RANGE[key]){
-   const raw=+attrIn.value||0,nv=normAttr(key,raw,!!p.blank&&!p.budget);
-   if(nv!==raw){attrIn.value=String(nv);attrIn.dispatchEvent(new Event('input',{bubbles:true}));const[mn,mx]=ATTR_RANGE[key];p.skillNotice=`${ATTR_NAMES[key]}: ${raw} foi ajustado para ${nv}. Os atributos vão de ${mn} a ${mx}, em múltiplos de 5.`;refresh(i)}
+   const raw=+attrIn.value||0,nv=clampAttr(key,raw,!!p.blank&&!p.budget);
+   if(nv!==raw){attrIn.value=String(nv);attrIn.dispatchEvent(new Event('input',{bubbles:true}));const[mn,mx]=ATTR_RANGE[key];p.skillNotice=`${ATTR_NAMES[key]}: ${raw} foi ajustado para ${nv}. Os atributos vão de ${mn} a ${mx}.`;refresh(i)}
   }
   return;
  }

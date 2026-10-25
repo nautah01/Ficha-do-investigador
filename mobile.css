@@ -89,3 +89,11 @@ body.mobile .note,body.mobile .cem{bottom:calc(54px + env(safe-area-inset-bottom
  body.mobile #desk .win-bar button{width:31px;height:32px}
  body.mobile #desk .win-body{padding-right:7px}
 }
+
+/* Botões "PDF" e "Enviar ficha" por extenso no celular.
+   A barra da ficha passa a ter duas linhas: título em cima; embaixo PDF, Enviar ficha, Manter (ícone) e Excluir (ícone). */
+.bl .bx{display:none}
+body.mobile #desk .win-bar{flex-wrap:wrap;row-gap:4px}
+body.mobile #desk .win-bar .win-title{flex:1 1 calc(100% - 44px)}
+body.mobile #desk .win-bar button.pdfb,body.mobile #desk .win-bar button.shb{flex:1 1 auto;width:auto;min-width:0;height:34px;padding:0 10px;gap:5px;font-size:.8rem;white-space:nowrap}
+body.mobile #desk .win-bar button.pdfb .bl,body.mobile #desk .win-bar button.shb .bl,body.mobile #desk .win-bar button.shb .bl .bx{display:inline}

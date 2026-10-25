@@ -36,26 +36,30 @@ async function streamBytes(stream,limit){
  for(;;){const{done,value}=await r.read();if(done)break;n+=value.length;if(n>limit){try{r.cancel()}catch(_){}throw new Error('Dados grandes demais.')}parts.push(value)}
  const out=new Uint8Array(n);let o=0;for(const x of parts){out.set(x,o);o+=x.length}return out;
 }
-async function packLink(obj){
- let bytes=new TextEncoder().encode(JSON.stringify(obj)),tag='j';
- if(window.CompressionStream){const cs=new CompressionStream('deflate-raw'),w=cs.writable.getWriter();w.write(bytes);w.close();bytes=await streamBytes(cs.readable,5e6);tag='z'}
+/* tags do link: j = JSON puro · z = JSON comprimido (formato antigo, só leitura aqui) · x = compacto ($v:2) puro · y = compacto comprimido */
+async function packLink(obj,compact){
+ let bytes=new TextEncoder().encode(JSON.stringify(obj)),tag=compact?'x':'j';
+ if(window.CompressionStream){const cs=new CompressionStream('deflate-raw'),w=cs.writable.getWriter();w.write(bytes).catch(()=>{});w.close().catch(()=>{});bytes=await streamBytes(cs.readable,5e6);tag=compact?'y':'z'}
  return tag+b64u.enc(bytes);
 }
 async function unpackLink(code){
- code=String(code||'').trim();const tag=code[0];let bytes=b64u.dec(code.slice(1));
- if(tag==='z'){if(!window.DecompressionStream)throw new Error('Este navegador não abre links comprimidos.');const ds=new DecompressionStream('deflate-raw'),w=ds.writable.getWriter();w.write(bytes);w.close();bytes=await streamBytes(ds.readable,2e6)}
- else if(tag!=='j')throw new Error('Link inválido.');
- return JSON.parse(new TextDecoder().decode(bytes));
+ code=String(code||'').trim();const tag=code[0];if(!'jzxy'.includes(tag||'-'))throw new Error('Link inválido.');let bytes;try{bytes=b64u.dec(code.slice(1))}catch(_){throw new Error('Link inválido.')}
+ if(tag==='z'||tag==='y'){if(!window.DecompressionStream)throw new Error('Este navegador não abre links comprimidos.');const ds=new DecompressionStream('deflate-raw'),w=ds.writable.getWriter();w.write(bytes).catch(()=>{});w.close().catch(()=>{});try{bytes=await streamBytes(ds.readable,2e6)}catch(err){throw new Error(err&&err.message==='Dados grandes demais.'?err.message:'Link incompleto ou corrompido (alguns apps cortam links grandes).')}}
+ else if(tag!=='j'&&tag!=='x')throw new Error('Link inválido.');
+ try{return JSON.parse(new TextDecoder().decode(bytes))}catch(_){throw new Error('Link inválido.')}
 }
 async function sheetLink(p){
- const code=await packLink(wrapSheets([sheetForShare(p,true)]));
+ let code;
+ try{code=await packLink(linkCompact(sheetForShare(p,true)),true)} /* formato curto (linkcodec.js) */
+ catch(err){console.warn('Link curto indisponível, usando o formato completo:',err);code=await packLink(wrapSheets([sheetForShare(p,true)]))}
  return location.href.split('#')[0]+'#ficha='+code;
 }
 
 /* ---------- leitura de arquivo, texto ou link ---------- */
 function sheetsFromData(data){
  let raw=[];
- if(data&&data.kind==='sheet'&&data.sheet)raw=[data.sheet];
+ if(data&&data.$v===2)raw=[linkExpand(data)]; /* link no formato curto */
+ else if(data&&data.kind==='sheet'&&data.sheet)raw=[data.sheet];
  else if(data&&Array.isArray(data.sheets))raw=data.sheets;
  else if(data&&data.c&&data.sk)raw=[data];
  else if(data&&Array.isArray(data.cur))raw=data.cur; /* estado completo exportado */
@@ -63,7 +67,7 @@ function sheetsFromData(data){
 }
 async function sheetsFromText(text){
  text=String(text||'').trim();if(!text)throw new Error('Nada para importar.');
- const m=text.match(/#ficha=([A-Za-z0-9_\-]+)/)||(/^[jz][A-Za-z0-9_\-]{20,}$/.test(text)?[0,text]:null);
+ const m=text.match(/#ficha=([A-Za-z0-9_\-]+)/)||(/^[jzxy][A-Za-z0-9_\-]{20,}$/.test(text)?[0,text]:null);
  const data=m?await unpackLink(m[1]):JSON.parse(text);
  const list=sheetsFromData(data);
  if(!list.length)throw new Error('Não encontrei nenhuma ficha válida nesse conteúdo.');
@@ -89,7 +93,7 @@ desk.addEventListener('click',async e=>{
    try{
     const url=await sheetLink(p);
     try{await navigator.clipboard.writeText(url)}catch(_){const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}
-    msg(url.length>8000?`Link copiado (${url.length} caracteres: longo; alguns apps de mensagem cortam links grandes. Prefira o arquivo).`:'Link copiado. O retrato e as imagens dos itens não vão no link.');
+    msg(url.length>8000?`Link copiado (${url.length} caracteres: longo; alguns apps de mensagem cortam links grandes. Prefira o arquivo).`:`Link copiado (${url.length} caracteres). O retrato e as imagens personalizadas não vão no link.`);
    }catch(err){msg('Não foi possível gerar o link: '+err.message)}
   }
  });
