@@ -1,20 +1,8 @@
-/* Mobile layout pass: give first-time users a clear next action and make the sheet readable by touch. */
-.mobile-welcome[hidden]{display:none!important}
+/* Mobile layout pass: keep the panel as the starting point and reduce sheet length. */
 body.mobile[data-mtab]:not([data-mtab=fichas]) #panelBtn{display:none!important}
-body.mobile .mobile-welcome{
- display:grid;gap:12px;margin:14px 0 18px;padding:18px 16px 14px;
- border:1px solid rgba(var(--gr2),.66);border-left:4px solid var(--head);border-radius:9px;
- background:linear-gradient(145deg,rgba(var(--gr),.15),rgba(var(--gr),.04)),var(--k2);
-}
-body.mobile .mobile-welcome h2{margin:0;padding:0;border:0;color:var(--head);font-size:1.34rem;line-height:1.2;letter-spacing:.01em}
-body.mobile .mobile-welcome p{margin:0;color:var(--txt);font-size:.98rem;line-height:1.5}
-body.mobile .mobile-welcome-primary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:10px 14px;font-size:1rem;text-align:left}
-body.mobile .mobile-welcome-primary span{font-size:1.25rem}
-body.mobile .mobile-welcome-secondary{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-body.mobile .mobile-welcome-secondary button{min-height:46px;padding:8px 9px;font-size:.83rem;line-height:1.3;white-space:normal}
-body.mobile .mobile-welcome-note{padding-top:8px;border-top:1px solid rgba(var(--gr2),.24);color:var(--txt)!important;font-size:.82rem!important;opacity:.86}
 body.mobile.pmin .top>h1{padding-left:0!important}
 body.mobile #panelBtn,body.mobile.pmin #panelBtn{position:relative!important;inset:auto!important;display:inline-flex;align-items:center;justify-content:center;margin:4px 0 2px;box-shadow:none}
+body.mobile #panelBtn[hidden]{display:none!important}
 body.mobile #desk .empty{display:none}
 
 @media(max-width:600px){
@@ -30,19 +18,19 @@ body.mobile #desk .empty{display:none}
  body.mobile #desk .win-body .der-field{grid-template-columns:minmax(0,1fr) 62px;min-height:44px;align-items:center}
  body.mobile #desk .win-body .der-field .in{width:62px;min-height:40px;font-size:1rem}
  body.mobile #desk .win-body .sub .occ-text,body.mobile #desk .win-body .sub .occ-select,body.mobile #desk .win-body .sub .blank-occ-picker{flex:0 0 100%;width:100%;min-width:0;max-width:none}
- body.mobile #desk .win-body .sk{grid-template-columns:minmax(0,1fr);gap:2px}
- body.mobile #desk .win-body .sk>.skill-row{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:44px;padding:4px 6px;border-bottom:1px solid rgba(var(--gr2),.2);font-size:.95rem}
+ body.mobile #desk .win-body .sk{grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 6px}
+ body.mobile #desk .win-body .sk>.skill-row{display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:38px;padding:3px 4px;border-bottom:1px solid rgba(var(--gr2),.2);font-size:.84rem}
  body.mobile #desk .win-body .skill-row .sk-label{flex:1 1 auto;min-width:0}
- body.mobile #desk .win-body .skill-row .sk-name{font-size:.94rem;line-height:1.25;overflow-wrap:anywhere}
- body.mobile #desk .win-body .skill-row>i{flex:0 0 auto;gap:5px}
- body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:54px;min-height:40px;padding:4px;font-size:.95rem}
+ body.mobile #desk .win-body .skill-row .sk-name{font-size:.84rem;line-height:1.16;overflow-wrap:anywhere}
+ body.mobile #desk .win-body .skill-row>i{flex:0 0 auto;gap:3px}
+ body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:42px;min-height:34px;padding:3px;font-size:.84rem}
  body.mobile #desk .win-body button.rmb{width:38px;min-width:38px;min-height:40px;margin:0;font-size:.8rem}
  body.mobile #desk .win-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;overflow:visible;padding:7px 9px 0}
  body.mobile #desk .win-tabs button{width:100%;min-width:0;min-height:44px;padding:7px 6px;font-size:.78rem;white-space:normal}
  body.mobile #desk .win-bar button.pdfb,body.mobile #desk .win-bar button.shb{min-height:40px}
  body.mobile #desk .mobile-card-actions button,body.mobile #desk .win-bar button{min-height:40px}
  body.mobile #mobTabs button{min-height:48px;font-size:.7rem}
- body.mobile .note-tools{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+ body.mobile .note-tools{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
  body.mobile .note-tools>button{min-height:42px;padding:5px 4px;font-size:.8rem}
  body.mobile .note-boards>button{min-height:40px}
  body.mobile .cem-foot button{min-height:44px}
@@ -56,13 +44,26 @@ body.mobile #desk .empty{display:none}
 }
 
 @media(max-width:390px){
- body.mobile .mobile-welcome{padding:16px 13px 12px}
- body.mobile .mobile-welcome h2{font-size:1.23rem}
- body.mobile .mobile-welcome-secondary{grid-template-columns:1fr}
- body.mobile .mobile-welcome-secondary button{min-height:44px;text-align:left}
  body.mobile #desk .win-body{padding-inline:8px}
  body.mobile #desk .win-body .stats div{padding-inline:2px}
  body.mobile #desk .win-tabs button{padding-inline:6px;font-size:.76rem}
 }
 
-@media(prefers-reduced-motion:reduce){body.mobile .mobile-welcome *{transition:none!important}}
+/* The skill list is the longest section of a sheet; use two columns on phones. */
+@media(max-width:600px){
+ body.mobile #panel .tools button.icon-label{width:36px;min-width:36px;justify-content:center;padding:2px 0}
+ body.mobile #panel .tools button.icon-label .tool-label{display:none}
+ body.mobile #panel .tools button.icon-label .tool-icon{font-size:.95rem}
+ body.mobile .note-tools>button#noteSelect,body.mobile .note-tools>button#noteAdd,body.mobile .note-tools>button#noteAddText{flex:1 1 calc(33.333% - 5px);min-width:0}
+ body.mobile .note-more-tools{display:block;flex:1 1 100%;min-width:0}
+ body.mobile .note-more-tools>summary{display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px;padding:5px 10px;border:1px solid rgba(var(--gr),.45);border-radius:4px;background:var(--k3);color:var(--ink2);font-size:.8rem;cursor:pointer;list-style:none}
+ body.mobile .note-more-tools>summary::-webkit-details-marker{display:none}
+ body.mobile .note-more-tools[open]{display:flex;flex-wrap:wrap}
+ body.mobile .note-more-tools[open]>.note-more-content{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;gap:5px}
+ body.mobile .note-more-content>button{min-height:40px;padding:4px;font-size:.75rem;line-height:1.15;white-space:normal}
+ body.mobile .note-boards .board-actions{display:flex;align-items:center;gap:4px}
+ body.mobile .note-boards .board-actions>summary{display:flex;align-items:center;justify-content:center;min-width:40px;min-height:40px;padding:4px 10px;border:1px solid rgba(var(--gr),.45);border-radius:4px;background:transparent;color:var(--ink2);font-size:1.1rem;cursor:pointer;list-style:none}
+ body.mobile .note-boards .board-actions>summary::-webkit-details-marker{display:none}
+ body.mobile .note-boards .board-actions>button{min-height:40px;margin:0;padding:6px 10px;font-size:.8rem}
+}
+@media(max-width:350px){body.mobile #desk .win-body .sk{grid-template-columns:1fr}body.mobile #desk .win-body .sk>.skill-row{min-height:36px;font-size:.88rem}body.mobile #desk .win-body .skill-row .sk-name{font-size:.88rem}body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:46px}}

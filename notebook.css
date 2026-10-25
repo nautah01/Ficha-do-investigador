@@ -79,6 +79,14 @@
 .note-boards>button{margin-bottom:4px;padding:3px 10px;font-size:.78rem;border-radius:4px;color:var(--ink2);background:transparent;border:1px solid rgba(var(--gr),.45);cursor:pointer}
 .note-boards>button:hover:not(:disabled){background:rgba(var(--gr),.15)}
 .note-boards>button:disabled{opacity:.4;cursor:default}
+.board-actions{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.board-actions[open]>summary{display:none}
+.board-actions:not([open])>summary{display:flex;align-items:center;justify-content:center;padding:3px 10px;border:1px solid rgba(var(--gr),.45);border-radius:4px;background:transparent;color:var(--ink2);cursor:pointer;list-style:none}
+.board-actions>button{margin:0}
+.note-more-tools{display:block;min-width:0}
+.note-more-tools[open]>summary{display:none}
+.note-more-tools:not([open])>summary{display:flex;align-items:center;gap:8px;padding:5px 10px;border:1px solid rgba(var(--gr),.45);border-radius:4px;background:var(--k3);color:var(--ink2);cursor:pointer;list-style:none}
+.note-more-content{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
 .btabs{display:flex;gap:3px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:thin}
 .bt{flex:none;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:5px 13px;font-size:.8rem;color:var(--muted2);background:transparent;border:1px solid rgba(var(--gr),.3);border-bottom:none;border-radius:6px 6px 0 0;cursor:pointer}
 .bt:hover{color:var(--ink2)}

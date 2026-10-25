@@ -647,8 +647,8 @@ window.DynamicInfo=(()=>{
  if(media.addEventListener)media.addEventListener('change',apply);else media.addListener(apply);
 })();
 (function panelMin(){
- const KEY='coc7-painel-v1',bar=document.getElementById('panel'),btn=document.getElementById('panelBtn'),mn=document.getElementById('panelMin');
- let min=document.body.classList.contains('mobile');try{const saved=localStorage.getItem(KEY);if(saved!==null)min=saved==='1'}catch(_){}
+ const KEY='coc7-painel-v2',bar=document.getElementById('panel'),btn=document.getElementById('panelBtn'),mn=document.getElementById('panelMin');
+ let min=false;try{const saved=localStorage.getItem(KEY);if(saved!==null)min=saved==='1'}catch(_){}
  const apply=()=>{bar.hidden=min;btn.hidden=!min;document.body.classList.toggle('pmin',min)};
  const set=v=>{min=v;try{localStorage.setItem(KEY,v?'1':'0')}catch(_){}apply();(v?btn:mn).focus()};
  mn.onclick=()=>set(true);btn.onclick=()=>set(false);
