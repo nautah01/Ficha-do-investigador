@@ -57,6 +57,35 @@ test('Gerador: teto de 75% respeitado, créditos na faixa e orçamento coerente'
  }
  assert.ok(n>=1000);
 });
+test('Ficha em branco: ao escolher a ocupação, as perícias dela sobem de "não treinadas" para "do personagem"',()=>{
+ const p=R.genBlank(false);
+ assert.ok(R.falta(p).some(([n])=>n==='Arte/Ofício (Pintura)'),'antes: Pintura está em não treinadas');
+ R.resetBlankDistribution(p,'Artista');
+ for(const n of R.occupationSkillNames(p)){
+  assert.ok(n in p.sk,n+' deveria estar nas perícias do personagem');
+  assert.ok(!R.falta(p).some(([x])=>x===n),n+' não pode ficar em não treinadas');
+  assert.equal(p.sk[n],Math.max(0,+R.base(n,p.c)||0),n+' entra com o valor-base');
+  assert.equal(R.skillFloor(p,n),p.sk[n]);
+ }
+ assert.ok('Arte/Ofício (Pintura)' in p.sk&&'Arte/Ofício (Atuar)' in p.sk);
+ /* trocar de ocupação devolve as perícias da anterior e sobe as da nova */
+ R.resetBlankDistribution(p,'Médico');
+ assert.ok(!('Arte/Ofício (Pintura)' in p.sk)&&R.falta(p).some(([n])=>n==='Arte/Ofício (Pintura)'));
+ assert.ok('Ciência (Biologia)' in p.sk&&'Ciência (Farmácia)' in p.sk&&'Língua (Latim)' in p.sk&&'Medicina' in p.sk);
+ /* perícia que já estava na ficha, ou que a pessoa adicionou, não é tocada nem removida depois */
+ const q=R.genBlank(false);q.sk['Antropologia']=1;R.resetBlankDistribution(q,'Ocultista');
+ assert.ok(!q.occSkills.includes('Antropologia')&&q.sk['Antropologia']===1);
+ R.resetBlankDistribution(q,'Médico');assert.ok('Antropologia' in q.sk);
+ /* sortear atributos (mesma ocupação) mantém as perícias e não ressuscita uma que a pessoa removeu */
+ const r=R.genBlank(false);R.resetBlankDistribution(r,'Fotógrafo');
+ delete r.sk['Consertos Elétricos'];delete r.skillFloors['Consertos Elétricos'];(r.removed=r.removed||{})['Consertos Elétricos']=1;
+ R.resetBlankDistribution(r,'Fotógrafo');
+ assert.ok('Arte/Ofício (Fotografia)' in r.sk&&!('Consertos Elétricos' in r.sk));
+ /* Amnésia não traz perícia nenhuma */
+ const a=R.genBlank(false);R.resetBlankDistribution(a,'Amnésia');assert.deepEqual(a.occSkills,[]);
+ /* toda ocupação: perícias nunca ficam duplicadas entre as duas listas */
+ for(const o of R.OCC){const s=R.genBlank(false);R.resetBlankDistribution(s,o.n);const fl=new Set(R.falta(s).map(([n])=>n));for(const n of Object.keys(s.sk))assert.ok(!fl.has(n),o.n+': '+n+' duplicada')}
+});
 test('SAN máxima = 99 − Mitos de Cthulhu',()=>{
  assert.equal(R.sanMaxOf({sk:{}}),99);assert.equal(R.sanMaxOf({sk:{'Mitos de Cthulhu':12}}),87);assert.equal(R.sanMaxOf({sk:{'Mitos de Cthulhu':150}}),0);
  const p={sk:{'Mythos de Cthulhu':5},custom:{},removed:{}};R.migrateSkillNames(p);assert.deepEqual(p.sk,{'Mitos de Cthulhu':5});

@@ -196,9 +196,26 @@ function blankBudgetState(p){
  const personalTotal=Math.max(0,(+p.c.INT||0)*2);
  return{occupational:{total:occupationalTotal,used:usedOcc,available:Math.max(0,occupationalTotal-usedOcc)},personal:{total:personalTotal,used:usedPersonal,available:Math.max(0,personalTotal-usedPersonal)},credit:range};
 }
+/* Perícias da ocupação (as mesmas que ficam em dourado). Amnésia e ocupações desconhecidas não trazem nenhuma. */
+function occupationSkillNames(p){
+ if(isAmnesia(p)||!occupationFor(occRefOf(p)))return[];
+ return[...occupationSkillRules(p).names];
+}
 function resetBlankDistribution(p,occupation){
  stripFragments(p);delete p.amnesia;
+ const changed=p.occ!==occupation;
+ /* perícias que a ocupação anterior trouxe sozinha voltam para "não treinadas" (as que a pessoa adicionou ficam) */
+ for(const n of Array.isArray(p.occSkills)?p.occSkills:[])if(typeof n==='string'&&!BLANK_SK.includes(n)){delete p.sk[n];if(p.skillFloors)delete p.skillFloors[n]}
+ p.occSkills=[];
  p.occ=occupation;p.skillAllocations={};p.skillPoints={available:0};p.skillNotice='';
+ ensureSkillBudget(p);
+ /* as perícias da nova ocupação que ainda não estavam em "Perícias do personagem" sobem de "não treinadas" com o valor-base */
+ for(const n of occupationSkillNames(p)){
+  if(p.sk[n]!==undefined)continue;
+  if(p.removed&&p.removed[n]){if(!changed)continue;delete p.removed[n]} /* ao sortear atributos, uma perícia que a pessoa removeu de propósito não volta */
+  if(p.custom)delete p.custom[n];
+  p.sk[n]=Math.max(0,+base(n,p.c)||0);p.occSkills.push(n);
+ }
  ensureSkillBudget(p);
  const range=creditBounds(p);
  for(const n of Object.keys(p.custom||{})){p.custom[n]=Math.max(0,+base(n,p.c)||0);p.skillFloors[n]=p.custom[n]}
