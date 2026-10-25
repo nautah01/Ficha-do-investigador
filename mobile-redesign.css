@@ -4,6 +4,10 @@ body.mobile.pmin .top>h1{padding-left:0!important}
 body.mobile #panelBtn,body.mobile.pmin #panelBtn{position:relative!important;inset:auto!important;display:inline-flex;align-items:center;justify-content:center;margin:4px 0 2px;box-shadow:none}
 body.mobile #panelBtn[hidden]{display:none!important}
 body.mobile #desk .empty{display:none}
+/* Keep the mobile layout overrides from reopening collapsed card sections. */
+body.mobile #desk .win.collapsed>.win-tabs,
+body.mobile #desk .win.collapsed>.win-body,
+body.mobile #desk .win.collapsed>.rsz{display:none!important}
 
 @media(max-width:600px){
  body.mobile{padding:10px 12px calc(78px + env(safe-area-inset-bottom))}
