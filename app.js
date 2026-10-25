@@ -79,7 +79,10 @@ const sel2=document.getElementById('occ2');
 const subOpts=()=>Object.entries(SUB).forEach(([n,s])=>Object.keys(s.o).forEach(k=>{sel.insertAdjacentHTML('beforeend',`<option value="${n}::${k}" hidden>${n} (${k})</option>`);sel2.insertAdjacentHTML('beforeend',`<option value="occ:${n}::${k}" hidden>${n} (${k}) — como secundária</option>`)}));
 sel2.innerHTML='<option value="">Nenhuma</option><option value="*">🎲 Aleatória</option><optgroup label="Ocupações">'+[...OCC].sort(srt).map(o=>`<option value="occ:${o.n}">${o.n}</option>`).join('')+'</optgroup>';
 subOpts();
-let cur=[],zTop=10,drag=null,rsz=null,saveT=0,dirty=false,blockSaves=false,storeReady=false;
+let cur=[],zTop=10,drag=null,rsz=null,saveT=0,dirty=false,blockSaves=false,storeReady=false,armedSkillSpinner=null;
+const pendingSpinnerChoices=new WeakMap();
+document.addEventListener('pointerup',()=>{armedSkillSpinner=null},true);
+document.addEventListener('pointercancel',()=>{armedSkillSpinner=null},true);
 const unlimitedPanel=()=>`<aside class="skill-pool unlimited-note" role="note"><b>Ficha sem limites</b><small>Não há pontos para distribuir nem mínimos ou máximos. Edite livremente atributos, perícias, ocupação e Nível de Crédito.</small></aside>`;
 const budgetModeGuidance=new WeakMap();
 function guideBudgetMode(i,mode){
@@ -470,14 +473,21 @@ desk.addEventListener('change',async e=>{
   else if(creditRange&&next>creditRange.max){notice=`O máximo de Nível de Crédito para esta ocupação é ${creditRange.max}%. O valor foi ajustado para esse limite.`;next=creditRange.max}
   else if(next===minimum)notice=`${n} chegou ao mínimo de ${minimum}%. Não é possível retirar mais pontos desta perícia.`;
   let confirmedChoiceType=null;
+  const pendingChoice=pendingSpinnerChoices.get(skillInput);
+  if(pendingChoice){
+   const result=await pendingChoice.promise;clearTimeout(pendingChoice.timer);if(pendingSpinnerChoices.get(skillInput)===pendingChoice)pendingSpinnerChoices.delete(skillInput);
+   if(cur[i]!==p)return;if(!result.ok){skillInput.value=String(old);return}confirmedChoiceType=result.type;
+  }
   if(isBudget(p)&&next>old&&(p.skillBudgetMode||'occupational')==='occupational'){
    const type=occupationChoiceType(p,n),available=blankBudgetState(p).occupational.available,cap=n==='Nível de Crédito'?(creditRange?.max??99):Math.max(old,skillCapFor(p,n));
    if(type&&Math.min(next,old+available,cap)>old){
-    const kind=type==='social'?'vaga de perícia social':'vaga de perícia aleatória';
-    const ok=await askConfirm({title:'Confirmar perícia escolhida',html:`<strong>${esc(n)}</strong> será escolhida para ocupar uma ${kind}. Ao confirmar, ela passa a brilhar em dourado.`,ok:'Confirmar escolha',danger:false});
-    if(cur[i]!==p)return;
-    if(!ok){skillInput.value=String(old);return}
-    confirmedChoiceType=type;
+    if(confirmedChoiceType!==type){
+     const kind=type==='social'?'vaga de perícia social':'vaga de perícia aleatória';
+     const ok=await askConfirm({title:'Confirmar perícia escolhida',html:`<strong>${esc(n)}</strong> será escolhida para ocupar uma ${kind}. Ao confirmar, ela passa a brilhar em dourado.`,ok:'Confirmar escolha',danger:false});
+     if(cur[i]!==p)return;
+     if(!ok){skillInput.value=String(old);return}
+     confirmedChoiceType=type;
+    }
    }
   }
   if(isBudget(p)&&next>old){
@@ -548,6 +558,12 @@ function onDragEnd(e){
  if(toBury>=0)buryFicha(toBury);
 }
 desk.addEventListener('pointerdown',e=>{
+ armedSkillSpinner=null;
+ const skillInput=e.target.closest('[data-skill-input]');
+ if(!document.body.classList.contains('mobile')&&skillInput&&e.button===0){
+  const r=skillInput.getBoundingClientRect(),spinnerWidth=Math.min(22,r.width*.4);
+  if(e.clientX>=r.right-spinnerWidth&&e.clientY<=r.top+r.height*.55)armedSkillSpinner=skillInput;
+ }
  if(document.body.classList.contains('mobile'))return;
  const win=e.target.closest('.win');if(!win)return;
  const i=+win.dataset.i;bring(i);
@@ -558,6 +574,18 @@ desk.addEventListener('pointerdown',e=>{
  document.addEventListener('pointermove',onDragMove);
  document.addEventListener('pointerup',onDragEnd);
 });
+desk.addEventListener('input',e=>{
+ const skillInput=e.target.closest('[data-skill-input]');
+ if(!skillInput||armedSkillSpinner!==skillInput||document.body.classList.contains('mobile')||pendingSpinnerChoices.has(skillInput))return;
+ const i=+skillInput.dataset.i,p=cur[i];if(!p||!isBudget(p)||(p.skillBudgetMode||'occupational')!=='occupational')return;
+ const n=skillInput.dataset.k.slice(2),old=Math.max(0,+get(p,'s:'+n)||0),next=Math.max(0,Math.floor(Number(skillInput.value)||0));if(next<=old)return;
+ const type=occupationChoiceType(p,n),available=blankBudgetState(p).occupational.available,creditRange=n==='Nível de Crédito'?creditBounds(p):null,cap=n==='Nível de Crédito'?(creditRange?.max??99):Math.max(old,skillCapFor(p,n));
+ if(type!=='social'||Math.min(next,old+available,cap)<=old)return;
+ const pending={promise:null,timer:0};
+ pending.promise=askConfirm({title:'Confirmar perícia escolhida',html:`<strong>${esc(n)}</strong> será escolhida para ocupar uma vaga de perícia social. Ao confirmar, ela passa a brilhar em dourado.`,ok:'Confirmar escolha',danger:false}).then(ok=>({ok,type}));
+ pending.timer=setTimeout(()=>{if(pendingSpinnerChoices.get(skillInput)===pending)pendingSpinnerChoices.delete(skillInput)},30000);
+ pendingSpinnerChoices.set(skillInput,pending);
+},true);
 desk.addEventListener('input',e=>{
  const sealed=e.target.closest('[data-am-sealed]');if(sealed){const p=cur[+sealed.dataset.i];if(p){amn(p).sealed=sealed.value;p.edit=true;persist()}return}
  const zoom=e.target.closest('[data-portrait-zoom]');if(zoom){const i=+zoom.dataset.i,p=cur[i];if(!p)return;p.portrait=p.portrait||{src:'',x:0,y:0};p.portrait.zoom=+zoom.value;const win=zoom.closest('.win'),canvas=win&&win.querySelector('[data-portrait-canvas]');if(canvas)paintPortrait(canvas,p);p.edit=true;persist();return}
