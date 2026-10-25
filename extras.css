@@ -26,6 +26,13 @@ input[readonly].in{opacity:.8;cursor:default}
 .dlg .wz-help{margin:0 0 12px}
 .dlg .row{flex-wrap:wrap}
 .wz-step-actions{align-items:stretch}
+.wz-step-actions.wz-first-step{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"points roll" "cancel next";gap:8px}
+.wz-step-actions.wz-second-step{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"cancel next";gap:8px}
+.wz-step-actions [data-w="points"]{grid-area:points}
+.wz-step-actions [data-w="roll"]{grid-area:roll}
+.wz-step-actions [data-w="cancel"]{grid-area:cancel}
+.wz-step-actions [data-w="next"]{grid-area:next}
+.wz-step-actions.wz-first-step [data-w="cancel"],.wz-step-actions.wz-first-step [data-w="next"],.wz-step-actions.wz-second-step [data-w="cancel"],.wz-step-actions.wz-second-step [data-w="next"]{display:block!important;visibility:visible;min-width:0;width:100%;margin:0}
 .wz-attrs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 16px}
 .wz-attrs>div{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border:1px solid var(--line);border-radius:6px;background:rgba(var(--gr),.06)}
 .wz-attrs span{font-size:.72rem;color:var(--muted)}
@@ -109,13 +116,7 @@ input[readonly].in{opacity:.8;cursor:default}
 
 /* telas pequenas: tabelas viram cartões */
 @media(max-width:640px){
- .dlg.wz-dlg .wz-step-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
- .dlg.wz-dlg .wz-step-actions.wz-first-step{grid-template-areas:"points roll" "cancel next"}
- .dlg.wz-dlg .wz-step-actions.wz-second-step{grid-template-areas:"cancel next"}
- .dlg.wz-dlg .wz-step-actions [data-w="points"]{grid-area:points}
- .dlg.wz-dlg .wz-step-actions [data-w="roll"]{grid-area:roll}
- .dlg.wz-dlg .wz-step-actions [data-w="cancel"]{grid-area:cancel}
- .dlg.wz-dlg .wz-step-actions [data-w="next"]{grid-area:next}
+ .dlg.wz-dlg .wz-step-actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
  .dlg.wz-dlg .wz-step-actions button{min-width:0;min-height:48px;padding:7px;font-size:.88rem;line-height:1.2;white-space:normal}
  .wz-attrs{grid-template-columns:repeat(2,1fr)}
  .pb-grid{grid-template-columns:1fr}
