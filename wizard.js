@@ -99,7 +99,7 @@ async function startGuidedCreation(){
  p.c={...attrs};p.der={...calc(p.c),luck:A()};p.nome=nome;p.idade=String(age);
  resetBlankDistribution(p,occ);
  p.skillBudgetMode='occupational';p.guide={step:3};p.edit=true;p.rolledC=rollSig(p);
- placeNew(p,0,cur);cur.push(p);activeSheet=cur.length-1;appSection='investigators';draw();
+ placeNew(p,0,cur);cur.push(p);draw();
  const el=winEl(cur.length-1);if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
 }
 

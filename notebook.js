@@ -314,7 +314,7 @@ btn.onclick=()=>{openN(win.hidden);if(win.hidden===false)window.Notas?.tab('boar
 const bar=win.querySelector('.note-bar');
 bar.addEventListener('dblclick',e=>{if(!e.target.closest('button'))win.classList.toggle('min')});
 bar.addEventListener('pointerdown',e=>{
- if(e.target.closest('button')||document.body.classList.contains('mobile')||document.body.classList.contains('structured-navigation'))return;
+ if(e.target.closest('button')||document.body.classList.contains('mobile'))return;
  const r=win.getBoundingClientRect(),dx=e.clientX-r.left,dy=e.clientY-r.top;bar.setPointerCapture(e.pointerId);
  bar.onpointermove=m=>{win.style.left=clamp(m.clientX-dx,0,innerWidth-80)+'px';win.style.top=clamp(m.clientY-dy,0,innerHeight-40)+'px'};
  bar.onpointerup=()=>{bar.onpointermove=bar.onpointerup=null};
