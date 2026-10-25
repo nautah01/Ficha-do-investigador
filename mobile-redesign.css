@@ -21,15 +21,15 @@ body.mobile #desk .win.collapsed>.rsz{display:none!important}
  body.mobile h1{font-size:1.38rem;line-height:1.18;letter-spacing:.04em}
  body.mobile #panelBtn{min-height:40px;padding-inline:11px;font-size:.78rem}
  body.mobile #desk .win-body{padding:11px 11px 14px}
- body.mobile #desk .win-body .stats{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px 6px;margin:10px 0}
- body.mobile #desk .win-body .stats>div{grid-column:span 2;min-height:0;padding:4px 3px}
- body.mobile #desk .win-body .stats>div:nth-last-child(2){grid-column:2/span 2}
- body.mobile #desk .win-body .stats>div:last-child{grid-column:4/span 2}
- body.mobile #desk .win-body .stats b{font-size:.78rem;letter-spacing:.04em}
- body.mobile #desk .win-body .stats .in{min-height:36px;max-width:72px;padding:3px;font-size:.92rem}
- body.mobile #desk .win-body .der{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
- body.mobile #desk .win-body .der-field{grid-template-columns:minmax(0,1fr) 62px;min-height:44px;align-items:center}
- body.mobile #desk .win-body .der-field .in{width:62px;min-height:40px;font-size:1rem}
+ body.mobile #desk .win-body .stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:8px 0}
+ body.mobile #desk .win-body .stats>div{grid-column:auto;min-height:0;padding:3px 2px}
+ body.mobile #desk .win-body .stats b{font-size:.65rem;letter-spacing:.03em}
+ body.mobile #desk .win-body .stats .in{width:100%;max-width:46px;min-height:31px;padding:2px;font-size:.82rem}
+ body.mobile #desk .win-body .stats small{font-size:.58rem;line-height:1.1}
+ body.mobile #desk .win-body .der{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-bottom:7px;padding:5px}
+ body.mobile #desk .win-body .der-field,body.mobile #desk .win-body .der-field:nth-child(n+5){grid-column:span 1;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:3px;min-width:0;min-height:54px;padding:4px 3px;font-size:.62rem}
+ body.mobile #desk .win-body .der-field span,body.mobile #desk .win-body .der-field:nth-child(2) span{min-width:0;font-size:.62rem;line-height:1.1;text-align:center;white-space:normal}
+ body.mobile #desk .win-body .der-field .in,body.mobile #desk .win-body .der-field:nth-child(2) .in{align-self:center;flex:0 1 auto;width:100%;max-width:48px;min-height:29px;padding:2px;font-size:.82rem}
  body.mobile #desk .win-body .sub .occ-text,body.mobile #desk .win-body .sub .occ-select,body.mobile #desk .win-body .sub .blank-occ-picker{flex:0 0 100%;width:100%;min-width:0;max-width:none}
  body.mobile #desk .win-body .sk{grid-template-columns:repeat(2,minmax(0,1fr));gap:3px 6px}
  body.mobile #desk .win-body .sk>.skill-row{display:flex;align-items:center;justify-content:space-between;gap:4px;min-height:38px;padding:3px 4px;border-bottom:1px solid rgba(var(--gr2),.2);font-size:.84rem}
@@ -39,9 +39,10 @@ body.mobile #desk .win.collapsed>.rsz{display:none!important}
  body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:42px;min-height:34px;padding:3px;font-size:.84rem}
  body.mobile #desk .win-body button.rmb{width:38px;min-width:38px;min-height:40px;margin:0;font-size:.8rem}
  body.mobile #desk .win-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;overflow:visible;padding:7px 9px 0}
- body.mobile #desk .stats-head{display:grid;grid-template-columns:minmax(0,1fr);gap:5px;align-items:start}
- body.mobile #desk .stats-head .stats-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;width:100%}
- body.mobile #desk .stats-head .stats-tools button{width:100%;min-width:0;min-height:38px;padding:5px 6px;font-size:.72rem;line-height:1.15;white-space:normal}
+ body.mobile #desk .stats-head{display:flex;justify-content:space-between;gap:5px;align-items:center}
+ body.mobile #desk .stats-head>span:first-child{flex:0 0 auto;font-size:.68rem}
+ body.mobile #desk .stats-head .stats-tools{display:flex;flex:0 1 auto;min-width:0;gap:4px;width:auto}
+ body.mobile #desk .stats-head .stats-tools button{flex:0 1 auto;width:auto;min-width:0;min-height:30px;padding:3px 5px;font-size:.62rem;line-height:1.1;white-space:nowrap}
  body.mobile #desk .win-tabs button{width:100%;min-width:0;min-height:44px;padding:7px 6px;font-size:.78rem;white-space:normal}
  body.mobile #desk .win-bar button.pdfb,body.mobile #desk .win-bar button.shb{min-height:40px}
  body.mobile #desk .mobile-card-actions button,body.mobile #desk .win-bar button{min-height:40px}
