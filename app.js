@@ -254,7 +254,7 @@ function swapWin(old,html){
 const draw=()=>{
  window.DynamicInfo?.hide();
  if(!cur.length){
-  desk.innerHTML='<p class="empty">Nenhuma ficha. Clique em Gerar — e depois use “Manter” nas que quiser guardar.</p>';renderCache=[];
+  desk.innerHTML='<p class="empty">Nenhuma ficha ainda. Escolha uma das opções do painel acima para começar.</p>';renderCache=[];
  }else{
   const htmls=cur.map(card),wins=[...desk.children].filter(el=>el.classList&&el.classList.contains('win'));
   if(wins.length!==renderCache.length||desk.querySelector(':scope > .empty')){
@@ -653,6 +653,16 @@ window.DynamicInfo=(()=>{
  const set=v=>{min=v;try{localStorage.setItem(KEY,v?'1':'0')}catch(_){}apply();(v?btn:mn).focus()};
  mn.onclick=()=>set(true);btn.onclick=()=>set(false);
  apply();
+})();
+/* As opções de geração automática ficam recolhidas até a pessoa escolher esse modo. */
+(function autoGenerationOptions(){
+ const toggle=document.getElementById('autoToggle'),options=document.getElementById('autoOptions');
+ if(!toggle||!options)return;
+ toggle.addEventListener('click',()=>{
+  const expanded=toggle.getAttribute('aria-expanded')!=='true';
+  toggle.setAttribute('aria-expanded',String(expanded));
+  options.hidden=!expanded;
+ });
 })();
 /* Aplica um estado (carregado do banco ou da outra aba) na tela. */
 function applyState(d){
