@@ -95,7 +95,7 @@ function guideBudgetMode(i,mode){
 }
 function budgetChoiceNote(p){
  const left=occupationChoiceRemaining(p);if(!left.any&&!left.social)return'';
- return`<aside class="budget-choice-note" data-budget-choice-note role="status" aria-live="polite" title="Use estas vagas ao distribuir pontos ocupacionais."><strong>Vagas da ocupação</strong>${left.any?`<span class="choice-count"><b>Perícias aleatórias</b><strong>${left.any}</strong></span>`:''}${left.social?`<span class="choice-count"><b>Perícias sociais</b><strong>${left.social}</strong></span>`:''}<small>escolha com pontos ocupacionais</small></aside>`;
+ return`<aside class="budget-choice-note" data-budget-choice-note role="status" aria-live="polite" title="Escolha perícias adicionais da ocupação usando pontos ocupacionais."><strong>Escolha perícias adicionais da ocupação</strong>${left.any?`<span class="choice-count"><b>Perícias aleatórias</b><strong>${left.any}</strong></span>`:''}${left.social?`<span class="choice-count"><b>Perícias sociais</b><strong>${left.social}</strong></span>`:''}<small>use pontos ocupacionais</small></aside>`;
 }
 function skillAllocationHint(p,n){
  const value=Math.max(0,+get(p,'s:'+n)||0),details=[`Normal ${value}%, Difícil ${value>>1}%, Extremo ${Math.floor(value/5)}%.`];
@@ -112,7 +112,7 @@ function blankBudgetPanel(p,i){
   const creditReady=!!credit&&creationAttributesReady(p);
   const defaultNote=creditReady?'Pontos ocupacionais descontam o Crédito mínimo e valem para perícias da ocupação. Pontos pessoais equivalem a INT × 2. Trocar de ocupação zera a distribuição.':'Escolha uma ocupação e defina os atributos (ou use “Sortear atributos”) para calcular os pontos disponíveis. Pontos pessoais = INT × 2.';
   const creditParts=creditReady?`Mínimo <b>${credit.min}</b> · Máximo <b>${credit.max}</b>`:credit?'Defina os atributos para calcular a faixa':'Escolha uma ocupação para ver a faixa';
-  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><label class="budget-mode${guideMode?' is-guide':''}"><span>Distribuir agora</span><select data-budget-mode data-i="${i}" aria-label="Tipo de pontos a distribuir"><option value="occupational" ${mode==='occupational'?'selected':''}>Ocupacionais</option><option value="personal" ${mode==='personal'?'selected':''}>Pessoais</option></select></label><div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div>${budgetChoiceNote(p)}<small class="occ-legend" data-occ-legend ${mode==='occupational'&&creditReady?'':'hidden'}>${isAmnesia(p)?'🌫️ Instinto: qualquer perícia aceita pontos ocupacionais, mas só até 60%. Metade dos pontos está adormecida (veja Amnésia abaixo).':'<span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.'}</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
+  return`<section class="blank-budgets" aria-label="Pontos de criação"><div class="budget-balance"><div class="budget-stat"><span>Pontos ocupacionais</span><strong><em data-budget-available="occupational">${b.occupational.available}</em><small>disponíveis de</small><span data-budget-total="occupational">${b.occupational.total}</span> pts</strong></div><div class="budget-stat"><span>Pontos pessoais · INT × 2</span><strong><em data-budget-available="personal">${b.personal.available}</em><small>disponíveis de</small><span data-budget-total="personal">${b.personal.total}</span> pts</strong></div></div><div class="budget-controls"><div class="budget-mode${guideMode?' is-guide':''}"><span>Distribuir agora</span><div class="budget-mode-options" role="group" aria-label="Tipo de pontos a distribuir"><button type="button" class="alt" data-budget-mode data-i="${i}" value="occupational" aria-pressed="${mode==='occupational'}">Perícias ocupacionais</button><button type="button" class="alt" data-budget-mode data-i="${i}" value="personal" aria-pressed="${mode==='personal'}">Perícias pessoais</button></div></div><div class="credit-range" data-credit-range><b>Nível de Crédito da ocupação</b><span>${creditParts}</span></div></div>${budgetChoiceNote(p)}<small class="occ-legend" data-occ-legend ${mode==='occupational'&&creditReady?'':'hidden'}>${isAmnesia(p)?'🌫️ Instinto: qualquer perícia aceita pontos ocupacionais, mas só até 60%. Metade dos pontos está adormecida (veja Amnésia abaixo).':'<span class="occ-legend-mark"></span> Perícias destacadas em dourado são as da ocupação escolhida: gaste os pontos ocupacionais nelas.'}</small><small data-skill-pool-note class="${p.skillNotice?'has-warning':''}">${esc(p.skillNotice||defaultNote)}</small></section>`;
 }
 const inp=(p,i,k,attrs='',label='')=>`<input class="in" type="${k==='d:db'?'text':'number'}" data-i="${i}" data-k="${esc(k)}"${label?` aria-label="${esc(label)}"`:''} ${attrs} value="${esc(get(p,k))}">`;
 const row=(p,i,n,rm)=>{
@@ -353,7 +353,7 @@ function refresh(i){
    const available=el.querySelector(`[data-budget-available="${type}"]`),total=el.querySelector(`[data-budget-total="${type}"]`);
    if(available)available.textContent=String(budgets[type].available);if(total)total.textContent=String(budgets[type].total);
   }
-  const mode=el.querySelector('[data-budget-mode]');if(mode&&mode!==document.activeElement)mode.value=p.skillBudgetMode||'occupational';
+  const currentMode=p.skillBudgetMode||'occupational';el.querySelectorAll('[data-budget-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.value===currentMode)));
   const modeLabel=el.querySelector('.budget-mode');if(modeLabel)modeLabel.classList.toggle('is-guide',!!budgetModeGuidance.get(p));
   const occMode=(p.skillBudgetMode||'occupational')==='occupational';
   el.querySelectorAll('.sk').forEach(box=>box.classList.toggle('hl-occ',occMode));
@@ -396,6 +396,7 @@ async function approveEquipment(p,item){
 desk.addEventListener('click',e=>{
  const i=e.target.closest('[data-i]');
  const idx=i?+i.dataset.i:NaN;
+ const budgetMode=e.target.closest('[data-budget-mode]');if(budgetMode){const k=+budgetMode.dataset.i,p=cur[k];if(!p)return;const hint=budgetModeGuidance.get(p);if(hint)clearTimeout(hint.timer);budgetModeGuidance.delete(p);p.skillBudgetMode=budgetMode.value;p.skillNotice='';refresh(k);persist();return}
  const blankOcc=e.target.closest('[data-blank-occ]');if(blankOcc){const k=+blankOcc.dataset.i,p=cur[k];if(p&&p.blank&&window.openBlankOccupationPicker)window.openBlankOccupationPicker(p.occ,next=>{const live=cur[k];if(!live||!live.blank||live.occ===next)return;resetBlankDistribution(live,next);live.edit=true;draw();persist()});return}
  const amBtn=e.target.closest('[data-am]');if(amBtn){const k=+amBtn.dataset.i,p=cur[k];if(p&&isAmnesia(p))amnesiaAction(p,amBtn.dataset.am,amBtn);return}
  const removePortrait=e.target.closest('[data-portrait-remove]');if(removePortrait){const k=+removePortrait.dataset.i,p=cur[k];if(p){delete p.portrait;p.edit=true;draw()}return}
@@ -507,7 +508,6 @@ desk.addEventListener('change',async e=>{
   }else if(!isBudget(p)&&next<old)p.skillPoints.available+=old-next;
   p.sk[n]=next;p.skillNotice=notice;p.edit=true;skillInput.value=String(next);if(wasMain)refresh(i);else draw();persist();return;
  }
- const budgetMode=e.target.closest('[data-budget-mode]');if(budgetMode){const i=+budgetMode.dataset.i,p=cur[i];if(!p)return;const hint=budgetModeGuidance.get(p);if(hint)clearTimeout(hint.timer);budgetModeGuidance.delete(p);p.skillBudgetMode=budgetMode.value;p.skillNotice='';refresh(i);persist();return}
  const occupationMain=e.target.closest('[data-occ-main]'),occupationSpec=e.target.closest('[data-occ-spec]');if(occupationMain||occupationSpec){
   const control=occupationMain||occupationSpec,i=+control.dataset.i,p=cur[i];if(!p)return;
   let next;

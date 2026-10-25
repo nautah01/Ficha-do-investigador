@@ -159,6 +159,9 @@ body.mobile #desk button.rrb{min-height:36px;padding:4px 10px}
  .blank-budgets .budget-mode,.blank-budgets .credit-range{display:grid;align-content:center;gap:4px;min-width:0;padding:5px 8px;border:1px solid rgba(var(--gr2),.2);border-radius:4px;color:var(--muted);font-size:.75rem}
  .blank-budgets .budget-mode.is-guide{border-color:#e65b5b;background:rgba(153,20,28,.24);color:#ffe0e0;box-shadow:0 0 0 2px rgba(230,91,91,.2),0 0 14px rgba(230,65,65,.3);animation:budget-mode-guide 700ms ease-in-out infinite alternate}
  .blank-budgets .budget-mode.is-guide>span{color:#ffbaba}
+ .budget-mode-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ .budget-mode-options button{min-width:0;min-height:38px;padding:5px 8px;font-size:.74rem;line-height:1.2;white-space:normal}
+ .budget-mode-options button[aria-pressed=true]{background:linear-gradient(var(--b3),var(--b4));border-color:var(--head);color:var(--head);box-shadow:inset 0 0 0 1px rgba(var(--gr2),.35)}
  @keyframes budget-mode-guide{from{box-shadow:0 0 0 1px rgba(230,91,91,.16),0 0 7px rgba(230,65,65,.16)}to{box-shadow:0 0 0 3px rgba(230,91,91,.34),0 0 17px rgba(230,65,65,.42)}}
  @media(prefers-reduced-motion:reduce){.blank-budgets .budget-mode.is-guide{animation:none}}
  .blank-budgets .budget-choice-note{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;padding:5px 8px;border-left:2px solid rgba(var(--gr2),.55);border-radius:3px;background:rgba(var(--gr),.035);color:var(--muted);font-size:.74rem;line-height:1.25}
