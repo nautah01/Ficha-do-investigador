@@ -79,7 +79,8 @@ const sel2=document.getElementById('occ2');
 const subOpts=()=>Object.entries(SUB).forEach(([n,s])=>Object.keys(s.o).forEach(k=>{sel.insertAdjacentHTML('beforeend',`<option value="${n}::${k}" hidden>${n} (${k})</option>`);sel2.insertAdjacentHTML('beforeend',`<option value="occ:${n}::${k}" hidden>${n} (${k}) — como secundária</option>`)}));
 sel2.innerHTML='<option value="">Nenhuma</option><option value="*">🎲 Aleatória</option><optgroup label="Ocupações">'+[...OCC].sort(srt).map(o=>`<option value="occ:${o.n}">${o.n}</option>`).join('')+'</optgroup>';
 subOpts();
-let cur=[],zTop=10,drag=null,rsz=null,saveT=0,dirty=false,blockSaves=false,storeReady=false;
+let cur=[],zTop=10,drag=null,rsz=null,saveT=0,dirty=false,blockSaves=false,storeReady=false,activeSheet=-1,appSection='investigators';
+document.body.classList.add('structured-navigation');
 const unlimitedPanel=()=>`<aside class="skill-pool unlimited-note" role="note"><b>Ficha sem limites</b><small>Não há pontos para distribuir nem mínimos ou máximos. Edite livremente atributos, perícias, ocupação e Nível de Crédito.</small></aside>`;
 const budgetModeGuidance=new WeakMap();
 function guideBudgetMode(i,mode){
@@ -162,18 +163,17 @@ function card(p,i){
  const cnt=p.equipment&&p.equipment.length?` (${p.equipment.length})`:'';
  return`<section class="win${p.pinned?' pinned':''}${u.collapsed?' collapsed':''}" data-i="${i}" style="left:${u.x}px;top:${u.y}px;width:${u.w}px;z-index:${u.z}">
   <header class="win-bar">
-   <button class="colb" data-i="${i}" title="Recolher / expandir">${u.collapsed?'▢':'–'}</button>
+   <button class="back-list" type="button" data-back-list>← <span>Todos os investigadores</span></button>
    <span class="win-title">${esc(ttl(p))}</span>
-   <button class="pdfb" data-i="${i}" title="Imprimir ou salvar esta ficha como PDF">📄 <span class="bl">PDF</span></button>
-   <button class="shb" data-i="${i}" title="Compartilhar: baixar arquivo da ficha ou copiar link">📤 <span class="bl">Enviar<span class="bx"> ficha</span></span></button>
-   <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Manter na mesa: a ficha não some quando você gera novas">${p.pinned?'📌 <span class="bl">Mantida</span>':'📌 <span class="bl">Manter</span>'}</button>
-   <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
-   <button class="delb" data-i="${i}" title="Excluir">🗑</button>
+   <button class="pdfb" data-i="${i}" title="Salvar esta ficha como PDF" aria-label="Salvar ficha como PDF">PDF</button>
+   <button class="shb" data-i="${i}" title="Baixar ou compartilhar esta ficha" aria-label="Compartilhar ficha">Enviar</button>
+   <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Fichas mantidas não são substituídas ao gerar outras" aria-label="${p.pinned?'Deixar de manter':'Manter'} ficha">${p.pinned?'Mantida':'Manter'}</button>
+   <button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha" aria-label="Duplicar ficha">Duplicar</button>
+   <button class="delb" data-i="${i}" title="Excluir esta ficha" aria-label="Excluir ficha">Excluir</button>
   </header>
   ${typeof guideBarHtml==='function'?guideBarHtml(p,i):''}
-  <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" data-sheet-tab="sheet" role="tab" aria-selected="${on('sheet')}">🗂 Ficha</button><button type="button" data-sheet-tab="backstory" role="tab" aria-selected="${on('backstory')}">📖 Backstory</button><button type="button" data-sheet-tab="combat" role="tab" aria-selected="${on('combat')}">⚔️ Combate</button><button type="button" data-sheet-tab="equipment" role="tab" aria-selected="${on('equipment')}">🎒 Equipamentos${cnt}</button></div>
+  <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" data-sheet-tab="sheet" role="tab" aria-selected="${on('sheet')}">Ficha</button><button type="button" data-sheet-tab="backstory" role="tab" aria-selected="${on('backstory')}">História e aparência</button><button type="button" data-sheet-tab="combat" role="tab" aria-selected="${on('combat')}">Combate</button><button type="button" data-sheet-tab="equipment" role="tab" aria-selected="${on('equipment')}">Equipamento${cnt}</button></div>
   <div class="win-body"><div class="win-pane sheet-pane" role="tabpanel" ${on('sheet')?'':'hidden'}>${body(p,i)}</div><div class="win-pane equipment-pane" role="tabpanel" ${on('equipment')?'':'hidden'}>${window.CthEquipment.render(p,i)}</div><div class="win-pane backstory-pane" role="tabpanel" ${on('backstory')?'':'hidden'}>${backstory(p,i)}</div><div class="win-pane combat-pane" role="tabpanel" ${on('combat')?'':'hidden'}>${typeof combatPanel==='function'?combatPanel(p,i):''}</div></div>
-  <div class="rsz" data-i="${i}"></div>
  </section>`;
 }
 /* Gravação: marca como "sujo" e grava depois de 180 ms; ao sair da página grava na hora. Falhas aparecem na tela (veja showSaveBanner). */
@@ -218,16 +218,7 @@ FichaStore.onStatus(s=>{
 let staleRemote=false;
 FichaStore.onRemote(()=>{staleRemote=true;blockSaves=true;showSaveBanner('conflict')});
 function fitDesk(){
- let w=800,h=560;
- const mob=document.body.classList.contains('mobile'),aw=fichaDeskW();
- cur.forEach((p,i)=>{
-  const u=uiOf(p,i);
-  if(!mob){
-   const nx=Math.max(0,Math.min(u.x,aw-u.w)),ny=Math.max(0,Math.min(u.y,FICHA_MAXY));
-   if(nx!==u.x||ny!==u.y){u.x=nx;u.y=ny;const el=winEl(i);if(el){el.style.left=nx+'px';el.style.top=ny+'px'}}
-  }
-  const el=winEl(i);w=Math.max(w,u.x+u.w);h=Math.max(h,u.y+(u.collapsed?56:el?el.offsetHeight:640))});
- desk.style.minWidth=Math.min(w,aw)+'px';desk.style.minHeight=h+'px';
+ desk.style.minWidth='0';desk.style.minHeight='0';
 }
 /* limites: as janelas ficam dentro da largura da tela e não descem além de FICHA_MAXY */
 const FICHA_MAXY=6000; /* limite só de segurança: a mesa cresce para baixo conforme as fichas descem */
@@ -253,25 +244,58 @@ function swapWin(old,html){
 }
 const draw=()=>{
  window.DynamicInfo?.hide();
- if(!cur.length){
-  desk.innerHTML='<p class="empty">Nenhuma ficha. Clique em Gerar — e depois use “Manter” nas que quiser guardar.</p>';renderCache=[];
- }else{
-  const htmls=cur.map(card),wins=[...desk.children].filter(el=>el.classList&&el.classList.contains('win'));
-  if(wins.length!==renderCache.length||desk.querySelector(':scope > .empty')){
-   desk.innerHTML=htmls.join('');hydratePortraits(desk);
+ const archive=document.getElementById('archiveHub'),editing=appSection==='investigators'&&activeSheet>=0&&!!cur[activeSheet];
+ desk.hidden=appSection!=='investigators';archive.hidden=appSection!=='archive';
+ document.body.classList.toggle('editing-sheet',!!editing);
+ if(appSection==='investigators'){
+  if(editing){
+   const p=cur[activeSheet],html=card(p,activeSheet);
+   const tabs=cur.map((item,i)=>`<button type="button" class="open-sheet-tab${i===activeSheet?' is-active':''}" data-open-sheet="${i}" aria-current="${i===activeSheet?'page':'false'}"><span>${esc(item.nome||item.occ||'Ficha sem nome')}</span>${item.guide?'<small>Em criação</small>':''}</button>`).join('');
+   const oldWin=desk.querySelector(':scope > .investigator-editor > .win');
+   if(oldWin&&+oldWin.dataset.i===activeSheet){
+    const openTabs=desk.querySelector('.open-sheet-tabs');if(openTabs)openTabs.innerHTML=tabs;
+    hydratePortraits(swapWin(oldWin,html));
+   }else{
+    desk.innerHTML=`<div class="open-sheet-strip" aria-label="Fichas abertas"><div class="open-sheet-tabs">${tabs}</div><button type="button" class="open-sheet-new" data-start-guided>＋ <span>Novo investigador</span></button></div><div class="investigator-editor">${html}</div>`;
+    hydratePortraits(desk);
+   }
+   renderCache=[html];
   }else{
-   const fresh=[];
-   htmls.forEach((h,k)=>{
-    if(k<wins.length){if(h!==renderCache[k])fresh.push(swapWin(wins[k],h))}
-    else{desk.insertAdjacentHTML('beforeend',h);fresh.push(desk.lastElementChild)}
-   });
-   for(let k=wins.length-1;k>=htmls.length;k--)wins[k].remove();
-   fresh.forEach(el=>hydratePortraits(el));
+   desk.innerHTML=investigatorIndex();renderCache=[];
   }
-  renderCache=htmls;
  }
  fitDesk();persist();
 };
+function investigatorIndex(){
+ const rows=cur.map((p,i)=>{
+  const title=ttl(p),portrait=p.portrait&&/^data:image\//i.test(p.portrait.src||'')?`<img src="${esc(p.portrait.src)}" alt="">`:`<span aria-hidden="true">${esc((p.nome||p.occ||'I').trim().slice(0,1).toLocaleUpperCase('pt-BR'))}</span>`;
+  const stage=p.guide?`Criação guiada · passo ${Math.max(1,Math.min(5,+p.guide.step||1))} de 5`:p.blank?'Ficha em branco':'Pronto para jogar';
+  const meta=[esc(p.occ||'Ocupação não definida'),p.idade?`${esc(p.idade)} anos`:null].filter(Boolean).join(' · ');
+  return`<article class="investigator-row"><button type="button" class="investigator-open" data-open-sheet="${i}" aria-label="Abrir ficha de ${esc(title)}"><span class="investigator-portrait">${portrait}</span><span class="investigator-copy"><strong>${esc(title)}</strong><small>${meta}</small></span><span class="investigator-state">${stage}</span><span class="investigator-count">${Object.keys(p.sk||{}).length} perícias</span><span class="investigator-arrow" aria-hidden="true">→</span></button><button type="button" class="delb investigator-delete" data-i="${i}" aria-label="Excluir ${esc(title)}" title="Excluir ficha">×</button></article>`;
+ }).join('');
+ return`<section class="investigator-index" aria-labelledby="investigatorIndexTitle"><header class="index-heading"><div><h2 id="investigatorIndexTitle">Seus investigadores</h2><p>${cur.length?`${cur.length} ${cur.length===1?'ficha salva':'fichas salvas'} neste navegador`:'Suas fichas aparecerão aqui.'}</p></div>${cur.length?`<button type="button" class="index-create" data-start-guided>＋ Novo investigador</button>`:''}</header>${cur.length?`<div class="investigator-list" aria-label="Lista de investigadores">${rows}</div>`:`<div class="index-empty"><h3>Ainda não há investigadores</h3><p>Use o passo a passo acima para criar o primeiro. Ele acompanha atributos, ocupação, perícias e história, e a ficha calcula os valores para você.</p></div>`}</section>`;
+}
+function setAppSection(section,source=null){
+ if(!['investigators','investigation','keeper','archive'].includes(section))return;
+ appSection=section;
+ if(section==='investigators'&&!source?.keepSheet)activeSheet=-1;
+ document.querySelectorAll('[data-app-destination]').forEach(b=>b.setAttribute('aria-current',b.dataset.appDestination===section?'page':'false'));
+ document.body.dataset.mtab=section;
+ if(section==='investigation'){
+  window.Cemiterio?.open(false);window.Notas?.open(true);window.Notas?.tab('board');
+ }else if(section==='archive'){
+  window.Notas?.open(false);if(!source?.keepCemetery)window.Cemiterio?.open(false);
+ }else{
+  window.Notas?.open(false);window.Cemiterio?.open(false);
+  if(section==='keeper'&&source?.id!=='gmTable')document.getElementById('gmTable')?.click();
+ }
+ draw();
+}
+document.addEventListener('click',e=>{
+ const destination=e.target.closest('[data-app-destination]');if(destination)setAppSection(destination.dataset.appDestination,destination);
+});
+document.getElementById('noteX')?.addEventListener('click',()=>{if(appSection==='investigation')setAppSection('investigators')});
+window.AppShell={navigate:setAppSection,openSheet(i){if(cur[i]){activeSheet=i;setAppSection('investigators',{keepSheet:true})}}};
 function portraitGeometry(img,w,h,p){
  const z=Math.max(1,Math.min(3,+p.zoom||1)),scale=Math.max(w/img.width,h/img.height)*z,iw=img.width*scale,ih=img.height*scale;
  const maxX=Math.max(0,(iw-w)/2/w),maxY=Math.max(0,(ih-h)/2/h),x=Math.max(-maxX,Math.min(maxX,+p.x||0)),y=Math.max(-maxY,Math.min(maxY,+p.y||0));
@@ -394,6 +418,11 @@ async function approveEquipment(p,item){
  return askConfirm({title:'Confira este equipamento',html,ok:'Adicionar mesmo assim',danger:false});
 }
 desk.addEventListener('click',e=>{
+ const openSheet=e.target.closest('[data-open-sheet]');if(openSheet){activeSheet=+openSheet.dataset.openSheet;appSection='investigators';draw();return}
+ if(e.target.closest('[data-back-list]')){activeSheet=-1;appSection='investigators';draw();return}
+ if(e.target.closest('[data-start-guided]')){document.getElementById('guided')?.click();return}
+ if(e.target.closest('[data-start-blank]')){document.getElementById('blank')?.click();return}
+ if(e.target.closest('[data-start-random]')){document.getElementById('go')?.click();return}
  const i=e.target.closest('[data-i]');
  const idx=i?+i.dataset.i:NaN;
  const blankOcc=e.target.closest('[data-blank-occ]');if(blankOcc){const k=+blankOcc.dataset.i,p=cur[k];if(p&&p.blank&&window.openBlankOccupationPicker)window.openBlankOccupationPicker(p.occ,next=>{const live=cur[k];if(!live||!live.blank||live.occ===next)return;resetBlankDistribution(live,next);live.edit=true;draw();persist()});return}
@@ -428,7 +457,7 @@ desk.addEventListener('click',e=>{
  if(e.target.closest('.addb')){const b=e.target.closest('.addb');(b.dataset.m?addMain:addSkill)(+b.dataset.i,b.parentElement);return}
  if(e.target.closest('.pdfb')){const b=e.target.closest('.pdfb');savePdf([cur[+b.dataset.i]],b);return}
  if(e.target.closest('.burb')){const k=+e.target.closest('.burb').dataset.i,p=cur[k];askConfirm({title:'Levar ao cemitério?',html:`<strong>${esc(ttl(p))}</strong> será enterrado no cemitério. Em seguida você informa a causa da morte.`,ok:'🪦 Levar ao cemitério',danger:false}).then(y=>{if(y&&cur[k]===p)buryFicha(k)});return}
- if(e.target.closest('.delb')){const k=+e.target.closest('.delb').dataset.i,p=cur[k];confirmDel(ttl(p)).then(y=>{if(y&&cur[k]===p){cur.splice(k,1);draw()}});return}
+ if(e.target.closest('.delb')){const k=+e.target.closest('.delb').dataset.i,p=cur[k];confirmDel(ttl(p)).then(y=>{if(y&&cur[k]===p){cur.splice(k,1);if(k===activeSheet)activeSheet=-1;else if(k<activeSheet)activeSheet--;draw()}});return}
  if(e.target.closest('.rrb')){
   const k=+e.target.closest('.rrb').dataset.i,p=cur[k];if(!p)return;
   const untouched=(!p.blank||!hasBlankPoints(p))&&(ATTR_KEYS.every(a=>!+p.c[a])||!p.edit||rollSig(p)===p.rolledC);
@@ -445,7 +474,7 @@ desk.addEventListener('click',e=>{
   });return}
  if(e.target.closest('.colb')){const p=cur[idx];p.ui.collapsed=!p.ui.collapsed;draw();return}
  if(e.target.closest('.pinb')){const p=cur[idx];p.pinned=!p.pinned;draw();return}
- if(e.target.closest('.dupb')){const p=JSON.parse(JSON.stringify(cur[idx]));p.pinned=false;delete p.shareId;p.ui={...p.ui,x:(p.ui.x||0)+28,y:(p.ui.y||0)+28,z:++zTop,collapsed:false};p.nome=p.nome.replace(/ \(cópia\)$/,'')+' (cópia)';if(!cur[idx].nome)p.nome='';cur.push(p);draw();return}
+ if(e.target.closest('.dupb')){const p=JSON.parse(JSON.stringify(cur[idx]));p.pinned=false;delete p.shareId;p.ui={...p.ui,x:(p.ui.x||0)+28,y:(p.ui.y||0)+28,z:++zTop,collapsed:false};p.nome=p.nome.replace(/ \(cópia\)$/,'')+' (cópia)';if(!cur[idx].nome)p.nome='';cur.push(p);activeSheet=cur.length-1;appSection='investigators';draw();return}
 });
 desk.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset.add==='n'){const b=e.target.parentElement.querySelector('.addb');(b.dataset.m?addMain:addSkill)(+b.dataset.i,e.target.parentElement)}});
 desk.addEventListener('change',async e=>{
@@ -548,7 +577,7 @@ function onDragEnd(e){
  if(toBury>=0)buryFicha(toBury);
 }
 desk.addEventListener('pointerdown',e=>{
- if(document.body.classList.contains('mobile'))return;
+ if(document.body.classList.contains('mobile')||document.body.classList.contains('structured-navigation'))return;
  const win=e.target.closest('.win');if(!win)return;
  const i=+win.dataset.i;bring(i);
  if(e.target.closest('.rsz')){rsz={i,ox:e.clientX,ow:cur[i].ui.w};document.addEventListener('pointermove',onDragMove);document.addEventListener('pointerup',onDragEnd);e.preventDefault();return}
@@ -621,12 +650,12 @@ async function go(){
  const kept=cur.filter(p=>p.pinned);
  const neu=Array.from({length:q},()=>gen(sel.value,sel2.value));
  neu.forEach((p,i)=>placeNew(p,i,kept));
- cur=kept.concat(neu);draw();
+ cur=kept.concat(neu);activeSheet=cur.length-1;appSection='investigators';draw();
 }
 document.getElementById('go').onclick=go;
 document.getElementById('blank').onclick=async()=>{
  const type=await askSheetType();if(!type)return;
- const p=genBlank(type==='unlimited');placeNew(p,0,cur);cur.push(p);draw();
+ const p=genBlank(type==='unlimited');placeNew(p,0,cur);cur.push(p);activeSheet=cur.length-1;appSection='investigators';draw();
  const el=winEl(cur.length-1);if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
 };
 window.DynamicInfo=(()=>{
@@ -646,14 +675,6 @@ window.DynamicInfo=(()=>{
  apply();
  if(media.addEventListener)media.addEventListener('change',apply);else media.addListener(apply);
 })();
-(function panelMin(){
- const KEY='coc7-painel-v1',bar=document.getElementById('panel'),btn=document.getElementById('panelBtn'),mn=document.getElementById('panelMin');
- let min=document.body.classList.contains('mobile');try{const saved=localStorage.getItem(KEY);if(saved!==null)min=saved==='1'}catch(_){}
- const apply=()=>{bar.hidden=min;btn.hidden=!min;document.body.classList.toggle('pmin',min)};
- const set=v=>{min=v;try{localStorage.setItem(KEY,v?'1':'0')}catch(_){}apply();(v?btn:mn).focus()};
- mn.onclick=()=>set(true);btn.onclick=()=>set(false);
- apply();
-})();
 /* Aplica um estado (carregado do banco ou da outra aba) na tela. */
 function applyState(d){
  if(d&&Array.isArray(d.cur)){
@@ -662,6 +683,7 @@ function applyState(d){
   if(d.qty)document.getElementById('qty').value=d.qty;
   cur.forEach(uiOf);
  }else cur=[];
+ activeSheet=-1;appSection='investigators';document.body.dataset.mtab='investigators';
  renderCache=[];desk.innerHTML='';draw();
  dirty=false;clearTimeout(saveT); /* só carregamos: não há o que gravar (evita ping-pong entre abas) */
 }
