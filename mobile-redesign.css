@@ -84,3 +84,18 @@ body.mobile #desk .win.collapsed>.rsz{display:none!important}
  body.mobile .note-boards .board-actions>button{min-height:40px;margin:0;padding:6px 10px;font-size:.8rem}
 }
 @media(max-width:350px){body.mobile #desk .win-body .sk{grid-template-columns:1fr}body.mobile #desk .win-body .sk>.skill-row{min-height:36px;font-size:.88rem}body.mobile #desk .win-body .skill-row .sk-name{font-size:.88rem}body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:46px}}
+
+/* Mobile fit: use the screen width evenly, keep skill labels intact, and make tabs a single row. */
+@media(max-width:600px){
+ body.mobile{padding-left:6px;padding-right:6px}
+ body.mobile #desk .win{margin-inline:0!important}
+ body.mobile #desk .win-body{padding:8px!important}
+ body.mobile #desk .win-body .sk{column-gap:3px}
+ body.mobile #desk .win-body .sk>.skill-row{gap:2px;padding-inline:2px}
+ body.mobile #desk .win-body .skill-row .sk-name{font-size:.73rem;line-height:1.12;overflow-wrap:normal;word-break:normal;hyphens:none}
+ body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:36px}
+ body.mobile #desk .win-body button.rmb{width:25px;min-width:25px}
+ body.mobile #desk .win-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:5px 6px 0}
+ body.mobile #desk .win-tabs button{display:flex;align-items:center;justify-content:center;min-width:0;min-height:42px;padding:4px 2px;font-size:.65rem;line-height:1.1;white-space:nowrap}
+ body.mobile #desk .win-tabs .tab-icon{display:none}
+}
