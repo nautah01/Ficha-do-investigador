@@ -38,6 +38,9 @@ button:disabled{cursor:not-allowed}
 .win{border-color:rgba(var(--gr2),.64);box-shadow:0 16px 44px rgba(0,0,0,.5),inset 0 0 0 1px rgba(var(--gr),.1)}
 .win-bar{min-height:42px}
 .win-title{font-size:.86rem}
+.win-bar .delb{display:inline-flex;align-items:center;justify-content:center;min-width:36px;padding:6px;border-color:rgba(176,54,54,.62);background:rgba(130,34,34,.2);color:var(--warn)}
+.win-bar .delb svg{display:block;width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.win-bar .delb:hover{border-color:var(--warn);background:var(--warn);color:#fff}
 .win-tabs{gap:5px;padding-top:6px}
 .win-tabs button{min-height:36px;transition:color .16s,background .16s,border-color .16s}
 .win-tabs button:hover{color:var(--head);background:rgba(var(--gr),.08)}

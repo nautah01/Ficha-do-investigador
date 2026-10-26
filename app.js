@@ -182,7 +182,7 @@ function card(p,i){
    <button class="shb" data-i="${i}" title="Compartilhar: baixar arquivo da ficha ou copiar link">📤 <span class="bl">Enviar<span class="bx"> ficha</span></span></button>
    <button class="pinb${p.pinned?' on':''}" data-i="${i}" title="Manter na mesa: a ficha não some quando você gera novas">${p.pinned?'📌 <span class="bl">Mantida</span>':'📌 <span class="bl">Manter</span>'}</button>
    <button class="dupb" data-i="${i}" title="Duplicar">❐</button>
-   <button class="delb" data-i="${i}" title="Excluir">🗑</button>
+   <button class="delb" data-i="${i}" aria-label="Excluir ficha" title="Excluir ficha"><svg aria-hidden="true" viewBox="0 0 24 24" focusable="false"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 14h10l1-14M9 7V4h6v3"/></svg></button>
   </header>
   ${typeof guideBarHtml==='function'?guideBarHtml(p,i):''}
   <div class="win-tabs" role="tablist" aria-label="Seções da ficha"><button type="button" data-sheet-tab="sheet" role="tab" aria-selected="${on('sheet')}"><span class="tab-icon" aria-hidden="true">🗂</span><span>Ficha</span></button><button type="button" data-sheet-tab="backstory" role="tab" aria-selected="${on('backstory')}"><span class="tab-icon" aria-hidden="true">📖</span><span>Backstory</span></button><button type="button" data-sheet-tab="combat" role="tab" aria-selected="${on('combat')}"><span class="tab-icon" aria-hidden="true">⚔️</span><span>Combate</span></button><button type="button" data-sheet-tab="equipment" role="tab" aria-selected="${on('equipment')}"><span class="tab-icon" aria-hidden="true">🎒</span><span>Equipamentos${cnt}</span></button></div>

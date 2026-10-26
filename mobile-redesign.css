@@ -111,3 +111,8 @@ body.mobile #desk .win.collapsed>.rsz{display:none!important}
  body.mobile .ovl .confirm-dlg .row button:last-child{grid-column:auto}
  body.mobile .ovl .confirm-dlg .row button{width:100%;min-width:0;white-space:nowrap}
 }
+
+/* Reserve a full line for the investigator name so it stays readable when collapsed. */
+@media(max-width:760px){
+ #desk .win-bar .win-title{order:-1;flex:1 0 calc(100% - 42px);min-width:0;overflow:visible;text-overflow:clip;white-space:normal;overflow-wrap:anywhere;font-size:.82rem;line-height:1.25}
+}
