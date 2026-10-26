@@ -41,9 +41,15 @@ button:disabled{cursor:not-allowed}
 .win-bar .delb{display:inline-flex;align-items:center;justify-content:center;min-width:0;padding:6px 8px;border-color:#a83232;background:#842626;color:#fff}
 .win-bar .delb svg{display:block;width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .win-bar .delb:hover{border-color:#d14a4a;background:#a83232;color:#fff}
+.win-bar .copy-icon{display:inline-block;width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.16em}
 .win.collapsed .win-bar .vmb{display:none!important}
 .win.collapsed .win-bar .bl{display:none!important}
 .win.collapsed .win-bar .win-title{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(min-width:761px){
+ body:not(.mobile) #desk .win.collapsed .win-bar button.pdfb .bl,
+ body:not(.mobile) #desk .win.collapsed .win-bar button.shb .bl,
+ body:not(.mobile) #desk .win.collapsed .win-bar button.shb .bl .bx{display:inline!important}
+}
 .win-tabs{gap:5px;padding-top:6px}
 .win-tabs button{min-height:36px;transition:color .16s,background .16s,border-color .16s}
 .win-tabs button:hover{color:var(--head);background:rgba(var(--gr),.08)}
