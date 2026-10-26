@@ -57,6 +57,17 @@ button:disabled{cursor:not-allowed}
 .sk .skill-row.chance-visible>i small[data-f^="s:"]{opacity:1;visibility:visible;transform:translateY(0)}
 .skill-row>i [data-skill-input]{min-height:32px}
 
+/* The presentation state keeps the same skill grid but replaces controls with readable values. */
+.sheet-pane.visual-mode .static-name{display:block;width:100%;padding:0 0 3px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;color:var(--head);font-size:1.12rem;font-weight:bold;text-align:left}
+.sheet-pane.visual-mode .occ-view,.sheet-pane.visual-mode .age-view{color:var(--muted);font-size:.85rem}
+.sheet-pane.visual-mode .occ-view{overflow-wrap:anywhere}
+.sheet-pane.visual-mode .stat-value{display:block;color:var(--btnt);font-size:1rem;font-weight:700;font-variant-numeric:tabular-nums}
+.sheet-pane.visual-mode .der-value{flex:0 0 auto;min-width:3ch;color:var(--txt);font-size:.86rem;font-weight:700;text-align:center;font-variant-numeric:tabular-nums}
+.sheet-pane.visual-mode .skill-row{display:flex;align-items:center;justify-content:space-between;gap:7px;min-height:34px;padding:3px 5px}
+.sheet-pane.visual-mode .skill-presentation{display:inline-flex;align-items:baseline;justify-content:flex-end;gap:7px;flex:0 0 auto;margin-left:auto;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sheet-pane.visual-mode .skill-score{min-width:4ch;color:var(--head);font-size:.88rem;text-align:right}
+.sheet-pane.visual-mode .skill-thresholds{color:var(--muted);font-size:.68rem;letter-spacing:.01em}
+
 .blank-budgets{gap:10px;padding:12px;border-radius:8px;background:linear-gradient(130deg,rgba(var(--gr),.09),rgba(var(--gr),.025));border-color:rgba(var(--gr2),.4);border-left-width:4px}
 .budget-stat{gap:6px;padding:10px 11px;background:linear-gradient(145deg,rgba(var(--gr),.09),rgba(var(--gr),.025))}
 .budget-stat>span{font-size:.78rem;letter-spacing:.02em}
@@ -124,6 +135,10 @@ html.eq-picker-open,html.eq-picker-open body{overflow:hidden!important;overscrol
  body.mobile #desk .win-body .skill-row>i{gap:1px}
  body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:36px;min-height:28px;padding:1px;font-size:.69rem}
  body.mobile #desk .win-body button.rmb{width:21px;min-width:21px;min-height:28px;margin-left:0}
+ body.mobile .sheet-pane.visual-mode .skill-row{gap:4px;padding-inline:3px}
+ body.mobile .sheet-pane.visual-mode .skill-presentation{gap:4px}
+ body.mobile .sheet-pane.visual-mode .skill-score{min-width:3ch;font-size:.75rem}
+ body.mobile .sheet-pane.visual-mode .skill-thresholds{font-size:.61rem}
 }
 @media(max-width:350px){body.mobile #desk .win-body .sk{grid-template-columns:1fr}body.mobile #desk .win-body .sk>.skill-row{min-height:32px;gap:5px}body.mobile #desk .win-body .skill-row .sk-name{font-size:.76rem}body.mobile #desk .win-body .skill-row>i [data-skill-input]{width:44px}}
 

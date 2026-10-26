@@ -13,6 +13,8 @@ body.mobile #desk .win.collapsed>.rsz{display:none!important}
  body.mobile #desk .win-bar{flex-wrap:nowrap;gap:3px;padding:5px 5px 5px 14px}
  body.mobile #desk .win-bar .win-title{flex:1 1 0;min-width:0;font-size:.72rem}
  body.mobile #desk .win-bar button.pdfb,body.mobile #desk .win-bar button.shb{flex:0 0 auto!important;width:auto!important;min-width:0!important;min-height:34px!important;height:34px!important;padding:0 6px!important;gap:3px;font-size:.7rem!important;line-height:1;white-space:nowrap}
+ body.mobile #desk .win-bar button.vmb{flex:0 0 auto;width:auto;min-width:0;height:34px;min-height:34px;padding:0 5px;font-size:.65rem;line-height:1;white-space:nowrap}
+ body.mobile #desk .win-bar button.vmb .bl{display:inline!important}
  body.mobile #desk .win-bar button.pdfb .bl,body.mobile #desk .win-bar button.shb .bl,body.mobile #desk .win-bar button.shb .bl .bx{display:inline!important}
  body.mobile #desk .win-bar button.pinb,body.mobile #desk .win-bar button.delb,body.mobile #desk .win-bar button.colb{flex:0 0 30px;width:30px;min-width:30px;height:34px;min-height:34px;padding:0;font-size:.85rem}
  body.mobile .blank-budgets .budget-controls{grid-template-columns:1fr}
