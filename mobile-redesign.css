@@ -112,3 +112,17 @@ body.mobile #desk .win.collapsed>.rsz{display:none!important}
  body.mobile .ovl .confirm-dlg .row button{width:100%;min-width:0;white-space:nowrap}
 }
 
+/* Compact cards use icon-only actions on mobile, matching the desktop header. */
+@media(max-width:760px){
+ body.mobile #desk .win.collapsed .win-bar .vmb{display:none!important}
+ body.mobile #desk .win.collapsed .win-bar .bl{display:none!important}
+ body.mobile #desk .win.collapsed .win-bar .dupb{display:inline-flex!important}
+ body.mobile #desk .win.collapsed .win-bar button.pdfb,
+ body.mobile #desk .win.collapsed .win-bar button.shb,
+ body.mobile #desk .win.collapsed .win-bar button.pinb,
+ body.mobile #desk .win.collapsed .win-bar button.dupb,
+ body.mobile #desk .win.collapsed .win-bar button.delb,
+ body.mobile #desk .win.collapsed .win-bar button.colb{flex:0 0 30px!important;width:30px!important;min-width:30px!important;height:34px!important;min-height:34px!important;padding:0!important}
+ body.mobile #desk .win.collapsed .win-bar .win-title{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}
+

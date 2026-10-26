@@ -38,9 +38,9 @@ button:disabled{cursor:not-allowed}
 .win{border-color:rgba(var(--gr2),.64);box-shadow:0 16px 44px rgba(0,0,0,.5),inset 0 0 0 1px rgba(var(--gr),.1)}
 .win-bar{min-height:42px}
 .win-title{font-size:.86rem}
-.win-bar .delb{display:inline-flex;align-items:center;justify-content:center;min-width:0;padding:6px 8px;border-color:var(--line);background:transparent;color:var(--warn)}
+.win-bar .delb{display:inline-flex;align-items:center;justify-content:center;min-width:0;padding:6px 8px;border-color:#a83232;background:#842626;color:#fff}
 .win-bar .delb svg{display:block;width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.win-bar .delb:hover{border-color:var(--warn);background:var(--warn);color:#fff}
+.win-bar .delb:hover{border-color:#d14a4a;background:#a83232;color:#fff}
 .win.collapsed .win-bar .vmb{display:none!important}
 .win.collapsed .win-bar .bl{display:none!important}
 .win.collapsed .win-bar .win-title{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
