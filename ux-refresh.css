@@ -45,11 +45,11 @@ button:disabled{cursor:not-allowed}
 .win.collapsed .win-bar .vmb{display:none!important}
 .win.collapsed .win-bar .bl{display:none!important}
 .win.collapsed .win-bar .win-title{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-@media(min-width:761px){
- body:not(.mobile) #desk .win.collapsed .win-bar button.pdfb .bl,
- body:not(.mobile) #desk .win.collapsed .win-bar button.shb .bl,
- body:not(.mobile) #desk .win.collapsed .win-bar button.shb .bl .bx{display:inline!important}
-}
+body:not(.mobile) #desk .win.collapsed .win-bar button.pdfb,
+body:not(.mobile) #desk .win.collapsed .win-bar button.shb{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;white-space:nowrap!important}
+body:not(.mobile) #desk .win.collapsed .win-bar button.pdfb .bl,
+body:not(.mobile) #desk .win.collapsed .win-bar button.shb .bl,
+body:not(.mobile) #desk .win.collapsed .win-bar button.shb .bl .bx{display:inline!important;white-space:nowrap!important}
 .win-tabs{gap:5px;padding-top:6px}
 .win-tabs button{min-height:36px;transition:color .16s,background .16s,border-color .16s}
 .win-tabs button:hover{color:var(--head);background:rgba(var(--gr),.08)}
