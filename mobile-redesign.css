@@ -5,6 +5,7 @@ body.mobile #panelBtn,body.mobile.pmin #panelBtn{position:relative!important;ins
 body.mobile #panelBtn[hidden]{display:none!important}
 body.mobile #desk .empty{display:none}
 /* Keep the mobile layout overrides from reopening collapsed card sections. */
+body.mobile #desk .win.collapsed>.win-tab-row,
 body.mobile #desk .win.collapsed>.win-tabs,
 body.mobile #desk .win.collapsed>.win-body,
 body.mobile #desk .win.collapsed>.rsz{display:none!important}
