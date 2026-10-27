@@ -331,7 +331,7 @@ const draw=()=>{
   }
   renderCache=htmls;
  }
- fitDesk();persist();
+ fitDesk();persist();if(typeof guideTourSync==='function')guideTourSync();
 };
 function portraitGeometry(img,w,h,p){
  const z=Math.max(1,Math.min(3,+p.zoom||1)),scale=Math.max(w/img.width,h/img.height)*z,iw=img.width*scale,ih=img.height*scale;
@@ -458,7 +458,7 @@ desk.addEventListener('click',e=>{
  const idx=i?+i.dataset.i:NaN;
  const visualToggle=e.target.closest('[data-visual-mode]');if(visualToggle){const k=+visualToggle.dataset.i,p=cur[k];if(!p)return;const u=uiOf(p,k);u.visualMode=!u.visualMode;draw();persist();return}
  const budgetCollapse=e.target.closest('[data-budget-collapse]');if(budgetCollapse){const k=+budgetCollapse.dataset.i,p=cur[k];if(!p)return;const u=uiOf(p,k);u.budgetCollapsed=!u.budgetCollapsed;draw();persist();return}
- const budgetMode=e.target.closest('[data-budget-mode]');if(budgetMode){const k=+budgetMode.dataset.i,p=cur[k];if(!p)return;const hint=budgetModeGuidance.get(p);if(hint)clearTimeout(hint.timer);budgetModeGuidance.delete(p);p.skillBudgetMode=budgetMode.value;p.skillNotice='';refresh(k);persist();return}
+ const budgetMode=e.target.closest('[data-budget-mode]');if(budgetMode){const k=+budgetMode.dataset.i,p=cur[k];if(!p)return;const hint=budgetModeGuidance.get(p);if(hint)clearTimeout(hint.timer);budgetModeGuidance.delete(p);p.skillBudgetMode=budgetMode.value;p.skillNotice='';if(p.guide&&+p.guide.step===4&&p.guide.phase==='budget'&&budgetMode.value==='personal')p.guide.didAction=true;refresh(k);if(typeof guideTourSync==='function')guideTourSync();persist();return}
  const blankOcc=e.target.closest('[data-blank-occ]');if(blankOcc){const k=+blankOcc.dataset.i,p=cur[k];if(p&&p.blank&&window.openBlankOccupationPicker)window.openBlankOccupationPicker(p.occ,next=>{const live=cur[k];if(!live||!live.blank||live.occ===next)return;resetBlankDistribution(live,next);live.edit=true;draw();persist()});return}
  const amBtn=e.target.closest('[data-am]');if(amBtn){const k=+amBtn.dataset.i,p=cur[k];if(p&&isAmnesia(p))amnesiaAction(p,amBtn.dataset.am,amBtn);return}
  const removePortrait=e.target.closest('[data-portrait-remove]');if(removePortrait){const k=+removePortrait.dataset.i,p=cur[k];if(p){delete p.portrait;p.edit=true;draw()}return}
@@ -575,7 +575,9 @@ desk.addEventListener('change',async e=>{
    if(requested>available){next=old+available;notice=`Você tem ${available} ponto(s) disponível(is). ${n} pode chegar, no máximo, a ${next}%.`}
    p.skillPoints.available-=next-old;
   }else if(!isBudget(p)&&next<old)p.skillPoints.available+=old-next;
-  p.sk[n]=next;p.skillNotice=notice;p.edit=true;skillInput.value=String(next);if(wasMain)refresh(i);else draw();if(notice)flashSkillNotice(i,n);persist();return;
+  p.sk[n]=next;p.skillNotice=notice;p.edit=true;skillInput.value=String(next);
+  if(p.guide&&p.guide.phase==='allocate'&&((+p.guide.step===3&&p.skillBudgetMode==='occupational')||(+p.guide.step===4&&p.skillBudgetMode==='personal'))&&(+p.skillAllocations?.[n]?.[p.skillBudgetMode]||0)>0)p.guide.didAction=true;
+  if(wasMain)refresh(i);else draw();if(typeof guideTourSync==='function')guideTourSync();if(notice)flashSkillNotice(i,n);persist();return;
  }
  const occupationMain=e.target.closest('[data-occ-main]'),occupationSpec=e.target.closest('[data-occ-spec]');if(occupationMain||occupationSpec){
   const control=occupationMain||occupationSpec,i=+control.dataset.i,p=cur[i];if(!p)return;
