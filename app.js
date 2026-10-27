@@ -82,12 +82,28 @@ subOpts();
 let cur=[],zTop=10,drag=null,rsz=null,saveT=0,dirty=false,blockSaves=false,storeReady=false,armedSkillSpinner=null;
 const pendingSpinnerChoices=new WeakMap();
 const skillChanceTimers=new WeakMap();
+const skillNoticeTimers=new WeakMap();
 const hideSkillChance=row=>{const timer=skillChanceTimers.get(row);if(timer)clearTimeout(timer);skillChanceTimers.delete(row);row.classList.remove('chance-visible')};
 const showSkillChanceAfterDelay=row=>{hideSkillChance(row);const timer=setTimeout(()=>{row.classList.add('chance-visible');skillChanceTimers.delete(row)},1000);skillChanceTimers.set(row,timer)};
 document.addEventListener('pointerup',e=>{armedSkillSpinner=null;if(e.pointerType==='touch'){const row=e.target.closest?.('.skill-row');if(row)hideSkillChance(row)}},true);
 document.addEventListener('pointercancel',e=>{armedSkillSpinner=null;const row=e.target.closest?.('.skill-row');if(row)hideSkillChance(row)},true);
 const unlimitedPanel=()=>`<aside class="skill-pool unlimited-note" role="note"><b>Ficha sem limites</b><small>Não há pontos para distribuir nem mínimos ou máximos. Edite livremente atributos, perícias, ocupação e Nível de Crédito.</small></aside>`;
 const budgetModeGuidance=new WeakMap();
+function flashSkillNotice(i,n=''){
+ const p=cur[i],el=winEl(i);if(!p||!el)return;
+ const timer=skillNoticeTimers.get(p);if(timer)clearTimeout(timer);
+ const note=el.querySelector('[data-skill-pool-note]');if(note)note.classList.add('notice-flash');
+ const pool=note?.closest('.skill-pool,.blank-budgets');if(pool)pool.classList.add('notice-flash');
+ const row=n?[...el.querySelectorAll('.skill-row')].find(item=>item.querySelector('[data-skill-input]')?.dataset.k===`s:${n}`):null;
+ if(row)row.classList.add('notice-flash');
+ const guided=budgetModeGuidance.get(p),mode=guided?.mode||p.skillBudgetMode;
+ const modeButton=[...el.querySelectorAll('[data-budget-mode]')].find(button=>button.value===mode);
+ if(modeButton&&guided)modeButton.classList.add('notice-flash');
+ skillNoticeTimers.set(p,setTimeout(()=>{
+  [note,pool,row,modeButton].filter(Boolean).forEach(node=>node.classList.remove('notice-flash'));
+  skillNoticeTimers.delete(p);
+ },3600));
+}
 function guideBudgetMode(i,mode){
  const p=cur[i];if(!p)return;
  const previous=budgetModeGuidance.get(p);if(previous)clearTimeout(previous.timer);
@@ -130,6 +146,22 @@ const row=(p,i,n,rm)=>{
  const valueMarkup=visual?`<span class="skill-presentation"><strong class="skill-score">${value}%</strong><span class="skill-thresholds" aria-label="Difícil ${half} por cento; Extremo ${fifth} por cento">${half} / ${fifth}</span></span>`:`<i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input${hintAttr}`,n+' (%)')}<small data-f="${esc('s:'+n)}" aria-hidden="true">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i>`;
  return`<span class="skill-row${occ?' occ-skill':''}${socialChoice&&(!isBudget(p)||(p.skillBudgetMode||'occupational')==='occupational')?' social-choice':''}"${title?` title="${title}"`:''}><span class="sk-label"><span class="sk-name">${esc(n)}</span></span>${valueMarkup}</span>`;
 };
+const SKILL_CATEGORY_ORDER=['Gerais','Armas de Fogo','Arte/Ofício','Ciência','Línguas','Lutar','Pilotar'];
+function skillCategory(name){
+ if(name.startsWith('Armas de Fogo ('))return'Armas de Fogo';
+ if(name.startsWith('Arte/Ofício ('))return'Arte/Ofício';
+ if(name.startsWith('Ciência ('))return'Ciência';
+ if(name.startsWith('Língua'))return'Línguas';
+ if(name.startsWith('Lutar ('))return'Lutar';
+ if(name.startsWith('Pilotar ('))return'Pilotar';
+ return'Gerais';
+}
+function skillGrid(p,i,entries,highlight=''){
+ const groups=new Map();
+ for(const entry of entries){const category=skillCategory(entry[0]);if(!groups.has(category))groups.set(category,[]);groups.get(category).push(entry)}
+ const categories=[...SKILL_CATEGORY_ORDER.filter(name=>groups.has(name)),... [...groups.keys()].filter(name=>!SKILL_CATEGORY_ORDER.includes(name)).sort((a,b)=>a.localeCompare(b,'pt'))];
+ return`<div class="sk${highlight}">${categories.map(category=>`<section class="skill-category${category==='Gerais'?' skill-category-general':''}"><h4>${category==='Gerais'?'Outras perícias':esc(category)}</h4><div class="skill-category-list">${groups.get(category).map(([name])=>row(p,i,name,1)).join('')}</div></section>`).join('')}</div>`;
+}
 function uiOf(p,i){
  p.ui=p.ui||{};
  if(p.ui.x==null)p.ui.x=18+(i%6)*36;
@@ -143,12 +175,12 @@ function body(p,i){
  ensureSkillBudget(p);
  const bud=isBudget(p),free=!!p.unlimited,emptyOk=!!p.blank&&!p.budget,visual=!!p.ui?.visualMode;
  const st=Object.keys(p.c).map(k=>{const[mn,mx]=ATTR_RANGE[k]||[0,99],attrs=free?'min="0" max="999"':`min="${emptyOk?0:mn}" max="${mx}" step="1"`;return`<div><b>${k}</b>${visual?staticValue(p,'c:'+k,'stat-value'):inp(p,i,'c:'+k,attrs,ATTR_NAMES[k]||k)}<small data-f="c:${k}">${fr(p,'c:'+k)}</small></div>`}).join('');
- const sk=Object.entries(p.sk).sort((a,b)=>b[1]-a[1]).map(([n])=>row(p,i,n,1)).join('');
- const skillPool=visual?'':free?unlimitedPanel():bud?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
  const hl=!visual&&bud&&(p.skillBudgetMode||'occupational')==='occupational'?' hl-occ':'';
+ const sk=skillGrid(p,i,Object.entries(p.sk).sort((a,b)=>b[1]-a[1]),hl);
+ const skillPool=visual?'':free?unlimitedPanel():bud?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
  const addM=bud?`<div class="add"><input class="in" style="width:76%" placeholder="Nova perícia (entra com o valor-base; gaste pontos nela)" list="skillSuggest" data-add="n" aria-label="Nome da nova perícia"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`:`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" list="skillSuggest" data-add="n" aria-label="Nome da nova perícia"><input class="in" type="number" value="50" title="Valor" data-add="v" aria-label="Valor"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
  const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${visual?staticValue(p,'d:'+k,'der-value'):inp(p,i,'d:'+k,k==='sanMax'?'readonly tabindex="-1" title="99 − Mitos de Cthulhu"':'',l)}</label>`).join('');
- const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias não treinadas':'▼ Perícias não treinadas'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias não treinadas (valor-base)</h3><div class="sk${hl}">${falta(p).map(([n])=>row(p,i,n,1)).join('')}</div><div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" list="skillSuggest" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
+ const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias não treinadas':'▼ Perícias não treinadas'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias não treinadas (valor-base)</h3>${skillGrid(p,i,falta(p),hl)}<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" list="skillSuggest" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
  const mobileActions=`<div class="mobile-card-actions"><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha"><svg class="copy-icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false"><rect x="8" y="8" width="12" height="13" rx="1.5"/><path d="M16 8V4H4v13h4"/></svg> Duplicar</button></div>`;
  const pb=free?'':`<button type="button" class="pbb" data-i="${i}" title="Distribuir 460 pontos entre os atributos (regra opcional do livro)">⚖ Compra de pontos</button>`;
  const name=visual?`<span class="in nm static-name">${p.nome?esc(p.nome):'Nome não definido'}</span>`:`<input class="in nm" data-i="${i}" data-k="n:nome" aria-label="Nome do investigador" placeholder="Nome do investigador" value="${esc(p.nome)}">`;
@@ -158,7 +190,7 @@ function body(p,i){
  return`<div class="ficha-heading"><h2>${name}</h2>${visual?'':`<button class="burb" data-i="${i}" title="Enviar para o cemitério">🪦 <span class="bl">Cemitério</span></button>`}</div>
   <div class="sub">${occupation}${age}${p.sec?`<small>· secundária: ${esc(p.sec)}</small>`:''}</div>
   <div class="stats-head"><span>Atributos</span>${statTools}</div><div class="stats">${st}</div><div class="der">${d}</div>${skillPool}${!visual&&isAmnesia(p)?amnesiaPanel(p,i):''}${!visual&&typeof resourcesPanel==='function'?resourcesPanel(p,i):''}
-  <h3 class="st skill-heading"><span>Perícias do personagem</span><small data-skill-count>${Object.keys(p.sk).length} perícias</small></h3><div class="sk${hl}">${sk}</div>${visual?'':`${addM}${fa}${mobileActions}`}`;
+  <h3 class="st skill-heading"><span>Perícias do personagem</span><small data-skill-count>${Object.keys(p.sk).length} perícias</small></h3>${sk}${visual?'':`${addM}${fa}${mobileActions}`}`;
 }
 function occSelect(p,i){
  if(!p.blank||p.unlimited)return`<input class="in occ-text" data-i="${i}" data-k="n:occ" aria-label="Ocupação do investigador" placeholder="${p.unlimited?'Ocupação (escreva livremente)':'Ocupação'}" value="${esc(p.occ||'')}">`;
@@ -370,7 +402,7 @@ function refresh(i){
   const modeLabel=el.querySelector('.budget-mode');if(modeLabel)modeLabel.classList.toggle('is-guide',!!budgetModeGuidance.get(p));
   const occMode=(p.skillBudgetMode||'occupational')==='occupational';
   el.querySelectorAll('.sk').forEach(box=>box.classList.toggle('hl-occ',occMode));
-  el.querySelectorAll('.sk>.skill-row').forEach(skillRow=>{const input=skillRow.querySelector('[data-skill-input]'),name=input&&input.dataset.k.slice(2);if(name){skillRow.classList.toggle('occ-skill',isOccupationHighlight(p,name));skillRow.classList.toggle('social-choice',occMode&&isSocialChoiceAvailable(p,name));const hint=skillAllocationHint(p,name);if(hint){input.title=hint;input.setAttribute('aria-description',hint)}else{input.removeAttribute('title');input.removeAttribute('aria-description')}}});
+  el.querySelectorAll('.sk .skill-row').forEach(skillRow=>{const input=skillRow.querySelector('[data-skill-input]'),name=input&&input.dataset.k.slice(2);if(name){skillRow.classList.toggle('occ-skill',isOccupationHighlight(p,name));skillRow.classList.toggle('social-choice',occMode&&isSocialChoiceAvailable(p,name));const hint=skillAllocationHint(p,name);if(hint){input.title=hint;input.setAttribute('aria-description',hint)}else{input.removeAttribute('title');input.removeAttribute('aria-description')}}});
   const choiceNote=el.querySelector('[data-budget-choice-note]'),choiceNoteHtml=budgetChoiceNote(p),choiceControls=el.querySelector('.budget-controls');
   if(choiceNoteHtml){if(choiceNote)choiceNote.outerHTML=choiceNoteHtml;else if(choiceControls)choiceControls.insertAdjacentHTML('afterend',choiceNoteHtml)}else if(choiceNote)choiceNote.remove();
   const creditReady=!!budgets.credit&&creationAttributesReady(p);
@@ -469,7 +501,7 @@ desk.addEventListener('change',async e=>{
   const i=+attrIn.dataset.i,p=cur[i],key=attrIn.dataset.k.slice(2);
   if(p&&!p.unlimited&&ATTR_RANGE[key]){
    const raw=+attrIn.value||0,nv=clampAttr(key,raw,!!p.blank&&!p.budget);
-   if(nv!==raw){attrIn.value=String(nv);attrIn.dispatchEvent(new Event('input',{bubbles:true}));const[mn,mx]=ATTR_RANGE[key];p.skillNotice=`${ATTR_NAMES[key]}: ${raw} foi ajustado para ${nv}. Os atributos vão de ${mn} a ${mx}.`;refresh(i)}
+   if(nv!==raw){attrIn.value=String(nv);attrIn.dispatchEvent(new Event('input',{bubbles:true}));const[mn,mx]=ATTR_RANGE[key];p.skillNotice=`${ATTR_NAMES[key]}: ${raw} foi ajustado para ${nv}. Os atributos vão de ${mn} a ${mx}.`;refresh(i);flashSkillNotice(i)}
   }
   return;
  }
@@ -528,7 +560,7 @@ desk.addEventListener('change',async e=>{
    if(requested>available){next=old+available;notice=`Você tem ${available} ponto(s) disponível(is). ${n} pode chegar, no máximo, a ${next}%.`}
    p.skillPoints.available-=next-old;
   }else if(!isBudget(p)&&next<old)p.skillPoints.available+=old-next;
-  p.sk[n]=next;p.skillNotice=notice;p.edit=true;skillInput.value=String(next);if(wasMain)refresh(i);else draw();persist();return;
+  p.sk[n]=next;p.skillNotice=notice;p.edit=true;skillInput.value=String(next);if(wasMain)refresh(i);else draw();if(notice)flashSkillNotice(i,n);persist();return;
  }
  const occupationMain=e.target.closest('[data-occ-main]'),occupationSpec=e.target.closest('[data-occ-spec]');if(occupationMain||occupationSpec){
   const control=occupationMain||occupationSpec,i=+control.dataset.i,p=cur[i];if(!p)return;

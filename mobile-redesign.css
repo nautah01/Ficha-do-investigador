@@ -127,3 +127,17 @@ body.mobile #desk .win.collapsed>.rsz{display:none!important}
  body.mobile #desk .win.collapsed .win-bar .win-title{flex:1 1 0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
 
+/* Keep grouped skills compact but readable on phones. */
+@media(max-width:760px){
+ body.mobile #desk .win-body .sk{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 8px}
+ body.mobile #desk .win-body .skill-category-general{grid-column:1/-1}
+ body.mobile #desk .win-body .skill-category-general .skill-category-list{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:7px}
+ body.mobile #desk .win-body .skill-category .skill-row{min-height:34px;gap:3px;padding-inline:3px}
+ body.mobile #desk .win-body .skill-category .sk-name{font-size:.72rem}
+ body.mobile #desk .win-body .skill-category .skill-row>i [data-skill-input]{width:34px;min-height:30px;font-size:.72rem}
+}
+@media(max-width:350px){
+ body.mobile #desk .win-body .sk{grid-template-columns:1fr}
+ body.mobile #desk .win-body .skill-category-general .skill-category-list{grid-template-columns:1fr}
+}
+

@@ -78,6 +78,28 @@ body:not(.mobile) #desk .win.collapsed .win-bar button.shb .bl .bx{display:inlin
 .sk .skill-row.chance-visible>i small[data-f^="s:"]{opacity:1;visibility:visible;transform:translateY(0)}
 .skill-row>i [data-skill-input]{min-height:32px}
 
+/* Character skills are grouped into compact sections, with general skills spread across three columns. */
+.win-body .sk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:7px 12px;font-size:.77rem}
+.win-body .skill-category{min-width:0;break-inside:avoid}
+.win-body .skill-category-general{grid-column:1/-1}
+.win-body .skill-category h4{display:flex;align-items:center;gap:7px;margin:0 0 3px;color:var(--head);font-size:.73rem;font-variant:small-caps;letter-spacing:.08em;line-height:1.2;text-align:center}
+.win-body .skill-category h4::before,.win-body .skill-category h4::after{flex:1 1 auto;height:1px;background:rgba(var(--gr2),.48);content:""}
+.win-body .skill-category-list{display:grid;grid-template-columns:1fr;align-items:start;gap:0 8px}
+.win-body .skill-category-general .skill-category-list{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:10px}
+.win-body .skill-category .skill-row{min-height:28px;gap:4px;padding:2px 4px;border-bottom:1px solid rgba(var(--gr2),.18);font-size:inherit}
+.win-body .skill-category .sk-name{font-size:.76rem;line-height:1.15}
+.win-body .skill-category .skill-row>i{gap:2px}
+.win-body .skill-category .skill-row>i [data-skill-input]{width:40px;min-height:26px;padding:1px 3px;font-size:.76rem}
+.win-body .sk.hl-occ .skill-row.occ-skill{padding-left:8px;border-radius:3px;border-bottom-color:transparent;background:linear-gradient(90deg,rgba(var(--gr),.24),rgba(var(--gr),.07));box-shadow:inset 3px 0 0 var(--head),0 0 0 1px rgba(var(--gr),.3)}
+.win-body .sk .skill-row.social-choice{padding-left:8px;border-radius:3px;border-bottom-color:transparent;background:linear-gradient(90deg,rgba(49,157,207,.2),rgba(49,157,207,.06));box-shadow:inset 3px 0 0 #55bce8,0 0 0 1px rgba(85,188,232,.24)}
+.win-body .sk .notice-flash{position:relative;z-index:1}
+.notice-flash{animation:skill-notice-flash 3.6s ease-out both!important}
+@keyframes skill-notice-flash{
+ 0%,55%{color:#fff!important;background-color:rgba(171,35,35,.46)!important;border-color:#fa5252!important;outline:1px solid rgba(250,82,82,.82)!important;outline-offset:1px;box-shadow:0 0 0 2px rgba(248,60,60,.42),0 0 16px rgba(210,35,35,.42)!important}
+ 82%{color:#ffd4d4!important;background-color:rgba(140,30,30,.25)!important;border-color:rgba(242,75,75,.8)!important;outline-color:rgba(250,82,82,.3)!important;box-shadow:0 0 0 1px rgba(248,60,60,.18)!important}
+ 100%{color:inherit;background-color:transparent;border-color:transparent;outline-color:transparent;box-shadow:none}
+}
+
 /* The presentation state keeps the same skill grid but replaces controls with readable values. */
 .sheet-pane.visual-mode .static-name{display:block;width:100%;padding:0 0 3px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;color:var(--head);font-size:1.12rem;font-weight:bold;text-align:left}
 .sheet-pane.visual-mode .occ-view,.sheet-pane.visual-mode .age-view{color:var(--muted);font-size:.85rem}
