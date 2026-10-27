@@ -114,9 +114,9 @@ const SCENES=[
   task:p=>{const n=String(p.back||'').trim().length;return[{label:'Escrever algumas linhas',detail:`${Math.min(n,40)}/40`,done:n>=40}]}},
  {id:'finale',step:5,tab:null,next:'✔ Concluir',
   title:()=>'Missão cumprida!',
-  text:p=>{const b=blankBudgetState(p),r=[];if(b.occupational.available>0)r.push(`${b.occupational.available} ocupacionais`);if(b.personal.available>0)r.push(`${b.personal.available} pessoais`);return`**${firstName(p)}** está pronto para encarar o desconhecido.${r.length?` Ainda restam ${r.join(' e ')}: dá para gastar quando quiser.`:''} Falta só o equipamento e, se quiser, o PDF.`},
-  spots:el=>[q(el,'.win-bar .pdfb'),q(el,'[data-sheet-tab=equipment]')],
-  pins:()=>['Baixe a ficha em PDF','Equipamento do investigador']}
+  text:p=>{const b=blankBudgetState(p),r=[];if(b.occupational.available>0)r.push(`${b.occupational.available} ocupacionais`);if(b.personal.available>0)r.push(`${b.personal.available} pessoais`);return`**${firstName(p)}** está pronto para encarar o desconhecido.${r.length?` Ainda restam ${r.join(' e ')}: dá para gastar quando quiser.`:''} Toque em **Enviar** para mandar o link da ficha ao Guardião. Falta só o equipamento.`},
+  spots:el=>[q(el,'.win-bar .pdfb'),q(el,'.win-bar .shb'),q(el,'[data-sheet-tab=equipment]')],
+  pins:()=>['Baixe a ficha em PDF','Envie o link da ficha ao Guardião','Equipamento do investigador']}
 ];
 const avail=p=>SCENES.filter(s=>!s.when||s.when(p));
 
@@ -361,14 +361,17 @@ function layoutNotes(holes,vw,vh){
    right:()=>({l:h.x+h.w+g,t:h.cy-ch/2,c:'al'}),
    left:()=>({l:h.x-cw-g,t:h.cy-ch/2,c:'ar'})
   };
-  let best=null;
+  /* escolhe o lado sem colisão; se nenhum servir, o de menor sobreposição (com folga de 8 px nos buracos) */
+  const area=(a,b)=>Math.max(0,Math.min(a.r,b.r)-Math.max(a.l,b.l))*Math.max(0,Math.min(a.b,b.b)-Math.max(a.t,b.t));
+  const soft=hr.map(x=>({l:x.l+8,t:x.t+8,r:x.r-8,b:x.b-8}));
+  let best=null,bestScore=Infinity;
   for(const s of['down','up','right','left']){
    const c=cand[s]();
    c.l=Math.max(8,Math.min(vw-cw-8,c.l));c.t=Math.max(8,Math.min(vh-ch-8,c.t));
    c.R={l:c.l,t:c.t,r:c.l+cw,b:c.t+ch};
-   const bad=hr.some(x=>hit(c.R,x))||hit(c.R,cardR)||placed.some(x=>hit(c.R,x));
-   if(!best)best=c;
-   if(!bad){best=c;break}
+   const score=soft.reduce((n,x)=>n+area(c.R,x),0)+area(c.R,cardR)*2+placed.reduce((n,x)=>n+area(c.R,x),0)*3;
+   if(score<bestScore){best=c;bestScore=score}
+   if(score===0)break;
   }
   note.className='cg-note '+best.c;note.style.left=best.l+'px';note.style.top=best.t+'px';
   note.style.setProperty('--ax',Math.max(14,Math.min(cw-14,h.cx-best.l))+'px');

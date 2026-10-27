@@ -24,6 +24,9 @@ input[readonly].in{opacity:.8;cursor:default}
 .dlg.pb-dlg{width:min(520px,100%);max-height:92vh;overflow:auto}
 .dlg.ms-dlg{width:min(900px,100%)}
 .dlg .wz-help{margin:0 0 12px}
+/* ✕ fixo no topo dos passos 1 e 2 (no celular o Cancelar do rodapé fica fora da tela) */
+.dlg .wz-x{position:sticky;top:0;float:right;z-index:2;width:40px;min-width:40px;height:40px;min-height:40px;margin:-8px -6px 4px 10px;padding:0;display:grid;place-items:center;font-size:1.05rem;line-height:1;border-radius:50%;background:var(--k2);color:var(--ink2);border:1px solid rgba(var(--gr),.5)}
+.dlg .wz-x:hover{color:var(--head);border-color:var(--head)}
 .dlg .row{flex-wrap:wrap}
 .wz-step-actions{align-items:stretch}
 .wz-step-actions.wz-first-step{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"points roll" "cancel next";gap:8px}
