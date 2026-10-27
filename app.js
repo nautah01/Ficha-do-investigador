@@ -146,27 +146,37 @@ const row=(p,i,n,rm)=>{
  const valueMarkup=visual?`<span class="skill-presentation"><strong class="skill-score">${value}%</strong><span class="skill-thresholds" aria-label="Difícil ${half} por cento; Extremo ${fifth} por cento">${half} / ${fifth}</span></span>`:`<i>${inp(p,i,'s:'+n,`min="${minimum}" data-skill-input${hintAttr}`,n+' (%)')}<small data-f="${esc('s:'+n)}" aria-hidden="true">${fr(p,'s:'+n)}</small>${rm?`<button class="rmb" title="Remover perícia" data-i="${i}" data-n="${esc(n)}">✕</button>`:''}</i>`;
  return`<span class="skill-row${occ?' occ-skill':''}${socialChoice&&(!isBudget(p)||(p.skillBudgetMode||'occupational')==='occupational')?' social-choice':''}"${title?` title="${title}"`:''}><span class="sk-label"><span class="sk-name">${esc(n)}</span></span>${valueMarkup}</span>`;
 };
-const SKILL_CATEGORY_ORDER=['Gerais','Armas de Fogo','Arte/Ofício','Ciência','Línguas','Lutar','Pilotar'];
+const SKILL_CATEGORY_ORDER=['Investigação','Artes e Ofícios','Combate','Interação','Movimento','Sobrevivência','Ciências','Conhecimento','Idiomas','Técnicas','Pilotagem','Outras'];
+const SKILL_CATEGORY_NAMES={
+ 'Investigação':['Antropologia','Arqueologia','Avaliação','Contabilidade','Encontrar','Escutar','História','Rastrear','Usar Biblioteca'],
+ 'Artes e Ofícios':['Disfarce','Prestidigitação'],
+ 'Combate':['Arremessar','Esquivar'],
+ 'Interação':['Charme','Intimidação','Lábia','Nível de Crédito','Psicanálise','Psicologia','Persuasão'],
+ 'Movimento':['Cavalgar','Dirigir Auto','Escalar','Furtividade','Natação','Saltar'],
+ 'Sobrevivência':['Medicina','Mundo Natural','Navegação','Primeiros Socorros','Sobrevivência'],
+ 'Conhecimento':['Direito','Mitos de Cthulhu','Ocultismo'],
+ 'Técnicas':['Chaveiro','Consertos Elétricos','Consertos Mecânicos','Eletrônica','Operar Maquinário','Operar Maquinário Pesado','Usar Computadores']
+};
 function skillCategory(name){
- if(name.startsWith('Armas de Fogo ('))return'Armas de Fogo';
- if(name.startsWith('Arte/Ofício ('))return'Arte/Ofício';
- if(name.startsWith('Ciência ('))return'Ciência';
- if(name.startsWith('Língua'))return'Línguas';
- if(name.startsWith('Lutar ('))return'Lutar';
- if(name.startsWith('Pilotar ('))return'Pilotar';
- return'Gerais';
+ if(name.startsWith('Arte/Ofício ('))return'Artes e Ofícios';
+ if(name.startsWith('Armas de Fogo (')||name.startsWith('Lutar ('))return'Combate';
+ if(name.startsWith('Ciência ('))return'Ciências';
+ if(name.startsWith('Língua'))return'Idiomas';
+ if(name.startsWith('Pilotar ('))return'Pilotagem';
+ if(SKILL_CATEGORY_NAMES['Combate'].includes(name))return'Combate';
+ return SKILL_CATEGORY_ORDER.find(category=>SKILL_CATEGORY_NAMES[category]?.includes(name))||'Outras';
 }
 function skillGrid(p,i,entries,highlight=''){
  const groups=new Map();
  for(const entry of entries){const category=skillCategory(entry[0]);if(!groups.has(category))groups.set(category,[]);groups.get(category).push(entry)}
- const categories=[...SKILL_CATEGORY_ORDER.filter(name=>groups.has(name)),... [...groups.keys()].filter(name=>!SKILL_CATEGORY_ORDER.includes(name)).sort((a,b)=>a.localeCompare(b,'pt'))];
- return`<div class="sk${highlight}">${categories.map(category=>`<section class="skill-category${category==='Gerais'?' skill-category-general':''}"><h4>${category==='Gerais'?'Outras perícias':esc(category)}</h4><div class="skill-category-list">${groups.get(category).map(([name])=>row(p,i,name,1)).join('')}</div></section>`).join('')}</div>`;
+ const categories=SKILL_CATEGORY_ORDER.filter(name=>groups.has(name));
+ return`<div class="sk${highlight}">${categories.map(category=>`<section class="skill-category"><h4>${esc(category)}</h4><div class="skill-category-list">${groups.get(category).map(([name])=>row(p,i,name,1)).join('')}</div></section>`).join('')}</div>`;
 }
 function uiOf(p,i){
  p.ui=p.ui||{};
  if(p.ui.x==null)p.ui.x=18+(i%6)*36;
  if(p.ui.y==null)p.ui.y=10+(i%6)*28;
- if(!p.ui.w)p.ui.w=520;
+ if(!p.ui.w)p.ui.w=680;
  if(p.ui.skillsWide){p.ui.w=520;delete p.ui.skillsWide}
  if(!p.ui.z)p.ui.z=++zTop;
  return p.ui;
