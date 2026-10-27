@@ -105,13 +105,13 @@ async function startGuidedCreation(){
 
 /* ---------- criação guiada: tour contextual dos passos 3 a 5 ---------- */
 const GUIDE_COPY={
- '3-budget':{title:'Pontos ocupacionais',text:p=>{const c=creditBounds(p);return`Aqui ficam os pontos da ocupação e a faixa de Nível de Crédito${c?` (${c.min}–${c.max}%)`:''}. Primeiro, confira o modo de distribuição. Depois vou destacar as perícias certas.`},next:'Ver perícias da ocupação →',target:'.blank-budgets'},
- '3-allocate':{title:'Sua ocupação em destaque',text:p=>{const left=blankBudgetState(p).occupational.available,choices=occupationChoiceRemaining(p);let extra='';if(choices.any||choices.social)extra=` A ocupação ainda pede ${[choices.any&&`${choices.any} escolha(s) aleatória(s)`,choices.social&&`${choices.social} escolha(s) social(is)`].filter(Boolean).join(' e ')}; o site vai confirmar essas vagas quando você aumentar uma perícia.`;return`Distribua pontos nas perícias douradas da ocupação${extra} Digite um novo valor em uma perícia para gastar pontos. Restam ${left} ocupacionais.`},next:'Continuar para pontos pessoais →',target:'.sk'},
- '4-budget':{title:'Pontos pessoais',text:p=>`Agora são ${blankBudgetState(p).personal.total} pontos (INT × 2), válidos para qualquer perícia. Clique em “Perícias pessoais” para escolher essa reserva antes de distribuir.`,next:'Continuar →',target:'.blank-budgets'},
- '4-allocate':{title:'Interesses do investigador',text:p=>`Escolha qualquer perícia e distribua pontos pessoais. Nenhuma perícia passa de ${SKILL_CAP}% durante a criação.`,next:'Ir para a Backstory →',target:'.sk'},
- '5-backstory':{title:'Quem é esta pessoa?',text:()=>'Registre algo sobre o investigador na Backstory: uma pessoa, um lugar ou um traço importante já basta para concluir. O campo está destacado.',next:'Concluir guia',target:'.backstory-text .bk'}
+ '3-budget':{title:'Pontos da ocupação',text:p=>{const c=creditBounds(p);return`A ocupação define quais perícias podem receber este primeiro grupo de pontos. O Nível de Crédito também sai daqui${c?` e precisa ficar entre ${c.min}% e ${c.max}%`:''}. Vou mostrar onde distribuir.`},next:'Ver perícias da ocupação →',target:'.blank-budgets'},
+ '3-allocate':{title:'Distribuir pontos da ocupação',text:p=>{const left=blankBudgetState(p).occupational.available,choices=occupationChoiceRemaining(p);let extra='';if(choices.any||choices.social)extra=` Sua ocupação também pede ${[choices.any&&`${choices.any} escolha(s) entre perícias`,choices.social&&`${choices.social} escolha(s) social(is)`].filter(Boolean).join(' e ')}; o site confirma essas vagas quando você aumentar uma delas.`;return`As perícias da ocupação estão destacadas em dourado. Clique no valor de uma delas e digite o total desejado; a diferença sai do saldo. Restam ${left} pontos ocupacionais.${extra}`},next:'Continuar para pontos pessoais →',target:'.sk'},
+ '4-budget':{title:'Pontos pessoais',text:p=>`Você recebe ${blankBudgetState(p).personal.total} pontos pessoais: é a Inteligência multiplicada por 2. Eles podem aumentar qualquer perícia. Selecione “Perícias pessoais” para trocar o tipo de ponto usado.`,next:'Continuar →',target:'.blank-budgets'},
+ '4-allocate':{title:'Escolher outras perícias',text:p=>`Agora você pode investir em qualquer perícia, mesmo que ela não pertença à ocupação. Digite o valor final desejado. O saldo pessoal diminui conforme os pontos são usados; o limite da criação é ${SKILL_CAP}%.`,next:'Ir para a Backstory →',target:'.sk'},
+ '5-backstory':{title:'Conte um pedaço da história',text:()=>'Na Backstory, escreva algo que ajude o Guardião a imaginar seu investigador: uma pessoa importante, um lugar marcante ou algo que ele teme. Uma frase já serve; você pode completar depois.',next:'Concluir guia',target:'.backstory-text .bk'}
 };
-let guideOverlay=null,guideSpot=null,guideCard=null,guideTarget=null,guidePositionFrame=0;
+let guideOverlay=null,guideSpot=null,guideTarget=null,guidePositionFrame=0,guideScrollTimer=null;
 function ensureGuideOverlay(){
  if(guideOverlay)return;
  guideOverlay=document.createElement('div');guideOverlay.className='guide-tour';guideOverlay.hidden=true;
@@ -119,7 +119,7 @@ function ensureGuideOverlay(){
  document.body.appendChild(guideOverlay);guideSpot=guideOverlay.querySelector('.guide-spot');guideCard=guideOverlay.querySelector('.guide-coach');
  guideOverlay.addEventListener('click',e=>{const b=e.target.closest('[data-guide-action]');if(b)advanceGuide(+guideOverlay.dataset.i,b.dataset.guideAction)});
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&guideOverlay&&!guideOverlay.hidden)advanceGuide(+guideOverlay.dataset.i,'exit')});
- addEventListener('resize',positionGuide);addEventListener('scroll',positionGuide,true);
+ addEventListener('resize',positionGuide,{passive:true});addEventListener('scroll',onGuideScroll,{passive:true,capture:true});
 }
 function guideStage(p){const step=Math.max(3,Math.min(5,+p.guide.step||3)),phase=p.guide.phase||'budget';return step===5?'5-backstory':`${step}-${phase}`}
 function guideTargetFor(p,i){const win=winEl(i),stage=guideStage(p);if(!win)return null;const pane=stage==='5-backstory'?win.querySelector('.backstory-pane'):win.querySelector('.sheet-pane');if(stage==='5-backstory'&&pane&&pane.hidden)return null;if(matchMedia('(max-width: 640px)').matches&&stage.endsWith('-budget'))return pane?.querySelector('.budget-controls')||pane?.querySelector('.blank-budgets');return pane?.querySelector(GUIDE_COPY[stage]?.target)||null}
@@ -127,22 +127,22 @@ function positionGuide(){
  if(!guideOverlay||guideOverlay.hidden||!guideTarget?.isConnected)return;
  cancelAnimationFrame(guidePositionFrame);guidePositionFrame=requestAnimationFrame(()=>{
   const r=guideTarget.getBoundingClientRect(),mobile=matchMedia('(max-width: 640px)').matches;
+  if(r.bottom<8||r.top>innerHeight-8){guideSpot.classList.add('is-offscreen');return}guideSpot.classList.remove('is-offscreen');
   const cap=mobile?Math.min(390,innerHeight*.44):Math.min(540,innerHeight*.62),h=Math.min(Math.max(r.height,52),cap),top=Math.max(8,Math.min(innerHeight-h-8,r.top));
   guideSpot.style.left=`${Math.max(8,r.left)}px`;guideSpot.style.top=`${top}px`;guideSpot.style.width=`${Math.max(24,Math.min(innerWidth-16,r.width))}px`;guideSpot.style.height=`${h}px`;
-  if(mobile){guideCard.style.left='12px';guideCard.style.right='12px';guideCard.style.top='auto';guideCard.style.bottom=`calc(env(safe-area-inset-bottom, 0px) + var(--guide-bottom-offset, 74px))`}
-  else{const w=Math.min(360,innerWidth-32),left=Math.max(16,Math.min(innerWidth-w-16,r.left+r.width-w)),below=top+h+14;guideCard.style.width=`${w}px`;guideCard.style.left=`${left}px`;guideCard.style.right='auto';guideCard.style.top=below+Math.min(220,guideCard.offsetHeight)<innerHeight?`${below}px`:'auto';guideCard.style.bottom=guideCard.style.top==='auto'?'16px':'auto'}
  });
 }
+function onGuideScroll(){if(!guideOverlay||guideOverlay.hidden)return;guideSpot.classList.add('is-moving');clearTimeout(guideScrollTimer);guideScrollTimer=setTimeout(()=>{guideSpot.classList.remove('is-moving');positionGuide()},170)}
 function guideTourSync(){
  if(!cur||!desk)return;const activeIndex=cur.findIndex(p=>p.guide);ensureGuideOverlay();
  if(activeIndex<0){guideOverlay.hidden=true;guideTarget=null;return}
  const p=cur[activeIndex],stage=guideStage(p),copy=GUIDE_COPY[stage],win=winEl(activeIndex);if(!copy||!win){guideOverlay.hidden=true;return}
- p.ui=p.ui||{};const expectedTab=stage==='5-backstory'?'backstory':'sheet';if(p.ui.tab!==expectedTab){p.ui.tab=expectedTab;return}
+ p.ui=p.ui||{};const expectedTab=stage==='5-backstory'?'backstory':'sheet',visibleTab=['equipment','backstory','combat'].includes(p.ui.tab)?p.ui.tab:'sheet';if(visibleTab!==expectedTab){p.ui.tab=expectedTab;draw();return}p.ui.tab=expectedTab;
  const target=guideTargetFor(p,activeIndex);if(!target){guideOverlay.hidden=true;return}
  guideOverlay.dataset.i=String(activeIndex);guideOverlay.hidden=false;guideTarget=target;
  const step=+p.guide.step,phase=p.guide.phase||'budget',left=step<5?blankBudgetState(p)[step===3?'occupational':'personal'].available:null;
- guideOverlay.querySelector('[data-guide-progress]').textContent=`CRIAÇÃO GUIADA · PASSO ${step} DE 5`;
- guideOverlay.querySelector('#guide-tour-title').textContent=copy.title;guideOverlay.querySelector('[data-guide-text]').textContent=copy.text(p);guideOverlay.querySelector('[data-guide-task]').textContent=phase==='allocate'&&step<5?(p.guide.didAction||left===0?'Etapa pronta para continuar.':'Sua próxima ação: altere o valor de uma perícia.') : stage==='5-backstory'?(p.guide.didAction?'Anotação registrada.':'Escreva uma linha ou pule esta etapa.'):'O restante da ficha fica suavemente escurecido enquanto você acompanha.';
+ guideOverlay.querySelector('[data-guide-progress]').textContent=`PASSO ${step} DE 5`;
+ guideOverlay.querySelector('#guide-tour-title').textContent=copy.title;guideOverlay.querySelector('[data-guide-text]').textContent=copy.text(p);guideOverlay.querySelector('[data-guide-task]').textContent=phase==='allocate'&&step<5?(p.guide.didAction||left===0?'Boa. Você já pode continuar.':'Altere o valor de uma perícia para distribuir os pontos.') : stage==='4-budget'?(p.skillBudgetMode==='personal'?'Pontos pessoais selecionados.':'Toque no botão “Perícias pessoais” logo acima.') : stage==='5-backstory'?(p.guide.didAction?'Anotação registrada.':'Escreva uma frase ou pule esta etapa.'):'O foco dourado marca a área de que estamos falando.';
  const next=guideOverlay.querySelector('[data-guide-action="next"]'),canNext=stage==='4-budget'?p.skillBudgetMode==='personal':phase!=='allocate'||!!p.guide.didAction||left===0||stage==='5-backstory'&&!!p.guide.didAction;
  next.textContent=copy.next;next.disabled=!canNext;next.title=canNext?'':stage==='5-backstory'?'Escreva uma linha ou pule esta etapa.':'Altere uma perícia antes de continuar.';
  guideOverlay.querySelector('[data-guide-action="skip"]').textContent=stage==='5-backstory'?'Concluir sem escrever':'Pular etapa';
