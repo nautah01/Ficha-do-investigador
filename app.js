@@ -197,7 +197,7 @@ function body(p,i){
  const skillPool=visual?'':free?unlimitedPanel():bud?blankBudgetPanel(p,i):`<aside class="skill-pool" role="status"><b>Pontos para redistribuir</b><strong><span data-skill-points>${p.skillPoints.available}</span> pts</strong><small data-skill-pool-note>${esc(p.skillNotice||'Reduza uma perícia acima do mínimo para liberar pontos; aumentos usam os pontos disponíveis.')}</small></aside>`;
  const addM=bud?`<div class="add"><input class="in" style="width:76%" placeholder="Nova perícia (entra com o valor-base; gaste pontos nela)" list="skillSuggest" data-add="n" aria-label="Nome da nova perícia"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`:`<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia do personagem" list="skillSuggest" data-add="n" aria-label="Nome da nova perícia"><input class="in" type="number" value="50" title="Valor" data-add="v" aria-label="Valor"><button class="addb" data-i="${i}" data-m="1">+ Adicionar</button></div>`;
  const d=[['hp','PV'],['san','Sanidade'],['luck','Sorte'],['pm','PM'],['mov','Mov'],['db','Bônus de Dano'],['corpo','Corpo']].map(([k,l])=>`<label class="der-field"><span>${l}</span>${visual?staticValue(p,'d:'+k,'der-value'):inp(p,i,'d:'+k,k==='sanMax'?'readonly tabindex="-1" title="99 − Mitos de Cthulhu"':'',l)}</label>`).join('');
- const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar perícias não treinadas':'▼ Perícias não treinadas'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Perícias não treinadas (valor-base)</h3>${skillGrid(p,i,falta(p),hl)}<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" list="skillSuggest" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
+ const fa=`<button class="ftg" data-i="${i}">${p.falta?'▲ Ocultar outras perícias':'▼ Outras perícias'}</button>`+(p.falta?`<h3 style="margin:12px 0 4px;font-size:.9rem">Outras perícias (valor-base)</h3>${skillGrid(p,i,falta(p),hl)}<div class="add"><input class="in" style="width:58%" placeholder="Nova perícia (ex.: Arte/Ofício (Cerâmica))" list="skillSuggest" data-add="n"><input class="in" type="number" value="1" title="Valor inicial" data-add="v"><button class="addb" data-i="${i}">+ Adicionar</button></div>`:'');
  const mobileActions=`<div class="mobile-card-actions"><button class="dupb" data-i="${i}" title="Criar uma cópia desta ficha"><svg class="copy-icon" aria-hidden="true" viewBox="0 0 24 24" focusable="false"><rect x="8" y="8" width="12" height="13" rx="1.5"/><path d="M16 8V4H4v13h4"/></svg> Duplicar</button></div>`;
  const pb=free?'':`<button type="button" class="pbb" data-i="${i}" title="Distribuir 460 pontos entre os atributos (regra opcional do livro)">⚖ Compra de pontos</button>`;
  const name=visual?`<span class="in nm static-name">${p.nome?esc(p.nome):'Nome não definido'}</span>`:`<input class="in nm" data-i="${i}" data-k="n:nome" aria-label="Nome do investigador" placeholder="Nome do investigador" value="${esc(p.nome)}">`;
@@ -446,8 +446,7 @@ function addMain(i,box){
 function addSkill(i,box){
  const p=cur[i],nome=box.querySelector('[data-add=n]').value.replace(/[<>&"']/g,'').trim(),v=Math.max(0,Math.min(999,+box.querySelector('[data-add=v]').value||0));
  if(p.removed&&p.removed[nome]){delete p.removed[nome];draw();return}
- if(!nome||p.sk[nome]!==undefined||nome in BASE||nome in EXTRA||(p.custom&&nome in p.custom))return;
- if(nome in SPECIAL_BASE&&p.removed)delete p.removed[nome];
+ if(!nome||p.sk[nome]!==undefined||nome in BASE||nome in EXTRA||nome in SPECIAL_BASE||(p.custom&&nome in p.custom))return;
  (p.custom=p.custom||{})[nome]=v;p.edit=true;draw();
 }
 async function approveEquipment(p,item){
@@ -767,10 +766,10 @@ window.DynamicInfo=(()=>{
  });
 })();
 /* Aplica um estado (carregado do banco ou da outra aba) na tela. */
-function restoreGeneratedOccupationSkills(p){
+function restoreGeneratedMainSkills(p){
  if(!p||p.blank||p.unlimited||!isBudget(p)||typeof occupationSkillNames!=='function')return;
  p.skillFloors=p.skillFloors||{};
- for(const n of occupationSkillNames(p)){
+ for(const n of new Set([...BLANK_SK,...occupationSkillNames(p)])){
   if(p.sk[n]!==undefined||p.removed?.[n])continue;
   const value=Math.max(0,+base(n,p.c)||0);
   p.sk[n]=value;
@@ -779,7 +778,7 @@ function restoreGeneratedOccupationSkills(p){
 }
 function applyState(d){
  if(d&&Array.isArray(d.cur)){
-  cur=d.cur;cur.forEach(p=>{migrateSkillNames(p);restoreGeneratedOccupationSkills(p)});zTop=d.zTop||20;
+  cur=d.cur;cur.forEach(p=>{migrateSkillNames(p);restoreGeneratedMainSkills(p)});zTop=d.zTop||20;
   if(d.occ)sel.value=d.occ;if(d.occ2)sel2.value=d.occ2;
   if(d.qty)document.getElementById('qty').value=d.qty;
   cur.forEach(uiOf);

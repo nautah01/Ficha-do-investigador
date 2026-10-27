@@ -53,6 +53,7 @@ function gen(sel,sel2,keep){
  const[selN,selSub]=String(sel).split('::'),o=sel==='*'?pick(OCC):OCC.find(x=>x.n===selN),oT=tokens(o,selSub);
  const c=keep&&keep.c?{...keep.c}:rollAttrs();
  const lang=keep&&keep.lang||pick(LANGS),sk={},bs=n=>base(n,c),cu=n=>sk[n]??bs(n);
+ BLANK_SK.forEach(n=>sk[n]=bs(n));
  const ALL=Object.keys(BASE).filter(n=>n!=='Nível de Crédito'),used=new Set(),keys=[],choiceKinds={};let anyExtra=0; /* vagas ocupacionais que viraram "qualquer perícia" porque todas as alternativas já estavam usadas */
  const res=(t,keep,choiceType)=>{let op=(t==='@soc'?SOC.join('|'):t==='@any'?COMMON.join('|'):t).split('|').map(x=>x==='@lang'?'Língua ('+lang+')':x);
   if(!keep)op=op.filter(x=>!used.has(x));let actualChoiceType=choiceType;if(!op.length){op=ALL.filter(x=>!used.has(x));if(!keep){anyExtra++;actualChoiceType='any'}}const n=pick(op);used.add(n);if(actualChoiceType)choiceKinds[n]=actualChoiceType;return n};
@@ -227,7 +228,7 @@ function resetBlankDistribution(p,occupation){
  }
 }
 const fr=(p,k)=>{const v=+get(p,k)||0;return(v>>1)+' / '+Math.floor(v/5)};
-const falta=p=>Object.entries({...BASE,...EXTRA,...(p.custom||{})}).filter(([n])=>p.sk[n]===undefined&&!(p.removed&&p.removed[n])).sort((a,b)=>a[0].localeCompare(b[0],'pt'));
+const falta=p=>Object.entries({...BASE,...EXTRA,...SPECIAL_BASE,...(p.custom||{})}).filter(([n])=>p.sk[n]===undefined&&!(p.removed&&p.removed[n])).sort((a,b)=>a[0].localeCompare(b[0],'pt'));
 
 /* ===================== Atributos: validação, rolagem e compra de pontos ===================== */
 function rollAttrs(){return{FOR:A(),CON:A(),POD:A(),DES:A(),APA:A(),TAM:B(),INT:B(),EDU:B()}}
