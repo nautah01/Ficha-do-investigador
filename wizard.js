@@ -1,6 +1,6 @@
 /* Compra de pontos (460) e criação guiada passo a passo.
    Passos: 1 atributos → 2 identidade e ocupação → 3 pontos ocupacionais → 4 pontos pessoais → 5 backstory.
-   Os passos 3–5 acontecem na própria ficha, guiados por uma barra no topo (p.guide.step). */
+   Os passos 3–5 acontecem na própria ficha, guiados pelo guia dinâmico (guide.js; estado em p.guide). */
 
 /* ---------- janela genérica ---------- */
 function wzModal(html,cls=''){
@@ -98,43 +98,14 @@ async function startGuidedCreation(){
  const p=genBlank(false);
  p.c={...attrs};p.der={...calc(p.c),luck:A()};p.nome=nome;p.idade=String(age);
  resetBlankDistribution(p,occ);
- p.skillBudgetMode='occupational';p.guide={step:3};p.edit=true;p.rolledC=rollSig(p);
+ p.skillBudgetMode='occupational';p.edit=true;p.rolledC=rollSig(p);
+ if(window.Coach)p.guide={step:3,scene:'points'};
  placeNew(p,0,cur);cur.push(p);draw();
- const el=winEl(cur.length-1);if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+ const el=winEl(cur.length-1);if(el&&el.scrollIntoView)el.scrollIntoView({behavior:'auto',inline:'center',block:'start'});
+ /* passos 3–5: o guia dinâmico leva até o quadro de pontos e acompanha tudo */
+ if(window.Coach)Coach.start(p);
 }
 
-/* ---------- criação guiada: passos 3 a 5 (barra na ficha) ---------- */
-const GUIDE_TXT={
- 3:{t:'Pontos ocupacionais',d:p=>{const c=creditBounds(p);return`Gaste nas perícias em dourado (as da sua ocupação) e defina o Nível de Crédito${c?` (${c.min} a ${c.max})`:''}. Nenhuma perícia passa de ${SKILL_CAP}%.`},left:p=>blankBudgetState(p).occupational.available},
- 4:{t:'Pontos pessoais',d:p=>`INT × 2 = ${blankBudgetState(p).personal.total} pontos para qualquer perícia, seguindo os interesses do personagem. Nenhuma perícia passa de ${SKILL_CAP}%.`,left:p=>blankBudgetState(p).personal.available},
- 5:{t:'Backstory',d:()=>'Escreva a história: aparência, ideologia, pessoas e lugares importantes, pertences queridos e traços. A aba Backstory já está aberta.',left:null}
-};
-function guideBarHtml(p,i){
- if(!p.guide)return'';
- const s=Math.max(3,Math.min(5,+p.guide.step||3)),g=GUIDE_TXT[s],left=g.left?g.left(p):null;
- const dots=[1,2,3,4,5].map(n=>`<i class="${n<s?'done':n===s?'now':''}"></i>`).join('');
- return`<div class="guide-bar" data-guide-bar data-i="${i}" role="region" aria-label="Criação guiada"><div class="gd-head"><span class="gd-dots" aria-hidden="true">${dots}</span><strong>Passo ${s} de 5 · ${g.t}</strong>${left!=null?`<span class="gd-left"><b data-guide-left>${left}</b> pts restantes</span>`:''}</div><p>${esc(g.d(p))}</p><div class="gd-actions"><button type="button" class="alt" data-guide="skip" data-i="${i}" title="Fechar o passo a passo e continuar editando livremente">Sair do guia</button>${s>3?`<button type="button" class="alt" data-guide="back" data-i="${i}">← Voltar</button>`:''}<button type="button" data-guide="${s===5?'finish':'next'}" data-i="${i}">${s===5?'✔ Concluir':'Próximo →'}</button></div></div>`;
-}
-function guideRefresh(p,el){
- const bar=el.querySelector('[data-guide-bar]');if(!bar||!p.guide)return;
- const s=Math.max(3,Math.min(5,+p.guide.step||3)),g=GUIDE_TXT[s];
- const l=bar.querySelector('[data-guide-left]');if(l&&g.left)l.textContent=g.left(p);
-}
-desk.addEventListener('click',async e=>{
- const b=e.target.closest('[data-guide]');if(!b)return;
- const k=+b.dataset.i,p=cur[k];if(!p||!p.guide)return;
- const act=b.dataset.guide,s=Math.max(3,Math.min(5,+p.guide.step||3));
- const go=step=>{p.guide.step=step;p.skillBudgetMode=step===4?'personal':'occupational';p.skillNotice='';p.ui=p.ui||{};p.ui.tab=step===5?'backstory':'sheet';p.edit=true;draw()};
- if(act==='skip'){delete p.guide;p.ui.tab='sheet';p.edit=true;draw();return}
- if(act==='finish'){delete p.guide;p.ui.tab='sheet';p.skillNotice='';p.edit=true;draw();return}
- if(act==='back'){go(s-1);return}
- if(act==='next'){
-  const left=GUIDE_TXT[s].left(p);
-  if(left>0){
-   const ok=await askConfirm({title:'Ainda restam pontos',html:`Sobram <strong>${left}</strong> pontos ${s===3?'ocupacionais':'pessoais'}. Você pode voltar e gastá-los, ou continuar e usá-los depois.`,ok:'Continuar mesmo assim',danger:false});
-   if(!ok||cur[k]!==p)return;
-  }
-  go(s+1);
- }
-});
+/* ---------- criação guiada: passos 3 a 5 ---------- */
+/* Agora vivem em guide.js : foco na tela, pinos, tarefas e “Pular etapa” / “Sair do guia”. */
 const guidedBtn=document.getElementById('guided');if(guidedBtn)guidedBtn.onclick=startGuidedCreation;

@@ -1,0 +1,115 @@
+/* Guia dinâmico da criação guiada (passos 3 a 5): foco na tela, pinos e tarefas.
+   Camada própria (z-index 90000): fica acima da ficha e das abas do celular, abaixo das janelas de confirmação (.ovl, 100000). */
+.cg-root{position:fixed;inset:0;z-index:90000;pointer-events:none;--cg-gold:rgba(var(--gr),.9)}
+.cg-root[hidden]{display:none}
+.cg-dim{position:absolute;inset:0;background:rgba(2,7,8,.6);pointer-events:auto;animation:cgFade .45s ease both}
+.cg-dim.cg-in{animation:cgFade .45s ease both}
+.cg-glows{position:absolute;inset:0;pointer-events:none}
+.cg-glow{position:absolute;box-sizing:border-box;pointer-events:none;border:2px solid rgba(var(--gr),.85);
+ box-shadow:0 0 0 1px rgba(0,0,0,.35),0 0 20px 3px rgba(var(--gr),.32),inset 0 0 26px rgba(var(--gr),.1);
+ animation:cgGlow 2.8s ease-in-out infinite,cgFade .45s ease both}
+.cg-glow.cg-hit{animation:cgGlowHit .6s ease-out 1}
+.cg-pins{position:absolute;inset:0;pointer-events:none}
+
+/* pinos e caixinhas */
+.cg-pin{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;display:grid;place-items:center;
+ background:var(--head);color:var(--onhead);font:700 .72rem/1 system-ui,sans-serif;border:2px solid var(--k1);
+ box-shadow:0 0 0 0 rgba(var(--gr),.7);animation:cgPin 2s ease-out infinite}
+.cg-note{position:absolute;box-sizing:border-box;padding:6px 9px 7px;border-radius:9px;border:1px solid rgba(var(--gr2),.85);
+ background:var(--k2);color:var(--txt);font-size:.76rem;line-height:1.3;box-shadow:0 8px 22px rgba(0,0,0,.45);animation:cgNote .38s cubic-bezier(.2,.9,.3,1.2) both}
+.cg-note b{display:inline-grid;place-items:center;min-width:1.35em;height:1.35em;margin-right:5px;border-radius:50%;background:var(--head);color:var(--onhead);font-size:.68rem;vertical-align:1px}
+.cg-note::after{content:"";position:absolute;left:var(--ax,50%);width:10px;height:10px;margin-left:-5px;background:var(--k2);
+ border:1px solid rgba(var(--gr2),.85);transform:rotate(45deg)}
+.cg-note.up::after{top:-6px;border-right:0;border-bottom:0}
+.cg-note.down::after{bottom:-6px;border-left:0;border-top:0}
+.cg-note.ar::after{left:auto;right:-6px;top:var(--ay,50%);margin:-5px 0 0;border-left:0;border-bottom:0}
+.cg-note.al::after{left:-6px;top:var(--ay,50%);margin:-5px 0 0;border-top:0;border-right:0}
+
+/* cartão do guia */
+.cg-card{position:fixed;bottom:16px;right:16px;width:min(410px,calc(100vw - 24px));pointer-events:auto;
+ animation:cgCardIn .5s cubic-bezier(.2,.9,.3,1.15) both}
+.cg-card.dock-l{right:auto;left:16px}
+.cg-bubble{position:relative;flex:1;min-width:0;padding:10px 12px 11px 16px;border-radius:14px;border:1px solid rgba(var(--gr2),.85);
+ background:linear-gradient(160deg,var(--k3),var(--k1));color:var(--txt);box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.4)}
+.cg-card.ok .cg-bubble{border-color:var(--ok);box-shadow:0 14px 34px rgba(0,0,0,.55),0 0 18px rgba(95,174,138,.35)}
+.cg-card.shake{animation:cgShake .45s ease}
+.cg-head{display:flex;align-items:center;gap:7px;min-height:24px}
+.cg-dots{display:inline-flex;gap:4px;flex:0 0 auto}
+.cg-dots i{width:8px;height:8px;border-radius:50%;border:1px solid var(--head);opacity:.55}
+.cg-dots i.done{background:var(--head);opacity:.9}
+.cg-dots i.now{background:var(--gold);opacity:1;box-shadow:0 0 6px var(--gold)}
+.cg-step{flex:1;min-width:0;font-size:.68rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cg-hbtn{flex:0 0 auto;min-width:28px;min-height:28px;padding:2px 8px;border-radius:6px;font-size:.72rem;line-height:1;background:transparent;color:var(--ink2);border:1px solid rgba(var(--gr),.35);cursor:pointer}
+.cg-hbtn:hover{border-color:var(--head);color:var(--head)}
+.cg-hbtn .s{display:none}
+.cg-title{margin:6px 0 3px;font-size:.98rem;line-height:1.2;color:var(--head);font-variant:small-caps;letter-spacing:.03em}
+.cg-text{margin:0;font-size:.84rem;line-height:1.42;color:var(--txt);min-height:2.6em}
+.cg-text b{color:var(--head)}
+.cg-text .w{display:inline-block;white-space:pre-wrap;opacity:0;animation:cgWord .3s ease forwards;animation-delay:calc(var(--i)*24ms)}
+.cg-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.cg-tasks{list-style:none;margin:8px 0 0;padding:7px 8px;border:1px dashed rgba(var(--gr2),.5);border-radius:8px;background:rgba(var(--gr),.05);display:grid;gap:5px}
+.cg-tasks:empty{display:none}
+.cg-tasks li{display:flex;align-items:center;gap:8px;font-size:.78rem;line-height:1.25;color:var(--txt)}
+.cg-tasks li.opt{color:var(--muted)}
+.cg-tasks li span:nth-child(2){flex:1;min-width:0}
+.cg-tasks li em{font-style:normal;font-size:.68rem;color:var(--muted);margin-left:4px}
+.cg-tasks li strong{font-variant-numeric:tabular-nums;font-size:.76rem;color:var(--head)}
+.cg-chk{flex:0 0 auto;width:17px;height:17px;border-radius:50%;border:1.5px solid rgba(var(--gr),.7);display:grid;place-items:center;font-size:.7rem;color:transparent;transition:background .25s,color .25s,transform .25s}
+.cg-tasks li.ok .cg-chk{background:var(--ok);border-color:var(--ok);color:var(--onhead);transform:scale(1.08)}
+.cg-tasks li.ok strong{color:var(--ok)}
+.cg-hint{margin:7px 0 0;padding:5px 8px;border-left:3px solid var(--head);border-radius:3px;background:rgba(var(--gr),.08);font-size:.75rem;line-height:1.35;color:var(--ink2);animation:cgNote .35s ease both}
+.cg-hint[hidden]{display:none}
+.cg-find{display:block;margin:7px 0 0;padding:4px 10px;border-radius:999px;font-size:.74rem;background:rgba(var(--gr),.12);color:var(--head);border:1px solid rgba(var(--gr),.5);cursor:pointer}
+.cg-find[hidden]{display:none}
+.cg-foot{display:flex;align-items:center;gap:6px;margin-top:9px}
+.cg-foot .sp{flex:1}
+.cg-foot button{min-height:34px;padding:4px 12px;font-size:.8rem;border-radius:6px;cursor:pointer}
+.cg-foot .cg-back{padding:4px 10px;background:transparent;color:var(--ink2);border:1px solid rgba(var(--gr),.4)}
+.cg-foot .cg-skip{background:transparent;color:var(--ink2);border:1px solid rgba(var(--gr),.4)}
+.cg-foot .cg-next{font-weight:700}
+.cg-foot .cg-next:disabled{opacity:.45;cursor:not-allowed}
+.cg-foot .cg-next.go{animation:cgNextPulse 1.5s ease-in-out infinite}
+.cg-foot button[hidden]{display:none}
+
+/* botão flutuante quando o guia está minimizado */
+.cg-fab{position:fixed;right:16px;bottom:16px;z-index:90000;display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+ background:var(--k2);color:var(--head);border:1px solid rgba(var(--gr2),.9);box-shadow:0 8px 22px rgba(0,0,0,.5);cursor:pointer;font-size:.8rem;animation:cgFab 2.4s ease-in-out infinite}
+.cg-fab[hidden]{display:none}
+.cg-fab span:first-child{font-size:1.1rem;line-height:1}
+
+/* confete de tinta */
+.cg-confetti{position:fixed;left:0;top:0;width:0;height:0;z-index:90001;pointer-events:none}
+.cg-confetti i{position:absolute;width:10px;height:10px;border-radius:2px;animation:cgConf 1.5s cubic-bezier(.15,.8,.3,1) forwards}
+
+@keyframes cgFade{from{opacity:0}to{opacity:1}}
+@keyframes cgGlow{0%,100%{box-shadow:0 0 0 1px rgba(0,0,0,.35),0 0 14px 2px rgba(var(--gr),.22),inset 0 0 18px rgba(var(--gr),.07)}50%{box-shadow:0 0 0 1px rgba(0,0,0,.35),0 0 30px 6px rgba(var(--gr),.5),inset 0 0 34px rgba(var(--gr),.16)}}
+@keyframes cgGlowHit{0%{box-shadow:0 0 0 1px rgba(0,0,0,.35),0 0 44px 12px rgba(var(--gr),.85)}100%{box-shadow:0 0 0 1px rgba(0,0,0,.35),0 0 20px 3px rgba(var(--gr),.32)}}
+@keyframes cgPin{0%{box-shadow:0 0 0 0 rgba(var(--gr),.7)}70%,100%{box-shadow:0 0 0 12px rgba(var(--gr),0)}}
+@keyframes cgNote{from{opacity:0;transform:translateY(6px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes cgCardIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes cgWord{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@keyframes cgShake{0%,100%{transform:none}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes cgNextPulse{0%,100%{box-shadow:0 0 0 0 rgba(var(--gr),.55)}60%{box-shadow:0 0 0 8px rgba(var(--gr),0)}}
+@keyframes cgFab{0%,100%{box-shadow:0 8px 22px rgba(0,0,0,.5),0 0 0 0 rgba(var(--gr),.5)}60%{box-shadow:0 8px 22px rgba(0,0,0,.5),0 0 0 10px rgba(var(--gr),0)}}
+@keyframes cgConf{0%{transform:translate(0,0) rotate(0) scale(1);opacity:1}70%{opacity:1}100%{transform:translate(var(--dx),calc(var(--dy) + 90px)) rotate(var(--rot)) scale(.7);opacity:0}}
+
+/* celular: cartão ancorado embaixo, ocupando a largura; a barra de abas fica atrás do escurecimento */
+body.mobile .cg-card,body.mobile .cg-card.dock-l{left:8px;right:8px;width:auto;bottom:calc(8px + env(safe-area-inset-bottom))}
+body.mobile .cg-bubble{padding:8px 10px 9px 13px;max-height:52vh;overflow:auto;overscroll-behavior:contain}
+body.mobile body.mobile .cg-title{font-size:.9rem;margin:4px 0 2px}
+body.mobile .cg-text{font-size:.8rem;line-height:1.38;min-height:0}
+body.mobile .cg-tasks{margin-top:6px;padding:6px 7px}
+body.mobile .cg-tasks li{font-size:.74rem}
+body.mobile .cg-foot{margin-top:7px}
+body.mobile .cg-foot button{min-height:40px;padding:4px 10px;font-size:.78rem}
+body.mobile .cg-hbtn{min-height:34px;min-width:34px}
+body.mobile .cg-hbtn .l{display:none}body.mobile .cg-hbtn .s{display:inline}
+body.mobile .cg-note{font-size:.7rem;padding:5px 7px 6px}
+body.mobile .cg-fab{right:10px;bottom:calc(74px + env(safe-area-inset-bottom))}
+
+@media (prefers-reduced-motion:reduce){
+ .cg-dim,.cg-glow,.cg-pin,.cg-note,.cg-card,.cg-hint,.cg-fab,.cg-foot .cg-next.go{animation:none!important}
+ .cg-text .w{animation:none;opacity:1}
+}
+
+body.mobile.cg-active{padding-bottom:calc(var(--cg-pad,260px) + env(safe-area-inset-bottom))!important}
