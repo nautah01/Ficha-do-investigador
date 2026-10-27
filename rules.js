@@ -65,6 +65,8 @@ function gen(sel,sel2,keep){
  const occS=oT.t.map(t=>{const k=t[0]==='!',token=k?t.slice(1):t,kind=token==='@any'?'any':token==='@soc'?'social':null,n=res(token,false,kind);if(k)keys.push(n);return n});
  const s2=[],keys2=[];
  if(sec){const hasK=secT.t.some(t=>t[0]==='!');secT.t.forEach((t,i)=>{if(t==='@any')return;const n=res(t.replace(/^!/,''),true);if(!s2.includes(n))s2.push(n);if((t[0]==='!'||(!hasK&&i===0))&&!keys2.includes(n))keys2.push(n)})}
+ /* Keep every selected occupation skill on the sheet, even if its point budget leaves it at base. */
+ for(const n of new Set([...occS,...s2]))if(sk[n]===undefined)sk[n]=bs(n);
  let occP=Math.max(...o.p.split('|').map(f=>f.split('+').reduce((a,t)=>{const[k,m]=t.split('*');return a+c[k]*m},0)));
   const crMax=Math.max(0,Math.min(99,occP,o.c[1]+creditMod)),crMin=Math.max(0,Math.min(crMax,o.c[0]+creditMod));
   const cr=Math.max(crMin,Math.min(crMax,Math.round((crMin+r(crMax-crMin+1))/5)*5));

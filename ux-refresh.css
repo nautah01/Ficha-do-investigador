@@ -35,7 +35,7 @@ button:disabled{cursor:not-allowed}
  .win-body .sk button.rmb{min-width:23px;min-height:26px;padding:0 3px;margin-left:2px}
 }
 
-.win{container-type:inline-size;border-color:rgba(var(--gr2),.64);box-shadow:0 16px 44px rgba(0,0,0,.5),inset 0 0 0 1px rgba(var(--gr),.1)}
+.win{border-color:rgba(var(--gr2),.64);box-shadow:0 16px 44px rgba(0,0,0,.5),inset 0 0 0 1px rgba(var(--gr),.1)}
 .win-bar{min-height:42px}
 .win-title{font-size:.86rem}
 .win-bar .delb{display:inline-flex;align-items:center;justify-content:center;min-width:0;padding:6px 8px;border-color:#a83232;background:#842626;color:#fff}
@@ -78,9 +78,12 @@ body:not(.mobile) #desk .win.collapsed .win-bar button.shb .bl .bx{display:inlin
 .sk .skill-row.chance-visible>i small[data-f^="s:"]{opacity:1;visibility:visible;transform:translateY(0)}
 .skill-row>i [data-skill-input]{min-height:32px}
 
-/* Skills follow the reference sheet's editorial columns: short groups flow down each column. */
-.win-body .sk{display:block;column-count:3;column-gap:16px;column-rule:1px solid rgba(var(--gr2),.25);column-fill:balance;font-size:.77rem}
-.win-body .skill-category{display:inline-block;width:100%;margin:0 0 9px;vertical-align:top;break-inside:avoid-column}
+/* Keep each skill category intact, with its own balanced vertical column. */
+.win-body .sk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;gap:0 16px;font-size:.77rem}
+.win-body .sk.skill-grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.win-body .sk.skill-grid-1{grid-template-columns:1fr}
+.win-body .skill-column{display:flex;min-width:0;flex-direction:column;gap:9px}
+.win-body .skill-category{min-width:0}
 .win-body .skill-category h4{display:flex;align-items:center;gap:7px;margin:2px 0 4px;color:var(--head);font-size:.73rem;font-variant:small-caps;letter-spacing:.09em;line-height:1.2;text-align:center}
 .win-body .skill-category h4::before,.win-body .skill-category h4::after{flex:1 1 auto;height:1px;background:rgba(var(--gr2),.55);content:""}
 .win-body .skill-category-list{display:grid;grid-template-columns:1fr;align-items:start}
@@ -90,8 +93,6 @@ body:not(.mobile) #desk .win.collapsed .win-bar button.shb .bl .bx{display:inlin
 .win-body .skill-category .skill-row>i{flex:0 0 auto;gap:2px}
 .win-body .skill-category .skill-row>i [data-skill-input]{width:38px;min-height:26px;padding:1px 3px;font-size:.76rem}
 .win-body .skill-category .skill-row .rmb{width:25px;min-width:25px;min-height:26px;padding:0}
-@container (max-width:620px){.win-body .sk{column-count:2;column-gap:12px}}
-@container (max-width:350px){.win-body .sk{column-count:1;column-rule:0}}
 .win-body .sk.hl-occ .skill-row.occ-skill{padding-left:8px;border-radius:3px;border-bottom-color:transparent;background:linear-gradient(90deg,rgba(var(--gr),.24),rgba(var(--gr),.07));box-shadow:inset 3px 0 0 var(--head),0 0 0 1px rgba(var(--gr),.3)}
 .win-body .sk .skill-row.social-choice{padding-left:8px;border-radius:3px;border-bottom-color:transparent;background:linear-gradient(90deg,rgba(49,157,207,.2),rgba(49,157,207,.06));box-shadow:inset 3px 0 0 #55bce8,0 0 0 1px rgba(85,188,232,.24)}
 .win-body .sk .notice-flash{position:relative;z-index:1}

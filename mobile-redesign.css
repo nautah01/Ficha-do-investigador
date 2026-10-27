@@ -129,7 +129,9 @@ body.mobile #desk .win.collapsed>.rsz{display:none!important}
 
 /* Match the reference's stacked skill groups at narrower widths. */
 @media(max-width:760px){
- body.mobile #desk .win-body .sk{column-count:2;column-gap:12px;column-rule-color:rgba(var(--gr2),.2)}
+ body.mobile #desk .win-body .sk{display:block;column-count:2;column-gap:12px;column-rule:1px solid rgba(var(--gr2),.2)}
+ body.mobile #desk .win-body .skill-column{display:contents}
+ body.mobile #desk .win-body .skill-category{display:inline-block;width:100%;margin:0 0 8px;vertical-align:top;break-inside:avoid-column}
  body.mobile #desk .win-body .skill-category{margin-bottom:8px}
  body.mobile #desk .win-body .skill-category .skill-row{min-height:32px;gap:3px;padding-inline:3px}
  body.mobile #desk .win-body .skill-category .sk-name{font-size:.72rem}

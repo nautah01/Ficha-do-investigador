@@ -170,13 +170,20 @@ function skillGrid(p,i,entries,highlight=''){
  const groups=new Map();
  for(const entry of entries){const category=skillCategory(entry[0]);if(!groups.has(category))groups.set(category,[]);groups.get(category).push(entry)}
  const categories=SKILL_CATEGORY_ORDER.filter(name=>groups.has(name));
- return`<div class="sk${highlight}">${categories.map(category=>`<section class="skill-category"><h4>${esc(category)}</h4><div class="skill-category-list">${groups.get(category).map(([name])=>row(p,i,name,1)).join('')}</div></section>`).join('')}</div>`;
+ const count=p.ui?.w<=350?1:p.ui?.w<=620?2:3,columns=Array.from({length:count},()=>[]),heights=Array(count).fill(0);
+ const weight=category=>29+groups.get(category).reduce((height,[name])=>height+31+(name.length>19?14:0),0);
+ for(const category of [...categories].sort((a,b)=>weight(b)-weight(a))){
+  const column=heights.indexOf(Math.min(...heights));
+  columns[column].push(category);heights[column]+=weight(category);
+ }
+ columns.forEach(column=>column.sort((a,b)=>categories.indexOf(a)-categories.indexOf(b)));
+ return`<div class="sk${highlight} skill-grid-${count}">${columns.map(column=>`<div class="skill-column">${column.map(category=>`<section class="skill-category"><h4>${esc(category)}</h4><div class="skill-category-list">${groups.get(category).map(([name])=>row(p,i,name,1)).join('')}</div></section>`).join('')}</div>`).join('')}</div>`;
 }
 function uiOf(p,i){
  p.ui=p.ui||{};
  if(p.ui.x==null)p.ui.x=18+(i%6)*36;
  if(p.ui.y==null)p.ui.y=10+(i%6)*28;
- if(!p.ui.w)p.ui.w=680;
+ if(!p.ui.w)p.ui.w=520;
  if(p.ui.skillsWide){p.ui.w=520;delete p.ui.skillsWide}
  if(!p.ui.z)p.ui.z=++zTop;
  return p.ui;
@@ -604,9 +611,9 @@ function onDragMove(e){
  if(window.Cemiterio)Cemiterio.hover(e.clientX,e.clientY,true);
 }
 function onDragEnd(e){
- const C=window.Cemiterio,toBury=drag&&e&&C&&C.over(e.clientX,e.clientY)?drag.i:-1;
+ const C=window.Cemiterio,toBury=drag&&e&&C&&C.over(e.clientX,e.clientY)?drag.i:-1,resized=rsz?rsz.i:null;
  if(C)C.hover(0,0,false);
- if(drag||rsz){drag=rsz=null;fitDesk();persist()}
+ if(drag||rsz){drag=rsz=null;fitDesk();if(resized!==null)draw();else persist()}
  document.removeEventListener('pointermove',onDragMove);
  document.removeEventListener('pointerup',onDragEnd);
  if(toBury>=0)buryFicha(toBury);
@@ -760,9 +767,19 @@ window.DynamicInfo=(()=>{
  });
 })();
 /* Aplica um estado (carregado do banco ou da outra aba) na tela. */
+function restoreGeneratedOccupationSkills(p){
+ if(!p||p.blank||p.unlimited||!isBudget(p)||typeof occupationSkillNames!=='function')return;
+ p.skillFloors=p.skillFloors||{};
+ for(const n of occupationSkillNames(p)){
+  if(p.sk[n]!==undefined||p.removed?.[n])continue;
+  const value=Math.max(0,+base(n,p.c)||0);
+  p.sk[n]=value;
+  if(p.skillFloors[n]===undefined)p.skillFloors[n]=value;
+ }
+}
 function applyState(d){
  if(d&&Array.isArray(d.cur)){
-  cur=d.cur;cur.forEach(migrateSkillNames);zTop=d.zTop||20;
+  cur=d.cur;cur.forEach(p=>{migrateSkillNames(p);restoreGeneratedOccupationSkills(p)});zTop=d.zTop||20;
   if(d.occ)sel.value=d.occ;if(d.occ2)sel2.value=d.occ2;
   if(d.qty)document.getElementById('qty').value=d.qty;
   cur.forEach(uiOf);
